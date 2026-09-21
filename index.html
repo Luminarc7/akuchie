@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>悪知恵 — 日本語カード検索（Scryfall API 版）</title>
+<title>ヤースガイカルテル — 日本語カード検索（Scryfall API 版）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -425,6 +425,22 @@
   .card-tile-body { padding: 10px 12px 8px; }
   .card-name-ja { font-size: 14.5px; }
 
+  .dropdown-filter {
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    border-radius: 3px;
+    padding: 7px 10px;
+    font-family: inherit;
+    font-size: 12.5px;
+    width: 100%;
+    margin-bottom: 4px;
+    position: sticky;
+    top: 0;
+  }
+  .dropdown-filter::placeholder { color: var(--muted); }
+  .dropdown-filter:focus { outline: 1px solid var(--gold); outline-offset: 0; }
+
   .translation-note {
     font-size: 11.5px;
     color: var(--muted);
@@ -625,21 +641,75 @@
 const RARITY_LABEL = { common: 'コモン', uncommon: 'アンコモン', rare: 'レア', mythic: '神話レア', special: 'スペシャル', bonus: 'ボーナス' };
 const MANA_COLOR_MAP = { W: 'var(--mana-w)', U: 'var(--mana-u)', B: 'var(--mana-b)', R: 'var(--mana-r)', G: 'var(--mana-g)', C: 'var(--mana-c)' };
 
-// English creature-type keyword -> Japanese label for the dropdown.
-// The keyword is what's actually sent to Scryfall's t: operator (which matches
-// the canonical English type line, regardless of the printing's language).
-const CREATURE_TYPES = [
-  ['elf','エルフ'], ['angel','天使'], ['dragon','ドラゴン'], ['zombie','ゾンビ'],
-  ['human','人間'], ['soldier','兵士'], ['spirit','スピリット'], ['elemental','エレメンタル'],
-  ['bird','鳥'], ['orc','オーク'], ['goblin','ゴブリン'], ['giant','巨人'],
-  ['vampire','吸血鬼'], ['demon','悪魔'], ['wizard','ウィザード'], ['knight','騎士'],
-  ['warrior','戦士'], ['rogue','ならず者'], ['merfolk','マーフォーク'], ['sliver','スリヴァー'],
-  ['phyrexian','ファイレクシアン'], ['dwarf','ドワーフ'], ['faerie','フェアリー'], ['insect','昆虫'],
-  ['snake','ヘビ'], ['spider','クモ'], ['wolf','狼'], ['bear','熊'],
-  ['cat','猫'], ['dog','犬'], ['horse','馬'], ['ape','サル'],
-  ['pirate','海賊'], ['ninja','忍者'], ['samurai','サムライ'], ['druid','ドルイド'],
-  ['cleric','クレリック'], ['shaman','シャーマン'], ['construct','構築物'], ['avatar','アバター'],
-];
+// Japanese labels for creature types. The full list of types is fetched at
+// runtime from Scryfall's /catalog/creature-types endpoint so it stays complete
+// and current; anything without a Japanese label here falls back to English.
+// The English value is what gets sent to Scryfall's t: operator.
+const CREATURE_TYPE_JA = {
+  elf:'エルフ', angel:'天使', dragon:'ドラゴン', zombie:'ゾンビ', human:'人間',
+  soldier:'兵士', spirit:'スピリット', elemental:'エレメンタル', bird:'鳥',
+  orc:'オーク', goblin:'ゴブリン', giant:'巨人', vampire:'吸血鬼', demon:'悪魔',
+  wizard:'ウィザード', knight:'騎士', warrior:'戦士', rogue:'ならず者',
+  merfolk:'マーフォーク', sliver:'スリヴァー', phyrexian:'ファイレクシアン',
+  dwarf:'ドワーフ', faerie:'フェアリー', insect:'昆虫', snake:'ヘビ',
+  spider:'クモ', wolf:'狼', bear:'熊', cat:'猫', dog:'犬', horse:'馬',
+  ape:'サル', pirate:'海賊', ninja:'忍者', samurai:'サムライ', druid:'ドルイド',
+  cleric:'クレリック', shaman:'シャーマン', construct:'構築物', avatar:'アバター',
+  beast:'ビースト', bat:'コウモリ', boar:'イノシシ', crab:'カニ', crocodile:'ワニ',
+  dinosaur:'恐竜', drake:'ドレイク', fish:'魚', fox:'狐', frog:'カエル',
+  fungus:'菌類', goat:'ヤギ', golem:'ゴーレム', griffin:'グリフィン',
+  horror:'ホラー', hound:'猟犬', hydra:'ハイドラ', illusion:'イリュージョン',
+  imp:'インプ', kavu:'カヴー', kirin:'キリン', kithkin:'キスキン', kor:'コー',
+  kraken:'クラーケン', leviathan:'リヴァイアサン', lizard:'トカゲ',
+  minotaur:'ミノタウルス', monk:'モンク', moonfolk:'ムーンフォーク',
+  mutant:'ミュータント', myr:'ミラー', nightmare:'ナイトメア', ooze:'ウーズ',
+  ox:'雄牛', pegasus:'ペガサス', phoenix:'フェニックス', plant:'植物',
+  rat:'ネズミ', rhino:'サイ', sable:'クロテン', salamander:'サラマンダー',
+  satyr:'サテュロス', scarecrow:'かかし', scorpion:'サソリ', serpent:'海蛇',
+  shade:'シェイド', shapeshifter:'多相の戦士', sheep:'羊', skeleton:'スケルトン',
+  slith:'スリス', slug:'ナメクジ', specter:'スペクター', sphinx:'スフィンクス',
+  squirrel:'リス', starfish:'ヒトデ', thopter:'飛行機械', thrull:'スラル',
+  treefolk:'ツリーフォーク', troll:'トロール', turtle:'海亀', unicorn:'ユニコーン',
+  wall:'壁', whale:'クジラ', wraith:'レイス', wurm:'ワーム', yeti:'イエティ',
+  archer:'射手', artificer:'工匠', assassin:'暗殺者', berserker:'狂戦士',
+  scout:'斥候', mercenary:'傭兵', minion:'ミニオン', noble:'貴族',
+  peasant:'農民', pilot:'操縦士', advisor:'助言者', ally:'同盟者',
+  barbarian:'バーバリアン', cyclops:'サイクロプス', devil:'デビル',
+  djinn:'ジン', efreet:'エフリート', gargoyle:'ガーゴイル', gnome:'ノーム',
+  gorgon:'ゴルゴン', harpy:'ハーピー', hippo:'カバ', homunculus:'ホムンクルス',
+  incarnation:'インカーネーション', jellyfish:'クラゲ', juggernaut:'ジャガーノート',
+  lammasu:'ラミア', licid:'リシド', manticore:'マンティコア', masticore:'マスティコア',
+  mole:'モグラ', mongoose:'マングース', monkey:'サル', naga:'ナーガ',
+  nautilus:'オウムガイ', nephilim:'ネフィリム', nymph:'ニンフ', octopus:'タコ',
+  orgg:'オーグ', ouphe:'オーフ', pest:'害獣', pincher:'ピンチャー',
+  praetor:'法務官', rabbit:'ウサギ', ranger:'レンジャー', rebel:'反逆者',
+  reflection:'反射', rigger:'索具師', sponge:'海綿', squid:'イカ',
+  surrakar:'サーラカー', vedalken:'ヴィダルケン', viashino:'ヴィーアシーノ',
+  volver:'ヴォルヴァー', weird:'ウィアード', werewolf:'狼男', wolverine:'クズリ',
+  wombat:'ウォンバット', worm:'ミミズ', zubera:'ズーバー', god:'神', cephalid:'セファリッド', dauthi:'ダウシー',
+  thalakos:'サラコス', soltari:'ソルタリー', spawn:'落とし子',
+  eldrazi:'エルドラージ', processor:'プロセッサー', scion:'末裂',
+  employee:'従業員', guest:'ゲスト', performer:'パフォーマー',
+  detective:'探偵', gnoll:'ノール', halfling:'ハーフリング', tiefling:'ティーフリング',
+  hamster:'ハムスター', raccoon:'アライグマ', otter:'カワウソ', bringer:'もたらす者',
+  camel:'ラクダ', antelope:'レイヨウ', badger:'アナグマ', basilisk:'バジリスク',
+  brushwagg:'ブラッシュワグ', carrier:'キャリアー', caribou:'カリブー',
+  chimera:'キメラ', cockatrice:'コカトリス', dreadnought:'ドレッドノート',
+  egg:'卵', elder:'長老', elk:'ヘラジカ', eye:'目', ferret:'フェレット',
+  flagbearer:'旗手', gamer:'ゲーマー', graveborn:'墓生まれ', hag:'鬼婆',
+  hellion:'ヘリオン', hippogriff:'ヒポグリフ', hyena:'ハイエナ',
+  jackal:'ジャッカル', kobold:'コボルド', lamia:'ラミア', leech:'ヒル',
+  lhurgoyf:'ルアゴイフ', metathran:'メタスラン', mouse:'ネズミ',
+  mystic:'神秘家', nomad:'遊牧民', pangolin:'センザンコウ', pentavite:'ペンタバイト', pheasant:'キジ', pony:'ポニー', porcupine:'ヤマアラシ',
+  prism:'プリズム', shark:'サメ', siren:'セイレーン',
+  snail:'カタツムリ', spike:'スパイク', spellshaper:'呪文形成者',
+  survivor:'生存者', tetravite:'テトラバイト', tortoise:'リクガメ',
+  triskelavite:'トリスケラバイト', vulture:'ハゲタカ', yak:'ヤク', bard:'バード', warlock:'ウォーロック',
+  army:'軍団', citizen:'市民', coward:'臆病者',
+  dryad:'ドライアド',
+  astartes:'アスタルテス', custodes:'カストーデス', necron:'ネクロン',
+  tyranid:'ティラニッド', inkling:'インクリング', child:'子供',
+};
 
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
@@ -720,11 +790,54 @@ function tokenizeQuery(raw) {
   return raw.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
 }
 
+// Oracle text spells out small card counts as words ("draw two cards") but uses
+// digits for damage and life ("deals 3 damage"). These helpers mirror that.
+const JA_NUM = { '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10 };
+function toNum(s) { return JA_NUM[s] !== undefined ? JA_NUM[s] : parseInt(s, 10); }
+const COUNT_WORD = ['zero','a','two','three','four','five','six','seven','eight','nine','ten'];
+function countWord(n) { return COUNT_WORD[n] !== undefined ? COUNT_WORD[n] : String(n); }
+function cardNoun(n) { return n === 1 ? 'card' : 'cards'; }
+
+const NUM = '(\\d+|[一二三四五六七八九十])';
+
+// Patterns are tried in order; the first match wins. Each returns the English
+// oracle-text fragment to search for.
+const JA_PHRASE_PATTERNS = [
+  [new RegExp(`^${NUM}枚(?:のカード)?(?:を)?(?:引く|ドロー(?:する)?)$`),
+    m => { const n = toNum(m[1]); return `draw ${countWord(n)} ${cardNoun(n)}`; }],
+  [new RegExp(`^${NUM}枚(?:のカード)?(?:を)?捨てる$`),
+    m => { const n = toNum(m[1]); return `discard ${countWord(n)} ${cardNoun(n)}`; }],
+  [new RegExp(`^${NUM}枚(?:を)?(?:切削|削る)$`),
+    m => { const n = toNum(m[1]); return `mill ${countWord(n)} ${cardNoun(n)}`; }],
+  [new RegExp(`^${NUM}点(?:の)?ダメージ(?:を与える)?$`),
+    m => `${toNum(m[1])} damage`],
+  [new RegExp(`^${NUM}点(?:の)?ライフ(?:を)?(?:得る|回復)$`),
+    m => `gain ${toNum(m[1])} life`],
+  [new RegExp(`^${NUM}点(?:の)?ライフ(?:を)?失う$`),
+    m => `lose ${toNum(m[1])} life`],
+  [/^\+(\d+)\/\+(\d+)(?:の)?カウンター$/,
+    m => `+${m[1]}/+${m[2]} counter`],
+  [new RegExp(`^${NUM}体(?:の)?(?:クリーチャー)?(?:を)?(?:生け贄|生贄)(?:に捧げる)?$`),
+    m => { const n = toNum(m[1]); return `sacrifice ${countWord(n)} creature${n === 1 ? '' : 's'}`; }],
+  [new RegExp(`^${NUM}/${NUM}(?:の)?(?:トークン|クリーチャー・トークン)$`),
+    m => `${toNum(m[1])}/${toNum(m[2])}`],
+];
+
+function matchPhrasePattern(term) {
+  for (const [re, build] of JA_PHRASE_PATTERNS) {
+    const m = term.match(re);
+    if (m) return build(m);
+  }
+  return null;
+}
+
 // Rewrites one Japanese term into a Scryfall clause. Returns null if unknown.
 function translateTerm(term) {
   const bare = term.replace(/^"|"$/g, '');
   if (JA_KEYWORDS[bare]) return `kw:"${JA_KEYWORDS[bare]}"`;
   if (JA_PHRASES[bare]) return `o:"${JA_PHRASES[bare]}"`;
+  const pattern = matchPhrasePattern(bare);
+  if (pattern) return `o:"${pattern}"`;
   return null;
 }
 
@@ -752,6 +865,13 @@ function translateQuery(raw) {
       if (opEn === 'o' && JA_PHRASES[valBare]) {
         notes.push(`${valBare} → o:${JA_PHRASES[valBare]}`);
         return `${prefix}o:"${JA_PHRASES[valBare]}"`;
+      }
+      if (opEn === 'o') {
+        const pat = matchPhrasePattern(valBare);
+        if (pat) {
+          notes.push(`${valBare} → o:${pat}`);
+          return `${prefix}o:"${pat}"`;
+        }
       }
       if (op !== opEn) notes.push(`${op}: → ${opEn}:`);
       return `${prefix}${opEn}${sep}${val}`;
@@ -1070,7 +1190,7 @@ function wireDropdown({ btnId, panelId, wrapId, stateSet, checkboxSelector, allL
   }
   document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  return { updateLabel, close };
+  return { updateLabel, close, rebind: () => { bindCheckboxes(); updateLabel(); } };
 }
 
 const typeDropdown = wireDropdown({
@@ -1079,13 +1199,59 @@ const typeDropdown = wireDropdown({
 });
 
 const creatureTypePanel = document.getElementById('creatureTypeDropdownPanel');
-creatureTypePanel.innerHTML = CREATURE_TYPES.map(([val, label]) =>
-  `<label><input type="checkbox" class="creature-type-check" value="${val}"> ${label} <span class="en">${val}</span></label>`
-).join('') + `<button class="dropdown-clear" id="creatureTypeDropdownClear" type="button">選択をクリア</button>`;
+
+// Render a list of creature types into the panel, optionally filtered.
+function renderCreatureTypes(types, filter = '') {
+  const f = filter.trim().toLowerCase();
+  const shown = types.filter(t => {
+    if (!f) return true;
+    const ja = CREATURE_TYPE_JA[t.toLowerCase()] || '';
+    return t.toLowerCase().includes(f) || ja.includes(filter.trim());
+  });
+  const rows = shown.map(t => {
+    const val = t.toLowerCase();
+    const ja = CREATURE_TYPE_JA[val];
+    const checked = state.creatureTypes.has(val) ? ' checked' : '';
+    const label = ja ? `${ja} <span class="en">${t}</span>` : `${t}`;
+    return `<label><input type="checkbox" class="creature-type-check" value="${val}"${checked}> ${label}</label>`;
+  }).join('');
+  creatureTypePanel.innerHTML =
+    `<input type="text" id="creatureTypeFilter" class="dropdown-filter" placeholder="絞り込み（日本語・英語）" value="${filter.replace(/"/g,'&quot;')}" autocomplete="off">`
+    + (rows || `<div style="font-size:12px;color:var(--muted);padding:6px 0;">該当なし</div>`)
+    + `<button class="dropdown-clear" id="creatureTypeDropdownClear" type="button">選択をクリア</button>`;
+
+  const filterInput = document.getElementById('creatureTypeFilter');
+  filterInput.addEventListener('input', (e) => {
+    const pos = e.target.selectionStart;
+    renderCreatureTypes(types, e.target.value);
+    const again = document.getElementById('creatureTypeFilter');
+    again.focus();
+    again.setSelectionRange(pos, pos);
+  });
+  filterInput.addEventListener('click', (e) => e.stopPropagation());
+  creatureTypeDropdown.rebind();
+}
+
+let ALL_CREATURE_TYPES = Object.keys(CREATURE_TYPE_JA);
+
 const creatureTypeDropdown = wireDropdown({
   btnId: 'creatureTypeDropdownBtn', panelId: 'creatureTypeDropdownPanel', wrapId: 'creatureTypeDropdownWrap',
   stateSet: state.creatureTypes, checkboxSelector: '.creature-type-check', countSuffix: '種類選択中',
 });
+
+renderCreatureTypes(ALL_CREATURE_TYPES);
+
+// Pull the authoritative, complete creature-type list from Scryfall so the
+// dropdown covers every type in the game and stays current with new sets.
+fetch('https://api.scryfall.com/catalog/creature-types')
+  .then(r => r.json())
+  .then(data => {
+    if (data && Array.isArray(data.data) && data.data.length) {
+      ALL_CREATURE_TYPES = data.data;
+      renderCreatureTypes(ALL_CREATURE_TYPES);
+    }
+  })
+  .catch(() => { /* keep the built-in list if the catalog can't be reached */ });
 
 // keyword-ability picker, built from the same JA->EN map the query translator uses
 const keywordPanel = document.getElementById('keywordDropdownPanel');
