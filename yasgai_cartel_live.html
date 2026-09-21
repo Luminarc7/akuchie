@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ヤースガイカルテル — 日本語カード検索（Scryfall API 版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-void: #14121f;
+    --ink-surface: #1d1a2e;
+    --ink-surface-raised: #262238;
+    --parchment: #ede7d8;
+    --muted: #948da8;
+    --gold: #c9a15a;
+    --line: #34304a;
+
+    --mana-w: #e8dfc0;
+    --mana-u: #3d8bd6;
+    --mana-b: #8d7a9e;
+    --mana-r: #cf5647;
+    --mana-g: #5a9c6a;
+    --mana-c: #9b95ac;
+
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ink-void);
+    color: var(--parchment);
+    font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .serif { font-family: "Shippori Mincho", serif; }
+
+  a { color: inherit; }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: linear-gradient(180deg, #17142400, #14121f 55%), var(--ink-void);
+    background-color: var(--ink-void);
+    border-bottom: 1px solid var(--line);
+    padding: 22px 20px 18px;
+  }
+  .header-inner { max-width: 1040px; margin: 0 auto; }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 16px;
+  }
+  .brand-mark {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .brand-sub {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+  }
+  .search-row input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    border-radius: 3px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  .search-row input[type="text"]::placeholder { color: var(--muted); }
+  .search-row input[type="text"]:focus,
+  select:focus,
+  .chip:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+  .search-row button {
+    background: var(--gold);
+    color: #211a0d;
+    border: none;
+    border-radius: 3px;
+    padding: 0 22px;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .search-row button:hover { filter: brightness(1.08); }
+
+  .syntax-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .guide-toggle {
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .syntax-hint { color: var(--muted); }
+
+  .guide-panel {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--ink-surface);
+    border-bottom: 1px solid var(--line);
+    transition: max-height 0.2s ease;
+  }
+  .guide-panel.open { max-height: 320px; }
+  .guide-inner { max-width: 1040px; margin: 0 auto; padding: 16px 20px 18px; }
+  .guide-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  .guide-table td { padding: 5px 10px 5px 0; vertical-align: top; color: #cfc9dd; }
+  .guide-table td:first-child { white-space: nowrap; width: 1%; }
+  .guide-table code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--gold);
+    font-size: 12px;
+  }
+  .guide-examples { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .guide-examples-label { font-size: 12px; color: var(--muted); }
+  .example-pill {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 11.5px;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .example-pill:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ---------- filters ---------- */
+  .filters {
+    max-width: 1040px;
+    margin: 16px auto 0;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filter-label { color: var(--muted); }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--ink-surface);
+    color: var(--parchment);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: "Shippori Mincho", serif;
+  }
+  .chip[data-active="true"] { box-shadow: 0 0 0 2px var(--gold) inset; }
+  .chip.w { color: #241f16; background: var(--mana-w); }
+  .chip.u { color: #eaf3fd; background: var(--mana-u); }
+  .chip.b { color: #eee9f4; background: var(--mana-b); }
+  .chip.r { color: #2a0d09; background: var(--mana-r); }
+  .chip.g { color: #0c2011; background: var(--mana-g); }
+  .chip.c { color: #17151d; background: var(--mana-c); }
+
+  select {
+    background: var(--ink-surface);
+    color: var(--parchment);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 13px;
+  }
+
+  .type-dropdown-wrap { position: relative; }
+  .dropdown-btn {
+    background: var(--ink-surface);
+    color: var(--parchment);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .dropdown-btn:hover { border-color: var(--gold); }
+  .dropdown-panel {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 16px;
+    min-width: 210px;
+    z-index: 30;
+    box-shadow: 0 10px 28px rgba(6, 5, 12, 0.5);
+  }
+  .dropdown-panel.open { display: flex; }
+  .dropdown-panel label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--parchment);
+    cursor: pointer;
+  }
+  .dropdown-panel input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; }
+  .dropdown-panel .en { color: var(--muted); font-size: 11px; }
+  .dropdown-clear {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 0 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-family: inherit;
+  }
+
+  .clear-btn {
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* ---------- results ---------- */
+  main { max-width: 1040px; margin: 0 auto; padding: 22px 20px 60px; }
+  .result-count { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .result-count strong { color: var(--parchment); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 14px;
+  }
+
+  .card-tile {
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 0;
+    color: inherit;
+    font-family: inherit;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .card-tile:hover { transform: translateY(-2px); border-color: var(--gold); }
+  .color-bar { height: 5px; width: 100%; }
+
+  .card-tile-body { padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card-name-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .card-name-ja { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 16.5px; line-height: 1.35; }
+  .card-name-en { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .pips { display: flex; gap: 3px; flex-shrink: 0; }
+  .pip {
+    width: 18px; height: 18px; border-radius: 50%;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Shippori Mincho", serif;
+  }
+  .pip.w { background: var(--mana-w); color: #241f16; }
+  .pip.u { background: var(--mana-u); color: #eaf3fd; }
+  .pip.b { background: var(--mana-b); color: #241f16; }
+  .pip.r { background: var(--mana-r); color: #2a0d09; }
+  .pip.g { background: var(--mana-g); color: #0c2011; }
+  .pip.c { background: var(--mana-c); color: #17151d; }
+
+  .type-line { font-size: 12px; color: var(--muted); }
+  .oracle-preview { font-size: 12.5px; line-height: 1.6; color: #cfc9dd; flex: 1; }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding: 8px 14px;
+  }
+  .rarity-dot { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.common { background: #9b95ac; }
+  .dot.uncommon { background: #b9c4cc; }
+  .dot.rare { background: #d8b556; }
+  .dot.mythic { background: #d1622f; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .serif { font-size: 19px; color: var(--parchment); display: block; margin-bottom: 8px; }
+
+  /* ---------- modal ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 9, 16, 0.78);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px calc(40px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    z-index: 50;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-card {
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    max-width: 460px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    z-index: 2;
+  }
+  .modal-color-bar { height: 8px; width: 100%; }
+  .modal-body { padding: 26px 24px 24px; }
+  .modal-name-ja { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 24px; margin: 0 0 2px; }
+  .modal-name-en { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  .modal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px;}
+  .modal-type { font-size: 13.5px; color: #cfc9dd; }
+  .modal-oracle {
+    font-size: 14px; line-height: 1.85; color: var(--parchment);
+    padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    margin-bottom: 14px; white-space: pre-line;
+  }
+  .modal-flavor { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+  .modal-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .modal-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; color: var(--parchment); }
+
+  footer {
+    max-width: 1040px; margin: 0 auto; padding: 0 20px 40px;
+    font-size: 11.5px; color: var(--muted); line-height: 1.8;
+  }
+
+  @media (max-width: 480px) {
+    .brand-mark { font-size: 22px; }
+    .modal-name-ja { font-size: 21px; }
+  }
+</style>
+<style>
+  .live-badge {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--ink-void);
+    background: var(--gold);
+    border-radius: 3px;
+    padding: 2px 7px;
+    margin-left: 8px;
+    vertical-align: middle;
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 700;
+  }
+  .card-tile { padding: 0; }
+  .card-thumb-wrap {
+    width: 100%;
+    aspect-ratio: 5 / 7;
+    background: var(--ink-surface-raised);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .card-thumb-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .card-thumb-fallback { font-size: 11px; color: var(--muted); padding: 10px; text-align: center; }
+  .card-tile-body { padding: 10px 12px 8px; }
+  .card-name-ja { font-size: 14.5px; }
+
+  .translation-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--gold);
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin: 0 0 14px;
+    line-height: 1.8;
+  }
+  .translation-note code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    color: var(--gold);
+    font-size: 11px;
+  }
+
+  .status-line { text-align: center; padding: 50px 20px; color: var(--muted); }
+  .status-line .serif { font-size: 17px; color: var(--parchment); display: block; margin-bottom: 6px; }
+  .spinner {
+    width: 22px; height: 22px; margin: 0 auto 14px;
+    border: 2px solid var(--line); border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .load-more-row { text-align: center; margin-top: 22px; }
+  .load-more-btn {
+    background: var(--ink-surface);
+    border: 1px solid var(--line);
+    color: var(--gold);
+    border-radius: 3px;
+    padding: 10px 22px;
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .load-more-btn:hover { border-color: var(--gold); }
+  .load-more-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .attribution {
+    max-width: 1040px; margin: 40px auto 0; padding: 18px 20px 40px;
+    border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--muted); line-height: 1.9;
+  }
+  .modal-thumb { width: 100%; }
+  .modal-thumb img { width: 100%; display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark serif">ヤースガイカルテル</span>
+      <span class="brand-sub">日本語カード検索</span>
+      <span class="live-badge">Scryfall API 連携版</span>
+    </div>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder='例：飛行 絆魂　／　効果:ダメージ 色:r　／　カード名でも検索できます' autocomplete="off">
+      <button id="searchBtn">検索</button>
+    </div>
+    <div class="syntax-row">
+      <button id="guideToggle" class="guide-toggle" aria-expanded="false">構文ガイド ▾</button>
+      <span class="syntax-hint">日本語のキーワード能力・用語で検索できます（例：飛行、絆魂、果敢）</span>
+    </div>
+  </div>
+</header>
+
+<div class="guide-panel" id="guidePanel">
+  <div class="guide-inner">
+    <table class="guide-table">
+      <tbody>
+        <tr><td><code>飛行</code></td><td>キーワード能力をそのまま日本語で検索（自動で <code>kw:flying</code> に変換）</td></tr>
+        <tr><td><code>絆魂 接死</code></td><td>複数指定すると「すべてを満たす」条件になります</td></tr>
+        <tr><td><code>効果:ダメージ</code></td><td>効果文を日本語で検索（<code>o:</code> も使えます）</td></tr>
+        <tr><td><code>色:r</code> / <code>c:r</code></td><td>色で絞り込む（<code>c:c</code>で無色）</td></tr>
+        <tr><td><code>タイプ:dragon</code></td><td>タイプで絞り込む（タイプ名は英語）</td></tr>
+        <tr><td><code>レアリティ:mythic</code></td><td>レアリティで絞り込む</td></tr>
+        <tr><td><code>マナ総量&gt;=4</code></td><td>マナ総量の比較（<code>cmc</code> も可）</td></tr>
+        <tr><td><code>パワー&gt;3</code> / <code>タフネス&lt;=2</code></td><td>パワー・タフネスの比較</td></tr>
+        <tr><td><code>-飛行</code></td><td>先頭に <code>-</code> を付けると除外</td></tr>
+        <tr><td><code>稲妻</code></td><td>カード名はそのまま入力（日本語名・英語名どちらでも）</td></tr>
+      </tbody>
+    </table>
+    <div class="guide-examples">
+      <span class="guide-examples-label">試してみる：</span>
+      <button class="example-pill" data-q="飛行 絆魂">飛行 絆魂</button>
+      <button class="example-pill" data-q="効果:ダメージ 色:r">効果:ダメージ 色:r</button>
+      <button class="example-pill" data-q="果敢 マナ総量&lt;=2">果敢 マナ総量&lt;=2</button>
+      <button class="example-pill" data-q="接死 -飛行">接死 -飛行</button>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <div class="filter-group">
+    <span class="filter-label">色</span>
+    <button class="chip w" data-color="W" title="白">白</button>
+    <button class="chip u" data-color="U" title="青">青</button>
+    <button class="chip b" data-color="B" title="黒">黒</button>
+    <button class="chip r" data-color="R" title="赤">赤</button>
+    <button class="chip g" data-color="G" title="緑">緑</button>
+    <button class="chip c" data-color="C" title="無色">無</button>
+  </div>
+
+  <div class="filter-group type-dropdown-wrap" id="typeDropdownWrap">
+    <span class="filter-label">タイプ</span>
+    <button id="typeDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
+    <div id="typeDropdownPanel" class="dropdown-panel">
+      <label><input type="checkbox" class="type-check" value="creature"> クリーチャー <span class="en">Creature</span></label>
+      <label><input type="checkbox" class="type-check" value="instant"> インスタント <span class="en">Instant</span></label>
+      <label><input type="checkbox" class="type-check" value="sorcery"> ソーサリー <span class="en">Sorcery</span></label>
+      <label><input type="checkbox" class="type-check" value="artifact"> アーティファクト <span class="en">Artifact</span></label>
+      <label><input type="checkbox" class="type-check" value="enchantment"> エンチャント <span class="en">Enchantment</span></label>
+      <label><input type="checkbox" class="type-check" value="land"> 土地 <span class="en">Land</span></label>
+      <label><input type="checkbox" class="type-check" value="planeswalker"> プレインズウォーカー <span class="en">Planeswalker</span></label>
+      <label><input type="checkbox" class="type-check" value="battle"> バトル <span class="en">Battle</span></label>
+      <button class="dropdown-clear" id="typeDropdownClear" type="button">選択をクリア</button>
+    </div>
+  </div>
+
+  <div class="filter-group type-dropdown-wrap" id="creatureTypeDropdownWrap">
+    <span class="filter-label">クリーチャー・タイプ</span>
+    <button id="creatureTypeDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
+    <div id="creatureTypeDropdownPanel" class="dropdown-panel" style="max-height:260px; overflow-y:auto;"></div>
+  </div>
+
+  <div class="filter-group type-dropdown-wrap" id="keywordDropdownWrap">
+    <span class="filter-label">キーワード能力</span>
+    <button id="keywordDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
+    <div id="keywordDropdownPanel" class="dropdown-panel" style="max-height:280px; overflow-y:auto;"></div>
+  </div>
+
+  <div class="filter-group type-dropdown-wrap" id="manaDropdownWrap">
+    <span class="filter-label">マナ総量</span>
+    <button id="manaDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
+    <div id="manaDropdownPanel" class="dropdown-panel">
+      <label><input type="checkbox" class="mana-check" value="0"> 0</label>
+      <label><input type="checkbox" class="mana-check" value="1"> 1</label>
+      <label><input type="checkbox" class="mana-check" value="2"> 2</label>
+      <label><input type="checkbox" class="mana-check" value="3"> 3</label>
+      <label><input type="checkbox" class="mana-check" value="4"> 4</label>
+      <label><input type="checkbox" class="mana-check" value="5"> 5</label>
+      <label><input type="checkbox" class="mana-check" value="6"> 6</label>
+      <label><input type="checkbox" class="mana-check" value="7+"> 7以上</label>
+      <label><input type="checkbox" class="mana-check" value="X"> Xを含む</label>
+      <button class="dropdown-clear" id="manaDropdownClear" type="button">選択をクリア</button>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <span class="filter-label">レアリティ</span>
+    <select id="raritySelect">
+      <option value="">すべて</option>
+      <option value="common">コモン</option>
+      <option value="uncommon">アンコモン</option>
+      <option value="rare">レア</option>
+      <option value="mythic">神話レア</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <span class="filter-label">並び替え</span>
+    <select id="sortSelect">
+      <option value="name">名前順（英語名ベース）</option>
+      <option value="cmc_asc">マナ総量が低い順</option>
+      <option value="cmc_desc">マナ総量が高い順</option>
+      <option value="released_desc">発売日が新しい順</option>
+    </select>
+  </div>
+
+  <button class="clear-btn" id="clearBtn">条件をクリア</button>
+</div>
+
+<main>
+  <div class="translation-note" id="translationNote" style="display:none;"></div>
+  <p class="result-count" id="resultCount"></p>
+  <div class="grid" id="cardGrid"></div>
+  <div class="load-more-row" id="loadMoreRow" style="display:none;">
+    <button class="load-more-btn" id="loadMoreBtn">さらに読み込む</button>
+  </div>
+</main>
+
+<div class="attribution">
+  カードデータおよび画像は <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> の API（<code>lang:ja</code> 指定）からリアルタイムに取得しています。<br>
+  This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
+  Card data © Scryfall LLC. 検索結果はキャッシュされず毎回APIへ問い合わせるため、Scryfallのレート制限（約10req/秒）に配慮し、検索は入力のたびではなくボタン操作時にのみ送信されます。
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
+<script>
+const RARITY_LABEL = { common: 'コモン', uncommon: 'アンコモン', rare: 'レア', mythic: '神話レア', special: 'スペシャル', bonus: 'ボーナス' };
+const MANA_COLOR_MAP = { W: 'var(--mana-w)', U: 'var(--mana-u)', B: 'var(--mana-b)', R: 'var(--mana-r)', G: 'var(--mana-g)', C: 'var(--mana-c)' };
+
+// English creature-type keyword -> Japanese label for the dropdown.
+// The keyword is what's actually sent to Scryfall's t: operator (which matches
+// the canonical English type line, regardless of the printing's language).
+const CREATURE_TYPES = [
+  ['elf','エルフ'], ['angel','天使'], ['dragon','ドラゴン'], ['zombie','ゾンビ'],
+  ['human','人間'], ['soldier','兵士'], ['spirit','スピリット'], ['elemental','エレメンタル'],
+  ['bird','鳥'], ['orc','オーク'], ['goblin','ゴブリン'], ['giant','巨人'],
+  ['vampire','吸血鬼'], ['demon','悪魔'], ['wizard','ウィザード'], ['knight','騎士'],
+  ['warrior','戦士'], ['rogue','ならず者'], ['merfolk','マーフォーク'], ['sliver','スリヴァー'],
+  ['phyrexian','ファイレクシアン'], ['dwarf','ドワーフ'], ['faerie','フェアリー'], ['insect','昆虫'],
+  ['snake','ヘビ'], ['spider','クモ'], ['wolf','狼'], ['bear','熊'],
+  ['cat','猫'], ['dog','犬'], ['horse','馬'], ['ape','サル'],
+  ['pirate','海賊'], ['ninja','忍者'], ['samurai','サムライ'], ['druid','ドルイド'],
+  ['cleric','クレリック'], ['shaman','シャーマン'], ['construct','構築物'], ['avatar','アバター'],
+];
+
+const state = {
+  query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
+  keywords: new Set(), manaCosts: new Set(), rarity: '', sort: 'name',
+};
+let nextPageUrl = null;
+let searchToken = 0; // guards against out-of-order responses
+
+// ============================================================================
+// Japanese -> Scryfall translation layer
+//
+// Scryfall's Oracle text is always English, and its search index runs on that
+// English text - `o:飛行` matches nothing. So before sending a query we rewrite
+// Japanese game terms into the English operators Scryfall actually understands:
+//   飛行        -> kw:flying        (real keyword abilities use the kw: operator)
+//   ダメージ     -> o:damage         (rules phrases fall back to oracle text)
+// ============================================================================
+
+// Official Japanese keyword-ability names -> Scryfall kw: values
+const JA_KEYWORDS = {
+  '飛行':'flying', '接死':'deathtouch', '絆魂':'lifelink', '速攻':'haste',
+  '警戒':'vigilance', 'トランプル':'trample', '先制攻撃':'first strike',
+  '二段攻撃':'double strike', '到達':'reach', '防衛':'defender',
+  '呪禁':'hexproof', '護法':'ward', '破壊不能':'indestructible',
+  '果敢':'prowess', '威迫':'menace', '瞬速':'flash', '被覆':'shroud',
+  '畏怖':'fear', '側面攻撃':'flanking', 'プロテクション':'protection',
+  '再生':'regenerate', '沼渡り':'swampwalk', '島渡り':'islandwalk',
+  '山渡り':'mountainwalk', '森渡り':'forestwalk', '平地渡り':'plainswalk',
+  '変異':'morph', '大変異':'megamorph', '変身':'transform',
+  '反復':'rebound', 'フラッシュバック':'flashback', '想起':'evoke',
+  '続唱':'cascade', '探査':'delve', '昂揚':'delirium', '上陸':'landfall',
+  '親和':'affinity', '召集':'convoke', '即席':'improvise',
+  '増殖':'proliferate', '占術':'scry', '諜報':'surveil', '切削':'mill',
+  '発見':'discover', '蘇生':'unearth', '脱出':'escape', '賛美':'exalted',
+  '感染':'infect', '毒性':'toxic', 'キッカー':'kicker',
+  '多重キッカー':'multikicker', '強請':'extort', '絢爛':'spectacle',
+  '忍術':'ninjutsu', '武士道':'bushido', '転生':'soulshift',
+  '連繋':'splice', '刹那':'split second', '秘匿':'hideaway',
+  '暴勇':'hellbent', '狂喜':'bloodthirst', '消散':'fading',
+  '待機':'suspend', '昇殿':'ascend', '英雄的':'heroic', '授与':'bestow',
+  '怪物化':'monstrosity', '紛争':'revolt', '製造':'fabricate',
+  '不死':'undying', '頑強':'persist', '発掘':'dredge', '進化':'evolve',
+  '暗号':'cipher', '超過':'overload', '活用':'scavenge', '融合':'fuse',
+  '奇跡':'miracle', '濫用':'exploit', '潜伏':'skulk', '搭乗':'crew',
+  '培養':'incubate', '謀議':'conspire', '双呪':'entwine', '氾濫':'flood',
+};
+
+// Common Japanese rules phrases -> English oracle-text fragments
+const JA_PHRASES = {
+  'ダメージ':'damage', '打ち消す':'counter target', '打ち消し':'counter target',
+  '破壊':'destroy', '追放':'exile', '生け贄':'sacrifice', '生贄':'sacrifice',
+  'ドロー':'draw', 'カードを引く':'draw', '引く':'draw',
+  '捨てる':'discard', '手札破壊':'discard',
+  'タップ':'tap', 'アンタップ':'untap',
+  'トークン':'token', 'ライフ':'life', 'ライフを得る':'gain life',
+  'ライフを失う':'lose life', '死亡':'dies', '戦場に出たとき':'enters',
+  '戦場':'battlefield', '攻撃':'attack', 'ブロック':'block',
+  '唱える':'cast', '対象':'target', '手札':'hand', '墓地':'graveyard',
+  'ライブラリー':'library', '探す':'search', '呪文':'spell',
+  'パーマネント':'permanent', 'マナ':'mana', '土地':'land',
+  'カウンターを置く':'counter on', '+1/+1カウンター':'+1/+1 counter',
+  '唱えられない':"can't be cast", '与える':'deal', '得る':'gain',
+};
+
+// Japanese operator aliases -> Scryfall operators
+const JA_OPERATORS = {
+  '効果':'o', 'テキスト':'o', '効果文':'o',
+  'タイプ':'t', '種類':'t',
+  '色':'c', 'カラー':'c',
+  'レアリティ':'r', '希少度':'r',
+  'セット':'e', 'エキスパンション':'e',
+  'マナ総量':'cmc', 'マナ':'cmc',
+  'パワー':'pow', 'タフネス':'tou',
+  'キーワード':'kw', 'キーワード能力':'kw',
+};
+
+function tokenizeQuery(raw) {
+  return raw.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
+}
+
+// Rewrites one Japanese term into a Scryfall clause. Returns null if unknown.
+function translateTerm(term) {
+  const bare = term.replace(/^"|"$/g, '');
+  if (JA_KEYWORDS[bare]) return `kw:"${JA_KEYWORDS[bare]}"`;
+  if (JA_PHRASES[bare]) return `o:"${JA_PHRASES[bare]}"`;
+  return null;
+}
+
+// Translates a full user query. Also returns which terms were translated so
+// the UI can show the user exactly what was sent to Scryfall.
+function translateQuery(raw) {
+  const notes = [];
+  const out = tokenizeQuery(raw).map(token => {
+    let prefix = '';
+    let body = token;
+    if (body.startsWith('-')) { prefix = '-'; body = body.slice(1); }
+
+    // token already has an operator, e.g. o:飛行 / 効果:ダメージ
+    const m = body.match(/^([^\s:<>=!]+)(:|>=|<=|>|<|=)(.*)$/);
+    if (m) {
+      let [, op, sep, val] = m;
+      const opEn = JA_OPERATORS[op] || op;
+      const valBare = val.replace(/^"|"$/g, '');
+
+      // o:飛行 is really asking for the keyword ability -> use kw:
+      if ((opEn === 'o' || opEn === 'kw') && JA_KEYWORDS[valBare]) {
+        notes.push(`${valBare} → kw:${JA_KEYWORDS[valBare]}`);
+        return `${prefix}kw:"${JA_KEYWORDS[valBare]}"`;
+      }
+      if (opEn === 'o' && JA_PHRASES[valBare]) {
+        notes.push(`${valBare} → o:${JA_PHRASES[valBare]}`);
+        return `${prefix}o:"${JA_PHRASES[valBare]}"`;
+      }
+      if (op !== opEn) notes.push(`${op}: → ${opEn}:`);
+      return `${prefix}${opEn}${sep}${val}`;
+    }
+
+    // bare Japanese term
+    const translated = translateTerm(body);
+    if (translated) {
+      notes.push(`${body.replace(/^"|"$/g,'')} → ${translated}`);
+      return prefix + translated;
+    }
+    return token; // pass through (card names, English terms, etc.)
+  }).join(' ');
+
+  return { query: out, notes };
+}
+
+let lastTranslationNotes = [];
+
+function buildSearchQuery() {
+  const parts = [];
+  if (state.query.trim()) {
+    const { query: translated, notes } = translateQuery(state.query.trim());
+    lastTranslationNotes = notes;
+    parts.push(translated);
+  } else {
+    lastTranslationNotes = [];
+  }
+  parts.push('lang:ja');
+  if (state.colors.size) parts.push('c:' + [...state.colors].join('').toLowerCase());
+  if (state.types.size) parts.push('(' + [...state.types].map(t => `t:${t}`).join(' or ') + ')');
+  if (state.creatureTypes.size) parts.push('(' + [...state.creatureTypes].map(t => `t:${t}`).join(' or ') + ')');
+  if (state.keywords.size) parts.push('(' + [...state.keywords].map(k => `kw:"${k}"`).join(' or ') + ')');
+  if (state.rarity) parts.push(`r:${state.rarity}`);
+  if (state.manaCosts.size) {
+    const clauses = [...state.manaCosts].map(m => {
+      if (m === 'X') return 'mana:{X}';
+      if (m === '7+') return 'cmc>=7';
+      return `cmc=${m}`;
+    });
+    parts.push('(' + clauses.join(' or ') + ')');
+  }
+  return parts.join(' ');
+}
+
+function sortParams() {
+  switch (state.sort) {
+    case 'cmc_asc': return { order: 'cmc', dir: 'asc' };
+    case 'cmc_desc': return { order: 'cmc', dir: 'desc' };
+    case 'released_desc': return { order: 'released', dir: 'desc' };
+    default: return { order: 'name', dir: 'asc' };
+  }
+}
+
+function parseManaCostString(str) {
+  if (!str) return [];
+  return [...str.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+}
+function pipClass(sym) {
+  const base = sym.replace('/', '');
+  if (['W','U','B','R','G'].includes(base[0]) && base.length <= 2) return base[0].toLowerCase();
+  return 'c';
+}
+function renderPips(costStr) {
+  const syms = parseManaCostString(costStr);
+  if (!syms.length) return '<span style="color:var(--muted); font-size:11px;">—</span>';
+  return syms.map(s => `<span class="pip ${pipClass(s)}">${s.length > 2 ? s[0] : s}</span>`).join('');
+}
+
+function getImage(card) {
+  if (card.image_uris) return card.image_uris.normal || card.image_uris.large;
+  if (card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris) {
+    return card.card_faces[0].image_uris.normal || card.card_faces[0].image_uris.large;
+  }
+  return null;
+}
+function getColors(card) {
+  if (card.colors && card.colors.length) return card.colors;
+  if (card.card_faces) {
+    const c = [...new Set(card.card_faces.flatMap(f => f.colors || []))];
+    if (c.length) return c;
+  }
+  return [];
+}
+function getText(card, field, fallbackField) {
+  return card[field] || card[fallbackField] ||
+    (card.card_faces ? card.card_faces.map(f => f[field] || f[fallbackField] || '').filter(Boolean).join('\n\n') : '') || '';
+}
+function colorBarStyle(colors) {
+  if (!colors.length) return `background:${MANA_COLOR_MAP.C};`;
+  if (colors.length === 1) return `background:${MANA_COLOR_MAP[colors[0]]};`;
+  return `background: linear-gradient(90deg, ${colors.map(c => MANA_COLOR_MAP[c]).join(', ')});`;
+}
+
+const grid = document.getElementById('cardGrid');
+const resultCount = document.getElementById('resultCount');
+const loadMoreRow = document.getElementById('loadMoreRow');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+function showStatus(html) {
+  grid.innerHTML = `<div class="status-line" style="grid-column:1/-1;">${html}</div>`;
+  loadMoreRow.style.display = 'none';
+}
+
+function cardTileHtml(card) {
+  const img = getImage(card);
+  const nameJa = card.printed_name || card.name;
+  const typeJa = card.printed_type_line || card.type_line || '';
+  const oracleJa = getText(card, 'printed_text', 'oracle_text');
+  const colors = getColors(card);
+  return `
+    <button class="card-tile" data-id="${card.id}">
+      <div class="color-bar" style="${colorBarStyle(colors)}"></div>
+      <div class="card-thumb-wrap">
+        ${img ? `<img src="${img}" alt="${nameJa}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card-thumb-fallback',textContent:'画像を読み込めませんでした'}))">`
+              : `<div class="card-thumb-fallback">画像なし</div>`}
+      </div>
+      <div class="card-tile-body">
+        <div class="card-name-row">
+          <div>
+            <div class="card-name-ja">${nameJa}</div>
+            <div class="card-name-en">${card.name}</div>
+          </div>
+        </div>
+        <div class="type-line">${typeJa}</div>
+      </div>
+      <div class="card-foot">
+        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
+        <span>${card.set ? card.set.toUpperCase() : ''}</span>
+      </div>
+    </button>`;
+}
+
+function openModal(card) {
+  const nameJa = card.printed_name || card.name;
+  const typeJa = card.printed_type_line || card.type_line || '';
+  const oracleJa = getText(card, 'printed_text', 'oracle_text');
+  const colors = getColors(card);
+  const img = getImage(card);
+  const pt = (card.power !== undefined) ? `<span class="modal-pt">${card.power}/${card.toughness}</span>`
+    : (card.loyalty !== undefined ? `<span class="modal-pt">忠誠度 ${card.loyalty}</span>` : '');
+
+  const modalCard = document.getElementById('modalCard');
+  modalCard.innerHTML = `
+    <button class="modal-close" id="modalCloseBtn" aria-label="閉じる">✕</button>
+    ${img ? `<div class="modal-thumb"><img src="${img}" alt="${nameJa}"></div>` : `<div class="modal-color-bar" style="${colorBarStyle(colors)}"></div>`}
+    <div class="modal-body">
+      <h2 class="modal-name-ja">${nameJa}</h2>
+      <p class="modal-name-en">${card.name}</p>
+      <div class="modal-row">
+        <span class="pips">${renderPips(card.mana_cost)}</span>
+        ${pt}
+      </div>
+      <p class="modal-type">${typeJa}</p>
+      <div class="modal-oracle">${oracleJa || '（効果テキストなし）'}</div>
+      ${card.flavor_text ? `<p class="modal-flavor">${card.flavor_text}</p>` : ''}
+      <div class="modal-meta">
+        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
+        <span>${card.set_name || ''}（${card.set ? card.set.toUpperCase() : ''}）</span>
+      </div>
+      <p style="margin-top:14px;"><a href="${card.scryfall_uri}" target="_blank" rel="noopener" style="color:var(--gold); font-size:12px;">Scryfallでこのカードを見る ↗</a></p>
+    </div>`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+let currentCards = [];
+
+function attachTileHandlers() {
+  grid.querySelectorAll('.card-tile').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = currentCards.find(c => c.id === btn.dataset.id);
+      if (card) openModal(card);
+    });
+  });
+}
+
+async function runSearch() {
+  const q = buildSearchQuery();
+  const { order, dir } = sortParams();
+  const myToken = ++searchToken;
+  nextPageUrl = null;
+  currentCards = [];
+  showStatus(`<div class="spinner"></div><span class="serif">検索中…</span>`);
+  resultCount.textContent = '';
+
+  const noteEl = document.getElementById('translationNote');
+  if (lastTranslationNotes.length) {
+    noteEl.innerHTML = `日本語の用語を Scryfall の英語構文に変換しました：`
+      + lastTranslationNotes.map(n => `<br>・${n}`).join('')
+      + `<br><br>送信クエリ： <code>${q.replace(/</g,'&lt;')}</code>`;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  const url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, order, dir, unique: 'cards' })}`;
+
+  try {
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (myToken !== searchToken) return; // a newer search superseded this one
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (res.status === 404) {
+        showStatus(`<span class="serif">該当するカードが見つかりませんでした</span>条件を変えて再度検索してください。`);
+        resultCount.innerHTML = `<strong>0</strong> 件`;
+      } else {
+        showStatus(`<span class="serif">検索エラー</span>${(data && data.details) || 'Scryfall APIへの問い合わせに失敗しました。'}`);
+      }
+      return;
+    }
+
+    currentCards = data.data;
+    nextPageUrl = data.has_more ? data.next_page : null;
+    resultCount.innerHTML = `<strong>${data.total_cards}</strong> 件見つかりました${data.has_more ? '（最初の' + data.data.length + '件を表示）' : ''}`;
+    grid.innerHTML = currentCards.map(cardTileHtml).join('');
+    attachTileHandlers();
+    loadMoreRow.style.display = nextPageUrl ? 'block' : 'none';
+  } catch (err) {
+    if (myToken !== searchToken) return;
+    showStatus(`<span class="serif">通信エラー</span>ネットワーク接続を確認してください。（${err.message}）`);
+  }
+}
+
+loadMoreBtn.addEventListener('click', async () => {
+  if (!nextPageUrl) return;
+  loadMoreBtn.disabled = true;
+  loadMoreBtn.textContent = '読み込み中…';
+  try {
+    const res = await fetch(nextPageUrl, { headers: { 'Accept': 'application/json' } });
+    const data = await res.json();
+    currentCards = currentCards.concat(data.data);
+    nextPageUrl = data.has_more ? data.next_page : null;
+    grid.insertAdjacentHTML('beforeend', data.data.map(cardTileHtml).join(''));
+    attachTileHandlers();
+    loadMoreRow.style.display = nextPageUrl ? 'block' : 'none';
+  } catch (err) {
+    // leave existing results in place; just stop the spinner state
+  }
+  loadMoreBtn.disabled = false;
+  loadMoreBtn.textContent = 'さらに読み込む';
+});
+
+// ---- initial state: don't hit the API until the user asks for something ----
+showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+
+// ---- controls ----
+document.getElementById('searchBtn').addEventListener('click', () => { state.query = document.getElementById('searchInput').value; runSearch(); });
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { state.query = e.target.value; runSearch(); }
+});
+document.getElementById('guideToggle').addEventListener('click', () => {
+  const panel = document.getElementById('guidePanel');
+  const btn = document.getElementById('guideToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', String(isOpen));
+  btn.textContent = isOpen ? '構文ガイド ▴' : '構文ガイド ▾';
+});
+document.querySelectorAll('.example-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    const q = pill.dataset.q;
+    document.getElementById('searchInput').value = q;
+    state.query = q;
+    runSearch();
+  });
+});
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const c = chip.dataset.color;
+    if (state.colors.has(c)) { state.colors.delete(c); chip.dataset.active = 'false'; }
+    else { state.colors.add(c); chip.dataset.active = 'true'; }
+    runSearch();
+  });
+});
+document.getElementById('raritySelect').addEventListener('change', (e) => { state.rarity = e.target.value; runSearch(); });
+document.getElementById('sortSelect').addEventListener('change', (e) => { state.sort = e.target.value; runSearch(); });
+
+// --- generic checkbox-dropdown wiring ---
+function wireDropdown({ btnId, panelId, wrapId, stateSet, checkboxSelector, allLabel = 'すべて', countSuffix = '選択中' }) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  const wrap = document.getElementById(wrapId);
+  function updateLabel() {
+    const n = stateSet.size;
+    btn.textContent = (n === 0 ? allLabel : `${n}${countSuffix}`) + ' ▾';
+  }
+  function close() { panel.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown-panel.open').forEach(p => { if (p !== panel) p.classList.remove('open'); });
+    const isOpen = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+  });
+  function bindCheckboxes() {
+    panel.querySelectorAll(checkboxSelector).forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) stateSet.add(cb.value); else stateSet.delete(cb.value);
+        updateLabel();
+        runSearch();
+      });
+    });
+  }
+  bindCheckboxes();
+  const clearBtn = panel.querySelector('.dropdown-clear');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      stateSet.clear();
+      panel.querySelectorAll(checkboxSelector).forEach(cb => cb.checked = false);
+      updateLabel();
+      runSearch();
+    });
+  }
+  document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  return { updateLabel, close };
+}
+
+const typeDropdown = wireDropdown({
+  btnId: 'typeDropdownBtn', panelId: 'typeDropdownPanel', wrapId: 'typeDropdownWrap',
+  stateSet: state.types, checkboxSelector: '.type-check', countSuffix: '種類選択中',
+});
+
+const creatureTypePanel = document.getElementById('creatureTypeDropdownPanel');
+creatureTypePanel.innerHTML = CREATURE_TYPES.map(([val, label]) =>
+  `<label><input type="checkbox" class="creature-type-check" value="${val}"> ${label} <span class="en">${val}</span></label>`
+).join('') + `<button class="dropdown-clear" id="creatureTypeDropdownClear" type="button">選択をクリア</button>`;
+const creatureTypeDropdown = wireDropdown({
+  btnId: 'creatureTypeDropdownBtn', panelId: 'creatureTypeDropdownPanel', wrapId: 'creatureTypeDropdownWrap',
+  stateSet: state.creatureTypes, checkboxSelector: '.creature-type-check', countSuffix: '種類選択中',
+});
+
+// keyword-ability picker, built from the same JA->EN map the query translator uses
+const keywordPanel = document.getElementById('keywordDropdownPanel');
+keywordPanel.innerHTML = Object.entries(JA_KEYWORDS)
+  .sort((a, b) => a[0].localeCompare(b[0], 'ja'))
+  .map(([ja, en]) => `<label><input type="checkbox" class="keyword-check" value="${en}"> ${ja} <span class="en">${en}</span></label>`)
+  .join('') + `<button class="dropdown-clear" id="keywordDropdownClear" type="button">選択をクリア</button>`;
+const keywordDropdown = wireDropdown({
+  btnId: 'keywordDropdownBtn', panelId: 'keywordDropdownPanel', wrapId: 'keywordDropdownWrap',
+  stateSet: state.keywords, checkboxSelector: '.keyword-check', countSuffix: '個選択中',
+});
+
+const manaDropdown = wireDropdown({
+  btnId: 'manaDropdownBtn', panelId: 'manaDropdownPanel', wrapId: 'manaDropdownWrap',
+  stateSet: state.manaCosts, checkboxSelector: '.mana-check', countSuffix: '個選択中',
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  state.query = ''; state.colors.clear(); state.types.clear();
+  state.creatureTypes.clear(); state.keywords.clear(); state.manaCosts.clear();
+  state.rarity = ''; state.sort = 'name';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('raritySelect').value = '';
+  document.getElementById('sortSelect').value = 'name';
+  document.querySelectorAll('.chip').forEach(c => c.dataset.active = 'false');
+  document.querySelectorAll('.type-check, .creature-type-check, .keyword-check, .mana-check').forEach(cb => cb.checked = false);
+  typeDropdown.updateLabel();
+  creatureTypeDropdown.updateLabel();
+  keywordDropdown.updateLabel();
+  manaDropdown.updateLabel();
+  searchToken++; // invalidate any in-flight search
+  lastTranslationNotes = [];
+  document.getElementById('translationNote').style.display = 'none';
+  showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+  resultCount.textContent = '';
+  loadMoreRow.style.display = 'none';
+});
+</script>
+</body>
+</html>
