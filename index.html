@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ヤースガイカルテル — 日本語カード検索（Scryfall API 版）</title>
+<title>悪知恵 — 日本語カード検索（Scryfall API 版）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink-void: #14121f;
-    --ink-surface: #1d1a2e;
-    --ink-surface-raised: #262238;
-    --parchment: #ede7d8;
-    --muted: #948da8;
+    --ink-void: #16141f;
+    --ink-surface: #201d30;
+    --ink-surface-raised: #2a2639;
+    --parchment: #f1ece0;
+    --muted: #a29cb4;
     --gold: #c9a15a;
-    --line: #34304a;
+    --line: #3a3550;
 
     --mana-w: #e8dfc0;
     --mana-u: #3d8bd6;
@@ -34,9 +34,15 @@
 
   body {
     margin: 0;
-    background: var(--ink-void);
+    background:
+      radial-gradient(1200px circle at 12% -10%, rgba(61,139,214,0.07), transparent 60%),
+      radial-gradient(1000px circle at 100% 0%, rgba(201,161,90,0.06), transparent 55%),
+      linear-gradient(180deg, #1c1930 0%, #17141f 45%, #100e17 100%);
+    background-attachment: fixed;
     color: var(--parchment);
     font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+    font-size: 15.5px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -49,8 +55,9 @@
     position: sticky;
     top: env(safe-area-inset-top, 0px);
     z-index: 20;
-    background: linear-gradient(180deg, #17142400, #14121f 55%), var(--ink-void);
-    background-color: var(--ink-void);
+    background: linear-gradient(180deg, #1c193000, #17141fd9 60%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
     padding: 22px 20px 18px;
   }
@@ -62,9 +69,15 @@
     margin: 0 0 16px;
   }
   .brand-mark {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
+    font-family: "Yuji Syuku", serif;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 0.07em;
+    background: linear-gradient(120deg, var(--gold) 0%, #f5ecd4 45%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
   .brand-sub {
     font-size: 12px;
@@ -161,11 +174,27 @@
   }
   .example-pill:hover { border-color: var(--gold); color: var(--gold); }
 
-  /* ---------- filters ---------- */
+  /* ---------- filters (separated from search as its own collapsible panel) ---------- */
+  .filter-panel {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--ink-surface);
+    border-bottom: 1px solid var(--line);
+    transition: max-height 0.2s ease;
+  }
+  .filter-panel.open { max-height: 600px; overflow-y: auto; }
+  .filter-panel-heading {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 16px 20px 0;
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    color: var(--gold);
+  }
   .filters {
     max-width: 1040px;
-    margin: 16px auto 0;
-    padding: 0 20px;
+    margin: 10px auto 0;
+    padding: 0 20px 18px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -340,6 +369,25 @@
   .empty-state .serif { font-size: 19px; color: var(--parchment); display: block; margin-bottom: 8px; }
 
   /* ---------- modal ---------- */
+  .card-page-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 20px calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+  .card-page-wrap .modal-card { max-width: 100%; }
+  .back-link {
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-family: "Shippori Mincho", serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    cursor: pointer;
+    padding: 0 0 18px;
+    display: inline-block;
+  }
+  .back-link:hover { text-decoration: underline; }
+
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(10, 9, 16, 0.78);
@@ -393,7 +441,7 @@
   }
 
   @media (max-width: 480px) {
-    .brand-mark { font-size: 22px; }
+    .brand-mark { font-size: 28px; }
     .modal-name-ja { font-size: 21px; }
   }
 </style>
@@ -424,6 +472,131 @@
   .card-thumb-fallback { font-size: 11px; color: var(--muted); padding: 10px; text-align: center; }
   .card-tile-body { padding: 10px 12px 8px; }
   .card-name-ja { font-size: 14.5px; }
+
+  .tile-price { color: var(--gold); font-weight: 700; font-size: 11px; }
+
+  .legal-circles { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+  .legal-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 8.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    cursor: default;
+  }
+  .legal-circle.legal { background: rgba(90,156,106,0.2); color: #8fd19f; border-color: rgba(90,156,106,0.5); }
+  .legal-circle.not_legal { background: var(--ink-surface-raised); color: var(--muted); border-color: var(--line); }
+  .legal-circle.banned { background: rgba(207,86,71,0.2); color: #ef8a7c; border-color: rgba(207,86,71,0.55); }
+  .legal-circle.restricted { background: rgba(201,161,90,0.2); color: var(--gold); border-color: rgba(201,161,90,0.55); }
+
+  .price-section { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .price-heading {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    color: var(--parchment);
+    margin-bottom: 10px;
+  }
+  .price-grid { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .price-row { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; color: var(--muted); }
+  .price-row strong { color: var(--gold); font-size: 14px; }
+  .price-empty { font-size: 12px; color: var(--muted); }
+
+  .legal-section { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .legal-heading {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    color: var(--parchment);
+    margin-bottom: 10px;
+  }
+  .legal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 4px 12px;
+  }
+  .legal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    padding: 3px 0;
+  }
+  .legal-name { color: var(--muted); }
+  .legal-row.legal .legal-name { color: var(--parchment); }
+  .legal-badge {
+    font-size: 10.5px;
+    border-radius: 3px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .legal-badge.legal { background: rgba(90,156,106,0.18); color: #7fc08f; border-color: rgba(90,156,106,0.4); }
+  .legal-badge.not_legal { background: rgba(148,141,168,0.12); color: var(--muted); border-color: var(--line); }
+  .legal-badge.banned { background: rgba(207,86,71,0.18); color: #e2796b; border-color: rgba(207,86,71,0.45); }
+  .legal-badge.restricted { background: rgba(201,161,90,0.18); color: var(--gold); border-color: rgba(201,161,90,0.45); }
+
+  .version-menu-wrap { position: relative; margin-top: 16px; }
+  .version-menu-btn { width: 100%; text-align: left; }
+  .version-panel { width: 100%; max-height: 320px; overflow-y: auto; }
+  .version-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 12.5px;
+  }
+  .version-row:last-child { border-bottom: none; }
+  .version-row.current { color: var(--gold); }
+  .version-label { flex: 1; min-width: 160px; }
+  .version-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .version-switch-btn {
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .version-switch-btn:hover { border-color: var(--gold); }
+  .version-hareruya-link {
+    font-size: 11.5px;
+    color: var(--gold);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .version-hareruya-link:hover { text-decoration: underline; }
+
+  .external-links { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .external-links-heading {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    color: var(--parchment);
+    margin-bottom: 6px;
+  }
+  .external-links-note { font-size: 11.5px; color: var(--muted); margin: 0 0 10px; line-height: 1.7; }
+  .external-link-btn {
+    display: inline-block;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    color: var(--gold);
+    border-radius: 3px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    text-decoration: none;
+    margin: 0 8px 8px 0;
+  }
+  .external-link-btn:hover { border-color: var(--gold); }
+
+  .index-status { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .index-status code { color: var(--gold); font-family: "SFMono-Regular", Consolas, monospace; }
 
   .dropdown-filter {
     background: var(--ink-surface);
@@ -494,10 +667,11 @@
 </head>
 <body>
 
+<div id="searchView">
 <header>
   <div class="header-inner">
     <div class="brand">
-      <span class="brand-mark serif">ヤースガイカルテル</span>
+      <span class="brand-mark">悪知恵</span>
       <span class="brand-sub">日本語カード検索</span>
       <span class="live-badge">Scryfall API 連携版</span>
     </div>
@@ -507,8 +681,10 @@
     </div>
     <div class="syntax-row">
       <button id="guideToggle" class="guide-toggle" aria-expanded="false">構文ガイド ▾</button>
+      <button id="filterToggle" class="guide-toggle" aria-expanded="false">絞り込み条件 ▾</button>
       <span class="syntax-hint">日本語のキーワード能力・用語で検索できます（例：飛行、絆魂、果敢）</span>
     </div>
+    <div class="index-status" id="indexStatus">日本語カード名インデックスを読み込み中…</div>
   </div>
 </header>
 
@@ -538,7 +714,9 @@
   </div>
 </div>
 
-<div class="filters">
+<div class="filter-panel" id="filterPanel">
+  <div class="filter-panel-heading">絞り込み条件</div>
+  <div class="filters">
   <div class="filter-group">
     <span class="filter-label">色</span>
     <button class="chip w" data-color="W" title="白">白</button>
@@ -616,6 +794,7 @@
   </div>
 
   <button class="clear-btn" id="clearBtn">条件をクリア</button>
+  </div>
 </div>
 
 <main>
@@ -630,11 +809,16 @@
 <div class="attribution">
   カードデータおよび画像は <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> の API（<code>lang:ja</code> 指定）からリアルタイムに取得しています。<br>
   This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-  Card data © Scryfall LLC. 検索結果はキャッシュされず毎回APIへ問い合わせるため、Scryfallのレート制限（約10req/秒）に配慮し、検索は入力のたびではなくボタン操作時にのみ送信されます。
+  Card data © Scryfall LLC. 検索結果はキャッシュされず毎回APIへ問い合わせるため、Scryfallのレート制限（約10req/秒）に配慮し、検索は入力のたびではなくボタン操作時にのみ送信されます。<br>
+  価格情報は Scryfall 経由で TCGplayer および Cardmarket のデータを表示しています（円建て価格ではありません）。
+</div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-card" id="modalCard"></div>
+<div id="cardView" class="card-page-wrap" style="display:none;">
+  <div class="card-page-inner">
+    <button id="backToSearchBtn" class="back-link" type="button">← 検索に戻る</button>
+    <div class="modal-card" id="cardViewCard"></div>
+  </div>
 </div>
 
 <script>
@@ -786,6 +970,215 @@ const JA_OPERATORS = {
   'キーワード':'kw', 'キーワード能力':'kw',
 };
 
+// ---- Japanese card-name index (legacy, name-only) -----------------------
+// Scryfall's search de-prioritizes localized printed names, so searching a
+// Japanese card name often returns nothing even when the printing exists.
+// We resolve the name locally first, then hand Scryfall an exact English
+// name search (!"..."), which it handles reliably.
+// Generated by build_ja_index.py. Superseded by ja_cards.json (see below)
+// when that's present; kept as a lighter fallback otherwise.
+let JA_NAME_INDEX = null;
+
+function normalizeName(s) {
+  return s.trim().replace(/\u3000/g, '').replace(/\s/g, '');
+}
+function lookupJaName(term) {
+  if (!JA_NAME_INDEX) return null;
+  return JA_NAME_INDEX[normalizeName(term)] || null;
+}
+
+// ---- local card database (full, effect-text-searchable) ------------------
+// Generated by build_ja_database.py from Scryfall's official bulk data
+// export - not scraped, this is the data source Scryfall publishes
+// specifically for building tools like this. Each row carries real
+// Japanese rules text, so effect search is a plain substring match against
+// actual localized text instead of a hand-built translation dictionary.
+// Once a search narrows to a page of matches, fresh images/prices/
+// legalities are pulled for just those cards via Scryfall's batch
+// /cards/collection endpoint (up to 75 cards per request).
+const LOCAL_FIELDS = ['id','oracle_id','name_en','name_ja','type_en','type_ja',
+  'oracle_en','oracle_ja','mana_cost','colors','cmc','power','toughness',
+  'rarity','set','keywords','released_at'];
+let LOCAL_DB = null;
+let localMatchQueue = null;
+let localOffset = 0;
+const PAGE_SIZE = 30; // stays under /cards/collection's 75-identifier limit
+
+function setIndexStatus(html) {
+  const el = document.getElementById('indexStatus');
+  if (el) el.innerHTML = html;
+}
+
+fetch('ja_cards.json')
+  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+  .then(rows => {
+    LOCAL_DB = rows.map(arr => {
+      const o = {};
+      LOCAL_FIELDS.forEach((f, i) => { o[f] = arr[i]; });
+      return o;
+    });
+    setIndexStatus(`ローカルデータベース読み込み済み：${LOCAL_DB.length.toLocaleString()}件（効果テキスト検索が有効）`);
+  })
+  .catch(() => {
+    // fall back to the older, name-only index if that's what's deployed
+    fetch('ja_names.json')
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+      .then(data => {
+        JA_NAME_INDEX = data;
+        setIndexStatus(`日本語カード名インデックスのみ読み込み済み：${Object.keys(data).length.toLocaleString()}件（<code>ja_cards.json</code> を配置すると効果テキスト検索も有効になります）`);
+      })
+      .catch(() => {
+        setIndexStatus(`ローカルデータベース未読込（<code>ja_cards.json</code> を配置すると日本語名・効果テキストの検索精度が上がります）`);
+      });
+  });
+
+async function hydrateCards(ids) {
+  if (!ids.length) return [];
+  const res = await fetch('https://api.scryfall.com/cards/collection', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ identifiers: ids.map(id => ({ id })) }),
+  });
+  const data = await res.json();
+  return data.data || [];
+}
+
+function compareNumLocal(cardVal, op, target) {
+  if (cardVal === null || cardVal === undefined || cardVal === '' || Number.isNaN(Number(cardVal))) return false;
+  const a = Number(cardVal), b = Number(target);
+  if (op === '>=') return a >= b;
+  if (op === '<=') return a <= b;
+  if (op === '>') return a > b;
+  if (op === '<') return a < b;
+  return a === b;
+}
+
+function localOperatorMatch(row, op, val) {
+  const valLower = val.toLowerCase();
+  switch (op) {
+    case 'o': return row.oracle_ja.includes(val) || row.oracle_en.toLowerCase().includes(valLower);
+    case 't': return row.type_ja.includes(val) || row.type_en.toLowerCase().includes(valLower);
+    case 'c': {
+      if (valLower === 'c' || valLower === 'colorless') return !row.colors;
+      const wanted = [...val.toUpperCase()].filter(ch => 'WUBRG'.includes(ch));
+      return wanted.every(c => (row.colors || '').includes(c));
+    }
+    case 'r': {
+      const aliases = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic' };
+      return row.rarity === (aliases[valLower] || valLower);
+    }
+    case 'e': case 'set': return row.set.toLowerCase() === valLower;
+    case 'kw': return (row.keywords || '').toLowerCase().split(',').includes(valLower);
+    default: return (row.oracle_ja + row.oracle_en).toLowerCase().includes(valLower);
+  }
+}
+
+function localQueryMatch(row, rawQuery) {
+  if (!rawQuery || !rawQuery.trim()) return true;
+  return tokenizeQuery(rawQuery.trim()).every(token => {
+    let negate = false, body = token;
+    if (body.startsWith('-') && body.length > 1) { negate = true; body = body.slice(1); }
+    const m = body.match(/^([^\s:<>=!]+)(:|>=|<=|>|<|=)(.*)$/);
+    let result;
+    if (m) {
+      const [, opRaw, sep, valRaw] = m;
+      const op = JA_OPERATORS[opRaw] || opRaw;
+      const val = valRaw.replace(/^"|"$/g, '');
+      if (['cmc', 'pow', 'power', 'tou', 'toughness'].includes(op)) {
+        const field = op === 'pow' ? 'power' : op === 'tou' ? 'toughness' : op;
+        result = compareNumLocal(row[field], sep, val);
+      } else {
+        result = localOperatorMatch(row, op, val);
+      }
+    } else {
+      const bare = body.replace(/^"|"$/g, '').toLowerCase();
+      const hay = `${row.name_ja} ${row.name_en} ${row.oracle_ja} ${row.oracle_en} ${row.type_ja} ${row.type_en}`.toLowerCase();
+      result = hay.includes(bare);
+    }
+    return negate ? !result : result;
+  });
+}
+
+function localFilterRow(row) {
+  if (state.colors.size) {
+    const rowColors = row.colors ? row.colors.split('') : ['C'];
+    let hit = false;
+    state.colors.forEach(c => { if (rowColors.includes(c)) hit = true; });
+    if (!hit) return false;
+  }
+  if (state.types.size) {
+    let hit = false;
+    state.types.forEach(t => { if (row.type_en.toLowerCase().includes(t)) hit = true; });
+    if (!hit) return false;
+  }
+  if (state.creatureTypes.size) {
+    let hit = false;
+    state.creatureTypes.forEach(t => { if (row.type_en.toLowerCase().includes(t)) hit = true; });
+    if (!hit) return false;
+  }
+  if (state.keywords.size) {
+    const rowKw = (row.keywords || '').toLowerCase().split(',');
+    let hit = false;
+    state.keywords.forEach(k => { if (rowKw.includes(k.toLowerCase())) hit = true; });
+    if (!hit) return false;
+  }
+  if (state.rarity && row.rarity !== state.rarity) return false;
+  if (state.manaCosts.size) {
+    const bucket = row.cmc >= 7 ? '7+' : String(Math.floor(row.cmc || 0));
+    const hasX = (row.mana_cost || '').includes('X');
+    let hit = false;
+    state.manaCosts.forEach(m => {
+      if (m === 'X') { if (hasX) hit = true; }
+      else if (m === bucket) hit = true;
+    });
+    if (!hit) return false;
+  }
+  return true;
+}
+
+function localSearchAndFilter() {
+  const rows = LOCAL_DB.filter(row => localFilterRow(row) && localQueryMatch(row, state.query));
+  if (state.sort === 'cmc_asc') rows.sort((a, b) => a.cmc - b.cmc);
+  else if (state.sort === 'cmc_desc') rows.sort((a, b) => b.cmc - a.cmc);
+  else if (state.sort === 'released_desc') rows.sort((a, b) => (b.released_at || '').localeCompare(a.released_at || ''));
+  else rows.sort((a, b) => a.name_en.localeCompare(b.name_en));
+  return rows;
+}
+
+// ---- format legality -----------------------------------------------------
+const FORMAT_JA = {
+  standard: 'スタンダード', pioneer: 'パイオニア', modern: 'モダン',
+  legacy: 'レガシー', vintage: 'ヴィンテージ', commander: '統率者',
+  pauper: 'パウパー', historic: 'ヒストリック', alchemy: 'アルケミー',
+  explorer: 'エクスプローラー', timeless: 'タイムレス', brawl: 'ブロール',
+  standardbrawl: 'スタンダードブロール', oathbreaker: 'オースブレイカー',
+  paupercommander: 'パウパー統率者', duel: 'デュエル統率者',
+  premodern: 'プレモダン', predh: 'プレEDH', future: 'フューチャー',
+  gladiator: 'グラディエーター', penny: 'ペニードレッドフル',
+};
+// Formats shown first, in the order players usually care about.
+const FORMAT_ORDER = ['standard','pioneer','modern','legacy','vintage','commander','pauper','brawl','historic','timeless','alchemy','explorer','duel','oathbreaker','paupercommander','premodern','predh','standardbrawl','gladiator','future','penny'];
+const LEGALITY_JA = {
+  legal: '使用可能', not_legal: '使用不可', banned: '禁止', restricted: '制限',
+};
+
+function legalityHtml(legalities) {
+  if (!legalities) return '';
+  const rows = FORMAT_ORDER
+    .filter(f => legalities[f])
+    .map(f => {
+      const status = legalities[f];
+      return `<div class="legal-row ${status}">
+        <span class="legal-name">${FORMAT_JA[f] || f}</span>
+        <span class="legal-badge ${status}">${LEGALITY_JA[status] || status}</span>
+      </div>`;
+    }).join('');
+  return rows ? `<div class="legal-section">
+      <div class="legal-heading">フォーマット適正</div>
+      <div class="legal-grid">${rows}</div>
+    </div>` : '';
+}
+
 function tokenizeQuery(raw) {
   return raw.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
 }
@@ -845,6 +1238,16 @@ function translateTerm(term) {
 // the UI can show the user exactly what was sent to Scryfall.
 function translateQuery(raw) {
   const notes = [];
+
+  // A Japanese card name has no spaces, so the whole query is usually the name.
+  // Check that first - an exact English name search is far more reliable than
+  // letting Scryfall try to match localized printed text.
+  const wholeName = lookupJaName(raw);
+  if (wholeName) {
+    notes.push(`${raw.trim()} → !"${wholeName}"（カード名として解決）`);
+    return { query: `!"${wholeName}"`, notes };
+  }
+
   const out = tokenizeQuery(raw).map(token => {
     let prefix = '';
     let body = token;
@@ -883,7 +1286,13 @@ function translateQuery(raw) {
       notes.push(`${body.replace(/^"|"$/g,'')} → ${translated}`);
       return prefix + translated;
     }
-    return token; // pass through (card names, English terms, etc.)
+    // a Japanese card name appearing alongside other filters
+    const asName = lookupJaName(body.replace(/^"|"$/g, ''));
+    if (asName) {
+      notes.push(`${body.replace(/^"|"$/g,'')} → !"${asName}"（カード名）`);
+      return `${prefix}!"${asName}"`;
+    }
+    return token; // pass through (English terms, partial names, etc.)
   }).join(' ');
 
   return { query: out, notes };
@@ -976,6 +1385,22 @@ function showStatus(html) {
   loadMoreRow.style.display = 'none';
 }
 
+// Compact format badges shown directly on search result tiles.
+// Abbreviations per the user's spec, plus a couple of very common extras.
+const FORMAT_BADGES = [
+  ['standard', 'ST'], ['pioneer', 'PO'], ['modern', 'MO'],
+  ['legacy', 'LC'], ['vintage', 'VT'], ['premodern', 'PM'],
+  ['commander', 'CM'], ['pauper', 'PA'],
+];
+function legalityCirclesHtml(legalities) {
+  if (!legalities) return '';
+  return `<div class="legal-circles">${FORMAT_BADGES.map(([fmt, code]) => {
+    const status = legalities[fmt] || 'not_legal';
+    const label = `${FORMAT_JA[fmt] || fmt}：${LEGALITY_JA[status] || status}`;
+    return `<span class="legal-circle ${status}" title="${label}">${code}</span>`;
+  }).join('')}</div>`;
+}
+
 function cardTileHtml(card) {
   const img = getImage(card);
   const nameJa = card.printed_name || card.name;
@@ -983,7 +1408,7 @@ function cardTileHtml(card) {
   const oracleJa = getText(card, 'printed_text', 'oracle_text');
   const colors = getColors(card);
   return `
-    <button class="card-tile" data-id="${card.id}">
+    <a class="card-tile" href="?card=${encodeURIComponent(card.id)}" data-id="${card.id}">
       <div class="color-bar" style="${colorBarStyle(colors)}"></div>
       <div class="card-thumb-wrap">
         ${img ? `<img src="${img}" alt="${nameJa}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card-thumb-fallback',textContent:'画像を読み込めませんでした'}))">`
@@ -997,15 +1422,33 @@ function cardTileHtml(card) {
           </div>
         </div>
         <div class="type-line">${typeJa}</div>
+        ${legalityCirclesHtml(card.legalities)}
       </div>
       <div class="card-foot">
         <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
-        <span>${card.set ? card.set.toUpperCase() : ''}</span>
+        ${card.prices && card.prices.usd ? `<span class="tile-price">$${card.prices.usd}</span>` : `<span>${card.set ? card.set.toUpperCase() : ''}</span>`}
       </div>
-    </button>`;
+    </a>`;
 }
 
-function openModal(card) {
+function priceHtml(prices) {
+  if (!prices) return '';
+  const rows = [];
+  if (prices.usd) rows.push(['USD', `$${prices.usd}`]);
+  if (prices.usd_foil) rows.push(['USD（フォイル）', `$${prices.usd_foil}`]);
+  if (prices.eur) rows.push(['EUR', `€${prices.eur}`]);
+  if (prices.eur_foil) rows.push(['EUR（フォイル）', `€${prices.eur_foil}`]);
+  if (prices.tix) rows.push(['MTGO tix', prices.tix]);
+  if (!rows.length) return `<div class="price-section"><div class="price-heading">価格</div><div class="price-empty">価格情報なし</div></div>`;
+  return `<div class="price-section">
+    <div class="price-heading">価格（Scryfall / TCGplayer・Cardmarket 経由）</div>
+    <div class="price-grid">
+      ${rows.map(([label, val]) => `<div class="price-row"><span>${label}</span><strong>${val}</strong></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderCardViewContent(card) {
   const nameJa = card.printed_name || card.name;
   const typeJa = card.printed_type_line || card.type_line || '';
   const oracleJa = getText(card, 'printed_text', 'oracle_text');
@@ -1014,9 +1457,7 @@ function openModal(card) {
   const pt = (card.power !== undefined) ? `<span class="modal-pt">${card.power}/${card.toughness}</span>`
     : (card.loyalty !== undefined ? `<span class="modal-pt">忠誠度 ${card.loyalty}</span>` : '');
 
-  const modalCard = document.getElementById('modalCard');
-  modalCard.innerHTML = `
-    <button class="modal-close" id="modalCloseBtn" aria-label="閉じる">✕</button>
+  document.getElementById('cardViewCard').innerHTML = `
     ${img ? `<div class="modal-thumb"><img src="${img}" alt="${nameJa}"></div>` : `<div class="modal-color-bar" style="${colorBarStyle(colors)}"></div>`}
     <div class="modal-body">
       <h2 class="modal-name-ja">${nameJa}</h2>
@@ -1028,38 +1469,218 @@ function openModal(card) {
       <p class="modal-type">${typeJa}</p>
       <div class="modal-oracle">${oracleJa || '（効果テキストなし）'}</div>
       ${card.flavor_text ? `<p class="modal-flavor">${card.flavor_text}</p>` : ''}
+      ${priceHtml(card.prices)}
+      ${legalityHtml(card.legalities)}
       <div class="modal-meta">
         <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
         <span>${card.set_name || ''}（${card.set ? card.set.toUpperCase() : ''}）</span>
       </div>
-      <p style="margin-top:14px;"><a href="${card.scryfall_uri}" target="_blank" rel="noopener" style="color:var(--gold); font-size:12px;">Scryfallでこのカードを見る ↗</a></p>
+
+      <div class="version-menu-wrap" id="versionMenuWrap">
+        <button id="versionMenuBtn" class="dropdown-btn version-menu-btn" type="button" aria-expanded="false">他の版を確認中…</button>
+        <div class="dropdown-panel version-panel" id="versionMenuPanel"></div>
+      </div>
+
+      <p style="margin-top:14px;">
+        <a href="${card.scryfall_uri}" target="_blank" rel="noopener" style="color:var(--gold); font-size:12px;">Scryfallでこのカードを見る ↗</a>
+      </p>
+      <div class="external-links">
+        <div class="external-links-heading">大会デッキでの使用状況</div>
+        <p class="external-links-note">当サイトはトーナメントデータを保持していません。以下のリンク先で最新の使用状況を確認できます。</p>
+        <a class="external-link-btn" href="https://www.mtggoldfish.com/search?q=${encodeURIComponent(card.name)}" target="_blank" rel="noopener">MTGGoldfishで見る ↗</a>
+        <a class="external-link-btn" href="https://mtgdecks.net/Search?query=${encodeURIComponent(card.name)}" target="_blank" rel="noopener">MTGDecksで見る ↗</a>
+      </div>
     </div>`;
-  document.getElementById('modalOverlay').classList.add('open');
-  document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+  document.title = `${nameJa} — 悪知恵`;
+  loadPrintings(card);
 }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+function hareruyaUrl(englishName) {
+  // Confirmed working search pattern: the 'cardname' param is ignored by
+  // Hareruya's site, 'product' is the one that actually filters results.
+  return `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(englishName)}`;
+}
+
+// Unlike Hareruya's, BIG MAGIC's and Tokyo MTG's search mechanisms could not
+// be confirmed (BIG MAGIC's is a multi-field filter form with unclear param
+// names; Tokyo MTG's site could not be inspected). Linking to their actual
+// storefronts rather than guessing a search URL that might silently fail.
+function bigMagicUrl() {
+  return `https://mtg.bigweb.co.jp/`;
+}
+function tokyoMtgUrl() {
+  return `https://tokyomtg.com/`;
+}
+
+async function loadPrintings(card) {
+  const btn = document.getElementById('versionMenuBtn');
+  const panel = document.getElementById('versionMenuPanel');
+  const wrap = document.getElementById('versionMenuWrap');
+  if (!btn || !card.oracle_id) { if (btn) btn.style.display = 'none'; return; }
+
+  try {
+    const q = `oracle_id:${card.oracle_id} lang:ja`;
+    const url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints', order: 'released', dir: 'desc' })}`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('no printings');
+    const data = await res.json();
+    const printings = data.data || [];
+
+    if (printings.length <= 1) {
+      btn.style.display = 'none';
+      return;
+    }
+
+    btn.textContent = `他の版を見る（${printings.length}）▾`;
+    panel.innerHTML = printings.map(p => {
+      const isCurrent = p.id === card.id;
+      const label = `${p.set_name || p.set.toUpperCase()}（#${p.collector_number}） ・ ${RARITY_LABEL[p.rarity] || p.rarity}`;
+      return `<div class="version-row ${isCurrent ? 'current' : ''}">
+        <span class="version-label">${label}${isCurrent ? '　(現在表示中)' : ''}</span>
+        <span class="version-actions">
+          ${isCurrent ? '' : `<button type="button" class="version-switch-btn" data-id="${p.id}">この版を見る</button>`}
+          <a class="version-hareruya-link" href="${hareruyaUrl(p.name)}" target="_blank" rel="noopener">晴れる屋で見る ↗</a>
+          <a class="version-hareruya-link" href="${bigMagicUrl()}" target="_blank" rel="noopener" title="カード名検索の直接リンクには未対応のため、サイトトップに移動します">BIG MAGICで見る ↗</a>
+          <a class="version-hareruya-link" href="${tokyoMtgUrl()}" target="_blank" rel="noopener" title="カード名検索の直接リンクには未対応のため、サイトトップに移動します">Tokyo MTGで見る ↗</a>
+        </span>
+      </div>`;
+    }).join('');
+
+    panel.querySelectorAll('.version-switch-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        const chosen = printings.find(p => p.id === b.dataset.id);
+        if (chosen) navigateToCard(chosen);
+        panel.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = panel.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  } catch (err) {
+    btn.style.display = 'none';
+  }
+}
+// Registered once (not inside loadPrintings, which runs on every card view)
+// to avoid stacking a new listener on every navigation.
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('versionMenuWrap');
+  const panel = document.getElementById('versionMenuPanel');
+  const btn = document.getElementById('versionMenuBtn');
+  if (wrap && panel && !wrap.contains(e.target)) {
+    panel.classList.remove('open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+function getCardIdFromUrl() {
+  return new URLSearchParams(location.search).get('card');
+}
+function showSearchView() {
+  document.getElementById('searchView').style.display = '';
+  document.getElementById('cardView').style.display = 'none';
+}
+function showCardView() {
+  document.getElementById('searchView').style.display = 'none';
+  document.getElementById('cardView').style.display = '';
+  window.scrollTo(0, 0);
+}
+async function fetchSingleCard(id) {
+  const res = await fetch(`https://api.scryfall.com/cards/${id}`, { headers: { 'Accept': 'application/json' } });
+  if (!res.ok) throw new Error('card not found');
+  return res.json();
+}
+
+let cameFromSearch = false;
+
+// Soft-navigate to a card's own page: updates the URL bar (so it's a real,
+// shareable, bookmarkable link) without a full reload, keeping the search
+// results underneath intact for the back button.
+function navigateToCard(card) {
+  cameFromSearch = true;
+  renderCardViewContent(card);
+  showCardView();
+  history.pushState({ cardId: card.id }, '', `?card=${encodeURIComponent(card.id)}`);
+}
+
+document.getElementById('backToSearchBtn').addEventListener('click', () => {
+  if (cameFromSearch && history.state && history.state.cardId) {
+    history.back();
+  } else {
+    location.href = location.pathname; // fresh page load, e.g. someone opened a card link directly
+  }
+});
+
+window.addEventListener('popstate', () => {
+  const id = getCardIdFromUrl();
+  if (!id) { showSearchView(); return; }
+  const cached = currentCards.find(c => c.id === id);
+  if (cached) { renderCardViewContent(cached); showCardView(); }
+  else fetchSingleCard(id).then(c => { renderCardViewContent(c); showCardView(); }).catch(() => showSearchView());
+});
 
 let currentCards = [];
 
 function attachTileHandlers() {
-  grid.querySelectorAll('.card-tile').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const card = currentCards.find(c => c.id === btn.dataset.id);
-      if (card) openModal(card);
+  grid.querySelectorAll('.card-tile').forEach(a => {
+    a.addEventListener('click', (e) => {
+      // let the browser handle modifier-clicks / middle-click as a real new-tab open
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+      e.preventDefault();
+      const card = currentCards.find(c => c.id === a.dataset.id);
+      if (card) navigateToCard(card);
     });
   });
 }
 
+async function runLocalSearch(myToken) {
+  const matches = localSearchAndFilter();
+  localMatchQueue = matches;
+  localOffset = 0;
+  document.getElementById('translationNote').style.display = 'none';
+
+  if (!matches.length) {
+    showStatus(`<span class="serif">該当するカードが見つかりませんでした</span>条件を変えて再度検索してください。`);
+    resultCount.innerHTML = `<strong>0</strong> 件`;
+    return;
+  }
+
+  showStatus(`<div class="spinner"></div><span class="serif">画像・価格・legalityを取得中…</span>`);
+  const pageRows = matches.slice(0, PAGE_SIZE);
+  try {
+    const hydrated = await hydrateCards(pageRows.map(r => r.id));
+    if (myToken !== searchToken) return;
+    currentCards = hydrated;
+    localOffset = pageRows.length;
+    resultCount.innerHTML = `<strong>${matches.length.toLocaleString()}</strong> 件見つかりました（ローカルDB検索）`;
+    grid.innerHTML = currentCards.map(cardTileHtml).join('');
+    attachTileHandlers();
+    loadMoreRow.style.display = localOffset < matches.length ? 'block' : 'none';
+  } catch (err) {
+    if (myToken !== searchToken) return;
+    showStatus(`<span class="serif">通信エラー</span>画像・価格情報の取得に失敗しました。（${err.message}）`);
+  }
+}
+
 async function runSearch() {
-  const q = buildSearchQuery();
-  const { order, dir } = sortParams();
   const myToken = ++searchToken;
   nextPageUrl = null;
   currentCards = [];
-  showStatus(`<div class="spinner"></div><span class="serif">検索中…</span>`);
   resultCount.textContent = '';
+
+  if (LOCAL_DB) {
+    showStatus(`<div class="spinner"></div><span class="serif">検索中…</span>`);
+    return runLocalSearch(myToken);
+  }
+
+  // ---- fallback: no local database loaded, search Scryfall's live API
+  // directly (weaker Japanese effect-text matching; see translateQuery) ----
+  const q = buildSearchQuery();
+  const { order, dir } = sortParams();
+  showStatus(`<div class="spinner"></div><span class="serif">検索中…</span>`);
 
   const noteEl = document.getElementById('translationNote');
   if (lastTranslationNotes.length) {
@@ -1101,6 +1722,24 @@ async function runSearch() {
 }
 
 loadMoreBtn.addEventListener('click', async () => {
+  if (LOCAL_DB && localMatchQueue) {
+    if (localOffset >= localMatchQueue.length) return;
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = '読み込み中…';
+    try {
+      const nextRows = localMatchQueue.slice(localOffset, localOffset + PAGE_SIZE);
+      const hydrated = await hydrateCards(nextRows.map(r => r.id));
+      currentCards = currentCards.concat(hydrated);
+      localOffset += nextRows.length;
+      grid.insertAdjacentHTML('beforeend', hydrated.map(cardTileHtml).join(''));
+      attachTileHandlers();
+      loadMoreRow.style.display = localOffset < localMatchQueue.length ? 'block' : 'none';
+    } catch (err) { /* leave existing results in place */ }
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.textContent = 'さらに読み込む';
+    return;
+  }
+
   if (!nextPageUrl) return;
   loadMoreBtn.disabled = true;
   loadMoreBtn.textContent = '読み込み中…';
@@ -1119,8 +1758,22 @@ loadMoreBtn.addEventListener('click', async () => {
   loadMoreBtn.textContent = 'さらに読み込む';
 });
 
-// ---- initial state: don't hit the API until the user asks for something ----
-showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+// ---- initial routing: show a single card's page if the URL asks for one,
+// otherwise show the search view without hitting the API until asked ----
+const initialCardId = getCardIdFromUrl();
+if (initialCardId) {
+  cameFromSearch = false;
+  showCardView();
+  document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">読み込み中…</span></div>`;
+  fetchSingleCard(initialCardId)
+    .then(c => renderCardViewContent(c))
+    .catch(() => {
+      document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><span class="serif">カードが見つかりませんでした</span>URLを確認するか、検索からやり直してください。</div>`;
+    });
+} else {
+  showSearchView();
+  showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+}
 
 // ---- controls ----
 document.getElementById('searchBtn').addEventListener('click', () => { state.query = document.getElementById('searchInput').value; runSearch(); });
@@ -1133,6 +1786,13 @@ document.getElementById('guideToggle').addEventListener('click', () => {
   const isOpen = panel.classList.toggle('open');
   btn.setAttribute('aria-expanded', String(isOpen));
   btn.textContent = isOpen ? '構文ガイド ▴' : '構文ガイド ▾';
+});
+document.getElementById('filterToggle').addEventListener('click', () => {
+  const panel = document.getElementById('filterPanel');
+  const btn = document.getElementById('filterToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', String(isOpen));
+  btn.textContent = isOpen ? '絞り込み条件 ▴' : '絞り込み条件 ▾';
 });
 document.querySelectorAll('.example-pill').forEach(pill => {
   pill.addEventListener('click', () => {
