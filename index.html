@@ -370,9 +370,9 @@
 
   /* ---------- modal ---------- */
   .card-page-wrap {
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto;
-    padding: 28px 20px calc(40px + env(safe-area-inset-bottom, 0px));
+    padding: 16px 16px calc(32px + env(safe-area-inset-bottom, 0px));
   }
   .card-page-wrap .modal-card { max-width: 100%; }
   .back-link {
@@ -381,9 +381,9 @@
     color: var(--gold);
     font-family: "Shippori Mincho", serif;
     font-weight: 700;
-    font-size: 14.5px;
+    font-size: 13.5px;
     cursor: pointer;
-    padding: 0 0 18px;
+    padding: 0 0 10px;
     display: inline-block;
   }
   .back-link:hover { text-decoration: underline; }
@@ -420,20 +420,20 @@
     line-height: 1;
     z-index: 2;
   }
-  .modal-color-bar { height: 8px; width: 100%; }
-  .modal-body { padding: 26px 24px 24px; }
-  .modal-name-ja { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 24px; margin: 0 0 2px; }
-  .modal-name-en { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
-  .modal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px;}
-  .modal-type { font-size: 13.5px; color: #cfc9dd; }
+  .modal-color-bar { height: 6px; width: 100%; }
+  .modal-body { padding: 16px 18px 18px; }
+  .modal-name-ja { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; margin: 0 0 2px; }
+  .modal-name-en { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
+  .modal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px;}
+  .modal-type { font-size: 12.5px; color: #cfc9dd; }
   .modal-oracle {
-    font-size: 14px; line-height: 1.85; color: var(--parchment);
-    padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    margin-bottom: 14px; white-space: pre-line;
+    font-size: 13px; line-height: 1.65; color: var(--parchment);
+    padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    margin-bottom: 10px; white-space: pre-line;
   }
-  .modal-flavor { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
-  .modal-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
-  .modal-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; color: var(--parchment); }
+  .modal-flavor { font-size: 12px; font-style: italic; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+  .modal-meta { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
+  .modal-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; color: var(--parchment); }
 
   footer {
     max-width: 1040px; margin: 0 auto; padding: 0 20px 40px;
@@ -442,7 +442,7 @@
 
   @media (max-width: 480px) {
     .brand-mark { font-size: 28px; }
-    .modal-name-ja { font-size: 21px; }
+    .modal-name-ja { font-size: 19px; }
   }
 </style>
 <style>
@@ -492,7 +492,7 @@
   .legal-circle.banned { background: rgba(207,86,71,0.2); color: #ef8a7c; border-color: rgba(207,86,71,0.55); }
   .legal-circle.restricted { background: rgba(201,161,90,0.2); color: var(--gold); border-color: rgba(201,161,90,0.55); }
 
-  .price-section { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .price-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
   .price-heading {
     font-family: "Shippori Mincho", serif;
     font-size: 13px;
@@ -504,7 +504,7 @@
   .price-row strong { color: var(--gold); font-size: 14px; }
   .price-empty { font-size: 12px; color: var(--muted); }
 
-  .legal-section { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .legal-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
   .legal-heading {
     font-family: "Shippori Mincho", serif;
     font-size: 13px;
@@ -538,9 +538,22 @@
   .legal-badge.banned { background: rgba(207,86,71,0.18); color: #e2796b; border-color: rgba(207,86,71,0.45); }
   .legal-badge.restricted { background: rgba(201,161,90,0.18); color: var(--gold); border-color: rgba(201,161,90,0.45); }
 
-  .version-menu-wrap { position: relative; margin-top: 16px; }
-  .version-menu-btn { width: 100%; text-align: left; }
-  .version-panel { width: 100%; max-height: 320px; overflow-y: auto; }
+  .version-menu-wrap { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+  .version-menu-heading {
+    font-family: "Shippori Mincho", serif;
+    font-size: 13px;
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+  .version-panel {
+    width: 100%;
+    max-height: 260px;
+    overflow-y: auto;
+    background: var(--ink-surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 4px 12px;
+  }
   .version-row {
     display: flex;
     justify-content: space-between;
@@ -574,7 +587,7 @@
   }
   .version-hareruya-link:hover { text-decoration: underline; }
 
-  .external-links { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .external-links { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
   .external-links-heading {
     font-family: "Shippori Mincho", serif;
     font-size: 13px;
@@ -1477,8 +1490,8 @@ function renderCardViewContent(card) {
       </div>
 
       <div class="version-menu-wrap" id="versionMenuWrap">
-        <button id="versionMenuBtn" class="dropdown-btn version-menu-btn" type="button" aria-expanded="false">他の版を確認中…</button>
-        <div class="dropdown-panel version-panel" id="versionMenuPanel"></div>
+        <div class="version-menu-heading" id="versionMenuHeading">他の版を確認中…</div>
+        <div class="version-panel" id="versionMenuPanel"></div>
       </div>
 
       <p style="margin-top:14px;">
@@ -1487,8 +1500,8 @@ function renderCardViewContent(card) {
       <div class="external-links">
         <div class="external-links-heading">大会デッキでの使用状況</div>
         <p class="external-links-note">当サイトはトーナメントデータを保持していません。以下のリンク先で最新の使用状況を確認できます。</p>
-        <a class="external-link-btn" href="https://www.mtggoldfish.com/search?q=${encodeURIComponent(card.name)}" target="_blank" rel="noopener">MTGGoldfishで見る ↗</a>
-        <a class="external-link-btn" href="https://mtgdecks.net/Search?query=${encodeURIComponent(card.name)}" target="_blank" rel="noopener">MTGDecksで見る ↗</a>
+        <a class="external-link-btn" href="${googleSiteSearchUrl('mtggoldfish.com', card.name)}" target="_blank" rel="noopener">MTGGoldfishで見る ↗</a>
+        <a class="external-link-btn" href="${googleSiteSearchUrl('mtgdecks.net', card.name)}" target="_blank" rel="noopener">MTGDecksで見る ↗</a>
       </div>
     </div>`;
   document.title = `${nameJa} — 悪知恵`;
@@ -1501,22 +1514,27 @@ function hareruyaUrl(englishName) {
   return `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(englishName)}`;
 }
 
-// Unlike Hareruya's, BIG MAGIC's and Tokyo MTG's search mechanisms could not
-// be confirmed (BIG MAGIC's is a multi-field filter form with unclear param
-// names; Tokyo MTG's site could not be inspected). Linking to their actual
-// storefronts rather than guessing a search URL that might silently fail.
-function bigMagicUrl() {
-  return `https://mtg.bigweb.co.jp/`;
+// A site's own internal search couldn't be reliably confirmed for these
+// stores (MTGGoldfish needs an exact set-name slug per card, MTGDecks and
+// Tokyo MTG's search mechanisms couldn't be verified, BIG MAGIC's is a
+// multi-field filter form with unclear param names) - guessing wrong here
+// just produces a dead link, which is worse than not linking at all. A
+// Google search scoped to the store's own domain reliably lands on the
+// right page regardless of how that site's internal search actually works.
+function googleSiteSearchUrl(domain, englishName) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`site:${domain} "${englishName}"`)}`;
 }
-function tokyoMtgUrl() {
-  return `https://tokyomtg.com/`;
+function bigMagicUrl(englishName) {
+  return googleSiteSearchUrl('mtg.bigweb.co.jp', englishName);
+}
+function tokyoMtgUrl(englishName) {
+  return googleSiteSearchUrl('tokyomtg.com', englishName);
 }
 
 async function loadPrintings(card) {
-  const btn = document.getElementById('versionMenuBtn');
+  const heading = document.getElementById('versionMenuHeading');
   const panel = document.getElementById('versionMenuPanel');
-  const wrap = document.getElementById('versionMenuWrap');
-  if (!btn || !card.oracle_id) { if (btn) btn.style.display = 'none'; return; }
+  if (!heading || !card.oracle_id) { if (heading) heading.style.display = 'none'; return; }
 
   try {
     const q = `oracle_id:${card.oracle_id} lang:ja`;
@@ -1527,11 +1545,11 @@ async function loadPrintings(card) {
     const printings = data.data || [];
 
     if (printings.length <= 1) {
-      btn.style.display = 'none';
+      heading.style.display = 'none';
       return;
     }
 
-    btn.textContent = `他の版を見る（${printings.length}）▾`;
+    heading.textContent = `他の版（${printings.length}）`;
     panel.innerHTML = printings.map(p => {
       const isCurrent = p.id === card.id;
       const label = `${p.set_name || p.set.toUpperCase()}（#${p.collector_number}） ・ ${RARITY_LABEL[p.rarity] || p.rarity}`;
@@ -1539,9 +1557,9 @@ async function loadPrintings(card) {
         <span class="version-label">${label}${isCurrent ? '　(現在表示中)' : ''}</span>
         <span class="version-actions">
           ${isCurrent ? '' : `<button type="button" class="version-switch-btn" data-id="${p.id}">この版を見る</button>`}
-          <a class="version-hareruya-link" href="${hareruyaUrl(p.name)}" target="_blank" rel="noopener">晴れる屋で見る ↗</a>
-          <a class="version-hareruya-link" href="${bigMagicUrl()}" target="_blank" rel="noopener" title="カード名検索の直接リンクには未対応のため、サイトトップに移動します">BIG MAGICで見る ↗</a>
-          <a class="version-hareruya-link" href="${tokyoMtgUrl()}" target="_blank" rel="noopener" title="カード名検索の直接リンクには未対応のため、サイトトップに移動します">Tokyo MTGで見る ↗</a>
+          <a class="version-hareruya-link" href="${hareruyaUrl(p.name)}" target="_blank" rel="noopener">晴れる屋 ↗</a>
+          <a class="version-hareruya-link" href="${bigMagicUrl(p.name)}" target="_blank" rel="noopener">BIG MAGIC ↗</a>
+          <a class="version-hareruya-link" href="${tokyoMtgUrl(p.name)}" target="_blank" rel="noopener">Tokyo MTG ↗</a>
         </span>
       </div>`;
     }).join('');
@@ -1550,31 +1568,12 @@ async function loadPrintings(card) {
       b.addEventListener('click', () => {
         const chosen = printings.find(p => p.id === b.dataset.id);
         if (chosen) navigateToCard(chosen);
-        panel.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
       });
     });
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = panel.classList.toggle('open');
-      btn.setAttribute('aria-expanded', String(isOpen));
-    });
   } catch (err) {
-    btn.style.display = 'none';
+    heading.style.display = 'none';
   }
 }
-// Registered once (not inside loadPrintings, which runs on every card view)
-// to avoid stacking a new listener on every navigation.
-document.addEventListener('click', (e) => {
-  const wrap = document.getElementById('versionMenuWrap');
-  const panel = document.getElementById('versionMenuPanel');
-  const btn = document.getElementById('versionMenuBtn');
-  if (wrap && panel && !wrap.contains(e.target)) {
-    panel.classList.remove('open');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  }
-});
 
 function getCardIdFromUrl() {
   return new URLSearchParams(location.search).get('card');
@@ -1662,6 +1661,39 @@ async function runLocalSearch(myToken) {
   } catch (err) {
     if (myToken !== searchToken) return;
     showStatus(`<span class="serif">通信エラー</span>画像・価格情報の取得に失敗しました。（${err.message}）`);
+  }
+}
+
+async function loadRandomCards() {
+  const myToken = ++searchToken;
+  const count = 24;
+  showStatus(`<div class="spinner"></div><span class="serif">ランダムなカードを読み込み中…</span>`);
+  resultCount.textContent = '';
+  loadMoreRow.style.display = 'none';
+
+  try {
+    let picked = [];
+    if (LOCAL_DB && LOCAL_DB.length) {
+      const idxs = new Set();
+      while (idxs.size < Math.min(count, LOCAL_DB.length)) {
+        idxs.add(Math.floor(Math.random() * LOCAL_DB.length));
+      }
+      picked = await hydrateCards([...idxs].map(i => LOCAL_DB[i].id));
+    } else {
+      const url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q: 'lang:ja', order: 'random' })}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error('random fetch failed');
+      const data = await res.json();
+      picked = (data.data || []).slice(0, count);
+    }
+    if (myToken !== searchToken) return;
+    currentCards = picked;
+    resultCount.innerHTML = `<span class="serif">ランダムなカード</span>　検索語を入力するか、フィルターを選んで絞り込めます`;
+    grid.innerHTML = currentCards.map(cardTileHtml).join('');
+    attachTileHandlers();
+  } catch (err) {
+    if (myToken !== searchToken) return;
+    showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
   }
 }
 
@@ -1772,7 +1804,7 @@ if (initialCardId) {
     });
 } else {
   showSearchView();
-  showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+  loadRandomCards();
 }
 
 // ---- controls ----
@@ -1945,9 +1977,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   searchToken++; // invalidate any in-flight search
   lastTranslationNotes = [];
   document.getElementById('translationNote').style.display = 'none';
-  showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
-  resultCount.textContent = '';
-  loadMoreRow.style.display = 'none';
+  loadRandomCards();
 });
 </script>
 </body>
