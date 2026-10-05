@@ -474,6 +474,12 @@
   .card-name-ja { font-size: 14.5px; }
 
   .tile-price { color: var(--gold); font-weight: 700; font-size: 11px; }
+  .reshuffle-btn {
+    background: none; border: 1px solid var(--line); color: var(--gold);
+    border-radius: 3px; padding: 3px 10px; font-size: 12px; cursor: pointer;
+    font-family: inherit; margin-left: 6px;
+  }
+  .reshuffle-btn:hover { border-color: var(--gold); }
 
   .legal-circles { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
   .legal-circle {
@@ -819,7 +825,8 @@
 
 <div class="attribution">
   This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-  カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）
+  カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）<br>
+  <span id="dbCount"></span>
 </div>
 </div>
 
@@ -1005,9 +1012,11 @@ function lookupJaName(term) {
 // from Japanese) so effect-text search is a fast in-memory substring match.
 // After a search narrows down, images/prices/legalities for just the visible
 // page of results are fetched from Scryfall's /cards/collection endpoint.
+// Default field order (version-1 files are a bare array in this order;
+// version-2 files carry their own "fields" list, which takes precedence).
 const LOCAL_FIELDS = ['id','oracle_id','name_en','name_ja','type_en','type_ja',
   'oracle_en','oracle_ja','mana_cost','colors','cmc','power','toughness',
-  'rarity','set','keywords','released_at'];
+  'rarity','set','keywords','released_at','alt_names_ja'];
 let LOCAL_DB = null;
 let dbState = 'loading'; // loading | ready | absent
 let localMatchQueue = null;
@@ -1017,12 +1026,15 @@ const PAGE_SIZE = 30; // stays under /cards/collection's 75-identifier limit
 function normText(s) { return String(s ?? '').normalize('NFKC').toLowerCase(); }
 function normJa(s) { return normText(s).replace(/\s+/g, ''); }
 
-function indexRow(arr) {
+function indexRow(arr, fields) {
+  if (!Array.isArray(fields)) fields = LOCAL_FIELDS;
   const o = {};
-  LOCAL_FIELDS.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
+  fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at'].forEach(f => { if (o[f] === null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja'].forEach(f => { if (o[f] == null) o[f] = ''; });
   o._nameJa = normJa(o.name_ja);
+  // older Japanese names the card was printed under, '|'-separated
+  o._altJa = o.alt_names_ja ? o.alt_names_ja.split('|').map(normJa).filter(Boolean) : [];
   o._nameEn = normText(o.name_en);
   o._typeJa = normJa(o.type_ja);
   o._typeEn = normText(o.type_en);
@@ -1036,12 +1048,40 @@ function indexRow(arr) {
   return o;
 }
 
-const dbReady = fetch('ja_cards.json')
-  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
-  .then(rows => {
-    LOCAL_DB = rows.map(indexRow);
-    dbState = 'ready';
-  })
+// Fetches a JSON file that may be gzip-compressed. GitHub Pages serves .gz
+// files as raw bytes, so they're decompressed here in the browser; if a host
+// already decompressed it in transit, the bytes are plain JSON and parsed as-is.
+async function fetchMaybeGzipJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (bytes[0] === 0x1f && bytes[1] === 0x8b) {
+    if (typeof DecompressionStream === 'undefined') throw new Error('no DecompressionStream');
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(stream).text());
+  }
+  return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+}
+
+let DB_META = null;
+function loadCardDatabase(data) {
+  const rows = Array.isArray(data) ? data : data.cards;
+  const fields = (!Array.isArray(data) && Array.isArray(data.fields)) ? data.fields : LOCAL_FIELDS;
+  if (!Array.isArray(rows) || !rows.length) throw new Error('empty card database');
+  LOCAL_DB = rows.map(arr => indexRow(arr, fields));
+  DB_META = Array.isArray(data) ? {} : { generated: data.generated, version: data.version };
+  dbState = 'ready';
+  const el = document.getElementById('dbCount');
+  if (el) {
+    const ja = LOCAL_DB.filter(r => r.name_ja).length;
+    el.textContent = `収録カード：${LOCAL_DB.length.toLocaleString()}枚（日本語版あり ${ja.toLocaleString()}枚）`
+      + (DB_META.generated ? `・データ更新日：${DB_META.generated}` : '');
+  }
+}
+
+const dbReady = fetchMaybeGzipJson('ja_cards.json.gz')
+  .catch(() => fetchMaybeGzipJson('ja_cards.json'))
+  .then(loadCardDatabase)
   .catch(() => {
     dbState = 'absent';
     // older, name-only index, if that's what's deployed instead
@@ -1051,16 +1091,39 @@ const dbReady = fetch('ja_cards.json')
       .catch(() => {});
   });
 
-async function hydrateCards(ids) {
-  if (!ids.length) return [];
-  const res = await fetch('https://api.scryfall.com/cards/collection', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ identifiers: ids.map(id => ({ id })) }),
-  });
-  const data = await res.json();
-  const byId = new Map((data.data || []).map(c => [c.id, c]));
-  return ids.map(id => byId.get(id)).filter(Boolean); // keep search order
+// A database row shaped like a Scryfall card object, so tiles and card pages
+// can still show name, type and text when images/prices can't be fetched.
+function rowToCard(row) {
+  return {
+    id: row.id, oracle_id: row.oracle_id, name: row.name_en,
+    printed_name: row.name_ja || undefined, type_line: row.type_en,
+    printed_type_line: row.type_ja || undefined, oracle_text: row.oracle_en,
+    printed_text: row.oracle_ja || undefined, mana_cost: row.mana_cost,
+    colors: row._colors ? row._colors.split('') : [], cmc: row._cmc,
+    power: row.power ?? undefined, toughness: row.toughness ?? undefined,
+    rarity: row.rarity, set: row.set, keywords: row.keywords ? row.keywords.split(',') : [],
+    scryfall_uri: `https://scryfall.com/search?q=${encodeURIComponent('oracleid:' + row.oracle_id)}`,
+  };
+}
+
+// Fetches images/prices/legalities for one page of results from Scryfall
+// (/cards/collection, max 75 per request), in search order. Any card it
+// can't get falls back to the database's own data instead of disappearing.
+async function hydrateRows(rows) {
+  if (!rows.length) return [];
+  let byId = new Map();
+  try {
+    const res = await fetch('https://api.scryfall.com/cards/collection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ identifiers: rows.map(r => ({ id: r.id })) }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      byId = new Map((data.data || []).map(c => [c.id, c]));
+    }
+  } catch (err) { /* network problem - show database text below */ }
+  return rows.map(r => byId.get(r.id) || rowToCard(r));
 }
 
 function compareNumLocal(cardVal, op, target) {
@@ -1120,6 +1183,7 @@ function textMatches(row, rawTerm, includeNameAndType) {
   const tJa = t.replace(/\s+/g, '');
   if (includeNameAndType) {
     if (row._nameJa.includes(tJa) || row._nameEn.includes(t) ||
+        row._altJa.some(n => n.includes(tJa)) ||
         row._typeJa.includes(tJa) || row._typeEn.includes(t)) return true;
   }
   if (row._textJa.includes(tJa) || row._textEn.includes(t)) return true;
@@ -1134,8 +1198,10 @@ function localOperatorMatch(row, op, sep, val) {
   switch (op) {
     case 'o':
       return textMatches(row, val, false);
-    case 'name': case 'n': case '名前': case 'カード名':
-      return row._nameJa.includes(v.replace(/\s+/g, '')) || row._nameEn.includes(v);
+    case 'name': case 'n': case '名前': case 'カード名': {
+      const vJa = v.replace(/\s+/g, '');
+      return row._nameJa.includes(vJa) || row._nameEn.includes(v) || row._altJa.some(n => n.includes(vJa));
+    }
     case 't': {
       if (row._typeJa.includes(v.replace(/\s+/g, '')) || row._typeEn.includes(v)) return true;
       const en = japaneseTypeToEnglish(String(val).normalize('NFKC').trim());
@@ -1231,8 +1297,8 @@ function relevance(row, query) {
   const q = normText(query).trim();
   if (!q) return 2;
   const qJa = q.replace(/\s+/g, '');
-  if (row._nameJa === qJa || row._nameEn === q) return 0;
-  if ((qJa && row._nameJa.includes(qJa)) || row._nameEn.includes(q)) return 1;
+  if (row._nameJa === qJa || row._nameEn === q || row._altJa.includes(qJa)) return 0;
+  if ((qJa && (row._nameJa.includes(qJa) || row._altJa.some(n => n.includes(qJa)))) || row._nameEn.includes(q)) return 1;
   return 2;
 }
 
@@ -1784,7 +1850,7 @@ async function runLocalSearch(myToken) {
   showStatus(`<div class="spinner"></div><span class="serif">画像・価格・legalityを取得中…</span>`);
   const pageRows = matches.slice(0, PAGE_SIZE);
   try {
-    const hydrated = await hydrateCards(pageRows.map(r => r.id));
+    const hydrated = await hydrateRows(pageRows);
     if (myToken !== searchToken) return;
     currentCards = hydrated;
     localOffset = pageRows.length;
@@ -1798,37 +1864,63 @@ async function runLocalSearch(myToken) {
   }
 }
 
+// Random cards for the homepage. Scryfall's search has no "random" sort
+// (the old version asked for one, got an error, and showed nothing), so cards
+// are sampled from the local database - Japanese cards, no basic lands - once
+// it has loaded. Without the database, single cards are fetched from
+// Scryfall's /cards/random endpoint instead, spaced out per their rate limits.
+const RANDOM_COUNT = 24;
+
+function sampleRows(rows, n) {
+  const picked = new Set();
+  const max = Math.min(n, rows.length);
+  while (picked.size < max) picked.add(rows[Math.floor(Math.random() * rows.length)]);
+  return [...picked];
+}
+
+async function fetchRandomFromScryfall(n, myToken) {
+  const cards = [];
+  for (let i = 0; i < n; i++) {
+    if (myToken !== searchToken) return cards;
+    try {
+      const res = await fetch(`https://api.scryfall.com/cards/random?${new URLSearchParams({ q: 'lang:ja -t:basic' })}`,
+        { headers: { 'Accept': 'application/json' } });
+      if (res.ok) cards.push(await res.json());
+    } catch (err) { /* skip this one */ }
+    await new Promise(r => setTimeout(r, 120));
+  }
+  return cards;
+}
+
 async function loadRandomCards() {
   const myToken = ++searchToken;
-  const count = 24;
   showStatus(`<div class="spinner"></div><span class="serif">ランダムなカードを読み込み中…</span>`);
   resultCount.textContent = '';
   loadMoreRow.style.display = 'none';
+  localMatchQueue = null;
 
-  try {
-    let picked = [];
-    if (LOCAL_DB && LOCAL_DB.length) {
-      const idxs = new Set();
-      while (idxs.size < Math.min(count, LOCAL_DB.length)) {
-        idxs.add(Math.floor(Math.random() * LOCAL_DB.length));
-      }
-      picked = await hydrateCards([...idxs].map(i => LOCAL_DB[i].id));
-    } else {
-      const url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q: 'lang:ja', order: 'random' })}`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!res.ok) throw new Error('random fetch failed');
-      const data = await res.json();
-      picked = (data.data || []).slice(0, count);
-    }
-    if (myToken !== searchToken) return;
-    currentCards = picked;
-    resultCount.innerHTML = `<span class="serif">ランダムなカード</span>　検索語を入力するか、フィルターを選んで絞り込めます`;
-    grid.innerHTML = currentCards.map(cardTileHtml).join('');
-    attachTileHandlers();
-  } catch (err) {
-    if (myToken !== searchToken) return;
-    showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>下の「検索」ボタン、またはEnterキーで検索します。`);
+  if (dbState === 'loading') await dbReady;
+  if (myToken !== searchToken) return;
+
+  let picked = [];
+  if (LOCAL_DB && LOCAL_DB.length) {
+    const pool = LOCAL_DB.filter(r => r.name_ja && !r._typeWords.has('basic'));
+    picked = await hydrateRows(sampleRows(pool.length ? pool : LOCAL_DB, RANDOM_COUNT));
+  } else {
+    picked = await fetchRandomFromScryfall(12, myToken);
   }
+  if (myToken !== searchToken) return;
+
+  if (!picked.length) {
+    showStatus(`<span class="serif">検索語を入力するか、フィルターを選んでください</span>「検索」ボタン、またはEnterキーで検索します。`);
+    return;
+  }
+  currentCards = picked;
+  resultCount.innerHTML = `<span class="serif">ランダムなカード</span>　<button type="button" class="reshuffle-btn" id="reshuffleBtn">別のカードを表示 ↻</button>`;
+  grid.innerHTML = currentCards.map(cardTileHtml).join('');
+  attachTileHandlers();
+  const reshuffle = document.getElementById('reshuffleBtn');
+  if (reshuffle) reshuffle.addEventListener('click', loadRandomCards);
 }
 
 async function runSearch() {
@@ -1900,7 +1992,7 @@ loadMoreBtn.addEventListener('click', async () => {
     loadMoreBtn.textContent = '読み込み中…';
     try {
       const nextRows = localMatchQueue.slice(localOffset, localOffset + PAGE_SIZE);
-      const hydrated = await hydrateCards(nextRows.map(r => r.id));
+      const hydrated = await hydrateRows(nextRows);
       currentCards = currentCards.concat(hydrated);
       localOffset += nextRows.length;
       grid.insertAdjacentHTML('beforeend', hydrated.map(cardTileHtml).join(''));
