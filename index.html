@@ -31,6 +31,7 @@
   *, *::before, *::after { box-sizing: inherit; }
   html { scroll-padding-top: env(safe-area-inset-top, 0px); }
   html, body { height: 100%; }
+  html { background: #100e17; }
 
   body {
     margin: 0;
@@ -66,8 +67,88 @@
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin: 0 0 16px;
+    margin: 0;
+    text-decoration: none;
   }
+  .top-nav { border-bottom: 1px solid var(--line); padding: 14px 20px 0; }
+  .top-nav-inner {
+    max-width: 1040px; margin: 0 auto;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .top-nav .brand { padding-bottom: 10px; }
+  .top-tabs { display: flex; gap: 4px; }
+  .top-tab {
+    background: none; border: 1px solid transparent; border-bottom: none;
+    color: var(--muted); font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px;
+    padding: 9px 16px; border-radius: 4px 4px 0 0; cursor: pointer;
+  }
+  .top-tab:hover { color: var(--parchment); }
+  .top-tab[aria-selected="true"] {
+    color: var(--gold); background: var(--ink-surface); border-color: var(--line);
+    position: relative; top: 1px;
+  }
+
+  /* ---------- set browser ---------- */
+  .sets-wrap { max-width: 1040px; margin: 0 auto; padding: 20px 20px 40px; }
+  .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .sets-toolbar input {
+    flex: 1; min-width: 220px; background: var(--ink-surface); border: 1px solid var(--line);
+    color: var(--parchment); border-radius: 3px; padding: 10px 14px; font-size: 14px; font-family: inherit;
+  }
+  .sets-toolbar input::placeholder { color: var(--muted); }
+  .set-year { font-family: "Shippori Mincho", serif; color: var(--gold); font-size: 15px; margin: 18px 0 6px; }
+  .set-year:first-child { margin-top: 0; }
+  .set-row {
+    display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center;
+    padding: 9px 10px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit;
+    border-radius: 3px;
+  }
+  .set-row:hover { background: var(--ink-surface); }
+  .set-icon { width: 24px; height: 24px; filter: invert(0.85) sepia(0.2); }
+  .set-names { min-width: 0; }
+  .set-name-ja { font-size: 14px; font-weight: 500; }
+  .set-name-en { font-size: 11.5px; color: var(--muted); }
+  .set-meta { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+  .set-meta code { color: var(--gold); font-family: "SFMono-Regular", Consolas, monospace; }
+  .set-header { display: flex; gap: 14px; align-items: center; margin: 6px 0 14px; flex-wrap: wrap; }
+  .set-header .set-icon { width: 40px; height: 40px; }
+  .set-header-title { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; }
+  .set-header-sub { font-size: 12px; color: var(--muted); }
+  .set-lang-toggle { display: flex; gap: 6px; margin-left: auto; }
+  .set-lang-btn {
+    background: var(--ink-surface); border: 1px solid var(--line); color: var(--parchment);
+    border-radius: 3px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  .set-lang-btn[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+  .set-lang-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* ---------- printings / treatments gallery ---------- */
+  .print-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+  .print-item {
+    background: var(--ink-surface); border: 1px solid var(--line); border-radius: 4px;
+    padding: 6px; text-align: left; cursor: pointer; color: inherit; font-family: inherit;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .print-item:hover { border-color: var(--gold); }
+  .print-item.current { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+  .print-item img { width: 100%; aspect-ratio: 5 / 7; object-fit: cover; border-radius: 3px; background: var(--ink-surface-raised); }
+  .print-set { font-size: 11px; line-height: 1.35; }
+  .print-meta { font-size: 10.5px; color: var(--muted); }
+  .print-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+  .print-tag {
+    font-size: 9.5px; padding: 1px 5px; border-radius: 3px;
+    background: var(--ink-surface-raised); border: 1px solid var(--line); color: var(--parchment);
+  }
+  .print-tag.ja { color: var(--gold); border-color: rgba(201,161,90,0.5); }
+  .print-price { font-size: 11px; color: var(--gold); font-weight: 700; }
+
+  .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 14px; font-size: 12.5px; align-items: baseline; }
+  .price-table .lbl { color: var(--muted); }
+  .price-table .usd { color: var(--gold); font-weight: 700; font-size: 14px; }
+  .price-table .jpy { color: var(--parchment); }
+  .price-sub { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+  .price-avg { font-size: 12px; margin-top: 6px; }
+  .price-avg strong { color: var(--gold); }
   .brand-mark {
     font-family: "Yuji Syuku", serif;
     font-size: 36px;
@@ -474,6 +555,7 @@
   .card-name-ja { font-size: 14.5px; }
 
   .tile-price { color: var(--gold); font-weight: 700; font-size: 11px; }
+  .tile-price .yen { color: var(--parchment); font-weight: 500; margin-left: 3px; }
   .reshuffle-btn {
     background: none; border: 1px solid var(--line); color: var(--gold);
     border-radius: 3px; padding: 3px 10px; font-size: 12px; cursor: pointer;
@@ -553,7 +635,7 @@
   }
   .version-panel {
     width: 100%;
-    max-height: 260px;
+    max-height: 560px;
     overflow-y: auto;
     background: var(--ink-surface-raised);
     border: 1px solid var(--line);
@@ -686,13 +768,22 @@
 </head>
 <body>
 
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a class="brand" href="./" id="brandLink">
+      <span class="brand-mark">悪知恵</span>
+      <span class="brand-sub">日本語カード検索</span>
+    </a>
+    <div class="top-tabs" role="tablist">
+      <button type="button" class="top-tab" id="tabSearch" role="tab" aria-selected="true">カード検索</button>
+      <button type="button" class="top-tab" id="tabSets" role="tab" aria-selected="false">セット一覧</button>
+    </div>
+  </div>
+</nav>
+
 <div id="searchView">
 <header>
   <div class="header-inner">
-    <div class="brand">
-      <span class="brand-mark">悪知恵</span>
-      <span class="brand-sub">日本語カード検索</span>
-    </div>
     <div class="search-row">
       <input type="text" id="searchInput" placeholder='例：飛行 絆魂　／　効果:ダメージ 色:r　／　カード名でも検索できます' autocomplete="off">
       <button id="searchBtn">検索</button>
@@ -823,18 +914,47 @@
   </div>
 </main>
 
-<div class="attribution">
-  This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-  カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）<br>
-  <span id="dbCount"></span>
-</div>
+
 </div>
 
 <div id="cardView" class="card-page-wrap" style="display:none;">
   <div class="card-page-inner">
-    <button id="backToSearchBtn" class="back-link" type="button">← 検索に戻る</button>
+    <button id="backToSearchBtn" class="back-link" type="button">← 戻る</button>
     <div class="modal-card" id="cardViewCard"></div>
   </div>
+</div>
+
+<div id="setsView" style="display:none;">
+  <div class="sets-wrap">
+    <div id="setListPanel">
+      <div class="sets-toolbar">
+        <input type="text" id="setFilter" placeholder="セット名・セットコードで絞り込み（例：モダンホライゾン、MH3）" autocomplete="off">
+        <select id="setTypeSelect">
+          <option value="main">エキスパンション・基本セット</option>
+          <option value="masters">マスターズ・特殊ドラフト</option>
+          <option value="commander">統率者</option>
+          <option value="other">その他（Secret Lair など）</option>
+          <option value="all">すべて</option>
+        </select>
+      </div>
+      <div id="setList" class="set-list"></div>
+    </div>
+    <div id="setDetailPanel" style="display:none;">
+      <button id="backToSetsBtn" class="back-link" type="button">← セット一覧に戻る</button>
+      <div id="setHeader" class="set-header"></div>
+      <p class="result-count" id="setResultCount"></p>
+      <div class="grid" id="setGrid"></div>
+      <div class="load-more-row" id="setLoadMoreRow" style="display:none;">
+        <button class="load-more-btn" id="setLoadMoreBtn" type="button">さらに読み込む</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="attribution">
+  This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
+  カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）<br>
+  <span id="dbCount"></span>
 </div>
 
 <script>
@@ -1064,11 +1184,13 @@ async function fetchMaybeGzipJson(url) {
 }
 
 let DB_META = null;
+let ORACLE_MAP = null;
 function loadCardDatabase(data) {
   const rows = Array.isArray(data) ? data : data.cards;
   const fields = (!Array.isArray(data) && Array.isArray(data.fields)) ? data.fields : LOCAL_FIELDS;
   if (!Array.isArray(rows) || !rows.length) throw new Error('empty card database');
   LOCAL_DB = rows.map(arr => indexRow(arr, fields));
+  ORACLE_MAP = new Map(LOCAL_DB.map(r => [r.oracle_id, r]));
   DB_META = Array.isArray(data) ? {} : { generated: data.generated, version: data.version };
   dbState = 'ready';
   const el = document.getElementById('dbCount');
@@ -1123,7 +1245,9 @@ async function hydrateRows(rows) {
       byId = new Map((data.data || []).map(c => [c.id, c]));
     }
   } catch (err) { /* network problem - show database text below */ }
-  return rows.map(r => byId.get(r.id) || rowToCard(r));
+  const cards = rows.map(r => byId.get(r.id) || rowToCard(r));
+  await ensureEnglishPrices(cards);
+  return cards;
 }
 
 function compareNumLocal(cardVal, op, target) {
@@ -1570,11 +1694,163 @@ function legalityCirclesHtml(legalities) {
   }).join('')}</div>`;
 }
 
+// ---- exchange rate (USD -> JPY) ------------------------------------------
+// Daily European Central Bank reference rate via Frankfurter (free, no key,
+// works from the browser). Yen amounts appear once it has loaded.
+let USD_JPY = null;
+let FX_DATE = null;
+const fxReady = (async () => {
+  const sources = [
+    ['https://api.frankfurter.dev/v2/rate/USD/JPY', d => ({ rate: d.rate, date: d.date })],
+    ['https://api.frankfurter.dev/v1/latest?base=USD&symbols=JPY', d => ({ rate: d.rates && d.rates.JPY, date: d.date })],
+  ];
+  for (const [url, pick] of sources) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const v = pick(await res.json());
+      if (v.rate > 0) { USD_JPY = v.rate; FX_DATE = v.date || ''; break; }
+    } catch (err) { /* try the next source */ }
+  }
+  updateYenLabels();
+})();
+
+function yenFor(usd) {
+  const n = parseFloat(usd);
+  if (!USD_JPY || !(n > 0)) return '';
+  return '¥' + Math.round(n * USD_JPY).toLocaleString('ja-JP');
+}
+function fxNoteText() {
+  return USD_JPY ? `為替レート：1ドル＝${USD_JPY.toFixed(2)}円（${FX_DATE}・欧州中央銀行）` : '';
+}
+// Fills every element carrying data-usd with its yen amount. Called when the
+// rate arrives and after anything with prices is rendered.
+function updateYenLabels(root = document) {
+  root.querySelectorAll('[data-usd]').forEach(el => {
+    const y = yenFor(el.dataset.usd);
+    el.textContent = !y ? '' : el.classList.contains('yen-short') ? y : `約${y}`;
+  });
+  root.querySelectorAll('.fx-note').forEach(el => { el.textContent = fxNoteText(); });
+}
+
+// ---- prices -----------------------------------------------------------------
+// Scryfall's USD prices are TCGplayer market prices (based on recent sales).
+// TCGplayer mostly lists English cards, so Japanese printings usually have no
+// price; for those, the English printing with the same set and collector
+// number (same art and treatment) supplies it.
+function effectivePrices(card) {
+  const own = card.prices || {};
+  const en = card._enPrices || {};
+  const hasOwn = own.usd || own.usd_foil || own.usd_etched;
+  return hasOwn ? { ...own, _fromEnglish: false } : { ...en, eur: own.eur || en.eur, tix: own.tix || en.tix, _fromEnglish: !!(en.usd || en.usd_foil || en.usd_etched) };
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function ensureEnglishPrices(cards) {
+  const need = cards.filter(c => c && c.lang && c.lang !== 'en' && c.set && c.collector_number && !c._enPrices
+    && !(c.prices && (c.prices.usd || c.prices.usd_foil || c.prices.usd_etched)));
+  for (let i = 0; i < need.length; i += 75) {
+    const chunk = need.slice(i, i + 75);
+    try {
+      const res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ identifiers: chunk.map(c => ({ set: c.set, collector_number: c.collector_number })) }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const byKey = new Map((data.data || []).map(e => [`${e.set}|${e.collector_number}`, e]));
+        chunk.forEach(c => {
+          const en = byKey.get(`${c.set}|${c.collector_number}`);
+          if (en) { c._enPrices = en.prices || {}; c._enId = en.id; }
+        });
+      }
+    } catch (err) { /* prices just stay blank */ }
+    if (i + 75 < need.length) await sleep(100);
+  }
+  return cards;
+}
+
+function tilePriceHtml(card) {
+  const p = effectivePrices(card);
+  const usd = p.usd || p.usd_foil || p.usd_etched;
+  if (!usd) return `<span>${card.set ? card.set.toUpperCase() : ''}</span>`;
+  return `<span class="tile-price">$${usd}<span class="yen yen-short" data-usd="${usd}">${yenFor(usd)}</span></span>`;
+}
+
+// ---- Japanese names/text for any printing -----------------------------------
+// English printings (alternate treatments, English-only sets) have no
+// printed_name, so the Japanese name and text come from the card database.
+function dbRowFor(card) {
+  return (typeof ORACLE_MAP !== 'undefined' && ORACLE_MAP && card && card.oracle_id) ? ORACLE_MAP.get(card.oracle_id) : null;
+}
+function displayNameJa(card) {
+  if (card.lang && card.lang !== 'en' && card.printed_name) return card.printed_name;
+  if (card.lang && card.lang !== 'en' && card.card_faces && card.card_faces.some(f => f.printed_name)) {
+    return card.card_faces.map(f => f.printed_name || f.name).join(' // ');
+  }
+  const row = dbRowFor(card);
+  return (row && row.name_ja) || card.printed_name || card.name;
+}
+function displayTypeJa(card) {
+  if (card.lang && card.lang !== 'en') {
+    const t = card.printed_type_line || (card.card_faces || []).map(f => f.printed_type_line).filter(Boolean).join(' // ');
+    if (t) return t;
+  }
+  const row = dbRowFor(card);
+  return (row && row.type_ja) || card.printed_type_line || card.type_line || '';
+}
+function displayTextJa(card) {
+  if (card.lang && card.lang !== 'en') {
+    const t = getText(card, 'printed_text', 'printed_text');
+    if (t) return t;
+  }
+  const row = dbRowFor(card);
+  return (row && row.oracle_ja) || getText(card, 'printed_text', 'oracle_text');
+}
+function japaneseFrontName(card) {
+  if (card.lang === 'ja') {
+    const face = card.card_faces && card.card_faces[0];
+    const n = (face && face.printed_name) || card.printed_name;
+    if (n) return String(n).split(' // ')[0];
+  }
+  const row = dbRowFor(card);
+  return row && row.name_ja ? row.name_ja.split(' // ')[0] : '';
+}
+
+// ---- treatments (borderless, showcase, extended art, ...) -------------------
+function treatmentLabels(p) {
+  const t = [];
+  const fe = p.frame_effects || [];
+  const pt = p.promo_types || [];
+  const finishes = p.finishes || [];
+  if (p.border_color === 'borderless') t.push('ボーダーレス');
+  if (fe.includes('showcase')) t.push('ショーケース');
+  if (fe.includes('extendedart')) t.push('拡張アート');
+  if (p.full_art) t.push('フルアート');
+  if (p.frame === '1993' || p.frame === '1997') t.push('旧枠');
+  if (p.frame === 'future') t.push('未来予知枠');
+  if (p.textless) t.push('テキストレス');
+  if (finishes.includes('etched') || fe.includes('etched')) t.push('エッチング・フォイル');
+  if (pt.includes('serialized')) t.push('シリアルナンバー');
+  if (pt.includes('surgefoil')) t.push('サージ・フォイル');
+  if (pt.includes('galaxyfoil')) t.push('ギャラクシー・フォイル');
+  if (pt.includes('textured')) t.push('テクスチャー・フォイル');
+  if (pt.includes('halofoil')) t.push('ハロー・フォイル');
+  if (pt.includes('fracturefoil')) t.push('フラクチャー・フォイル');
+  if (pt.includes('prerelease')) t.push('プレリリース');
+  if (pt.includes('promopack')) t.push('プロモパック');
+  if (pt.includes('stamped') || pt.includes('datestamped')) t.push('スタンプ');
+  if (!t.length) t.push('通常');
+  if (finishes.length === 1 && finishes[0] === 'foil') t.push('フォイルのみ');
+  return t;
+}
+
 function cardTileHtml(card) {
   const img = getImage(card);
-  const nameJa = card.printed_name || card.name;
-  const typeJa = card.printed_type_line || card.type_line || '';
-  const oracleJa = getText(card, 'printed_text', 'oracle_text');
+  const nameJa = displayNameJa(card);
+  const typeJa = displayTypeJa(card);
   const colors = getColors(card);
   return `
     <a class="card-tile" href="?card=${encodeURIComponent(card.id)}" data-id="${card.id}">
@@ -1595,32 +1871,35 @@ function cardTileHtml(card) {
       </div>
       <div class="card-foot">
         <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
-        ${card.prices && card.prices.usd ? `<span class="tile-price">$${card.prices.usd}</span>` : `<span>${card.set ? card.set.toUpperCase() : ''}</span>`}
+        ${tilePriceHtml(card)}
       </div>
     </a>`;
 }
 
-function priceHtml(prices) {
-  if (!prices) return '';
-  const rows = [];
-  if (prices.usd) rows.push(['USD', `$${prices.usd}`]);
-  if (prices.usd_foil) rows.push(['USD（フォイル）', `$${prices.usd_foil}`]);
-  if (prices.eur) rows.push(['EUR', `€${prices.eur}`]);
-  if (prices.eur_foil) rows.push(['EUR（フォイル）', `€${prices.eur_foil}`]);
-  if (prices.tix) rows.push(['MTGO tix', prices.tix]);
-  if (!rows.length) return `<div class="price-section"><div class="price-heading">価格</div><div class="price-empty">価格情報なし</div></div>`;
+function priceHtml(card) {
+  const p = effectivePrices(card);
+  const rows = [['通常', p.usd], ['フォイル', p.usd_foil], ['エッチング', p.usd_etched]].filter(([, v]) => v);
+  const extras = [p.eur ? `€${p.eur}（Cardmarket）` : '', p.eur_foil ? `フォイル €${p.eur_foil}` : '', p.tix ? `MTGO ${p.tix} tix` : ''].filter(Boolean);
+  const body = rows.length
+    ? `<div class="price-table">${rows.map(([label, usd]) =>
+        `<span class="lbl">${label}</span><span class="usd">$${usd}</span><span class="jpy" data-usd="${usd}">${yenFor(usd) ? '約' + yenFor(usd) : ''}</span>`).join('')}</div>`
+    : `<div class="price-empty">この版の価格情報はありません</div>`;
   return `<div class="price-section">
-    <div class="price-heading">価格（Scryfall / TCGplayer・Cardmarket 経由）</div>
-    <div class="price-grid">
-      ${rows.map(([label, val]) => `<div class="price-row"><span>${label}</span><strong>${val}</strong></div>`).join('')}
+    <div class="price-heading">価格（TCGplayer 市場価格＝直近の取引の平均）</div>
+    ${body}
+    <div class="price-avg" id="priceAvg">${card._avgHtml || ''}</div>
+    <div class="price-sub">
+      ${p._fromEnglish ? '※日本語版の価格データがないため、同じ版の英語版の価格を表示しています。<br>' : ''}
+      ${extras.length ? extras.join('・') + '<br>' : ''}
+      <span class="fx-note">${fxNoteText()}</span>
     </div>
   </div>`;
 }
 
 function renderCardViewContent(card) {
-  const nameJa = card.printed_name || card.name;
-  const typeJa = card.printed_type_line || card.type_line || '';
-  const oracleJa = getText(card, 'printed_text', 'oracle_text');
+  const nameJa = displayNameJa(card);
+  const typeJa = displayTypeJa(card);
+  const oracleJa = displayTextJa(card);
   const colors = getColors(card);
   const img = getImage(card);
   const pt = (card.power !== undefined) ? `<span class="modal-pt">${card.power}/${card.toughness}</span>`
@@ -1638,7 +1917,7 @@ function renderCardViewContent(card) {
       <p class="modal-type">${typeJa}</p>
       <div class="modal-oracle">${oracleJa || '（効果テキストなし）'}</div>
       ${card.flavor_text ? `<p class="modal-flavor">${card.flavor_text}</p>` : ''}
-      ${priceHtml(card.prices)}
+      ${priceHtml(card)}
       ${legalityHtml(card.legalities)}
       <div class="modal-meta">
         <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
@@ -1646,7 +1925,7 @@ function renderCardViewContent(card) {
       </div>
 
       <div class="version-menu-wrap" id="versionMenuWrap">
-        <div class="version-menu-heading" id="versionMenuHeading">他の版を確認中…</div>
+        <div class="version-menu-heading" id="versionMenuHeading">すべての版・仕様を確認中…</div>
         <div class="version-panel" id="versionMenuPanel"></div>
       </div>
 
@@ -1655,7 +1934,7 @@ function renderCardViewContent(card) {
       </p>
       <div class="external-links">
         <div class="external-links-heading">ショップで探す</div>
-        <a class="external-link-btn" href="${hareruyaUrl(frontFaceName(card))}" target="_blank" rel="noopener">晴れる屋 ↗</a>
+        <a class="external-link-btn" href="${hareruyaUrl(card)}" target="_blank" rel="noopener">晴れる屋 ↗</a>
         <a class="external-link-btn" href="${bigMagicUrl(frontFaceName(card))}" target="_blank" rel="noopener">BIG MAGIC ↗</a>
         <a class="external-link-btn" href="${tokyoMtgUrl(frontFaceName(card))}" target="_blank" rel="noopener">Tokyo MTG ↗</a>
         <div class="external-links-heading" style="margin-top:8px;">大会デッキでの使用状況</div>
@@ -1666,12 +1945,25 @@ function renderCardViewContent(card) {
   document.title = `${nameJa} — 悪知恵`;
   loadPrintings(card);
   loadGoldfishLink(card);
+  if (!card._enPrices && card.lang && card.lang !== 'en' && !effectivePrices(card).usd) {
+    // prices for a Japanese printing come from its English counterpart
+    ensureEnglishPrices([card]).then(() => {
+      if (card._enPrices && getCardIdFromUrl() === card.id) {
+        const sec = document.querySelector('#cardViewCard .price-section');
+        if (sec) { sec.outerHTML = priceHtml(card); updateYenLabels(document.getElementById('cardViewCard')); }
+      }
+    });
+  }
 }
 
-function hareruyaUrl(englishName) {
-  // Confirmed working search pattern: the 'cardname' param is ignored by
-  // Hareruya's site, 'product' is the one that actually filters results.
-  return `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(englishName)}`;
+// Hareruya's search only matches English names on its English site and
+// Japanese names on its Japanese site - sending an English name to /ja/
+// returns "no products found". So: Japanese name -> /ja/, else English -> /en/.
+function hareruyaUrl(card) {
+  const ja = japaneseFrontName(card);
+  return ja
+    ? `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(ja)}`
+    : `https://www.hareruyamtg.com/en/products/search?product=${encodeURIComponent(frontFaceName(card))}`;
 }
 
 // Front face's English name ("Fable of the Mirror-Breaker", not the full
@@ -1710,7 +2002,7 @@ async function loadGoldfishLink(card) {
   const link = document.getElementById('goldfishLink');
   if (!link || !card.oracle_id) return;
   try {
-    const q = `oracle_id:${card.oracle_id} lang:en (st:expansion or st:core or st:masters or st:draft_innovation or st:commander) not:promo`;
+    const q = `oracleid:${card.oracle_id} lang:en (st:expansion or st:core or st:masters or st:draft_innovation or st:commander) not:promo`;
     const res = await fetch(`https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints', order: 'released', dir: 'desc' })}`,
       { headers: { 'Accept': 'application/json' } });
     if (!res.ok) return;
@@ -1734,40 +2026,98 @@ function tokyoMtgUrl(englishName) {
   return googleSiteSearchUrl('tokyomtg.com', englishName);
 }
 
+async function fetchAllPages(url, maxPages = 3) {
+  let out = [], next = url, pages = 0;
+  while (next && pages < maxPages) {
+    const res = await fetch(next, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) break;
+    const data = await res.json();
+    out = out.concat(data.data || []);
+    next = data.has_more ? data.next_page : null;
+    pages++;
+    if (next) await sleep(100);
+  }
+  return out;
+}
+
+// Scryfall's own "every printing of this card" link (prints_search_uri),
+// optionally narrowed with extra syntax such as lang:ja.
+function printsSearchUrl(card, extra) {
+  const base = card.prints_search_uri ||
+    `https://api.scryfall.com/cards/search?${new URLSearchParams({ q: `oracleid:${card.oracle_id}`, unique: 'prints', order: 'released' })}`;
+  if (!extra) return base;
+  const u = new URL(base);
+  u.searchParams.set('q', `${u.searchParams.get('q') || ''} ${extra}`.trim());
+  return u.toString();
+}
+
+// Shows every printing - all sets and treatments (borderless, showcase,
+// extended art, ...). Japanese versions are used where they exist; prices
+// come from the matching English printing.
 async function loadPrintings(card) {
   const heading = document.getElementById('versionMenuHeading');
   const panel = document.getElementById('versionMenuPanel');
   if (!heading || !card.oracle_id) { if (heading) heading.style.display = 'none'; return; }
 
   try {
-    const q = `oracle_id:${card.oracle_id} lang:ja`;
-    const url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints', order: 'released', dir: 'desc' })}`;
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error('no printings');
-    const data = await res.json();
-    const printings = data.data || [];
+    const [defaultPrints, jaPrints] = await Promise.all([
+      fetchAllPages(printsSearchUrl(card)),
+      fetchAllPages(printsSearchUrl(card, 'lang:ja')).catch(() => []),
+    ]);
+    if (getCardIdFromUrl() && getCardIdFromUrl() !== card.id) return; // navigated away
 
-    if (printings.length <= 1) {
-      heading.style.display = 'none';
-      return;
+    const byKey = new Map();
+    defaultPrints.forEach(p => byKey.set(`${p.set}|${p.collector_number}`, { en: p.lang === 'en' ? p : null, other: p.lang === 'en' ? null : p }));
+    jaPrints.forEach(p => {
+      const key = `${p.set}|${p.collector_number}`;
+      const entry = byKey.get(key) || { en: null, other: null };
+      entry.ja = p;
+      byKey.set(key, entry);
+    });
+    const entries = [...byKey.values()].map(e => {
+      const display = e.ja || e.other || e.en;
+      if (display !== e.en && e.en) display._enPrices = e.en.prices || {};
+      return { display, priceCard: e.en || display };
+    }).sort((a, b) => (b.display.released_at || '').localeCompare(a.display.released_at || ''));
+
+    if (!entries.length) { heading.style.display = 'none'; return; }
+
+    // average non-foil market price across printings (serialized excluded)
+    const usdValues = entries
+      .filter(e => !(e.priceCard.promo_types || []).includes('serialized'))
+      .map(e => parseFloat((e.priceCard.prices || {}).usd)).filter(v => v > 0);
+    const avgEl = document.getElementById('priceAvg');
+    if (avgEl && usdValues.length) {
+      const avg = usdValues.reduce((a, b) => a + b, 0) / usdValues.length;
+      const min = Math.min(...usdValues);
+      card._avgHtml = `全${usdValues.length}版の平均（通常版）：<strong>$${avg.toFixed(2)}</strong> <span data-usd="${avg.toFixed(2)}"></span>`
+        + `　最安：<strong>$${min.toFixed(2)}</strong> <span data-usd="${min.toFixed(2)}"></span>`;
+      avgEl.innerHTML = card._avgHtml;
     }
 
-    heading.textContent = `他の版（${printings.length}）`;
-    panel.innerHTML = printings.map(p => {
-      const isCurrent = p.id === card.id;
-      const label = `${p.set_name || p.set.toUpperCase()}（#${p.collector_number}） ・ ${RARITY_LABEL[p.rarity] || p.rarity}`;
-      return `<div class="version-row ${isCurrent ? 'current' : ''}">
-        <span class="version-label">${label}${isCurrent ? '　(現在表示中)' : ''}</span>
-        <span class="version-actions">
-          ${isCurrent ? '' : `<button type="button" class="version-switch-btn" data-id="${p.id}">この版を見る</button>`}
-        </span>
-      </div>`;
-    }).join('');
+    heading.textContent = `すべての版・仕様（${entries.length}）`;
+    panel.innerHTML = `<div class="print-grid">${entries.map(({ display, priceCard }) => {
+      const isCurrent = display.id === card.id || priceCard.id === card.id;
+      const img = display.image_uris ? display.image_uris.small
+        : (display.card_faces && display.card_faces[0].image_uris ? display.card_faces[0].image_uris.small : '');
+      const tags = treatmentLabels(priceCard).map(t => `<span class="print-tag">${t}</span>`).join('')
+        + (display.lang === 'ja' ? '<span class="print-tag ja">日本語版</span>' : '');
+      const pr = priceCard.prices || {};
+      const usd = pr.usd || pr.usd_foil || pr.usd_etched;
+      return `<button type="button" class="print-item ${isCurrent ? 'current' : ''}" data-id="${display.id}" title="${display.set_name}">
+        ${img ? `<img src="${img}" alt="" loading="lazy">` : ''}
+        <span class="print-set">${display.set_name || display.set.toUpperCase()}</span>
+        <span class="print-meta">#${display.collector_number}・${RARITY_LABEL[display.rarity] || display.rarity}</span>
+        <span class="print-tags">${tags}</span>
+        ${usd ? `<span class="print-price">$${usd} <span class="yen-short" data-usd="${usd}"></span></span>` : ''}
+      </button>`;
+    }).join('')}</div>`;
+    updateYenLabels(document.getElementById('cardViewCard'));
 
-    panel.querySelectorAll('.version-switch-btn').forEach(b => {
+    panel.querySelectorAll('.print-item').forEach(b => {
       b.addEventListener('click', () => {
-        const chosen = printings.find(p => p.id === b.dataset.id);
-        if (chosen) navigateToCard(chosen);
+        const chosen = entries.find(e => e.display.id === b.dataset.id);
+        if (chosen && chosen.display.id !== card.id) navigateToCard(chosen.display);
       });
     });
   } catch (err) {
@@ -1778,15 +2128,17 @@ async function loadPrintings(card) {
 function getCardIdFromUrl() {
   return new URLSearchParams(location.search).get('card');
 }
-function showSearchView() {
-  document.getElementById('searchView').style.display = '';
-  document.getElementById('cardView').style.display = 'none';
+function showView(name) {
+  document.getElementById('searchView').style.display = name === 'search' ? '' : 'none';
+  document.getElementById('cardView').style.display = name === 'card' ? '' : 'none';
+  document.getElementById('setsView').style.display = name === 'sets' ? '' : 'none';
+  if (name !== 'card') {
+    document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
+    document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
+  }
 }
-function showCardView() {
-  document.getElementById('searchView').style.display = 'none';
-  document.getElementById('cardView').style.display = '';
-  window.scrollTo(0, 0);
-}
+function showSearchView() { showView('search'); }
+function showCardView() { showView('card'); window.scrollTo(0, 0); }
 async function fetchSingleCard(id) {
   const res = await fetch(`https://api.scryfall.com/cards/${id}`, { headers: { 'Accept': 'application/json' } });
   if (!res.ok) throw new Error('card not found');
@@ -1813,27 +2165,246 @@ document.getElementById('backToSearchBtn').addEventListener('click', () => {
   }
 });
 
-window.addEventListener('popstate', () => {
-  const id = getCardIdFromUrl();
-  if (!id) { showSearchView(); return; }
-  const cached = currentCards.find(c => c.id === id);
-  if (cached) { renderCardViewContent(cached); showCardView(); }
-  else fetchSingleCard(id).then(c => { renderCardViewContent(c); showCardView(); }).catch(() => showSearchView());
+// ---- set browser ------------------------------------------------------------
+const SET_GROUPS = {
+  main: ['expansion', 'core'],
+  masters: ['masters', 'draft_innovation'],
+  commander: ['commander'],
+  other: ['funny', 'starter', 'duel_deck', 'box', 'from_the_vault', 'spellbook', 'premium_deck',
+          'masterpiece', 'arsenal', 'planechase', 'archenemy', 'treasure_chest', 'promo'],
+};
+// Official Japanese names for recent major sets (others show their English name).
+const SET_NAME_JA = {
+  tdm: 'タルキール：龍嵐録', dft: '霊気走破', dsk: 'ダスクモーン：戦慄の館', blb: 'ブルームバロウ',
+  mh3: 'モダンホライゾン3', otj: 'サンダー・ジャンクションの無法者', mkm: 'カルロフ邸殺人事件',
+  lci: 'イクサラン：失われし洞窟', woe: 'エルドレインの森', ltr: '指輪物語：中つ国の伝承',
+  mom: '機械兵団の進軍', one: 'ファイレクシア：完全なる統一', bro: '兄弟戦争', dmu: '団結のドミナリア',
+  snc: 'ニューカペナの街角', neo: '神河：輝ける世界', vow: 'イニストラード：真紅の契り',
+  mid: 'イニストラード：真夜中の狩り', afr: 'フォーゴトン・レルム探訪', stx: 'ストリクスヘイヴン：魔法学院',
+  khm: 'カルドハイム', znr: 'ゼンディカーの夜明け', m21: '基本セット2021', iko: 'イコリア：巨獣の棲処',
+  thb: 'テーロス還魂記', eld: 'エルドレインの王権', m20: '基本セット2020', war: '灯争大戦',
+  rna: 'ラヴニカの献身', grn: 'ラヴニカのギルド', dom: 'ドミナリア', mh2: 'モダンホライゾン2',
+  mh1: 'モダンホライゾン', '2xm': 'ダブルマスターズ', '2x2': 'ダブルマスターズ2022',
+};
+function setNameJa(set) { return SET_NAME_JA[set.code] || set.name; }
+
+let ALL_SETS = null;
+let setsPromise = null;
+function loadSets() {
+  if (!setsPromise) {
+    setsPromise = fetch('https://api.scryfall.com/sets', { headers: { 'Accept': 'application/json' } })
+      .then(r => { if (!r.ok) throw new Error('sets'); return r.json(); })
+      .then(d => {
+        ALL_SETS = (d.data || []).filter(st => !st.digital && st.card_count > 0)
+          .sort((a, b) => (b.released_at || '').localeCompare(a.released_at || ''));
+        return ALL_SETS;
+      })
+      .catch(err => { setsPromise = null; throw err; });
+  }
+  return setsPromise;
+}
+
+function renderSetList() {
+  const listEl = document.getElementById('setList');
+  if (!ALL_SETS) {
+    listEl.innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">セット一覧を読み込み中…</span></div>`;
+    loadSets().then(renderSetList).catch(() => {
+      listEl.innerHTML = `<div class="status-line"><span class="serif">セット一覧を読み込めませんでした</span>時間をおいて再度お試しください。</div>`;
+    });
+    return;
+  }
+  const group = document.getElementById('setTypeSelect').value;
+  const q = normText(document.getElementById('setFilter').value).trim();
+  // typing a name searches every set type; otherwise the dropdown decides
+  const sets = ALL_SETS.filter(st => q
+    ? (normText(st.name).includes(q) || st.code.toLowerCase().includes(q) || normText(SET_NAME_JA[st.code] || '').includes(q))
+    : (group === 'all' || (SET_GROUPS[group] || []).includes(st.set_type)));
+  if (!sets.length) { listEl.innerHTML = `<div class="status-line"><span class="serif">該当するセットがありません</span></div>`; return; }
+  let html = '', year = null;
+  sets.forEach(st => {
+    const y = (st.released_at || '').slice(0, 4) || '—';
+    if (y !== year) { html += `<div class="set-year">${y}年</div>`; year = y; }
+    const ja = SET_NAME_JA[st.code];
+    html += `<a class="set-row" href="?set=${encodeURIComponent(st.code)}" data-code="${st.code}">
+      <img class="set-icon" src="${st.icon_svg_uri}" alt="" loading="lazy">
+      <div class="set-names"><div class="set-name-ja">${ja || st.name}</div>${ja ? `<div class="set-name-en">${st.name}</div>` : ''}</div>
+      <div class="set-meta"><code>${st.code.toUpperCase()}</code>・${st.released_at || ''}<br>${st.card_count}枚</div>
+    </a>`;
+  });
+  listEl.innerHTML = html;
+  listEl.querySelectorAll('.set-row').forEach(a => a.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    e.preventDefault();
+    goTo(`?set=${encodeURIComponent(a.dataset.code)}`);
+  }));
+}
+
+const setView = { code: null, lang: 'ja', next: null, cards: [], jaAvailable: true, token: 0 };
+const setGrid = document.getElementById('setGrid');
+
+function setSearchUrl(code, lang) {
+  const q = `e:${code}` + (lang === 'ja' ? ' lang:ja' : '');
+  return `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints', order: 'set', dir: 'asc' })}`;
+}
+
+async function openSet(code, lang) {
+  const token = ++setView.token;
+  Object.assign(setView, { code, lang, next: null, cards: [], jaAvailable: true });
+  document.getElementById('setListPanel').style.display = 'none';
+  document.getElementById('setDetailPanel').style.display = '';
+  document.getElementById('setLoadMoreRow').style.display = 'none';
+  document.getElementById('setResultCount').textContent = '';
+  setGrid.innerHTML = `<div class="status-line" style="grid-column:1/-1;"><div class="spinner"></div><span class="serif">カードを読み込み中…</span></div>`;
+  window.scrollTo(0, 0);
+
+  let set = null;
+  try { set = (await loadSets()).find(st => st.code === code) || null; } catch (err) { /* header falls back below */ }
+  if (token !== setView.token) return;
+
+  try {
+    let res = await fetch(setSearchUrl(code, lang), { headers: { 'Accept': 'application/json' } });
+    if (lang === 'ja' && res.status === 404) {
+      // never printed in Japanese - show the English cards instead
+      setView.jaAvailable = false;
+      setView.lang = lang = 'en';
+      res = await fetch(setSearchUrl(code, 'en'), { headers: { 'Accept': 'application/json' } });
+    }
+    if (token !== setView.token) return;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const cards = data.data || [];
+    if (lang === 'ja') await ensureEnglishPrices(cards);
+    if (token !== setView.token) return;
+
+    if (!set && cards[0]) set = { code, name: cards[0].set_name, released_at: cards[0].released_at, card_count: data.total_cards, icon_svg_uri: '' };
+    renderSetHeader(set || { code, name: code.toUpperCase() });
+    setView.cards = cards;
+    setView.next = data.has_more ? data.next_page : null;
+    document.getElementById('setResultCount').innerHTML = `<strong>${data.total_cards}</strong> 枚（${lang === 'ja' ? '日本語版' : '英語版'}・コレクター番号順）`
+      + (setView.jaAvailable ? '' : '　<span style="color:var(--muted)">※このセットは日本語版が発売されていないため英語版を表示しています</span>');
+    setGrid.innerHTML = cards.map(cardTileHtml).join('');
+    attachTileHandlersIn(setGrid, () => setView.cards);
+    document.getElementById('setLoadMoreRow').style.display = setView.next ? '' : 'none';
+    document.title = `${set ? setNameJa(set) : code.toUpperCase()} — 悪知恵`;
+  } catch (err) {
+    if (token !== setView.token) return;
+    renderSetHeader(set || { code, name: code.toUpperCase() });
+    setGrid.innerHTML = `<div class="status-line" style="grid-column:1/-1;"><span class="serif">カードを読み込めませんでした</span>セットコードを確認するか、時間をおいて再度お試しください。</div>`;
+  }
+}
+
+function renderSetHeader(set) {
+  const ja = SET_NAME_JA[set.code];
+  document.getElementById('setHeader').innerHTML = `
+    ${set.icon_svg_uri ? `<img class="set-icon" src="${set.icon_svg_uri}" alt="">` : ''}
+    <div>
+      <div class="set-header-title">${ja || set.name}</div>
+      <div class="set-header-sub">${ja ? set.name + '・' : ''}${String(set.code).toUpperCase()}${set.released_at ? '・発売日 ' + set.released_at : ''}${set.card_count ? '・' + set.card_count + '枚' : ''}</div>
+    </div>
+    <div class="set-lang-toggle">
+      <button type="button" class="set-lang-btn" data-lang="ja" aria-pressed="${setView.lang === 'ja'}" ${setView.jaAvailable ? '' : 'disabled'}>日本語版</button>
+      <button type="button" class="set-lang-btn" data-lang="en" aria-pressed="${setView.lang === 'en'}">英語版</button>
+    </div>`;
+  document.querySelectorAll('#setHeader .set-lang-btn').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.lang === setView.lang) return;
+    history.replaceState({}, '', `?set=${encodeURIComponent(setView.code)}${b.dataset.lang === 'en' ? '&lang=en' : ''}`);
+    openSet(setView.code, b.dataset.lang);
+  }));
+}
+
+document.getElementById('setLoadMoreBtn').addEventListener('click', async () => {
+  if (!setView.next) return;
+  const btn = document.getElementById('setLoadMoreBtn');
+  const token = setView.token;
+  btn.disabled = true; btn.textContent = '読み込み中…';
+  try {
+    const res = await fetch(setView.next, { headers: { 'Accept': 'application/json' } });
+    const data = await res.json();
+    const cards = data.data || [];
+    if (setView.lang === 'ja') await ensureEnglishPrices(cards);
+    if (token === setView.token) {
+      setView.cards = setView.cards.concat(cards);
+      setView.next = data.has_more ? data.next_page : null;
+      setGrid.insertAdjacentHTML('beforeend', cards.map(cardTileHtml).join(''));
+      attachTileHandlersIn(setGrid, () => setView.cards);
+      document.getElementById('setLoadMoreRow').style.display = setView.next ? '' : 'none';
+    }
+  } catch (err) { /* keep what's shown */ }
+  btn.disabled = false; btn.textContent = 'さらに読み込む';
 });
+document.getElementById('setFilter').addEventListener('input', renderSetList);
+document.getElementById('setTypeSelect').addEventListener('change', renderSetList);
+
+// ---- routing ----------------------------------------------------------------
+// ?card=<id> card page · ?set=<code>[&lang=en] set page · ?view=sets set list
+function routeFromUrl() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('card')) return { view: 'card', id: p.get('card') };
+  if (p.get('set')) return { view: 'set', code: p.get('set').toLowerCase(), lang: p.get('lang') === 'en' ? 'en' : 'ja' };
+  if (p.get('view') === 'sets') return { view: 'sets' };
+  return { view: 'search' };
+}
+
+function applyRoute(route) {
+  if (route.view === 'card') {
+    const cached = [...currentCards, ...setView.cards].find(c => c.id === route.id);
+    showCardView();
+    if (cached) { renderCardViewContent(cached); return; }
+    document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">読み込み中…</span></div>`;
+    fetchSingleCard(route.id)
+      .then(c => { if (getCardIdFromUrl() === route.id) renderCardViewContent(c); })
+      .catch(() => {
+        document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><span class="serif">カードが見つかりませんでした</span>URLを確認するか、検索からやり直してください。</div>`;
+      });
+  } else if (route.view === 'set') {
+    showView('sets');
+    document.getElementById('setListPanel').style.display = 'none';
+    document.getElementById('setDetailPanel').style.display = '';
+    if (setView.code !== route.code || setView.lang !== route.lang || !setView.cards.length) openSet(route.code, route.lang);
+  } else if (route.view === 'sets') {
+    showView('sets');
+    document.getElementById('setDetailPanel').style.display = 'none';
+    document.getElementById('setListPanel').style.display = '';
+    document.title = 'セット一覧 — 悪知恵';
+    renderSetList();
+  } else {
+    showView('search');
+    document.title = '悪知恵 — 日本語カード検索';
+    if (!grid.children.length) loadRandomCards();
+  }
+}
+
+function goTo(url) {
+  history.pushState({}, '', url);
+  applyRoute(routeFromUrl());
+}
+
+window.addEventListener('popstate', () => applyRoute(routeFromUrl()));
+document.getElementById('tabSearch').addEventListener('click', () => goTo(location.pathname));
+document.getElementById('tabSets').addEventListener('click', () => goTo('?view=sets'));
+document.getElementById('brandLink').addEventListener('click', (e) => { e.preventDefault(); goTo(location.pathname); });
+document.getElementById('backToSetsBtn').addEventListener('click', () => goTo('?view=sets'));
 
 let currentCards = [];
 
-function attachTileHandlers() {
-  grid.querySelectorAll('.card-tile').forEach(a => {
+// Binds clicks on tiles in a grid (each tile only once - "load more" used to
+// re-bind every tile, so one click could navigate twice). getCards returns
+// the grid's current card list.
+function attachTileHandlersIn(container, getCards) {
+  container.querySelectorAll('.card-tile').forEach(a => {
+    if (a.dataset.bound) return;
+    a.dataset.bound = '1';
     a.addEventListener('click', (e) => {
       // let the browser handle modifier-clicks / middle-click as a real new-tab open
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
       e.preventDefault();
-      const card = currentCards.find(c => c.id === a.dataset.id);
+      const card = getCards().find(c => c.id === a.dataset.id);
       if (card) navigateToCard(card);
     });
   });
+  updateYenLabels(container);
 }
+function attachTileHandlers() { attachTileHandlersIn(grid, () => currentCards); }
 
 async function runLocalSearch(myToken) {
   const matches = localSearchAndFilter();
@@ -2024,20 +2595,8 @@ loadMoreBtn.addEventListener('click', async () => {
 
 // ---- initial routing: show a single card's page if the URL asks for one,
 // otherwise show the search view without hitting the API until asked ----
-const initialCardId = getCardIdFromUrl();
-if (initialCardId) {
-  cameFromSearch = false;
-  showCardView();
-  document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">読み込み中…</span></div>`;
-  fetchSingleCard(initialCardId)
-    .then(c => renderCardViewContent(c))
-    .catch(() => {
-      document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><span class="serif">カードが見つかりませんでした</span>URLを確認するか、検索からやり直してください。</div>`;
-    });
-} else {
-  showSearchView();
-  loadRandomCards();
-}
+cameFromSearch = false;
+applyRoute(routeFromUrl());
 
 // ---- controls ----
 document.getElementById('searchBtn').addEventListener('click', () => { state.query = document.getElementById('searchInput').value; runSearch(); });
