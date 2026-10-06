@@ -1,0 +1,55 @@
+# Rebuilds meta.json (the data behind the metagame tab) once a day.
+#
+# Where this file goes in your repository:
+#     .github/workflows/update-meta.yml
+# It needs build_meta.py in the top folder of the repository, next to index.html.
+
+name: Update metagame data
+
+on:
+  schedule:
+    - cron: "40 18 * * *"   # every day at 18:40 UTC (03:40 in Japan); the tournament archive updates around 17:00 UTC
+  workflow_dispatch:        # adds a "Run workflow" button so you can also run it by hand
+
+permissions:
+  contents: write           # to save meta.json into the repository
+  pages: write              # to ask GitHub Pages to republish the site afterwards
+
+concurrency:
+  group: update-meta
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build meta.json
+        run: python3 build_meta.py --out meta.json --cache "$RUNNER_TEMP/meta_cache"
+
+      - name: Save meta.json if it changed
+        id: save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add meta.json
+          if git diff --cached --quiet; then
+            echo "Nothing new."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Update metagame data"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A commit made by a workflow does not republish a GitHub Pages site on
+      # its own, so ask for a rebuild. (Harmless if the site is published some
+      # other way - the step is allowed to fail.)
+      - name: Republish the site
+        if: steps.save.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
