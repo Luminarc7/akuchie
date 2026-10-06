@@ -1,961 +1,686 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>悪知恵 — 日本語カード検索</title>
+<script>
+/* Apply the saved theme before the page paints (no flash). Without a saved
+   choice, follow the device's light/dark setting. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('akuchie-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark' && t !== 'yawgmoth') {
+    t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  }
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink-void: #16141f;
-    --ink-surface: #201d30;
-    --ink-surface-raised: #2a2639;
-    --parchment: #f1ece0;
-    --muted: #a29cb4;
-    --gold: #c9a15a;
+  /* ============================ theme tokens ============================ */
+  :root, html[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #15131d;
+    --page-glow:
+      radial-gradient(1100px circle at 8% -10%, rgba(88,110,200,0.10), transparent 60%),
+      radial-gradient(900px circle at 100% 0%, rgba(208,167,92,0.07), transparent 55%);
+    --surface: #1f1c2c;
+    --surface-2: #2a263a;
+    --field: #15131d;
     --line: #3a3550;
+    --text: #f1ece0;
+    --muted: #a59fb8;
+    --accent: #d0a75c;
+    --accent-ink: #1f1706;
+    --brand-hi: #f5ecd4;
+    --ok: #8fd19f;   --ok-bg: rgba(90,156,106,0.20);  --ok-line: rgba(90,156,106,0.50);
+    --bad: #ef8a7c;  --bad-bg: rgba(207,86,71,0.20);  --bad-line: rgba(207,86,71,0.55);
+    --warn: #e0b872; --warn-bg: rgba(201,161,90,0.20); --warn-line: rgba(201,161,90,0.55);
+    --shadow: 0 10px 28px rgba(5,4,10,0.5);
+    --icon-filter: invert(0.88);
+    --scrim: rgba(8,7,12,0.6);
+  }
+  html[data-theme="light"] {
+    color-scheme: light;
+    --page: #f1f0f5;
+    --page-glow:
+      radial-gradient(1100px circle at 8% -10%, rgba(88,110,200,0.08), transparent 60%),
+      radial-gradient(900px circle at 100% 0%, rgba(160,120,40,0.07), transparent 55%);
+    --surface: #ffffff;
+    --surface-2: #eceaf3;
+    --field: #ffffff;
+    --line: #d3cfe0;
+    --text: #1d1a2b;
+    --muted: #5f5a75;
+    --accent: #7a5510;
+    --accent-ink: #ffffff;
+    --brand-hi: #2b2238;
+    --ok: #1e6b34;   --ok-bg: #dff1e3;  --ok-line: #9fcfab;
+    --bad: #a52a1d;  --bad-bg: #fbe2de; --bad-line: #e8a59c;
+    --warn: #7a5510; --warn-bg: #f6ebd3; --warn-line: #dcc08a;
+    --shadow: 0 8px 24px rgba(40,34,70,0.14);
+    --icon-filter: none;
+    --scrim: rgba(30,26,50,0.35);
+  }
+  html[data-theme="yawgmoth"] {
+    color-scheme: dark;
+    --page: #050706;
+    --page-glow: none;
+    --surface: rgba(13,17,15,0.93);
+    --surface-2: rgba(32,41,35,0.96);
+    --field: rgba(4,6,5,0.85);
+    --line: #34443a;
+    --text: #e9efe4;
+    --muted: #9aab9b;
+    --accent: #a9d86e;
+    --accent-ink: #0c1407;
+    --brand-hi: #f0f7dd;
+    --ok: #8fd19f;   --ok-bg: rgba(90,156,106,0.22);  --ok-line: rgba(90,156,106,0.55);
+    --bad: #ef8a7c;  --bad-bg: rgba(207,86,71,0.22);  --bad-line: rgba(207,86,71,0.55);
+    --warn: #e0b872; --warn-bg: rgba(201,161,90,0.22); --warn-line: rgba(201,161,90,0.55);
+    --shadow: 0 10px 30px rgba(0,0,0,0.65);
+    --icon-filter: invert(0.88);
+    --scrim: rgba(0,0,0,0.65);
+  }
+  :root {
+    --mana-w: #e8dfc0; --mana-u: #3d8bd6; --mana-b: #8d7a9e;
+    --mana-r: #cf5647; --mana-g: #5a9c6a; --mana-c: #9b95ac;
+    --bar-h: 62px;
+    /* older names still referenced by some inline styles */
+    --gold: var(--accent); --parchment: var(--text);
+    --ink-void: var(--page); --ink-surface: var(--surface); --ink-surface-raised: var(--surface-2);
+  }
 
-    --mana-w: #e8dfc0;
-    --mana-u: #3d8bd6;
-    --mana-b: #8d7a9e;
-    --mana-r: #cf5647;
-    --mana-g: #5a9c6a;
-    --mana-c: #9b95ac;
-
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
+  /* ================================ base ================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--page); scroll-padding-top: calc(var(--bar-h) + 12px); }
+  body {
+    margin: 0; min-height: 100vh;
+    background: var(--page-glow); background-attachment: fixed;
+    color: var(--text);
+    font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  *, *::before, *::after { box-sizing: inherit; }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-  html, body { height: 100%; }
-  html { background: #100e17; }
-
-  body {
-    margin: 0;
-    background:
-      radial-gradient(1200px circle at 12% -10%, rgba(61,139,214,0.07), transparent 60%),
-      radial-gradient(1000px circle at 100% 0%, rgba(201,161,90,0.06), transparent 55%),
-      linear-gradient(180deg, #1c1930 0%, #17141f 45%, #100e17 100%);
-    background-attachment: fixed;
-    color: var(--parchment);
-    font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
-    font-size: 15.5px;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .serif { font-family: "Shippori Mincho", serif; }
-
   a { color: inherit; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .serif { font-family: "Shippori Mincho", serif; }
+  code {
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.9em;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+  }
+  select, input[type="text"] {
+    background: var(--field); border: 1px solid var(--line); border-radius: 6px;
+    color: var(--text); padding: 8px 12px; font-size: 14px;
+  }
+  input[type="text"]::placeholder { color: var(--muted); }
+  input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; flex: none; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 20px 40px; }
 
-  /* ---------- header ---------- */
-  header {
-    position: sticky;
-    top: env(safe-area-inset-top, 0px);
-    z-index: 20;
-    background: linear-gradient(180deg, #1c193000, #17141fd9 60%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line);
-    padding: 22px 20px 18px;
+  /* =============================== top bar =============================== */
+  .topbar { position: sticky; top: 0; z-index: 40; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto; padding: 9px 20px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: "brand search tabs theme";
+    gap: 10px 20px; align-items: center; min-height: var(--bar-h);
   }
-  .header-inner { max-width: 1040px; margin: 0 auto; }
-  .brand {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin: 0;
-    text-decoration: none;
-  }
-  .top-nav { border-bottom: 1px solid var(--line); padding: 14px 20px 0; }
-  .top-nav-inner {
-    max-width: 1040px; margin: 0 auto;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  }
-  .top-nav .brand { padding-bottom: 10px; }
-  .top-tabs { display: flex; gap: 4px; }
-  .top-tab {
-    background: none; border: 1px solid transparent; border-bottom: none;
-    color: var(--muted); font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px;
-    padding: 9px 16px; border-radius: 4px 4px 0 0; cursor: pointer;
-  }
-  .top-tab:hover { color: var(--parchment); }
-  .top-tab[aria-selected="true"] {
-    color: var(--gold); background: var(--ink-surface); border-color: var(--line);
-    position: relative; top: 1px;
-  }
-
-  /* ---------- set browser ---------- */
-  .sets-wrap { max-width: 1040px; margin: 0 auto; padding: 20px 20px 40px; }
-  .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-  .sets-toolbar input {
-    flex: 1; min-width: 220px; background: var(--ink-surface); border: 1px solid var(--line);
-    color: var(--parchment); border-radius: 3px; padding: 10px 14px; font-size: 14px; font-family: inherit;
-  }
-  .sets-toolbar input::placeholder { color: var(--muted); }
-  .set-year { font-family: "Shippori Mincho", serif; color: var(--gold); font-size: 15px; margin: 18px 0 6px; }
-  .set-year:first-child { margin-top: 0; }
-  .set-row {
-    display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center;
-    padding: 9px 10px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit;
-    border-radius: 3px;
-  }
-  .set-row:hover { background: var(--ink-surface); }
-  .set-icon { width: 24px; height: 24px; filter: invert(0.85) sepia(0.2); }
-  .set-names { min-width: 0; }
-  .set-name-ja { font-size: 14px; font-weight: 500; }
-  .set-name-en { font-size: 11.5px; color: var(--muted); }
-  .set-meta { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
-  .set-meta code { color: var(--gold); font-family: "SFMono-Regular", Consolas, monospace; }
-  .set-header { display: flex; gap: 14px; align-items: center; margin: 6px 0 14px; flex-wrap: wrap; }
-  .set-header .set-icon { width: 40px; height: 40px; }
-  .set-header-title { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; }
-  .set-header-sub { font-size: 12px; color: var(--muted); }
-  .set-lang-toggle { display: flex; gap: 6px; margin-left: auto; }
-  .set-lang-btn {
-    background: var(--ink-surface); border: 1px solid var(--line); color: var(--parchment);
-    border-radius: 3px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; font-family: inherit;
-  }
-  .set-lang-btn[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
-  .set-lang-btn:disabled { opacity: 0.4; cursor: default; }
-
-  /* ---------- printings / treatments gallery ---------- */
-  .print-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
-  .print-item {
-    background: var(--ink-surface); border: 1px solid var(--line); border-radius: 4px;
-    padding: 6px; text-align: left; cursor: pointer; color: inherit; font-family: inherit;
-    display: flex; flex-direction: column; gap: 3px;
-  }
-  .print-item:hover { border-color: var(--gold); }
-  .print-item.current { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
-  .print-item img { width: 100%; aspect-ratio: 5 / 7; object-fit: cover; border-radius: 3px; background: var(--ink-surface-raised); }
-  .print-set { font-size: 11px; line-height: 1.35; }
-  .print-meta { font-size: 10.5px; color: var(--muted); }
-  .print-tags { display: flex; flex-wrap: wrap; gap: 3px; }
-  .print-tag {
-    font-size: 9.5px; padding: 1px 5px; border-radius: 3px;
-    background: var(--ink-surface-raised); border: 1px solid var(--line); color: var(--parchment);
-  }
-  .print-tag.ja { color: var(--gold); border-color: rgba(201,161,90,0.5); }
-  .print-price { font-size: 11px; color: var(--gold); font-weight: 700; }
-
-  .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 14px; font-size: 12.5px; align-items: baseline; }
-  .price-table .lbl { color: var(--muted); }
-  .price-table .usd { color: var(--gold); font-weight: 700; font-size: 14px; }
-  .price-table .jpy { color: var(--parchment); }
-  .price-sub { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
-  .price-avg { font-size: 12px; margin-top: 6px; }
-  .price-avg strong { color: var(--gold); }
+  .brand { grid-area: brand; display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: inherit; }
   .brand-mark {
-    font-family: "Yuji Syuku", serif;
-    font-size: 36px;
-    font-weight: 400;
-    letter-spacing: 0.07em;
-    background: linear-gradient(120deg, var(--gold) 0%, #f5ecd4 45%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    font-family: "Yuji Syuku", serif; font-size: 30px; line-height: 1.15; letter-spacing: 0.06em;
+    background: linear-gradient(120deg, var(--accent) 0%, var(--brand-hi) 48%, var(--accent) 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
   }
-  .brand-sub {
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
+  .brand-sub { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+  .search-form { grid-area: search; display: flex; gap: 8px; min-width: 0; }
+  .search-form input { flex: 1; min-width: 0; padding: 10px 14px; font-size: 15px; }
+  .search-form button, .btn-primary {
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px;
+    padding: 0 20px; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; white-space: nowrap;
   }
+  .search-form button:hover { filter: brightness(1.07); }
+  .top-tabs { grid-area: tabs; display: flex; gap: 2px; }
+  .top-tab {
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    padding: 8px 12px; color: var(--muted); font-weight: 700; font-size: 14px; white-space: nowrap;
+  }
+  .top-tab:hover { color: var(--text); }
+  .top-tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+  .theme-switch {
+    grid-area: theme; display: flex; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--field); padding: 2px;
+  }
+  .theme-btn { border: 0; background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .theme-btn:hover { color: var(--text); }
+  .theme-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 
-  .search-row {
-    display: flex;
-    gap: 10px;
-  }
-  .search-row input[type="text"] {
-    flex: 1;
-    min-width: 0;
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    color: var(--parchment);
-    border-radius: 3px;
-    padding: 13px 16px;
-    font-size: 15px;
-    font-family: inherit;
-  }
-  .search-row input[type="text"]::placeholder { color: var(--muted); }
-  .search-row input[type="text"]:focus,
-  select:focus,
-  .chip:focus-visible,
-  button:focus-visible {
-    outline: 2px solid var(--gold);
-    outline-offset: 1px;
-  }
-  .search-row button {
-    background: var(--gold);
-    color: #211a0d;
-    border: none;
-    border-radius: 3px;
-    padding: 0 22px;
-    font-family: "Shippori Mincho", serif;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-  }
-  .search-row button:hover { filter: brightness(1.08); }
-
-  .syntax-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 10px;
-    font-size: 12px;
-  }
-  .guide-toggle {
-    background: none;
-    border: none;
-    color: var(--gold);
-    font-family: inherit;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 0;
-  }
-  .syntax-hint { color: var(--muted); }
-
-  .guide-panel {
-    max-height: 0;
-    overflow: hidden;
-    background: var(--ink-surface);
-    border-bottom: 1px solid var(--line);
-    transition: max-height 0.2s ease;
-  }
-  .guide-panel.open { max-height: 320px; }
-  .guide-inner { max-width: 1040px; margin: 0 auto; padding: 16px 20px 18px; }
-  .guide-table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
-  .guide-table td { padding: 5px 10px 5px 0; vertical-align: top; color: #cfc9dd; }
-  .guide-table td:first-child { white-space: nowrap; width: 1%; }
-  .guide-table code {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 1px 6px;
-    color: var(--gold);
-    font-size: 12px;
-  }
-  .guide-examples { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .guide-examples-label { font-size: 12px; color: var(--muted); }
-  .example-pill {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 11.5px;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    color: var(--parchment);
-    border-radius: 20px;
-    padding: 5px 12px;
-    cursor: pointer;
-  }
-  .example-pill:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* ---------- filters (separated from search as its own collapsible panel) ---------- */
+  /* ============================ search layout ============================ */
+  .search-layout { display: grid; grid-template-columns: 274px minmax(0, 1fr); gap: 22px; align-items: start; }
   .filter-panel {
-    max-height: 0;
-    overflow: hidden;
-    background: var(--ink-surface);
-    border-bottom: 1px solid var(--line);
-    transition: max-height 0.2s ease;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 14px 16px;
+    position: sticky; top: calc(var(--bar-h) + 14px);
+    max-height: calc(100vh - var(--bar-h) - 28px); overflow-y: auto; overscroll-behavior: contain;
   }
-  .filter-panel.open { max-height: 600px; overflow-y: auto; }
-  .filter-panel-heading {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 16px 20px 0;
-    font-family: "Shippori Mincho", serif;
-    font-size: 13px;
-    color: var(--gold);
-  }
-  .filters {
-    max-width: 1040px;
-    margin: 10px auto 0;
-    padding: 0 20px 18px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 18px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .filter-label { color: var(--muted); }
+  .filter-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+  .filter-head h2 { font-family: "Shippori Mincho", serif; font-size: 16px; margin: 0; }
+  .filter-close { display: none; }
+  .clear-btn { background: none; border: 0; padding: 0; color: var(--accent); font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
+  .filter-section + .filter-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .filter-title { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 0 0 8px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
   .chip {
-    border: 1px solid var(--line);
-    background: var(--ink-surface);
-    color: var(--parchment);
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: "Shippori Mincho", serif;
+    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 13px; padding: 0;
   }
-  .chip[data-active="true"] { box-shadow: 0 0 0 2px var(--gold) inset; }
   .chip.w { color: #241f16; background: var(--mana-w); }
   .chip.u { color: #eaf3fd; background: var(--mana-u); }
-  .chip.b { color: #eee9f4; background: var(--mana-b); }
+  .chip.b { color: #17131c; background: var(--mana-b); }
   .chip.r { color: #2a0d09; background: var(--mana-r); }
   .chip.g { color: #0c2011; background: var(--mana-g); }
   .chip.c { color: #17151d; background: var(--mana-c); }
+  .chip[data-active="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+  .opt-chip {
+    border: 1px solid var(--line); background: var(--field); border-radius: 999px;
+    padding: 4px 11px; font-size: 12.5px; line-height: 1.5; color: var(--text);
+  }
+  .opt-chip:hover { border-color: var(--accent); }
+  .opt-chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .list-filter { width: 100%; margin-bottom: 6px; padding: 7px 10px; font-size: 13px; }
+  .check-list {
+    max-height: 212px; overflow-y: auto; overscroll-behavior: contain;
+    border: 1px solid var(--line); border-radius: 6px; background: var(--field); padding: 4px 0;
+  }
+  .check-row { display: flex; align-items: center; gap: 8px; padding: 5px 10px; font-size: 13px; cursor: pointer; }
+  .check-row:hover { background: var(--surface-2); }
+  .check-row .en { color: var(--muted); font-size: 11px; margin-left: auto; text-align: right; }
+  .check-empty { padding: 8px 10px; font-size: 12.5px; color: var(--muted); }
+  .filter-backdrop { display: none; }
 
-  select {
-    background: var(--ink-surface);
-    color: var(--parchment);
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 6px 8px;
-    font-family: inherit;
-    font-size: 13px;
+  /* ============================== results ============================== */
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 14px; margin-bottom: 12px;
   }
+  .result-count { margin: 0; font-size: 13.5px; color: var(--muted); }
+  .result-count strong, .result-count .serif { color: var(--text); }
+  .result-count .serif { font-size: 15px; font-weight: 700; }
+  .toolbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .toolbar select { padding: 6px 10px; font-size: 13px; }
+  .filter-open-btn { display: none; border: 1px solid var(--line); background: var(--field); border-radius: 6px; padding: 6px 12px; font-size: 13px; }
+  .reshuffle-btn {
+    background: none; border: 1px solid var(--line); color: var(--accent);
+    border-radius: 6px; padding: 3px 10px; font-size: 12.5px; margin-left: 6px;
+  }
+  .reshuffle-btn:hover { border-color: var(--accent); }
+  .active-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+  .active-filters:empty { display: none; }
+  .filter-pill {
+    border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+    padding: 3px 10px; font-size: 12.5px; color: var(--text);
+  }
+  .filter-pill:hover { border-color: var(--bad-line); color: var(--bad); }
+  .filter-pill .x { margin-left: 6px; color: var(--muted); }
 
-  .type-dropdown-wrap { position: relative; }
-  .dropdown-btn {
-    background: var(--ink-surface);
-    color: var(--parchment);
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 6px 10px;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
+  .guide { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; }
+  .guide summary { padding: 9px 14px; font-size: 13.5px; color: var(--accent); cursor: pointer; }
+  .guide-inner { padding: 4px 14px 14px; }
+  .guide-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  .guide-table td { padding: 5px 12px 5px 0; vertical-align: top; }
+  .guide-table td:first-child { white-space: nowrap; width: 1%; }
+  .guide-table code { color: var(--accent); }
+  .guide-examples { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+  .example-pill {
+    font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px;
+    background: var(--field); border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 4px 12px;
   }
-  .dropdown-btn:hover { border-color: var(--gold); }
-  .dropdown-panel {
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 12px 16px;
-    min-width: 210px;
-    z-index: 30;
-    box-shadow: 0 10px 28px rgba(6, 5, 12, 0.5);
-  }
-  .dropdown-panel.open { display: flex; }
-  .dropdown-panel label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--parchment);
-    cursor: pointer;
-  }
-  .dropdown-panel input[type="checkbox"] { accent-color: var(--gold); width: 14px; height: 14px; }
-  .dropdown-panel .en { color: var(--muted); font-size: 11px; }
-  .dropdown-clear {
-    align-self: flex-start;
-    background: none;
-    border: none;
-    color: var(--gold);
-    font-size: 12px;
-    cursor: pointer;
-    padding: 2px 0 0;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    font-family: inherit;
-  }
-
-  .clear-btn {
-    background: none;
-    border: none;
-    color: var(--gold);
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    padding: 0;
-    font-family: inherit;
+  .example-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .translation-note {
+    font-size: 12px; color: var(--muted); background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 12px; margin: 0 0 12px; line-height: 1.8;
   }
 
-  /* ---------- results ---------- */
-  main { max-width: 1040px; margin: 0 auto; padding: 22px 20px 60px; }
-  .result-count { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
-  .result-count strong { color: var(--parchment); }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 14px;
-  }
-
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(172px, 1fr)); gap: 14px; }
   .card-tile {
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    overflow: hidden;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding: 0;
-    color: inherit;
-    font-family: inherit;
-    transition: transform 0.12s ease, border-color 0.12s ease;
+    display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden; text-decoration: none; color: inherit;
   }
-  .card-tile:hover { transform: translateY(-2px); border-color: var(--gold); }
-  .color-bar { height: 5px; width: 100%; }
-
-  .card-tile-body { padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .card-name-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .card-name-ja { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 16.5px; line-height: 1.35; }
-  .card-name-en { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .pips { display: flex; gap: 3px; flex-shrink: 0; }
-  .pip {
-    width: 18px; height: 18px; border-radius: 50%;
-    font-size: 10px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    font-family: "Shippori Mincho", serif;
+  .card-tile:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  .color-bar { height: 4px; width: 100%; }
+  .card-thumb-wrap {
+    aspect-ratio: 488 / 680; background: var(--surface-2); margin: 8px 8px 0; border-radius: 4.75% / 3.5%;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
   }
-  .pip.w { background: var(--mana-w); color: #241f16; }
-  .pip.u { background: var(--mana-u); color: #eaf3fd; }
-  .pip.b { background: var(--mana-b); color: #241f16; }
-  .pip.r { background: var(--mana-r); color: #2a0d09; }
-  .pip.g { background: var(--mana-g); color: #0c2011; }
-  .pip.c { background: var(--mana-c); color: #17151d; }
-
-  .type-line { font-size: 12px; color: var(--muted); }
-  .oracle-preview { font-size: 12.5px; line-height: 1.6; color: #cfc9dd; flex: 1; }
+  .card-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-thumb-fallback { font-size: 11.5px; color: var(--muted); padding: 10px; text-align: center; }
+  .card-tile-body { padding: 9px 11px 8px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card-name-ja { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
+  .card-name-en { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .type-line { font-size: 11.5px; color: var(--muted); line-height: 1.45; }
   .card-foot {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 11px; color: var(--muted);
-    border-top: 1px solid var(--line);
-    padding: 8px 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); padding: 7px 11px;
   }
   .rarity-dot { display: inline-flex; align-items: center; gap: 5px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; }
-  .dot.common { background: #9b95ac; }
-  .dot.uncommon { background: #b9c4cc; }
-  .dot.rare { background: #d8b556; }
-  .dot.mythic { background: #d1622f; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mana-c); flex: none; }
+  .dot.common { background: #8e8a99; } .dot.uncommon { background: #9fb4c4; }
+  .dot.rare { background: #d1a93f; }   .dot.mythic { background: #d1622f; }
+  .tile-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
+  .tile-price .yen { color: var(--text); font-weight: 500; margin-left: 4px; }
 
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-  .empty-state .serif { font-size: 19px; color: var(--parchment); display: block; margin-bottom: 8px; }
-
-  /* ---------- modal ---------- */
-  .card-page-wrap {
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 16px 16px calc(32px + env(safe-area-inset-bottom, 0px));
-  }
-  .card-page-wrap .modal-card { max-width: 100%; }
-  .back-link {
-    background: none;
-    border: none;
-    color: var(--gold);
-    font-family: "Shippori Mincho", serif;
-    font-weight: 700;
-    font-size: 13.5px;
-    cursor: pointer;
-    padding: 0 0 10px;
-    display: inline-block;
-  }
-  .back-link:hover { text-decoration: underline; }
-
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(10, 9, 16, 0.78);
-    display: none;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 40px 16px calc(40px + env(safe-area-inset-bottom, 0px));
-    overflow-y: auto;
-    z-index: 50;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-card {
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    max-width: 460px;
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-  .modal-close {
-    position: absolute; top: 10px; right: 10px;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    color: var(--parchment);
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 15px;
-    line-height: 1;
-    z-index: 2;
-  }
-  .modal-color-bar { height: 6px; width: 100%; }
-  .modal-body { padding: 16px 18px 18px; }
-  .modal-name-ja { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; margin: 0 0 2px; }
-  .modal-name-en { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
-  .modal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px;}
-  .modal-type { font-size: 12.5px; color: #cfc9dd; }
-  .modal-oracle {
-    font-size: 13px; line-height: 1.65; color: var(--parchment);
-    padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    margin-bottom: 10px; white-space: pre-line;
-  }
-  .modal-flavor { font-size: 12px; font-style: italic; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
-  .modal-meta { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
-  .modal-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; color: var(--parchment); }
-
-  footer {
-    max-width: 1040px; margin: 0 auto; padding: 0 20px 40px;
-    font-size: 11.5px; color: var(--muted); line-height: 1.8;
-  }
-
-  @media (max-width: 480px) {
-    .brand-mark { font-size: 28px; }
-    .modal-name-ja { font-size: 19px; }
-  }
-</style>
-<style>
-  .live-badge {
-    display: inline-block;
-    font-size: 10.5px;
-    color: var(--ink-void);
-    background: var(--gold);
-    border-radius: 3px;
-    padding: 2px 7px;
-    margin-left: 8px;
-    vertical-align: middle;
-    font-family: "Noto Sans JP", sans-serif;
-    font-weight: 700;
-  }
-  .card-tile { padding: 0; }
-  .card-thumb-wrap {
-    width: 100%;
-    aspect-ratio: 5 / 7;
-    background: var(--ink-surface-raised);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .card-thumb-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  .card-thumb-fallback { font-size: 11px; color: var(--muted); padding: 10px; text-align: center; }
-  .card-tile-body { padding: 10px 12px 8px; }
-  .card-name-ja { font-size: 14.5px; }
-
-  .tile-price { color: var(--gold); font-weight: 700; font-size: 11px; }
-  .tile-price .yen { color: var(--parchment); font-weight: 500; margin-left: 3px; }
-  .reshuffle-btn {
-    background: none; border: 1px solid var(--line); color: var(--gold);
-    border-radius: 3px; padding: 3px 10px; font-size: 12px; cursor: pointer;
-    font-family: inherit; margin-left: 6px;
-  }
-  .reshuffle-btn:hover { border-color: var(--gold); }
-
-  .legal-circles { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+  .legal-circles { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
   .legal-circle {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    font-size: 8.5px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-    cursor: default;
+    width: 22px; height: 22px; border-radius: 50%; font-size: 8.5px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; cursor: default;
   }
-  .legal-circle.legal { background: rgba(90,156,106,0.2); color: #8fd19f; border-color: rgba(90,156,106,0.5); }
-  .legal-circle.not_legal { background: var(--ink-surface-raised); color: var(--muted); border-color: var(--line); }
-  .legal-circle.banned { background: rgba(207,86,71,0.2); color: #ef8a7c; border-color: rgba(207,86,71,0.55); }
-  .legal-circle.restricted { background: rgba(201,161,90,0.2); color: var(--gold); border-color: rgba(201,161,90,0.55); }
+  .legal-circle.legal, .legal-badge.legal { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-line); }
+  .legal-circle.not_legal, .legal-badge.not_legal { background: var(--surface-2); color: var(--muted); border-color: var(--line); }
+  .legal-circle.banned, .legal-badge.banned { background: var(--bad-bg); color: var(--bad); border-color: var(--bad-line); }
+  .legal-circle.restricted, .legal-badge.restricted { background: var(--warn-bg); color: var(--warn); border-color: var(--warn-line); }
 
-  .price-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
-  .price-heading {
-    font-family: "Shippori Mincho", serif;
-    font-size: 13px;
-    color: var(--parchment);
-    margin-bottom: 10px;
-  }
-  .price-grid { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .price-row { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; color: var(--muted); }
-  .price-row strong { color: var(--gold); font-size: 14px; }
-  .price-empty { font-size: 12px; color: var(--muted); }
-
-  .legal-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
-  .legal-heading {
-    font-family: "Shippori Mincho", serif;
-    font-size: 13px;
-    color: var(--parchment);
-    margin-bottom: 10px;
-  }
-  .legal-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 4px 12px;
-  }
-  .legal-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 12px;
-    padding: 3px 0;
-  }
-  .legal-name { color: var(--muted); }
-  .legal-row.legal .legal-name { color: var(--parchment); }
-  .legal-badge {
-    font-size: 10.5px;
-    border-radius: 3px;
-    padding: 2px 7px;
-    white-space: nowrap;
-    border: 1px solid transparent;
-  }
-  .legal-badge.legal { background: rgba(90,156,106,0.18); color: #7fc08f; border-color: rgba(90,156,106,0.4); }
-  .legal-badge.not_legal { background: rgba(148,141,168,0.12); color: var(--muted); border-color: var(--line); }
-  .legal-badge.banned { background: rgba(207,86,71,0.18); color: #e2796b; border-color: rgba(207,86,71,0.45); }
-  .legal-badge.restricted { background: rgba(201,161,90,0.18); color: var(--gold); border-color: rgba(201,161,90,0.45); }
-
-  .version-menu-wrap { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
-  .version-menu-heading {
-    font-family: "Shippori Mincho", serif;
-    font-size: 13px;
-    color: var(--parchment);
-    margin-bottom: 8px;
-  }
-  .version-panel {
-    width: 100%;
-    max-height: 560px;
-    overflow-y: auto;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 4px 12px;
-  }
-  .version-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 12.5px;
-  }
-  .version-row:last-child { border-bottom: none; }
-  .version-row.current { color: var(--gold); }
-  .version-label { flex: 1; min-width: 160px; }
-  .version-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .version-switch-btn {
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    color: var(--parchment);
-    border-radius: 3px;
-    padding: 4px 10px;
-    font-size: 11.5px;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .version-switch-btn:hover { border-color: var(--gold); }
-  .version-hareruya-link {
-    font-size: 11.5px;
-    color: var(--gold);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .version-hareruya-link:hover { text-decoration: underline; }
-
-  .external-links { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
-  .external-links-heading {
-    font-family: "Shippori Mincho", serif;
-    font-size: 13px;
-    color: var(--parchment);
-    margin-bottom: 6px;
-  }
-  .external-links-note { font-size: 11.5px; color: var(--muted); margin: 0 0 10px; line-height: 1.7; }
-  .external-link-btn {
-    display: inline-block;
-    background: var(--ink-surface-raised);
-    border: 1px solid var(--line);
-    color: var(--gold);
-    border-radius: 3px;
-    padding: 8px 14px;
-    font-size: 12.5px;
-    text-decoration: none;
-    margin: 0 8px 8px 0;
-  }
-  .external-link-btn:hover { border-color: var(--gold); }
-
-  .index-status { font-size: 11px; color: var(--muted); margin-top: 8px; }
-  .index-status code { color: var(--gold); font-family: "SFMono-Regular", Consolas, monospace; }
-
-  .dropdown-filter {
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    color: var(--parchment);
-    border-radius: 3px;
-    padding: 7px 10px;
-    font-family: inherit;
-    font-size: 12.5px;
-    width: 100%;
-    margin-bottom: 4px;
-    position: sticky;
-    top: 0;
-  }
-  .dropdown-filter::placeholder { color: var(--muted); }
-  .dropdown-filter:focus { outline: 1px solid var(--gold); outline-offset: 0; }
-
-  .translation-note {
-    font-size: 11.5px;
-    color: var(--muted);
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    border-left: 2px solid var(--gold);
-    border-radius: 3px;
-    padding: 8px 12px;
-    margin: 0 0 14px;
-    line-height: 1.8;
-  }
-  .translation-note code {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    color: var(--gold);
-    font-size: 11px;
-  }
-
-  .status-line { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .status-line .serif { font-size: 17px; color: var(--parchment); display: block; margin-bottom: 6px; }
+  .status-line { text-align: center; padding: 48px 20px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  .status-line .serif { display: block; font-size: 17px; color: var(--text); margin-bottom: 6px; }
   .spinner {
-    width: 22px; height: 22px; margin: 0 auto 14px;
-    border: 2px solid var(--line); border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    width: 22px; height: 22px; margin: 0 auto 14px; border: 2px solid var(--line); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .load-more-row { text-align: center; margin-top: 22px; }
+  .load-more-row { text-align: center; margin-top: 20px; }
   .load-more-btn {
-    background: var(--ink-surface);
-    border: 1px solid var(--line);
-    color: var(--gold);
-    border-radius: 3px;
-    padding: 10px 22px;
-    font-family: "Shippori Mincho", serif;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
+    background: var(--surface); border: 1px solid var(--line); color: var(--accent); border-radius: 6px;
+    padding: 10px 24px; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px;
   }
-  .load-more-btn:hover { border-color: var(--gold); }
+  .load-more-btn:hover { border-color: var(--accent); }
   .load-more-btn:disabled { opacity: 0.5; cursor: default; }
 
-  .attribution {
-    max-width: 1040px; margin: 40px auto 0; padding: 18px 20px 40px;
-    border-top: 1px solid var(--line);
-    font-size: 11px; color: var(--muted); line-height: 1.9;
+  /* ============================== card page ============================== */
+  .back-link { background: none; border: 0; padding: 0 0 12px; color: var(--accent); font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; }
+  .back-link:hover { text-decoration: underline; }
+  .card-page { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 26px; align-items: start; }
+  .cp-art { position: sticky; top: calc(var(--bar-h) + 14px); }
+  .cp-art img { width: 100%; display: block; border-radius: 4.75% / 3.5%; box-shadow: var(--shadow); background: var(--surface-2); aspect-ratio: 488 / 680; }
+  .cp-art .cp-noimg {
+    aspect-ratio: 488 / 680; border-radius: 4.75% / 3.5%; background: var(--surface-2); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px;
   }
-  .modal-thumb { width: 100%; }
-  .modal-thumb img { width: 100%; display: block; }
+  .cp-info { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 20px; min-width: 0; }
+  .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .cp-name { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
+  .cp-name-en { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+  .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
+  .pips { display: flex; gap: 3px; }
+  .pip {
+    width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; font-family: "Shippori Mincho", serif;
+  }
+  .pip.w { background: var(--mana-w); color: #241f16; } .pip.u { background: var(--mana-u); color: #eaf3fd; }
+  .pip.b { background: var(--mana-b); color: #17131c; } .pip.r { background: var(--mana-r); color: #2a0d09; }
+  .pip.g { background: var(--mana-g); color: #0c2011; } .pip.c { background: var(--mana-c); color: #17151d; }
+  .cp-typeline { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
+  .cp-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 16px; white-space: nowrap; }
+  .cp-text { font-size: 14.5px; line-height: 1.8; white-space: pre-line; margin: 10px 0 0; max-width: 62ch; }
+  .cp-flavor { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.7; margin: 10px 0 0; max-width: 62ch; }
+  .cp-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; color: var(--muted); margin-top: 12px; }
+  .cp-meta a { color: var(--accent); }
+  .cp-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .cp-heading, .price-heading, .legal-heading, .external-links-heading, .version-menu-heading {
+    font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; margin: 0 0 9px;
+  }
+  .price-heading small { font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+  .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 16px; align-items: baseline; font-size: 13px; }
+  .price-table .lbl { color: var(--muted); }
+  .price-table .usd { color: var(--accent); font-weight: 700; font-size: 17px; }
+  .price-table .jpy { font-size: 15px; font-weight: 500; }
+  .price-avg { font-size: 12.5px; margin-top: 8px; }
+  .price-avg strong { color: var(--accent); }
+  .price-sub { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.7; }
+  .price-empty { font-size: 13px; color: var(--muted); }
+  .link-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .external-link-btn {
+    display: inline-block; background: var(--field); border: 1px solid var(--line); color: var(--text);
+    border-radius: 6px; padding: 7px 14px; font-size: 13px; text-decoration: none;
+  }
+  .external-link-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .legal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 4px 16px; }
+  .legal-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; padding: 2px 0; }
+  .legal-name { color: var(--muted); }
+  .legal-row.legal .legal-name { color: var(--text); }
+  .legal-badge { font-size: 10.5px; border-radius: 4px; padding: 1px 7px; white-space: nowrap; border: 1px solid transparent; }
+
+  .versions { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 18px; }
+  .print-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 10px; }
+  .print-item {
+    background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 6px;
+    text-align: left; color: inherit; display: flex; flex-direction: column; gap: 3px;
+  }
+  .print-item:hover { border-color: var(--accent); }
+  .print-item.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .print-item img { width: 100%; aspect-ratio: 488 / 680; object-fit: cover; border-radius: 4.75% / 3.5%; background: var(--surface-2); display: block; }
+  .print-set { font-size: 11.5px; line-height: 1.4; }
+  .print-meta { font-size: 10.5px; color: var(--muted); }
+  .print-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+  .print-tag { font-size: 10px; padding: 0 5px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); }
+  .print-tag.ja { color: var(--accent); border-color: var(--warn-line); }
+  .print-price { font-size: 11.5px; color: var(--accent); font-weight: 700; }
+  .print-price .yen-short { color: var(--text); font-weight: 500; }
+
+  /* ============================= set browser ============================= */
+  .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .sets-toolbar input { flex: 1; min-width: 220px; padding: 10px 14px; }
+  .set-list { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 14px 12px; }
+  .set-year { font-family: "Shippori Mincho", serif; font-weight: 700; color: var(--accent); font-size: 15px; margin: 16px 0 4px; }
+  .set-row {
+    display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+    padding: 8px 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; border-radius: 6px;
+  }
+  .set-row:hover { background: var(--surface-2); }
+  .set-icon { width: 24px; height: 24px; filter: var(--icon-filter); }
+  .set-name-ja { font-size: 14px; font-weight: 500; }
+  .set-name-en { font-size: 11.5px; color: var(--muted); }
+  .set-meta { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; line-height: 1.5; }
+  .set-code { color: var(--accent); font-weight: 700; letter-spacing: 0.04em; }
+  .set-header {
+    display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
+  }
+  .set-header .set-icon { width: 38px; height: 38px; }
+  .set-header-title { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; line-height: 1.3; }
+  .set-header-sub { font-size: 12px; color: var(--muted); }
+  .set-lang-toggle { display: flex; gap: 6px; margin-left: auto; }
+  .set-lang-btn { background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font-size: 12.5px; }
+  .set-lang-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .set-lang-btn:disabled { opacity: 0.4; cursor: default; }
+  #setResultCount { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; margin: 0 0 12px; }
+  #setResultCount:empty { display: none; }
+
+  /* ================================ footer ================================ */
+  .attribution {
+    max-width: 1280px; margin: 8px auto 0; padding: 0 20px 36px;
+  }
+  .attribution-inner {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 16px; font-size: 11.5px; color: var(--muted); line-height: 1.9;
+  }
+  .attribution a { color: var(--accent); }
+
+  /* ============================ Yawgmoth mode ============================ */
+  #yawgBackdrop, #fallLayer { position: fixed; inset: 0; pointer-events: none; display: none; }
+  #yawgBackdrop {
+    z-index: -2; background-color: #050706; background-repeat: no-repeat;
+    background-position: center 16%; background-size: cover;
+  }
+  #fallLayer { z-index: -1; overflow: hidden; }
+  .yawg-window { display: none; }
+  html[data-theme="yawgmoth"] #yawgBackdrop,
+  html[data-theme="yawgmoth"] #fallLayer { display: block; }
+  /* a clear opening under the bar where the picture shows uncovered */
+  html[data-theme="yawgmoth"] .yawg-window { display: block; height: clamp(170px, 40vh, 400px); }
+  /* On card and set pages the content matters more: keep a smaller opening. */
+  html[data-theme="yawgmoth"][data-view="card"] .yawg-window,
+  html[data-theme="yawgmoth"][data-view="sets"] .yawg-window { height: clamp(90px, 16vh, 170px); }
+  .faller {
+    position: absolute; top: -14vh; left: var(--x); width: var(--size); height: var(--size);
+    font-size: var(--size); line-height: 1; text-align: center; opacity: var(--o, 0.9);
+    animation: fall var(--dur) linear var(--delay) infinite; will-change: transform; user-select: none;
+  }
+  .faller.glyph { color: #a9d86e; font-family: "Shippori Mincho", serif; font-weight: 800; }
+  @keyframes fall {
+    from { transform: translate3d(0, 0, 0) rotate(0deg); }
+    to   { transform: translate3d(var(--drift), 130vh, 0) rotate(var(--spin)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faller { animation: none; top: var(--rest); }
+    .spinner { animation-duration: 2.4s; }
+  }
+
+  /* ============================== responsive ============================== */
+  @media (max-width: 1080px) { .brand-sub { display: none; } }
+  @media (max-width: 900px) {
+    .search-layout { grid-template-columns: minmax(0, 1fr); }
+    .filter-open-btn { display: inline-block; }
+    /* filters become a slide-in drawer with its own scrolling */
+    .filter-panel {
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 60;
+      width: min(88vw, 360px); max-height: none; border-radius: 0; border: 0; border-right: 1px solid var(--line);
+      transform: translateX(-104%); transition: transform 0.2s ease; visibility: hidden;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+    html[data-theme="yawgmoth"] .filter-panel { background: #0d110f; }
+    .filter-panel.open { transform: none; visibility: visible; }
+    .filter-close { display: inline-block; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; font-size: 13px; }
+    .filter-backdrop.open { display: block; position: fixed; inset: 0; z-index: 55; background: var(--scrim); }
+    html.filters-open { overflow: hidden; }
+  }
+  @media (max-width: 820px) {
+    :root { --bar-h: 0px; }
+    .topbar { position: static; }
+    .topbar-inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "brand theme" "search search" "tabs tabs";
+      padding: 10px 16px 0; gap: 10px 12px;
+    }
+    .top-tabs { gap: 0; }
+    .top-tab { flex: 1; text-align: center; padding: 9px 8px; }
+    .wrap { padding: 14px 16px 32px; }
+    .attribution { padding: 0 16px 28px; }
+    .card-page { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .cp-art { position: static; max-width: 300px; margin: 0 auto; width: 100%; }
+    .cp-name { font-size: 21px; }
+    .cp-info { padding: 14px 15px 16px; }
+    .versions { padding: 14px 14px 16px; }
+  }
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .brand-mark { font-size: 26px; }
+    .theme-btn { padding: 5px 9px; }
+    .set-row { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; }
+    .print-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+  }
+  @media (prefers-reduced-motion: reduce) { .filter-panel { transition: none; } }
 </style>
 </head>
 <body>
 
-<nav class="top-nav">
-  <div class="top-nav-inner">
+<div id="yawgBackdrop" aria-hidden="true"></div>
+<div id="fallLayer" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
     <a class="brand" href="./" id="brandLink">
       <span class="brand-mark">悪知恵</span>
       <span class="brand-sub">日本語カード検索</span>
     </a>
+    <form class="search-form" id="searchForm" role="search" action="./">
+      <input type="text" id="searchInput" aria-label="カードを検索" placeholder="カード名・効果で検索（例：稲妻、1枚捨てる、飛行 絆魂）" autocomplete="off">
+      <button type="submit" id="searchBtn">検索</button>
+    </form>
     <div class="top-tabs" role="tablist">
       <button type="button" class="top-tab" id="tabSearch" role="tab" aria-selected="true">カード検索</button>
       <button type="button" class="top-tab" id="tabSets" role="tab" aria-selected="false">セット一覧</button>
     </div>
-  </div>
-</nav>
-
-<div id="searchView">
-<header>
-  <div class="header-inner">
-    <div class="search-row">
-      <input type="text" id="searchInput" placeholder='例：飛行 絆魂　／　効果:ダメージ 色:r　／　カード名でも検索できます' autocomplete="off">
-      <button id="searchBtn">検索</button>
-    </div>
-    <div class="syntax-row">
-      <button id="guideToggle" class="guide-toggle" aria-expanded="false">構文ガイド ▾</button>
-      <button id="filterToggle" class="guide-toggle" aria-expanded="false">絞り込み条件 ▾</button>
-      <span class="syntax-hint">日本語のキーワード能力・用語で検索できます（例：飛行、絆魂、果敢）</span>
+    <div class="theme-switch" role="group" aria-label="表示テーマ">
+      <button type="button" class="theme-btn" data-theme="light" aria-pressed="false">ライト</button>
+      <button type="button" class="theme-btn" data-theme="dark" aria-pressed="false">ダーク</button>
+      <button type="button" class="theme-btn" data-theme="yawgmoth" aria-pressed="false">ヨーグモス</button>
     </div>
   </div>
 </header>
 
-<div class="guide-panel" id="guidePanel">
-  <div class="guide-inner">
-    <table class="guide-table">
-      <tbody>
-        <tr><td><code>飛行</code></td><td>キーワード能力をそのまま日本語で検索（自動で <code>kw:flying</code> に変換）</td></tr>
-        <tr><td><code>絆魂 接死</code></td><td>複数指定すると「すべてを満たす」条件になります</td></tr>
-        <tr><td><code>効果:ダメージ</code></td><td>効果文を日本語で検索（<code>o:</code> も使えます）</td></tr>
-        <tr><td><code>色:r</code> / <code>c:r</code></td><td>色で絞り込む（<code>c:c</code>で無色）</td></tr>
-        <tr><td><code>タイプ:dragon</code></td><td>タイプで絞り込む（タイプ名は英語）</td></tr>
-        <tr><td><code>レアリティ:mythic</code></td><td>レアリティで絞り込む</td></tr>
-        <tr><td><code>マナ総量&gt;=4</code></td><td>マナ総量の比較（<code>cmc</code> も可）</td></tr>
-        <tr><td><code>パワー&gt;3</code> / <code>タフネス&lt;=2</code></td><td>パワー・タフネスの比較</td></tr>
-        <tr><td><code>-飛行</code></td><td>先頭に <code>-</code> を付けると除外</td></tr>
-        <tr><td><code>稲妻</code></td><td>カード名はそのまま入力（日本語名・英語名どちらでも）</td></tr>
-      </tbody>
-    </table>
-    <div class="guide-examples">
-      <span class="guide-examples-label">試してみる：</span>
-      <button class="example-pill" data-q="飛行 絆魂">飛行 絆魂</button>
-      <button class="example-pill" data-q="効果:ダメージ 色:r">効果:ダメージ 色:r</button>
-      <button class="example-pill" data-q="果敢 マナ総量&lt;=2">果敢 マナ総量&lt;=2</button>
-      <button class="example-pill" data-q="接死 -飛行">接死 -飛行</button>
-    </div>
-  </div>
-</div>
+<div class="yawg-window" aria-hidden="true"></div>
 
-<div class="filter-panel" id="filterPanel">
-  <div class="filter-panel-heading">絞り込み条件</div>
-  <div class="filters">
-  <div class="filter-group">
-    <span class="filter-label">色</span>
-    <button class="chip w" data-color="W" title="白">白</button>
-    <button class="chip u" data-color="U" title="青">青</button>
-    <button class="chip b" data-color="B" title="黒">黒</button>
-    <button class="chip r" data-color="R" title="赤">赤</button>
-    <button class="chip g" data-color="G" title="緑">緑</button>
-    <button class="chip c" data-color="C" title="無色">無</button>
-  </div>
+<div id="searchView" class="wrap">
+  <div class="search-layout">
 
-  <div class="filter-group type-dropdown-wrap" id="typeDropdownWrap">
-    <span class="filter-label">タイプ</span>
-    <button id="typeDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
-    <div id="typeDropdownPanel" class="dropdown-panel">
-      <label><input type="checkbox" class="type-check" value="creature"> クリーチャー <span class="en">Creature</span></label>
-      <label><input type="checkbox" class="type-check" value="instant"> インスタント <span class="en">Instant</span></label>
-      <label><input type="checkbox" class="type-check" value="sorcery"> ソーサリー <span class="en">Sorcery</span></label>
-      <label><input type="checkbox" class="type-check" value="artifact"> アーティファクト <span class="en">Artifact</span></label>
-      <label><input type="checkbox" class="type-check" value="enchantment"> エンチャント <span class="en">Enchantment</span></label>
-      <label><input type="checkbox" class="type-check" value="land"> 土地 <span class="en">Land</span></label>
-      <label><input type="checkbox" class="type-check" value="planeswalker"> プレインズウォーカー <span class="en">Planeswalker</span></label>
-      <label><input type="checkbox" class="type-check" value="battle"> バトル <span class="en">Battle</span></label>
-      <button class="dropdown-clear" id="typeDropdownClear" type="button">選択をクリア</button>
-    </div>
-  </div>
-
-  <div class="filter-group type-dropdown-wrap" id="creatureTypeDropdownWrap">
-    <span class="filter-label">クリーチャー・タイプ</span>
-    <button id="creatureTypeDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
-    <div id="creatureTypeDropdownPanel" class="dropdown-panel" style="max-height:260px; overflow-y:auto;"></div>
-  </div>
-
-  <div class="filter-group type-dropdown-wrap" id="keywordDropdownWrap">
-    <span class="filter-label">キーワード能力</span>
-    <button id="keywordDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
-    <div id="keywordDropdownPanel" class="dropdown-panel" style="max-height:280px; overflow-y:auto;"></div>
-  </div>
-
-  <div class="filter-group type-dropdown-wrap" id="manaDropdownWrap">
-    <span class="filter-label">マナ総量</span>
-    <button id="manaDropdownBtn" class="dropdown-btn" type="button" aria-expanded="false" aria-haspopup="true">すべて ▾</button>
-    <div id="manaDropdownPanel" class="dropdown-panel">
-      <label><input type="checkbox" class="mana-check" value="0"> 0</label>
-      <label><input type="checkbox" class="mana-check" value="1"> 1</label>
-      <label><input type="checkbox" class="mana-check" value="2"> 2</label>
-      <label><input type="checkbox" class="mana-check" value="3"> 3</label>
-      <label><input type="checkbox" class="mana-check" value="4"> 4</label>
-      <label><input type="checkbox" class="mana-check" value="5"> 5</label>
-      <label><input type="checkbox" class="mana-check" value="6"> 6</label>
-      <label><input type="checkbox" class="mana-check" value="7+"> 7以上</label>
-      <label><input type="checkbox" class="mana-check" value="X"> Xを含む</label>
-      <button class="dropdown-clear" id="manaDropdownClear" type="button">選択をクリア</button>
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <span class="filter-label">レアリティ</span>
-    <select id="raritySelect">
-      <option value="">すべて</option>
-      <option value="common">コモン</option>
-      <option value="uncommon">アンコモン</option>
-      <option value="rare">レア</option>
-      <option value="mythic">神話レア</option>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <span class="filter-label">並び替え</span>
-    <select id="sortSelect">
-      <option value="name">おすすめ順</option>
-      <option value="cmc_asc">マナ総量が低い順</option>
-      <option value="cmc_desc">マナ総量が高い順</option>
-      <option value="released_desc">発売日が新しい順</option>
-    </select>
-  </div>
-
-  <button class="clear-btn" id="clearBtn">条件をクリア</button>
-  </div>
-</div>
-
-<main>
-  <div class="translation-note" id="translationNote" style="display:none;"></div>
-  <p class="result-count" id="resultCount"></p>
-  <div class="grid" id="cardGrid"></div>
-  <div class="load-more-row" id="loadMoreRow" style="display:none;">
-    <button class="load-more-btn" id="loadMoreBtn">さらに読み込む</button>
-  </div>
-</main>
-
-
-</div>
-
-<div id="cardView" class="card-page-wrap" style="display:none;">
-  <div class="card-page-inner">
-    <button id="backToSearchBtn" class="back-link" type="button">← 戻る</button>
-    <div class="modal-card" id="cardViewCard"></div>
-  </div>
-</div>
-
-<div id="setsView" style="display:none;">
-  <div class="sets-wrap">
-    <div id="setListPanel">
-      <div class="sets-toolbar">
-        <input type="text" id="setFilter" placeholder="セット名・セットコードで絞り込み（例：モダンホライゾン、MH3）" autocomplete="off">
-        <select id="setTypeSelect">
-          <option value="main">エキスパンション・基本セット</option>
-          <option value="masters">マスターズ・特殊ドラフト</option>
-          <option value="commander">統率者</option>
-          <option value="other">その他（Secret Lair など）</option>
-          <option value="all">すべて</option>
-        </select>
+    <aside class="filter-panel" id="filterPanel" aria-label="絞り込み条件">
+      <div class="filter-head">
+        <h2>絞り込み</h2>
+        <span>
+          <button type="button" class="clear-btn" id="clearBtn">すべてクリア</button>
+          <button type="button" class="filter-close" id="filterClose">閉じる</button>
+        </span>
       </div>
-      <div id="setList" class="set-list"></div>
-    </div>
-    <div id="setDetailPanel" style="display:none;">
-      <button id="backToSetsBtn" class="back-link" type="button">← セット一覧に戻る</button>
-      <div id="setHeader" class="set-header"></div>
-      <p class="result-count" id="setResultCount"></p>
-      <div class="grid" id="setGrid"></div>
-      <div class="load-more-row" id="setLoadMoreRow" style="display:none;">
-        <button class="load-more-btn" id="setLoadMoreBtn" type="button">さらに読み込む</button>
+
+      <div class="filter-section">
+        <p class="filter-title">色</p>
+        <div class="chip-row">
+          <button type="button" class="chip w" data-color="W" title="白" aria-label="白">白</button>
+          <button type="button" class="chip u" data-color="U" title="青" aria-label="青">青</button>
+          <button type="button" class="chip b" data-color="B" title="黒" aria-label="黒">黒</button>
+          <button type="button" class="chip r" data-color="R" title="赤" aria-label="赤">赤</button>
+          <button type="button" class="chip g" data-color="G" title="緑" aria-label="緑">緑</button>
+          <button type="button" class="chip c" data-color="C" title="無色" aria-label="無色">無</button>
+        </div>
       </div>
+
+      <div class="filter-section">
+        <p class="filter-title">カード・タイプ</p>
+        <div class="chip-row">
+          <button type="button" class="opt-chip" data-group="types" data-value="creature">クリーチャー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="instant">インスタント</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="sorcery">ソーサリー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="artifact">アーティファクト</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="enchantment">エンチャント</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="land">土地</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="planeswalker">プレインズウォーカー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="battle">バトル</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-title">マナ総量</p>
+        <div class="chip-row">
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="0">0</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="1">1</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="2">2</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="3">3</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="4">4</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="5">5</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="6">6</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="7+">7以上</button>
+          <button type="button" class="opt-chip" data-group="manaCosts" data-value="X">Xを含む</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-title">レアリティ</p>
+        <div class="chip-row">
+          <button type="button" class="opt-chip" data-group="rarity" data-value="common">コモン</button>
+          <button type="button" class="opt-chip" data-group="rarity" data-value="uncommon">アンコモン</button>
+          <button type="button" class="opt-chip" data-group="rarity" data-value="rare">レア</button>
+          <button type="button" class="opt-chip" data-group="rarity" data-value="mythic">神話レア</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-title">クリーチャー・タイプ</p>
+        <input type="text" class="list-filter" id="creatureTypeFilter" placeholder="タイプ名で探す（例：ドラゴン、elf）" autocomplete="off" aria-label="クリーチャー・タイプを探す">
+        <div class="check-list" id="creatureTypeList" data-group="creatureTypes"></div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-title">キーワード能力</p>
+        <input type="text" class="list-filter" id="keywordFilter" placeholder="能力名で探す（例：飛行、flash）" autocomplete="off" aria-label="キーワード能力を探す">
+        <div class="check-list" id="keywordList" data-group="keywords"></div>
+      </div>
+    </aside>
+    <div class="filter-backdrop" id="filterBackdrop"></div>
+
+    <main>
+      <div class="toolbar">
+        <p class="result-count" id="resultCount"></p>
+        <div class="toolbar-right">
+          <button type="button" class="filter-open-btn" id="filterOpenBtn">絞り込み</button>
+          <select id="sortSelect" aria-label="並び替え">
+            <option value="name">おすすめ順</option>
+            <option value="cmc_asc">マナ総量が低い順</option>
+            <option value="cmc_desc">マナ総量が高い順</option>
+            <option value="released_desc">発売日が新しい順</option>
+          </select>
+        </div>
+      </div>
+      <div class="active-filters" id="activeFilters"></div>
+
+      <details class="guide" id="guidePanel">
+        <summary>検索のヒント（日本語のまま使える構文）</summary>
+        <div class="guide-inner">
+          <table class="guide-table">
+            <tbody>
+              <tr><td><code>稲妻</code></td><td>カード名（日本語名・英語名どちらでも）</td></tr>
+              <tr><td><code>1枚捨てる</code></td><td>効果文をそのまま検索</td></tr>
+              <tr><td><code>飛行</code></td><td>キーワード能力</td></tr>
+              <tr><td><code>絆魂 接死</code></td><td>複数の語を並べると、すべてを満たすカード</td></tr>
+              <tr><td><code>効果:ダメージ</code></td><td>効果文だけを対象に検索（<code>o:</code> も可）</td></tr>
+              <tr><td><code>色:r</code></td><td>色（w・u・b・r・g、<code>色:c</code> で無色）</td></tr>
+              <tr><td><code>タイプ:ドラゴン</code></td><td>タイプ（<code>t:</code> も可）</td></tr>
+              <tr><td><code>マナ総量&gt;=4</code></td><td>マナ総量の比較（<code>cmc</code> も可）</td></tr>
+              <tr><td><code>パワー&gt;3</code></td><td>パワー・タフネスの比較（<code>タフネス&lt;=2</code>）</td></tr>
+              <tr><td><code>-飛行</code></td><td>先頭に <code>-</code> を付けると除外</td></tr>
+            </tbody>
+          </table>
+          <div class="guide-examples">
+            試してみる
+            <button type="button" class="example-pill" data-q="飛行 絆魂">飛行 絆魂</button>
+            <button type="button" class="example-pill" data-q="効果:ダメージ 色:r">効果:ダメージ 色:r</button>
+            <button type="button" class="example-pill" data-q="果敢 マナ総量&lt;=2">果敢 マナ総量&lt;=2</button>
+            <button type="button" class="example-pill" data-q="接死 -飛行">接死 -飛行</button>
+          </div>
+        </div>
+      </details>
+
+      <div class="translation-note" id="translationNote" style="display:none;"></div>
+      <div class="grid" id="cardGrid"></div>
+      <div class="load-more-row" id="loadMoreRow" style="display:none;">
+        <button type="button" class="load-more-btn" id="loadMoreBtn">さらに読み込む</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="cardView" class="wrap" style="display:none;">
+  <button id="backToSearchBtn" class="back-link" type="button">← 戻る</button>
+  <div id="cardViewCard"></div>
+</div>
+
+<div id="setsView" class="wrap" style="display:none;">
+  <div id="setListPanel">
+    <div class="sets-toolbar">
+      <input type="text" id="setFilter" placeholder="セット名・セットコードで探す（例：モダンホライゾン、MH3）" autocomplete="off" aria-label="セットを探す">
+      <select id="setTypeSelect" aria-label="セットの種類">
+        <option value="main">エキスパンション・基本セット</option>
+        <option value="masters">マスターズ・特殊ドラフト</option>
+        <option value="commander">統率者</option>
+        <option value="other">その他（Secret Lair など）</option>
+        <option value="all">すべて</option>
+      </select>
+    </div>
+    <div id="setList" class="set-list"></div>
+  </div>
+  <div id="setDetailPanel" style="display:none;">
+    <button id="backToSetsBtn" class="back-link" type="button">← セット一覧に戻る</button>
+    <div id="setHeader" class="set-header"></div>
+    <p class="result-count" id="setResultCount"></p>
+    <div class="grid" id="setGrid"></div>
+    <div class="load-more-row" id="setLoadMoreRow" style="display:none;">
+      <button class="load-more-btn" id="setLoadMoreBtn" type="button">さらに読み込む</button>
     </div>
   </div>
 </div>
 
-<div class="attribution">
-  This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-  カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）<br>
-  <span id="dbCount"></span>
-</div>
+<footer class="attribution">
+  <div class="attribution-inner">
+    This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
+    カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）<br>
+    <span id="dbCount"></span>
+    <span id="yawgCredit"></span>
+  </div>
+</footer>
 
 <script>
 const RARITY_LABEL = { common: 'コモン', uncommon: 'アンコモン', rare: 'レア', mythic: '神話レア', special: 'スペシャル', bonus: 'ボーナス' };
@@ -1466,7 +1191,7 @@ function legalityHtml(legalities) {
         <span class="legal-badge ${status}">${LEGALITY_JA[status] || status}</span>
       </div>`;
     }).join('');
-  return rows ? `<div class="legal-section">
+  return rows ? `<div class="legal-section cp-section">
       <div class="legal-heading">フォーマット適正</div>
       <div class="legal-grid">${rows}</div>
     </div>` : '';
@@ -1884,8 +1609,8 @@ function priceHtml(card) {
     ? `<div class="price-table">${rows.map(([label, usd]) =>
         `<span class="lbl">${label}</span><span class="usd">$${usd}</span><span class="jpy" data-usd="${usd}">${yenFor(usd) ? '約' + yenFor(usd) : ''}</span>`).join('')}</div>`
     : `<div class="price-empty">この版の価格情報はありません</div>`;
-  return `<div class="price-section">
-    <div class="price-heading">価格（TCGplayer 市場価格＝直近の取引の平均）</div>
+  return `<div class="price-section cp-section">
+    <div class="price-heading">価格<small>TCGplayer 市場価格（直近の取引の平均）</small></div>
     ${body}
     <div class="price-avg" id="priceAvg">${card._avgHtml || ''}</div>
     <div class="price-sub">
@@ -1896,55 +1621,80 @@ function priceHtml(card) {
   </div>`;
 }
 
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Both faces for double-faced cards, otherwise the single image.
+function faceImages(card) {
+  if (card.image_uris) return [card.image_uris.normal || card.image_uris.large].filter(Boolean);
+  return (card.card_faces || []).map(f => f.image_uris && (f.image_uris.normal || f.image_uris.large)).filter(Boolean);
+}
+
 function renderCardViewContent(card) {
   const nameJa = displayNameJa(card);
   const typeJa = displayTypeJa(card);
   const oracleJa = displayTextJa(card);
-  const colors = getColors(card);
-  const img = getImage(card);
-  const pt = (card.power !== undefined) ? `<span class="modal-pt">${card.power}/${card.toughness}</span>`
-    : (card.loyalty !== undefined ? `<span class="modal-pt">忠誠度 ${card.loyalty}</span>` : '');
+  const images = faceImages(card);
+  const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${card.power}/${card.toughness}</span>`
+    : (card.loyalty !== undefined ? `<span class="cp-pt">忠誠度 ${card.loyalty}</span>` : '');
+  const en = englishName(card);
+  const shopLinks = [
+    ['晴れる屋', hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)],
+  ].filter(([, url]) => url);
+  const deckLinks = [['MTGDecks', mtgDecksUrl(card)], ['MTGGoldfish', goldfishUrl(card)]].filter(([, url]) => url);
+  const linkRow = links => links.map(([label, url]) =>
+    `<a class="external-link-btn" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('');
 
   document.getElementById('cardViewCard').innerHTML = `
-    ${img ? `<div class="modal-thumb"><img src="${img}" alt="${nameJa}"></div>` : `<div class="modal-color-bar" style="${colorBarStyle(colors)}"></div>`}
-    <div class="modal-body">
-      <h2 class="modal-name-ja">${nameJa}</h2>
-      <p class="modal-name-en">${card.name}</p>
-      <div class="modal-row">
-        <span class="pips">${renderPips(card.mana_cost)}</span>
-        ${pt}
+    <div class="card-page">
+      <div class="cp-art">
+        ${images.length ? images.map(src => `<img src="${esc(src)}" alt="${esc(nameJa)}">`).join('<div style="height:10px"></div>')
+                        : `<div class="cp-noimg">画像なし</div>`}
       </div>
-      <p class="modal-type">${typeJa}</p>
-      <div class="modal-oracle">${oracleJa || '（効果テキストなし）'}</div>
-      ${card.flavor_text ? `<p class="modal-flavor">${card.flavor_text}</p>` : ''}
-      ${priceHtml(card)}
-      ${legalityHtml(card.legalities)}
-      <div class="modal-meta">
-        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity}</span>
-        <span>${card.set_name || ''}（${card.set ? card.set.toUpperCase() : ''}）</span>
+      <div class="cp-info">
+        <div class="cp-title-row">
+          <div>
+            <h1 class="cp-name">${nameJa}</h1>
+            <p class="cp-name-en">${card.name || ''}</p>
+          </div>
+          <div class="cp-cost"><span class="pips">${renderPips(card.mana_cost)}</span></div>
+        </div>
+        <div class="cp-typeline"><span>${typeJa}</span>${pt}</div>
+        <div class="cp-text">${oracleJa || '（効果テキストなし）'}</div>
+        ${card.flavor_text ? `<p class="cp-flavor">${card.flavor_text}</p>` : ''}
+        <div class="cp-meta">
+          <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${RARITY_LABEL[card.rarity] || card.rarity || ''}</span>
+          ${card.set ? `<a href="?set=${encodeURIComponent(card.set)}" class="cp-set-link" data-set="${esc(card.set)}">${card.set_name || card.set.toUpperCase()}（${card.set.toUpperCase()}）</a>` : ''}
+          ${card.collector_number ? `<span>#${card.collector_number}</span>` : ''}
+          ${card.scryfall_uri ? `<a href="${esc(card.scryfall_uri)}" target="_blank" rel="noopener">Scryfall ↗</a>` : ''}
+        </div>
+        ${priceHtml(card)}
+        ${shopLinks.length ? `<div class="cp-section external-links">
+          <div class="external-links-heading">ショップで探す</div>
+          <div class="link-row">${linkRow(shopLinks)}</div>
+        </div>` : ''}
+        ${deckLinks.length ? `<div class="cp-section external-links">
+          <div class="external-links-heading">大会デッキでの使用状況</div>
+          <div class="link-row">${linkRow(deckLinks)}</div>
+        </div>` : ''}
+        ${legalityHtml(card.legalities)}
       </div>
-
-      <div class="version-menu-wrap" id="versionMenuWrap">
-        <div class="version-menu-heading" id="versionMenuHeading">すべての版・仕様を確認中…</div>
-        <div class="version-panel" id="versionMenuPanel"></div>
-      </div>
-
-      <p style="margin-top:14px;">
-        <a href="${card.scryfall_uri}" target="_blank" rel="noopener" style="color:var(--gold); font-size:12px;">Scryfallでこのカードを見る ↗</a>
-      </p>
-      <div class="external-links">
-        <div class="external-links-heading">ショップで探す</div>
-        <a class="external-link-btn" href="${hareruyaUrl(card)}" target="_blank" rel="noopener">晴れる屋 ↗</a>
-        <a class="external-link-btn" href="${bigMagicUrl(frontFaceName(card))}" target="_blank" rel="noopener">BIG MAGIC ↗</a>
-        <a class="external-link-btn" href="${tokyoMtgUrl(frontFaceName(card))}" target="_blank" rel="noopener">Tokyo MTG ↗</a>
-        <div class="external-links-heading" style="margin-top:8px;">大会デッキでの使用状況</div>
-        <a class="external-link-btn" href="${mtgDecksUrl(card)}" target="_blank" rel="noopener">MTGDecks ↗</a>
-        <a class="external-link-btn" id="goldfishLink" href="${goldfishUrl(card)}" target="_blank" rel="noopener">MTGGoldfish ↗</a>
-      </div>
-    </div>`;
+    </div>
+    <section class="versions" id="versionsBox">
+      <div class="version-menu-heading" id="versionMenuHeading">すべての版・仕様を確認中…</div>
+      <div class="version-panel" id="versionMenuPanel"></div>
+    </section>`;
   document.title = `${nameJa} — 悪知恵`;
+
+  const setLink = document.querySelector('#cardViewCard .cp-set-link');
+  if (setLink) setLink.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    e.preventDefault();
+    goTo(`?set=${encodeURIComponent(setLink.dataset.set)}`);
+  });
+
   loadPrintings(card);
-  loadGoldfishLink(card);
   if (!card._enPrices && card.lang && card.lang !== 'en' && !effectivePrices(card).usd) {
     // prices for a Japanese printing come from its English counterpart
     ensureEnglishPrices([card]).then(() => {
@@ -1956,74 +1706,58 @@ function renderCardViewContent(card) {
   }
 }
 
-// Hareruya's search only matches English names on its English site and
-// Japanese names on its Japanese site - sending an English name to /ja/
-// returns "no products found". So: Japanese name -> /ja/, else English -> /en/.
+// ---- links to shops and deck sites ------------------------------------------
+// The card's English name (front face only for double-faced cards). Deck
+// sites and most shops are indexed by English name, so this must never be a
+// Japanese name: the card database's English name is used as a cross-check
+// and anything containing kana/kanji is rejected.
+function englishName(card) {
+  const row = dbRowFor(card);
+  const face = card.card_faces && card.card_faces[0] && card.card_faces[0].name;
+  const candidates = [face, card.name, row && row.name_en]
+    .map(n => String(n || '').split(' // ')[0].trim());
+  return candidates.find(n => /[A-Za-z]/.test(n) && !/[぀-ヿ㐀-鿿]/.test(n)) || '';
+}
+
+// Hareruya's search only matches Japanese names on its Japanese site and
+// English names on its English site.
 function hareruyaUrl(card) {
   const ja = japaneseFrontName(card);
-  return ja
-    ? `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(ja)}`
-    : `https://www.hareruyamtg.com/en/products/search?product=${encodeURIComponent(frontFaceName(card))}`;
+  if (ja) return `https://www.hareruyamtg.com/ja/products/search?product=${encodeURIComponent(ja)}`;
+  const en = englishName(card);
+  return en ? `https://www.hareruyamtg.com/en/products/search?product=${encodeURIComponent(en)}` : '';
 }
 
-// Front face's English name ("Fable of the Mirror-Breaker", not the full
-// "A // B" name) - what store and deck sites use to identify a card.
-function frontFaceName(card) {
-  return (card.card_faces && card.card_faces[0] && card.card_faces[0].name) || String(card.name || '').split(' // ')[0];
+// BIG MAGIC (Bigweb): its product search takes a `name` and matches English
+// card names (each product carries both the English and Japanese name).
+function bigMagicUrl(card) {
+  const name = englishName(card) || japaneseFrontName(card);
+  return name ? `https://www.bigweb.co.jp/ja/products/mtg/list?name=${encodeURIComponent(name)}` : '';
 }
 
-// Lowercase, accents and punctuation dropped, spaces -> hyphens:
-// "Ragavan, Nimble Pilferer" -> "ragavan-nimble-pilferer".
-function urlSlug(text) {
-  return String(text || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase().replace(/['’.,:!?()"&]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+// Tokyo MTG's own card search.
+function tokyoMtgUrl(card) {
+  const en = englishName(card);
+  return en ? `https://tokyomtg.com/cardpage.html?p=q&query=${encodeURIComponent(en)}` : '';
 }
 
-// MTGDecks card page, e.g. /prices/ragavan-nimble-pilferer - shows the
-// card's latest tournament decks and the archetypes playing it.
+// MTGDecks card pages: /prices/<name>, lowercase, accents dropped, and every
+// run of other characters (spaces, commas, apostrophes) becomes one hyphen:
+// "Urza's Saga" -> urza-s-saga, "Lórien Revealed" -> lorien-revealed.
+function mtgDecksSlug(name) {
+  return String(name || '').normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 function mtgDecksUrl(card) {
-  return `https://www.mtgdecks.net/prices/${urlSlug(frontFaceName(card))}`;
+  const slug = mtgDecksSlug(englishName(card));
+  return slug ? `https://mtgdecks.net/prices/${slug}` : '';
 }
 
-// MTGGoldfish card pages are /price/<set>/<collector number>/<card>, e.g.
-// /price/multiverse-legends/21/ragavan-nimble-pilferer, and list the decks
-// using the card. The set part has to match MTGGoldfish's own naming, which
-// lines up with Scryfall's for regular sets but not for many promos and
-// Japan-only printings - so the link starts as a search scoped to
-// MTGGoldfish card pages, then upgrades to the direct page once the card's
-// newest regular English printing has been looked up (see loadGoldfishLink).
-function goldfishPriceUrl(printing) {
-  return `https://www.mtggoldfish.com/price/${urlSlug(printing.set_name)}/${encodeURIComponent(printing.collector_number)}/${urlSlug(frontFaceName(printing))}`;
-}
+// MTGGoldfish's site search (lists the card's printings; each links to the
+// page with prices and the decks using it).
 function goldfishUrl(card) {
-  return googleSiteSearchUrl('mtggoldfish.com/price', frontFaceName(card));
-}
-async function loadGoldfishLink(card) {
-  const link = document.getElementById('goldfishLink');
-  if (!link || !card.oracle_id) return;
-  try {
-    const q = `oracleid:${card.oracle_id} lang:en (st:expansion or st:core or st:masters or st:draft_innovation or st:commander) not:promo`;
-    const res = await fetch(`https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints', order: 'released', dir: 'desc' })}`,
-      { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) return;
-    const data = await res.json();
-    const printing = (data.data || [])[0];
-    const current = document.getElementById('goldfishLink');
-    if (printing && current === link) link.href = goldfishPriceUrl(printing);
-  } catch (err) { /* keep the search link */ }
-}
-
-// BIG MAGIC's and Tokyo MTG's own search URLs couldn't be confirmed, so these
-// open a search scoped to the store's domain, which reliably lands on the
-// card's product page.
-function googleSiteSearchUrl(domain, englishName) {
-  return `https://www.google.com/search?q=${encodeURIComponent(`site:${domain} "${englishName}"`)}`;
-}
-function bigMagicUrl(englishName) {
-  return googleSiteSearchUrl('mtg.bigweb.co.jp', englishName);
-}
-function tokyoMtgUrl(englishName) {
-  return googleSiteSearchUrl('tokyomtg.com', englishName);
+  const en = englishName(card);
+  return en ? `https://www.mtggoldfish.com/q?query_string=${encodeURIComponent(en).replace(/%20/g, '+')}` : '';
 }
 
 async function fetchAllPages(url, maxPages = 3) {
@@ -2057,7 +1791,8 @@ function printsSearchUrl(card, extra) {
 async function loadPrintings(card) {
   const heading = document.getElementById('versionMenuHeading');
   const panel = document.getElementById('versionMenuPanel');
-  if (!heading || !card.oracle_id) { if (heading) heading.style.display = 'none'; return; }
+  const hideBox = () => { const b = document.getElementById('versionsBox'); if (b) b.style.display = 'none'; };
+  if (!heading || !card.oracle_id) { hideBox(); return; }
 
   try {
     const [defaultPrints, jaPrints] = await Promise.all([
@@ -2080,7 +1815,7 @@ async function loadPrintings(card) {
       return { display, priceCard: e.en || display };
     }).sort((a, b) => (b.display.released_at || '').localeCompare(a.display.released_at || ''));
 
-    if (!entries.length) { heading.style.display = 'none'; return; }
+    if (!entries.length) { hideBox(); return; }
 
     // average non-foil market price across printings (serialized excluded)
     const usdValues = entries
@@ -2121,7 +1856,7 @@ async function loadPrintings(card) {
       });
     });
   } catch (err) {
-    heading.style.display = 'none';
+    hideBox();
   }
 }
 
@@ -2129,15 +1864,22 @@ function getCardIdFromUrl() {
   return new URLSearchParams(location.search).get('card');
 }
 function showView(name) {
+  document.documentElement.dataset.view = name;
   document.getElementById('searchView').style.display = name === 'search' ? '' : 'none';
   document.getElementById('cardView').style.display = name === 'card' ? '' : 'none';
   document.getElementById('setsView').style.display = name === 'sets' ? '' : 'none';
+  if (name !== 'search') setFilterDrawer(false);
   if (name !== 'card') {
     document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
     document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
   }
 }
 function showSearchView() { showView('search'); }
+function setFilterDrawer(open) {
+  document.getElementById('filterPanel').classList.toggle('open', open);
+  document.getElementById('filterBackdrop').classList.toggle('open', open);
+  document.documentElement.classList.toggle('filters-open', open);
+}
 function showCardView() { showView('card'); window.scrollTo(0, 0); }
 async function fetchSingleCard(id) {
   const res = await fetch(`https://api.scryfall.com/cards/${id}`, { headers: { 'Accept': 'application/json' } });
@@ -2228,7 +1970,7 @@ function renderSetList() {
     html += `<a class="set-row" href="?set=${encodeURIComponent(st.code)}" data-code="${st.code}">
       <img class="set-icon" src="${st.icon_svg_uri}" alt="" loading="lazy">
       <div class="set-names"><div class="set-name-ja">${ja || st.name}</div>${ja ? `<div class="set-name-en">${st.name}</div>` : ''}</div>
-      <div class="set-meta"><code>${st.code.toUpperCase()}</code>・${st.released_at || ''}<br>${st.card_count}枚</div>
+      <div class="set-meta"><span class="set-code">${st.code.toUpperCase()}</span>・${st.released_at || ''}<br>${st.card_count}枚</div>
     </a>`;
   });
   listEl.innerHTML = html;
@@ -2598,178 +2340,288 @@ loadMoreBtn.addEventListener('click', async () => {
 cameFromSearch = false;
 applyRoute(routeFromUrl());
 
-// ---- controls ----
-document.getElementById('searchBtn').addEventListener('click', () => { state.query = document.getElementById('searchInput').value; runSearch(); });
-document.getElementById('searchInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { state.query = e.target.value; runSearch(); }
-});
-document.getElementById('guideToggle').addEventListener('click', () => {
-  const panel = document.getElementById('guidePanel');
-  const btn = document.getElementById('guideToggle');
-  const isOpen = panel.classList.toggle('open');
-  btn.setAttribute('aria-expanded', String(isOpen));
-  btn.textContent = isOpen ? '構文ガイド ▴' : '構文ガイド ▾';
-});
-document.getElementById('filterToggle').addEventListener('click', () => {
-  const panel = document.getElementById('filterPanel');
-  const btn = document.getElementById('filterToggle');
-  const isOpen = panel.classList.toggle('open');
-  btn.setAttribute('aria-expanded', String(isOpen));
-  btn.textContent = isOpen ? '絞り込み条件 ▴' : '絞り込み条件 ▾';
+// ---- controls ---------------------------------------------------------------
+const searchInput = document.getElementById('searchInput');
+
+function hasActiveFilters() {
+  return !!(state.colors.size || state.types.size || state.creatureTypes.size ||
+            state.keywords.size || state.manaCosts.size || state.rarity);
+}
+// Search when there is something to search for, otherwise show random cards.
+function refreshResults() {
+  if (!state.query.trim() && !hasActiveFilters()) {
+    lastTranslationNotes = [];
+    document.getElementById('translationNote').style.display = 'none';
+    loadRandomCards();
+  } else {
+    runSearch();
+  }
+}
+
+// The search box lives in the top bar, so it works from any page.
+document.getElementById('searchForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  state.query = searchInput.value;
+  if (routeFromUrl().view !== 'search') {
+    history.pushState({}, '', location.pathname);
+    showView('search');
+    document.title = '悪知恵 — 日本語カード検索';
+    window.scrollTo(0, 0);
+  }
+  refreshResults();
 });
 document.querySelectorAll('.example-pill').forEach(pill => {
   pill.addEventListener('click', () => {
-    const q = pill.dataset.q;
-    document.getElementById('searchInput').value = q;
-    state.query = q;
-    runSearch();
+    searchInput.value = pill.dataset.q;
+    state.query = pill.dataset.q;
+    refreshResults();
   });
 });
-document.querySelectorAll('.chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const c = chip.dataset.color;
-    if (state.colors.has(c)) { state.colors.delete(c); chip.dataset.active = 'false'; }
-    else { state.colors.add(c); chip.dataset.active = 'true'; }
-    runSearch();
-  });
+document.getElementById('sortSelect').addEventListener('change', (e) => {
+  state.sort = e.target.value;
+  if (state.query.trim() || hasActiveFilters()) runSearch();   // random cards have no order
 });
-document.getElementById('raritySelect').addEventListener('change', (e) => { state.rarity = e.target.value; runSearch(); });
-document.getElementById('sortSelect').addEventListener('change', (e) => { state.sort = e.target.value; runSearch(); });
 
-// --- generic checkbox-dropdown wiring ---
-function wireDropdown({ btnId, panelId, wrapId, stateSet, checkboxSelector, allLabel = 'すべて', countSuffix = '選択中' }) {
-  const btn = document.getElementById(btnId);
-  const panel = document.getElementById(panelId);
-  const wrap = document.getElementById(wrapId);
-  function updateLabel() {
-    const n = stateSet.size;
-    btn.textContent = (n === 0 ? allLabel : `${n}${countSuffix}`) + ' ▾';
-  }
-  function close() { panel.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.querySelectorAll('.dropdown-panel.open').forEach(p => { if (p !== panel) p.classList.remove('open'); });
-    const isOpen = panel.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(isOpen));
-  });
-  function bindCheckboxes() {
-    panel.querySelectorAll(checkboxSelector).forEach(cb => {
-      cb.addEventListener('change', () => {
-        if (cb.checked) stateSet.add(cb.value); else stateSet.delete(cb.value);
-        updateLabel();
-        runSearch();
-      });
-    });
-  }
-  bindCheckboxes();
-  const clearBtn = panel.querySelector('.dropdown-clear');
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      stateSet.clear();
-      panel.querySelectorAll(checkboxSelector).forEach(cb => cb.checked = false);
-      updateLabel();
-      runSearch();
-    });
-  }
-  document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) close(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  return { updateLabel, close, rebind: () => { bindCheckboxes(); updateLabel(); } };
+// ---- filters ----------------------------------------------------------------
+// Everything sits in an always-open side panel (a slide-in drawer on phones),
+// so no menu can be cut off. Long lists scroll inside their own box and have
+// a search field.
+const COLOR_LABEL = { W: '白', U: '青', B: '黒', R: '赤', G: '緑', C: '無色' };
+const KEYWORD_JA_BY_EN = {};
+Object.entries(JA_KEYWORDS).forEach(([ja, en]) => { if (!KEYWORD_JA_BY_EN[en]) KEYWORD_JA_BY_EN[en] = ja; });
+const chipLabel = (group, value) => {
+  const el = [...document.querySelectorAll(`.opt-chip[data-group="${group}"]`)].find(b => b.dataset.value === value);
+  return el ? el.textContent.trim() : value;
+};
+const titleCase = t => String(t).replace(/(^|[\s-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+
+function toggleInSet(set, value) { if (set.has(value)) set.delete(value); else set.add(value); }
+
+function activeFilterItems() {
+  const items = [];
+  state.colors.forEach(v => items.push({ group: 'colors', value: v, label: `色：${COLOR_LABEL[v] || v}` }));
+  state.types.forEach(v => items.push({ group: 'types', value: v, label: chipLabel('types', v) }));
+  state.manaCosts.forEach(v => items.push({ group: 'manaCosts', value: v, label: `マナ総量 ${chipLabel('manaCosts', v)}` }));
+  if (state.rarity) items.push({ group: 'rarity', value: state.rarity, label: chipLabel('rarity', state.rarity) });
+  state.creatureTypes.forEach(v => items.push({ group: 'creatureTypes', value: v, label: CREATURE_TYPE_JA[v] || titleCase(v) }));
+  state.keywords.forEach(v => items.push({ group: 'keywords', value: v, label: KEYWORD_JA_BY_EN[v] || titleCase(v) }));
+  return items;
 }
 
-const typeDropdown = wireDropdown({
-  btnId: 'typeDropdownBtn', panelId: 'typeDropdownPanel', wrapId: 'typeDropdownWrap',
-  stateSet: state.types, checkboxSelector: '.type-check', countSuffix: '種類選択中',
-});
-
-const creatureTypePanel = document.getElementById('creatureTypeDropdownPanel');
-
-// Render a list of creature types into the panel, optionally filtered.
-function renderCreatureTypes(types, filter = '') {
-  const f = filter.trim().toLowerCase();
-  const shown = types.filter(t => {
-    if (!f) return true;
-    const ja = CREATURE_TYPE_JA[t.toLowerCase()] || '';
-    return t.toLowerCase().includes(f) || ja.includes(filter.trim());
+// Makes every filter control, pill and counter reflect `state`.
+function syncFilterUI() {
+  document.querySelectorAll('.chip[data-color]').forEach(c => {
+    const on = state.colors.has(c.dataset.color);
+    c.dataset.active = String(on);
+    c.setAttribute('aria-pressed', String(on));
   });
-  const rows = shown.map(t => {
-    const val = t.toLowerCase();
-    const ja = CREATURE_TYPE_JA[val];
-    const checked = state.creatureTypes.has(val) ? ' checked' : '';
-    const label = ja ? `${ja} <span class="en">${t}</span>` : `${t}`;
-    return `<label><input type="checkbox" class="creature-type-check" value="${val}"${checked}> ${label}</label>`;
-  }).join('');
-  creatureTypePanel.innerHTML =
-    `<input type="text" id="creatureTypeFilter" class="dropdown-filter" placeholder="絞り込み（日本語・英語）" value="${filter.replace(/"/g,'&quot;')}" autocomplete="off">`
-    + (rows || `<div style="font-size:12px;color:var(--muted);padding:6px 0;">該当なし</div>`)
-    + `<button class="dropdown-clear" id="creatureTypeDropdownClear" type="button">選択をクリア</button>`;
-
-  const filterInput = document.getElementById('creatureTypeFilter');
-  filterInput.addEventListener('input', (e) => {
-    const pos = e.target.selectionStart;
-    renderCreatureTypes(types, e.target.value);
-    const again = document.getElementById('creatureTypeFilter');
-    again.focus();
-    again.setSelectionRange(pos, pos);
+  document.querySelectorAll('.opt-chip').forEach(b => {
+    const { group, value } = b.dataset;
+    const on = group === 'rarity' ? state.rarity === value : state[group].has(value);
+    b.setAttribute('aria-pressed', String(on));
   });
-  filterInput.addEventListener('click', (e) => e.stopPropagation());
-  creatureTypeDropdown.rebind();
+  document.querySelectorAll('.check-list').forEach(list => {
+    const set = state[list.dataset.group];
+    list.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = set.has(cb.value); });
+  });
+  const items = activeFilterItems();
+  document.getElementById('activeFilters').innerHTML = items.map(it =>
+    `<button type="button" class="filter-pill" data-group="${it.group}" data-value="${esc(it.value)}" title="この条件を外す">${esc(it.label)}<span class="x" aria-hidden="true">×</span></button>`).join('');
+  document.getElementById('filterOpenBtn').textContent = items.length ? `絞り込み（${items.length}）` : '絞り込み';
+  document.getElementById('clearBtn').style.visibility = items.length ? 'visible' : 'hidden';
 }
 
-let ALL_CREATURE_TYPES = Object.keys(CREATURE_TYPE_JA);
+function removeFilter(group, value) {
+  if (group === 'rarity') state.rarity = '';
+  else state[group].delete(value);
+}
 
-const creatureTypeDropdown = wireDropdown({
-  btnId: 'creatureTypeDropdownBtn', panelId: 'creatureTypeDropdownPanel', wrapId: 'creatureTypeDropdownWrap',
-  stateSet: state.creatureTypes, checkboxSelector: '.creature-type-check', countSuffix: '種類選択中',
+document.querySelectorAll('.chip[data-color]').forEach(chip => {
+  chip.addEventListener('click', () => { toggleInSet(state.colors, chip.dataset.color); syncFilterUI(); refreshResults(); });
+});
+document.getElementById('filterPanel').addEventListener('click', (e) => {
+  const chip = e.target.closest('.opt-chip');
+  if (!chip) return;
+  const { group, value } = chip.dataset;
+  if (group === 'rarity') state.rarity = state.rarity === value ? '' : value;
+  else toggleInSet(state[group], value);
+  syncFilterUI();
+  refreshResults();
+});
+document.getElementById('activeFilters').addEventListener('click', (e) => {
+  const pill = e.target.closest('.filter-pill');
+  if (!pill) return;
+  removeFilter(pill.dataset.group, pill.dataset.value);
+  syncFilterUI();
+  refreshResults();
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
+  state.keywords.clear(); state.manaCosts.clear(); state.rarity = '';
+  syncFilterUI();
+  refreshResults();
 });
 
-renderCreatureTypes(ALL_CREATURE_TYPES);
+// Searchable checkbox lists (creature types, keyword abilities).
+// items: [{ value, ja, en }] - `value` is what the search uses.
+function renderCheckList(listEl, items, filterText) {
+  const set = state[listEl.dataset.group];
+  const f = normText(filterText).trim();
+  const shown = !f ? items : items.filter(it => normText(it.ja).includes(f) || normText(it.en).includes(f));
+  listEl.innerHTML = shown.length ? shown.map(it =>
+    `<label class="check-row"><input type="checkbox" value="${esc(it.value)}"${set.has(it.value) ? ' checked' : ''}>` +
+    `<span>${esc(it.ja || it.en)}</span>${it.ja ? `<span class="en">${esc(it.en)}</span>` : ''}</label>`).join('')
+    : `<div class="check-empty">該当するものがありません</div>`;
+}
+function wireCheckList(listId, filterId, getItems) {
+  const listEl = document.getElementById(listId);
+  const filterEl = document.getElementById(filterId);
+  const render = () => renderCheckList(listEl, getItems(), filterEl.value);
+  filterEl.addEventListener('input', render);
+  listEl.addEventListener('change', (e) => {
+    if (!e.target.matches('input[type="checkbox"]')) return;
+    const set = state[listEl.dataset.group];
+    if (e.target.checked) set.add(e.target.value); else set.delete(e.target.value);
+    syncFilterUI();
+    refreshResults();
+  });
+  render();
+  return { render };
+}
 
-// Pull the authoritative, complete creature-type list from Scryfall so the
-// dropdown covers every type in the game and stays current with new sets.
-fetch('https://api.scryfall.com/catalog/creature-types')
+// Types with a Japanese name first (in Japanese order), then the rest A-Z.
+function sortForList(items) {
+  const withJa = items.filter(it => it.ja).sort((a, b) => a.ja.localeCompare(b.ja, 'ja'));
+  const rest = items.filter(it => !it.ja).sort((a, b) => a.en.localeCompare(b.en));
+  return withJa.concat(rest);
+}
+let ALL_CREATURE_TYPES = Object.keys(CREATURE_TYPE_JA).map(titleCase);
+const creatureTypeItems = () => sortForList(ALL_CREATURE_TYPES.map(t => ({ value: t.toLowerCase(), ja: CREATURE_TYPE_JA[t.toLowerCase()] || '', en: t })));
+const creatureTypeList = wireCheckList('creatureTypeList', 'creatureTypeFilter', creatureTypeItems);
+
+// The complete, current creature-type list comes from Scryfall's catalog.
+fetch('https://api.scryfall.com/catalog/creature-types', { headers: { 'Accept': 'application/json' } })
   .then(r => r.json())
   .then(data => {
     if (data && Array.isArray(data.data) && data.data.length) {
       ALL_CREATURE_TYPES = data.data;
-      renderCreatureTypes(ALL_CREATURE_TYPES);
+      creatureTypeList.render();
     }
   })
-  .catch(() => { /* keep the built-in list if the catalog can't be reached */ });
+  .catch(() => { /* keep the built-in list */ });
 
-// keyword-ability picker, built from the same JA->EN map the query translator uses
-const keywordPanel = document.getElementById('keywordDropdownPanel');
-keywordPanel.innerHTML = Object.entries(JA_KEYWORDS)
-  .sort((a, b) => a[0].localeCompare(b[0], 'ja'))
-  .map(([ja, en]) => `<label><input type="checkbox" class="keyword-check" value="${en}"> ${ja} <span class="en">${en}</span></label>`)
-  .join('') + `<button class="dropdown-clear" id="keywordDropdownClear" type="button">選択をクリア</button>`;
-const keywordDropdown = wireDropdown({
-  btnId: 'keywordDropdownBtn', panelId: 'keywordDropdownPanel', wrapId: 'keywordDropdownWrap',
-  stateSet: state.keywords, checkboxSelector: '.keyword-check', countSuffix: '個選択中',
-});
+const keywordItems = () => sortForList(Object.entries(KEYWORD_JA_BY_EN).map(([en, ja]) => ({ value: en, ja, en: titleCase(en) })));
+wireCheckList('keywordList', 'keywordFilter', keywordItems);
 
-const manaDropdown = wireDropdown({
-  btnId: 'manaDropdownBtn', panelId: 'manaDropdownPanel', wrapId: 'manaDropdownWrap',
-  stateSet: state.manaCosts, checkboxSelector: '.mana-check', countSuffix: '個選択中',
-});
+// Phone layout: the filter panel opens as a drawer.
+document.getElementById('filterOpenBtn').addEventListener('click', () => setFilterDrawer(true));
+document.getElementById('filterClose').addEventListener('click', () => setFilterDrawer(false));
+document.getElementById('filterBackdrop').addEventListener('click', () => setFilterDrawer(false));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setFilterDrawer(false); });
 
-document.getElementById('clearBtn').addEventListener('click', () => {
-  state.query = ''; state.colors.clear(); state.types.clear();
-  state.creatureTypes.clear(); state.keywords.clear(); state.manaCosts.clear();
-  state.rarity = ''; state.sort = 'name';
-  document.getElementById('searchInput').value = '';
-  document.getElementById('raritySelect').value = '';
-  document.getElementById('sortSelect').value = 'name';
-  document.querySelectorAll('.chip').forEach(c => c.dataset.active = 'false');
-  document.querySelectorAll('.type-check, .creature-type-check, .keyword-check, .mana-check').forEach(cb => cb.checked = false);
-  typeDropdown.updateLabel();
-  creatureTypeDropdown.updateLabel();
-  keywordDropdown.updateLabel();
-  manaDropdown.updateLabel();
-  searchToken++; // invalidate any in-flight search
-  lastTranslationNotes = [];
-  document.getElementById('translationNote').style.display = 'none';
-  loadRandomCards();
-});
+syncFilterUI();
+
+// ---- themes: light / dark / Yawgmoth ----------------------------------------
+const THEMES = ['light', 'dark', 'yawgmoth'];
+const fallLayer = document.getElementById('fallLayer');
+function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
+
+function setTheme(name, save) {
+  if (!THEMES.includes(name)) name = 'dark';
+  document.documentElement.setAttribute('data-theme', name);
+  if (save) { try { localStorage.setItem('akuchie-theme', name); } catch (e) { /* private mode */ } }
+  document.querySelectorAll('.theme-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === name)));
+  if (name === 'yawgmoth') startYawgmoth(); else stopYawgmoth();
+}
+document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme, true)));
+
+// Yawgmoth mode. Nothing here is redrawn or bundled: the background is the
+// official art of "Yawgmoth, Thran Physician" and the falling symbols are the
+// official Phyrexian mana symbols, both loaded from Scryfall the same way card
+// images are, shown unaltered, with the artist credited in the footer.
+const yawg = { ready: null, art: '', artist: '', symbols: [] };
+function loadYawgAssets() {
+  if (yawg.ready) return yawg.ready;
+  try {
+    const cached = JSON.parse(localStorage.getItem('akuchie-yawg') || 'null');
+    if (cached && cached.art) Object.assign(yawg, { art: cached.art, artist: cached.artist || '', symbols: cached.symbols || [] });
+  } catch (e) { /* no cache */ }
+  yawg.ready = (async () => {
+    if (!yawg.art) {
+      try {
+        const res = await fetch(`https://api.scryfall.com/cards/named?${new URLSearchParams({ exact: 'Yawgmoth, Thran Physician', set: 'mh1' })}`,
+          { headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          const c = await res.json();
+          yawg.art = (c.image_uris && c.image_uris.art_crop) || '';
+          yawg.artist = c.artist || '';
+        }
+      } catch (e) { /* plain dark background instead */ }
+    }
+    if (!yawg.symbols.length) {
+      try {
+        const res = await fetch('https://api.scryfall.com/symbology', { headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          const d = await res.json();
+          yawg.symbols = (d.data || []).filter(sym => /^\{[WUBRG]\/P\}$/.test(sym.symbol) && sym.svg_uri).map(sym => sym.svg_uri);
+        }
+      } catch (e) { /* falls back to a plain Φ character */ }
+    }
+    try { localStorage.setItem('akuchie-yawg', JSON.stringify({ art: yawg.art, artist: yawg.artist, symbols: yawg.symbols })); } catch (e) { /* ignore */ }
+  })();
+  return yawg.ready;
+}
+
+const CATS = ['🐈', '🐈‍⬛', '🐱', '😼', '🐈'];
+function buildFallers() {
+  fallLayer.innerHTML = '';
+  const count = window.innerWidth < 700 ? 16 : 30;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  for (let i = 0; i < count; i++) {
+    const isCat = i % 2 === 1;
+    let el;
+    if (isCat) {
+      el = document.createElement('span');
+      el.textContent = CATS[Math.floor(Math.random() * CATS.length)];
+    } else if (yawg.symbols.length) {
+      el = document.createElement('img');
+      el.alt = '';
+      el.src = yawg.symbols[Math.floor(Math.random() * yawg.symbols.length)];
+    } else {
+      el = document.createElement('span');
+      el.textContent = 'Φ';
+      el.classList.add('glyph');
+    }
+    el.classList.add('faller');
+    const dur = rand(9, 20);
+    el.style.setProperty('--x', `${rand(0, 97).toFixed(2)}%`);
+    el.style.setProperty('--size', `${Math.round(rand(22, 46))}px`);
+    el.style.setProperty('--dur', `${dur.toFixed(1)}s`);
+    el.style.setProperty('--delay', `${(-rand(0, dur)).toFixed(1)}s`);   // already mid-fall on load
+    el.style.setProperty('--drift', `${Math.round(rand(-90, 90))}px`);
+    el.style.setProperty('--spin', `${Math.round(rand(-300, 300))}deg`);
+    el.style.setProperty('--o', rand(0.6, 0.95).toFixed(2));
+    el.style.setProperty('--rest', `${rand(4, 92).toFixed(1)}vh`);        // used when motion is reduced
+    fallLayer.appendChild(el);
+  }
+}
+function startYawgmoth() {
+  buildFallers();
+  loadYawgAssets().then(() => {
+    if (currentTheme() !== 'yawgmoth') return;
+    if (yawg.art) document.getElementById('yawgBackdrop').style.backgroundImage = `url("${yawg.art}")`;
+    document.getElementById('yawgCredit').innerHTML = yawg.art
+      ? `<br>背景画像：Yawgmoth, Thran Physician${yawg.artist ? `（絵：${esc(yawg.artist)}）` : ''}・画像提供 Scryfall　™ &amp; © Wizards of the Coast`
+      : '';
+    buildFallers();
+  });
+}
+function stopYawgmoth() {
+  fallLayer.innerHTML = '';
+  document.getElementById('yawgCredit').innerHTML = '';
+}
+
+setTheme(currentTheme(), false);
 </script>
 </body>
 </html>
