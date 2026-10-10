@@ -313,6 +313,18 @@
     background: var(--field); border: 1px solid var(--line); color: var(--text); border-radius: 999px; padding: 4px 12px;
   }
   .example-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .match-note {
+    font-size: 12.5px; color: var(--muted); background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 12px; margin: 0 0 12px; line-height: 1.8;
+  }
+  .match-note:empty { display: none; }
+  .match-note .fix { color: var(--text); }
+  .link-btn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+  .tier-divider {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 6px 0 -4px;
+  }
+  .tier-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .translation-note {
     font-size: 12px; color: var(--muted); background: var(--surface); border: 1px solid var(--line);
     border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 12px; margin: 0 0 12px; line-height: 1.8;
@@ -376,6 +388,7 @@
   .back-link:hover { text-decoration: underline; }
   .card-page { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 26px; align-items: start; }
   .cp-art { position: sticky; top: calc(var(--bar-h) + 14px); }
+  .cp-img-note { font-size: 11.5px; color: var(--muted); margin: 8px 2px 0; line-height: 1.6; }
   .cp-art img { width: 100%; display: block; border-radius: 4.75% / 3.5%; box-shadow: var(--shadow); background: var(--surface-2); aspect-ratio: 488 / 680; }
   .cp-art .cp-noimg {
     aspect-ratio: 488 / 680; border-radius: 4.75% / 3.5%; background: var(--surface-2); border: 1px solid var(--line);
@@ -818,6 +831,7 @@
 
       <div class="translation-note" id="translationNote" style="display:none;"></div>
       <div class="combo-hint" id="comboHint" style="display:none;"></div>
+      <div class="match-note" id="matchNote"></div>
       <div class="grid" id="cardGrid"></div>
       <div class="load-more-row" id="loadMoreRow" style="display:none;">
         <button type="button" class="load-more-btn" id="loadMoreBtn" data-i18n="loadmore">さらに読み込む</button>
@@ -898,6 +912,7 @@ const EDITIONS = {
   main:     { colors: '' },
   selesnya: { colors: 'GW', page: 'selesnya.html' },
   golgari:  { colors: 'BG', page: 'golgari.html',
+              hidden: true,                            // not linked from the main site (reach it by its address)
               ownDecksOnly: true,                      // metagame tab lists only decks in these colours
               combos: 'combos_golgari.json.gz',        // combo suggestions (built by build_combos.py)
               scene: 'garden', themeKey: 'akuchie-theme-golgari' },
@@ -1007,6 +1022,18 @@ const STR = {
   'yen.approx': ['約{y}', '≈ {y}'],
   'img.fail': ['画像を読み込めませんでした', 'Image failed to load'],
   'img.none': ['画像なし', 'No image'],
+  'img.english.none': ['日本語版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the Japanese printing, so the English printing’s picture is shown.'],
+  'img.english.lowres': ['日本語版の画像は低解像度のため、同じ版の英語版の高解像度画像を表示しています。', 'The Japanese printing only has a low-resolution picture, so the English printing’s sharp picture is shown.'],
+  'match.fixed': ['「{from}」は「{to}」として検索しました。', 'Searched for “{to}” instead of “{from}”.'],
+  'match.strict': ['語句がまとまって出てくるカードを表示しています。', 'Showing cards where the words appear together.'],
+  'match.showLoose': ['語句がバラバラに含まれるだけのカードも表示（+{n}件）', 'Also show cards that only contain the words separately (+{n})'],
+  'match.withLoose': ['語句がバラバラに含まれるだけのカードも含めて表示しています。', 'Also showing cards that only contain the words separately.'],
+  'match.hideLoose': ['まとまって出てくるカードだけに戻す', 'Back to cards where the words appear together'],
+  'match.fallback': ['語句がまとまって出てくるカードはなかったため、語句をすべて含むカードを表示しています。', 'No card has the words together, so cards that contain all of them are shown.'],
+  'tier.1': ['語句がまとまって一致', 'Words together'],
+  'tier.2': ['カードのタイプ・名前と組み合わせて一致', 'Matching together with the card’s type or name'],
+  'tier.2.ja': ['同じ能力の中に語句がそろって一致', 'All the words in the same ability'],
+  'tier.3': ['語句がバラバラに含まれるカード', 'Words found separately'],
   'price.heading': ['価格', 'Price'],
   'price.sub': ['TCGplayer 市場価格（直近の取引の平均）', 'TCGplayer market price (average of recent sales)'],
   'price.nonfoil': ['通常', 'Non-foil'],
@@ -1245,6 +1272,7 @@ const CREATURE_TYPE_JA = {
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
   keywords: new Set(), manaCosts: new Set(), rarity: '', sort: 'name',
+  showLoose: false,   // also show cards that contain the search words only separately
 };
 let nextPageUrl = null;
 let searchToken = 0; // guards against out-of-order responses
@@ -1554,8 +1582,15 @@ function textMatches(row, rawTerm, includeNameAndType) {
 function localOperatorMatch(row, op, sep, val) {
   const v = normText(val).trim();
   switch (op) {
-    case 'o':
+    case 'o': {
+      // a quoted English phrase - o:"sacrifice two permanents" - is matched word by word,
+      // so plurals and numbers written either way still count
+      if (/\s/.test(String(val).trim()) && !JA_CHARS.test(val)) {
+        const seq = enTokens(val);
+        if (seq.length && rowEnLines(row).slice(2).some(line => findSeq(line, seq))) return true;
+      }
       return textMatches(row, val, false);
+    }
     case 'name': case 'n': case '名前': case 'カード名': {
       const vJa = v.replace(/\s+/g, '');
       return row._nameJa.includes(vJa) || row._nameEn.includes(v) || row._altJa.some(n => n.includes(vJa));
@@ -1660,16 +1695,477 @@ function relevance(row, query) {
   return 2;
 }
 
-function localSearchAndFilter() {
-  const rows = LOCAL_DB.filter(row => inScope(row) && localFilterRow(row) && localQueryMatch(row, state.query));
-  if (state.sort === 'cmc_asc') rows.sort((a, b) => a._cmc - b._cmc || a.name_en.localeCompare(b.name_en));
-  else if (state.sort === 'cmc_desc') rows.sort((a, b) => b._cmc - a._cmc || a.name_en.localeCompare(b.name_en));
-  else if (state.sort === 'released_desc') rows.sort((a, b) => (b.released_at || '').localeCompare(a.released_at || ''));
-  else {
-    const q = state.query || '';
-    rows.sort((a, b) => relevance(a, q) - relevance(b, q) || a.name_en.localeCompare(b.name_en));
+// ============================================================================
+// Free-text search: words that belong together
+//
+// "sacrifice 2 permanents" or 「パーマネント2つを生け贄」 is read as a phrase, not
+// as separate words that may be anywhere on the card. Every match gets a tier:
+//   1 - the words together: the phrase itself, or all of them close to each
+//       other within one ability (a line of rules text). Keyword abilities
+//       (flying, deathtouch, ...) count wherever they are on the card.
+//   2 - English searches of two or three plain words (no numbers or small
+//       words, e.g. "elf mana"): a word found in the card's type line or name
+//       counts for the whole card, the rest must still be together.
+//       Japanese searches: all the pieces within one ability, in any order.
+//   3 - every word somewhere on the card (how the search used to work).
+// Tiers 1 and 2 are shown; tier 3 only when asked for, or when nothing else
+// matches. English words are compared by their stem ("permanents" =
+// "permanent", "sacrificed" = "sacrifice"), numbers as numbers ("2" = "two",
+// "1" = "a"), and a word found on no card at all is replaced by the closest
+// word that is ("permanants" -> "permanents"). Japanese is compared with
+// full-width/half-width and kanji numbers unified (２ = 2 = 二), counters
+// unified (２体 = 2枚 = 2つ) and, as a second try, without particles
+// (を・が・に・の…), so 「1枚捨てる」 finds 「カードを１枚捨てる」.
+// ============================================================================
+const JA_CHARS = /[぀-ヿ㐀-鿿]/;
+const EN_TOKEN_RE = /\{[^}]+\}|[+\-]?\d+\/[+\-]?\d+|[a-z0-9]+(?:'[a-z]+)?/g;
+const EN_NUMBERS = {
+  zero: '0', a: '1', an: '1', one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7',
+  eight: '8', nine: '9', ten: '10', eleven: '11', twelve: '12', thirteen: '13', fifteen: '15', twenty: '20',
+};
+const EN_NUMBER_WORDS = {};   // '2' -> ['2', 'two'], used for quick pre-checks
+Object.entries(EN_NUMBERS).forEach(([w, d]) => { (EN_NUMBER_WORDS[d] = EN_NUMBER_WORDS[d] || [d]).push(w); });
+const EN_IRREGULAR = {
+  elves: 'elf', dwarves: 'dwarf', wolves: 'wolf', lives: 'life', knives: 'knife', leaves: 'leaf', halves: 'half',
+  thieves: 'thief', mice: 'mouse', men: 'man', women: 'woman', children: 'child', teeth: 'tooth', oxen: 'ox',
+  dealt: 'deal', drew: 'draw', drawn: 'draw', lost: 'lose', chose: 'choose', chosen: 'choose', paid: 'pay',
+  dies: 'die', died: 'die', dying: 'die',
+};
+// small words that only glue a phrase together; they may be left out or differ
+const SEARCH_STOP = new Set(['the', 'of', 'to', 'your', 'you', 'and', 'or', 'with', 'from', 'into', 'onto', 'on',
+  'in', 'at', 'for', 'by', 'it', 'its', 'that', 'this', 'is', 'are', 'be', 'as']);
+
+// A rough English stemmer: the same rules are applied to the card text and
+// to the search, so they only need to agree with each other.
+function enStem(word) {
+  let w = word;
+  if (w.endsWith("'s")) w = w.slice(0, -2);
+  if (EN_NUMBERS[w]) return EN_NUMBERS[w];
+  if (EN_IRREGULAR[w]) return EN_IRREGULAR[w];
+  if (w.length <= 3 || /[^a-z]/.test(w)) return w;   // short words, numbers, {T}, +1/+1
+  if (w.endsWith('ies') && w.length > 4) w = w.slice(0, -3) + 'y';
+  else if (w.endsWith('sses')) w = w.slice(0, -2);
+  else if (/(?:ch|sh|x|z)es$/.test(w)) w = w.slice(0, -2);
+  else if (w.endsWith('s') && !/(?:ss|us|is)$/.test(w)) w = w.slice(0, -1);
+  if (w.length > 5 && w.endsWith('ing')) w = w.slice(0, -3);
+  else if (w.length > 4 && w.endsWith('ed')) w = w.slice(0, -2);
+  if (w.length > 3 && /([bdfgklmnprtz])\1$/.test(w)) w = w.slice(0, -1);   // tapp(ed) -> tap
+  if (w.length > 4 && w.endsWith('e')) w = w.slice(0, -1);                  // sacrifice(d) -> sacrific
+  return w;
+}
+function enTokens(text) {
+  return (normText(text).replace(/[’‘]/g, "'").match(EN_TOKEN_RE) || []).map(enStem);
+}
+// Is `seq` found word for word, in a row, inside `line`?
+function findSeq(line, seq) {
+  if (!seq.length || seq.length > line.length) return false;
+  outer: for (let i = 0; i + seq.length <= line.length; i++) {
+    for (let j = 0; j < seq.length; j++) if (line[i + j] !== seq[j]) continue outer;
+    return true;
   }
-  return rows;
+  return false;
+}
+// The shortest stretch of `line` holding every word of `need`, in any order
+// and in the given order (Infinity when there is none).
+function windowSpan(line, need) {
+  const pos = need.map(c => { const p = []; line.forEach((tok, i) => { if (tok === c) p.push(i); }); return p; });
+  if (pos.some(p => !p.length)) return null;
+  const events = [];
+  pos.forEach((p, k) => p.forEach(i => events.push([i, k])));
+  events.sort((a, b) => a[0] - b[0]);
+  const count = new Array(need.length).fill(0);
+  let have = 0, left = 0, span = Infinity;
+  for (let r = 0; r < events.length; r++) {
+    if (count[events[r][1]]++ === 0) have++;
+    while (have === need.length) {
+      span = Math.min(span, events[r][0] - events[left][0] + 1);
+      if (--count[events[left][1]] === 0) have--;
+      left++;
+    }
+  }
+  let ordered = Infinity;
+  pos[0].forEach(start => {
+    let at = start;
+    for (let k = 1; k < need.length; k++) {
+      const next = pos[k].find(i => i > at);
+      if (next === undefined) return;
+      at = next;
+    }
+    ordered = Math.min(ordered, at - start + 1);
+  });
+  return { span, ordered };
+}
+
+// Per-card word lists, made the first time a card is looked at:
+// [name, type line, rules text line 1, line 2, ...]
+function rowEnLines(row) {
+  if (!row._enLines) {
+    row._enLines = [row.name_en, row.type_en].concat(String(row.oracle_en || '').split('\n')).map(enTokens);
+  }
+  return row._enLines;
+}
+function rowKeywords(row) {
+  if (!row._kwStems) {
+    const single = new Set(), multi = [];
+    row._kw.forEach(k => { const toks = enTokens(k); if (toks.length === 1) single.add(toks[0]); else if (toks.length > 1) multi.push(toks); });
+    row._kwStems = { single, multi };
+  }
+  return row._kwStems;
+}
+function rowEnAll(row) {
+  if (row._enAll === undefined) row._enAll = `${row._nameEn}\n${row._typeEn}\n${row._textEn}`.replace(/[’‘]/g, "'");
+  return row._enAll;
+}
+
+// ---- spelling: words that appear on no card are corrected to the nearest one that does
+let EN_CORPUS = null, EN_VOCAB = null;
+function enCorpus() {
+  if (EN_CORPUS === null) EN_CORPUS = LOCAL_DB.map(rowEnAll).join('\n');
+  return EN_CORPUS;
+}
+function enVocab() {
+  if (!EN_VOCAB) {
+    const counts = new Map();
+    for (const m of enCorpus().matchAll(/[a-z]+(?:'[a-z]+)?/g)) counts.set(m[0], (counts.get(m[0]) || 0) + 1);
+    EN_VOCAB = new Map();   // stem -> { word, count, best }
+    counts.forEach((n, w) => {
+      if (w.length < 3) return;
+      const s = enStem(w);
+      const v = EN_VOCAB.get(s);
+      if (!v) EN_VOCAB.set(s, { word: w, count: n, best: n });
+      else { v.count += n; if (n > v.best) { v.best = n; v.word = w; } }
+    });
+  }
+  return EN_VOCAB;
+}
+// edit distance with swaps of neighbouring letters, giving up past `max`
+function editDistance(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev2 = null, prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    let rowMin = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+      if (prev2 && i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+      cur.push(v);
+      rowMin = Math.min(rowMin, v);
+    }
+    if (rowMin > max) return max + 1;
+    prev2 = prev;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function correctEnglish(stem) {
+  const max = stem.length >= 8 ? 2 : 1;
+  let best = null;
+  enVocab().forEach((info, s) => {
+    if (Math.abs(s.length - stem.length) > max || s === stem) return;
+    const d = editDistance(stem, s, max);
+    if (d <= max && (!best || d < best.d || (d === best.d && info.count > best.count))) best = { d, stem: s, word: info.word, count: info.count };
+  });
+  return best;
+}
+
+// ---- reading the search box
+function parseSearch(raw) {
+  const out = { filters: [], words: [], ja: [], phrases: [] };
+  tokenizeQuery(String(raw || '').normalize('NFKC').trim()).forEach(token => {
+    let negate = false, body = token;
+    if (body.startsWith('-') && body.length > 1) { negate = true; body = body.slice(1); }
+    const m = body.match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)(.+)$/);
+    if (m) {
+      out.filters.push({ negate, op: JA_OPERATORS[m[1]] || m[1].toLowerCase(), sep: m[2], val: m[3].replace(/^"|"$/g, ''), text: body.replace(/^"|"$/g, '') });
+      return;
+    }
+    const quoted = /^".+"$/.test(body);
+    const bare = body.replace(/^"|"$/g, '').trim();
+    if (!bare) return;
+    if (negate) { out.filters.push({ negate: true, op: null, text: bare }); return; }
+    if (quoted && /\s/.test(bare)) { out.phrases.push(bare); return; }   // "exact phrase"
+    if (JA_CHARS.test(bare)) out.ja.push(bare);
+    else out.words.push(bare);
+  });
+  return out;
+}
+function passesFilter(row, f) {
+  let r = f.op ? localOperatorMatch(row, f.op, f.sep, f.val) : null;
+  if (r === null) r = textMatches(row, f.text, true);
+  return f.negate ? !r : r;
+}
+
+function prepareEnglish(words) {
+  const units = [];
+  words.forEach(w => (normText(w).replace(/[’‘]/g, "'").match(EN_TOKEN_RE) || [])
+    .forEach(raw => units.push({ raw, canon: enStem(raw), stop: SEARCH_STOP.has(raw) })));
+  const fixes = [];
+  units.forEach(u => {
+    if (u.stop || u.raw.length < 4 || /[^a-z']/.test(u.raw)) return;
+    const corpus = enCorpus();
+    if (corpus.includes(u.raw) || corpus.includes(u.canon)) return;
+    const fix = correctEnglish(u.canon);
+    if (fix) { fixes.push({ from: u.raw, to: fix.word }); u.raw = fix.word; u.canon = fix.stem; }
+  });
+  let content = [...new Set(units.filter(u => !u.stop).map(u => u.canon))];
+  if (!content.length) content = [...new Set(units.map(u => u.canon))];
+  // numbers and small words mean the search is a phrase: no type-line shortcut then
+  const phraseLike = units.some(u => u.stop || /^\d/.test(u.canon)) || content.length >= 4;
+  return { units, seq: units.map(u => u.canon), content, phraseLike, fixes };
+}
+function englishMayHave(row, u) {
+  const all = rowEnAll(row);
+  if (all.includes(u.raw) || all.includes(u.canon)) return true;
+  const alts = EN_NUMBER_WORDS[u.canon];
+  return !!(alts && alts.some(a => all.includes(a)));
+}
+// How closely `need` sits together in one line: in the search's order with
+// up to four other words in between, or in another order only when (almost)
+// adjacent - "two permanents: draw a card" must not count as "draw two cards".
+function closeness(line, need) {
+  const w = windowSpan(line, need);
+  if (!w) return null;
+  if (w.ordered <= need.length + 4) return w.ordered / 100;
+  if (w.span <= need.length + 1) return 0.5 + w.span / 100;
+  return null;
+}
+function englishTier(row, q) {
+  if (!q.units.every(u => u.stop || englishMayHave(row, u))) return null;
+  const lines = rowEnLines(row);
+  const kw = rowKeywords(row);
+  const kwSat = new Set(q.content.filter(c => kw.single.has(c)));
+  kw.multi.forEach(seq => { if (findSeq(q.seq, seq)) seq.forEach(c => kwSat.add(c)); });
+  if (q.seq.length > 1 && lines.some(line => findSeq(line, q.seq))) return { tier: 1, score: 0 };
+  const need = q.content.filter(c => !kwSat.has(c));
+  if (!need.length) return { tier: 1, score: 1 };
+  let best = Infinity;
+  lines.forEach(line => { const c = closeness(line, need); if (c !== null) best = Math.min(best, 1 + c); });
+  if (best < Infinity) return { tier: 1, score: best };
+  if (!q.phraseLike) {
+    const head = new Set(lines[0].concat(lines[1]));
+    const rest = need.filter(c => !head.has(c));
+    if (rest.length < need.length) {
+      const body = lines.slice(2);
+      const together = rest.length === 0 || (rest.length === 1 ? body.some(line => line.includes(rest[0]))
+        : body.some(line => closeness(line, rest) !== null));
+      if (together) return { tier: 2, score: 2 };
+    }
+  }
+  const loose = q.units.every(u => u.stop || kwSat.has(u.canon) || lines.some(line => line.includes(u.canon)) || textMatches(row, u.raw, true));
+  return loose ? { tier: 3, score: 3 } : null;
+}
+// One English word: whole-word matches (any ending: permanent/permanents,
+// sacrifice/sacrificed) first, then words that merely contain it.
+function wholeWordRegex(u) {
+  if (!u.re) {
+    const quote = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const forms = new Set([u.raw, u.canon].concat(EN_NUMBER_WORDS[u.canon] || []));
+    const alts = [...forms].map(f => quote(f) + (/[a-z]$/.test(f) ? "(?:[a-z]?(?:e|es|s|ed|d|ing|y|ies)|'s)?" : '')).join('|');
+    u.re = new RegExp(`(?:^|[^a-z0-9])(?:${alts})(?![a-z0-9])`);
+  }
+  return u.re;
+}
+function englishWordTier(row, q) {
+  const u = q.units.find(x => !x.stop) || q.units[0];
+  if (!englishMayHave(row, u)) return null;
+  if (wholeWordRegex(u).test(rowEnAll(row)) || rowKeywords(row).single.has(u.canon)) return { tier: 1, score: 1 };
+  return textMatches(row, u.raw, true) ? { tier: 2, score: 2 } : null;
+}
+
+// ---- Japanese
+const JA_DIGIT = { '〇': '0', '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9' };
+const JA_PARTICLE_RE = /[をがにはのとでもへや]/g;
+const JA_SPLIT_RE = /[をがにはのとでもへや、。・「」『』（）():：\s]+/;
+function normJaSearch(s) {
+  return normText(s).replace(/\s+/g, '')
+    .replace(/生贄|いけにえ/g, '生け贄')
+    .replace(/([一二三四五六七八九])(?=[体枚つ個点回])/g, d => JA_DIGIT[d])
+    .replace(/(\d+)[体枚個]/g, '$1つ');
+}
+function rowJaLines(row) {
+  if (!row._jaLines) {
+    const names = [row.name_ja].concat(row.alt_names_ja ? row.alt_names_ja.split('|') : []).filter(Boolean).join('|');
+    row._jaLines = [names, row.type_ja].concat(String(row.oracle_ja || '').split('\n')).map(normJaSearch);
+    row._jaBare = row._jaLines.map(line => line.replace(JA_PARTICLE_RE, ''));
+  }
+  return row._jaLines;
+}
+function rowJaAll(row) {
+  if (row._jaAll === undefined) row._jaAll = normJaSearch([row.name_ja, row.alt_names_ja, row.type_ja, row.oracle_ja].join('\n'));
+  return row._jaAll;
+}
+function jaMayHave(row, u) {
+  const all = rowJaAll(row);
+  if (u.n && all.includes(u.n)) return true;
+  if (u.kw && row._kw.has(u.kw)) return true;
+  if (u.chunks.length > 1 && u.chunks.every(c => all.includes(c))) return true;
+  if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) return true;
+  if (u.bare && u.bare !== u.n) {
+    if (row._jaAllBare === undefined) row._jaAllBare = all.replace(JA_PARTICLE_RE, '');
+    if (row._jaAllBare.includes(u.bare)) return true;
+  }
+  return false;
+}
+function prepareJapanese(tokens) {
+  return tokens.map(raw => {
+    const n = normJaSearch(raw);
+    const eq = englishEquivalents(raw);
+    return {
+      raw, n, bare: n.replace(JA_PARTICLE_RE, ''),
+      chunks: n.split(JA_SPLIT_RE).filter(Boolean),
+      kw: eq.kw, en: eq.text ? enTokens(eq.text) : null,
+    };
+  });
+}
+// Where on the card a Japanese search word is: keyword, lines ('j2' = Japanese
+// line 2, 'e3' = English line 3 via the English equivalent), name/type line.
+function locateJa(row, u) {
+  const out = { kw: !!(u.kw && row._kw.has(u.kw)), lines: new Set(), head: false };
+  const lines = rowJaLines(row), bare = row._jaBare;
+  lines.forEach((line, i) => {
+    if ((u.n && line.includes(u.n)) || (u.bare && bare[i].includes(u.bare))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
+  });
+  if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
+    rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
+  }
+  return out;
+}
+function japaneseWordTier(row, u) {
+  if (!jaMayHave(row, u)) return null;
+  const loc = locateJa(row, u);
+  if (loc.kw || loc.lines.size) return { tier: 1, score: loc.lines.has('j0') ? 0.5 : 1 };
+  if (u.chunks.length > 1) {
+    const lines = rowJaLines(row);
+    if (lines.some(line => u.chunks.every(c => line.includes(c)))) return { tier: 2, score: 2 };
+    if (u.chunks.every(c => lines.some(line => line.includes(c)))) return { tier: 3, score: 3 };
+  }
+  return null;
+}
+// Several search words: together in one line -> 1; with the name/type line
+// standing for the whole card -> 2; anywhere -> 3.
+function unitsTier(locs) {
+  const need = locs.filter(l => !l.kw);
+  if (!need.length) return 1;
+  if ([...need[0].lines].some(k => need.every(l => l.lines.has(k)))) return 1;
+  const rest = need.filter(l => !l.head);
+  if (rest.length < need.length && (rest.length <= 1 || [...rest[0].lines].some(k => rest.every(l => l.lines.has(k))))) return 2;
+  return 3;
+}
+
+function buildSearchPlan(query) {
+  const parsed = parseSearch(query);
+  const plan = { filters: parsed.filters, phrases: parsed.phrases.map(p => JA_CHARS.test(p) ? { ja: normJaSearch(p) } : { en: enTokens(p) }),
+                 en: null, enWord: false, ja: [], fixes: [], free: false, graded: false, tier2: 'tier.2' };
+  if (parsed.words.length) {
+    const en = prepareEnglish(parsed.words);
+    if (en.units.length) { plan.en = en; plan.fixes = en.fixes; }
+  }
+  if (parsed.ja.length) plan.ja = prepareJapanese(parsed.ja);
+  plan.free = !!(plan.en || plan.ja.length);
+  plan.enWord = !!(plan.en && plan.en.content.length <= 1 && !plan.ja.length);
+  plan.graded = !!((plan.en && !plan.enWord) || plan.ja.length > 1 || (plan.ja.length === 1 && (plan.en || plan.ja[0].chunks.length > 1)));
+  if (!plan.en && plan.ja.length === 1) plan.tier2 = 'tier.2.ja';
+  return plan;
+}
+function phraseInRow(row, p) {
+  if (p.ja !== undefined) return rowJaLines(row).some(line => line.includes(p.ja));
+  return rowEnLines(row).some(line => findSeq(line, p.en));
+}
+function evaluateRow(row, plan) {
+  let tier = 1, score = 0;
+  if (plan.en) {
+    const r = plan.enWord ? englishWordTier(row, plan.en) : englishTier(row, plan.en);
+    if (!r) return null;
+    tier = Math.max(tier, r.tier); score += r.score;
+  }
+  if (plan.ja.length) {
+    let r;
+    if (plan.ja.length === 1 && !plan.en) r = japaneseWordTier(row, plan.ja[0]);
+    else {
+      if (!plan.ja.every(u => jaMayHave(row, u))) return null;
+      const locs = plan.ja.map(u => locateJa(row, u));
+      if (locs.some(l => !l.kw && !l.lines.size)) return null;
+      const t = unitsTier(locs);
+      r = { tier: t, score: t };
+    }
+    if (!r) return null;
+    tier = Math.max(tier, r.tier); score += r.score;
+  }
+  return { tier, score };
+}
+
+// What the last search found, for the note above the results and the
+// group headings between tiers.
+let searchInfo = null;
+
+function localSearchAndFilter() {
+  const plan = buildSearchPlan(state.query);
+  const base = LOCAL_DB.filter(row => inScope(row) && localFilterRow(row)
+    && plan.filters.every(f => passesFilter(row, f)) && plan.phrases.every(p => phraseInRow(row, p)));
+  const grades = new Map();
+  let rows = base;
+  if (plan.free) {
+    rows = [];
+    base.forEach(row => { const r = evaluateRow(row, plan); if (r) { grades.set(row, r); rows.push(row); } });
+  }
+  const counts = [0, 0, 0, 0];
+  rows.forEach(row => { counts[grades.has(row) ? grades.get(row).tier : 1]++; });
+  let shown = rows, fellBack = false;
+  if (plan.graded) {
+    if (counts[1] + counts[2]) { if (!state.showLoose) shown = rows.filter(row => grades.get(row).tier < 3); }
+    else fellBack = counts[3] > 0;
+  }
+  const tierOf = row => (grades.has(row) ? grades.get(row).tier : 1);
+  const scoreOf = row => (grades.has(row) ? grades.get(row).score : 0);
+  const q = state.query || '';
+  const rel = new Map();
+  if (!state.sort || state.sort === 'name') shown.forEach(row => rel.set(row, relevance(row, q)));
+  const byName = (a, b) => (a.name_en < b.name_en ? -1 : a.name_en > b.name_en ? 1 : 0);
+  const bySort = {
+    cmc_asc: (a, b) => a._cmc - b._cmc || byName(a, b),
+    cmc_desc: (a, b) => b._cmc - a._cmc || byName(a, b),
+    released_desc: (a, b) => (b.released_at || '').localeCompare(a.released_at || ''),
+  }[state.sort] || ((a, b) => rel.get(a) - rel.get(b) || scoreOf(a) - scoreOf(b) || byName(a, b));
+  shown = shown.slice().sort((a, b) => tierOf(a) - tierOf(b) || bySort(a, b));
+  searchInfo = {
+    graded: plan.graded, grades, counts, fellBack, fixes: plan.fixes, tier2: plan.tier2,
+    groups: plan.graded ? new Set(shown.map(tierOf)).size > 1 : false,
+  };
+  return shown;
+}
+
+// Result tiles, with a heading wherever a new tier starts.
+function resultTilesHtml(cards, rows, previousRow) {
+  const info = searchInfo;
+  const tierOf = row => (info && row && info.grades.has(row) ? info.grades.get(row).tier : null);
+  let last = tierOf(previousRow);
+  return cards.map((card, i) => {
+    const tier = rows ? tierOf(rows[i]) : null;
+    let heading = '';
+    if (info && info.groups && tier !== null && tier !== last) {
+      heading = `<div class="tier-divider" role="separator">${esc(t(tier === 2 ? info.tier2 : 'tier.' + tier))}</div>`;
+    }
+    last = tier;
+    return heading + cardTileHtml(card);
+  }).join('');
+}
+function renderMatchNote() {
+  const el = document.getElementById('matchNote');
+  const info = searchInfo;
+  if (!info) { el.innerHTML = ''; return; }
+  const parts = info.fixes.map(f => `<span class="fix">${esc(t('match.fixed', { from: f.from, to: f.to }))}</span>`);
+  if (info.graded) {
+    if (info.fellBack) parts.push(esc(t('match.fallback')));
+    else if (info.counts[3]) {
+      parts.push(state.showLoose
+        ? `${esc(t('match.withLoose'))} <button type="button" class="link-btn" id="looseToggle">${esc(t('match.hideLoose'))}</button>`
+        : `${esc(t('match.strict'))} <button type="button" class="link-btn" id="looseToggle">${esc(t('match.showLoose', { n: fmtNum(info.counts[3]) }))}</button>`);
+    }
+  }
+  el.innerHTML = parts.join(' ');
+  const toggle = document.getElementById('looseToggle');
+  if (toggle) toggle.addEventListener('click', () => { state.showLoose = !state.showLoose; runSearch(); });
 }
 
 // ---- format legality -----------------------------------------------------
@@ -1884,12 +2380,43 @@ function renderPips(costStr) {
   return syms.map(s => `<span class="pip ${pipClass(s)}">${s.length > 2 ? s[0] : s}</span>`).join('');
 }
 
+// ---- card pictures --------------------------------------------------------------
+// Scryfall says how good each printing's picture is (image_status). When a
+// Japanese printing has no real scan - Scryfall then shows a placeholder
+// marked as not available in this language - or only a low-resolution one,
+// the same printing's English picture is shown instead. Every picture comes
+// with a srcset, so the browser downloads the size the screen really needs.
+const IMAGE_QUALITY = { missing: 0, placeholder: 1, lowres: 2, highres_scan: 3 };
+function hasPicture(card) {
+  return !!(card && (card.image_uris || (card.card_faces && card.card_faces.some(f => f.image_uris))));
+}
+function imageQuality(card) {
+  if (!hasPicture(card)) return 0;
+  return Object.prototype.hasOwnProperty.call(IMAGE_QUALITY, card.image_status) ? IMAGE_QUALITY[card.image_status] : 2.5;
+}
+function pictureSource(card) {
+  const en = card && card._enCard;
+  if (!en || !card.lang || card.lang === 'en') return card;
+  const own = imageQuality(card), alt = imageQuality(en);
+  if (own <= 1 && alt >= 2) return en;   // placeholder, or no picture at all
+  if (own === 2 && alt === 3) return en;  // low-resolution scan -> sharp scan
+  return card;
+}
+function faceUris(card) {
+  const pic = pictureSource(card);
+  if (!pic) return [];
+  if (pic.image_uris) return [pic.image_uris];
+  return (pic.card_faces || []).map(f => f.image_uris).filter(Boolean);
+}
+const IMAGE_WIDTHS = { small: 146, normal: 488, large: 672 };
+function pictureTag(uris, { alt = '', sizes, use = ['small', 'normal', 'large'], main = 'normal', lazy = true, extra = '' }) {
+  const srcset = use.filter(k => uris[k]).map(k => `${uris[k]} ${IMAGE_WIDTHS[k]}w`).join(', ');
+  const src = uris[main] || uris.normal || uris.large || uris.small || uris.png;
+  return `<img src="${esc(src)}"${srcset ? ` srcset="${esc(srcset)}" sizes="${sizes}"` : ''} alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ''}${extra}>`;
+}
 function getImage(card) {
-  if (card.image_uris) return card.image_uris.normal || card.image_uris.large;
-  if (card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris) {
-    return card.card_faces[0].image_uris.normal || card.card_faces[0].image_uris.large;
-  }
-  return null;
+  const u = faceUris(card)[0];
+  return u ? (u.normal || u.large || u.small || null) : null;
 }
 function getColors(card) {
   if (card.colors && card.colors.length) return card.colors;
@@ -1988,9 +2515,15 @@ function effectivePrices(card) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Fetches the English printing with the same set and collector number for
+// Japanese cards that need it: for its price (Japanese printings rarely have
+// one) and, when the Japanese picture is a placeholder or low-resolution,
+// for its picture. Japanese-only printings with no picture at all borrow the
+// card's newest English picture.
 async function ensureEnglishPrices(cards) {
-  const need = cards.filter(c => c && c.lang && c.lang !== 'en' && c.set && c.collector_number && !c._enPrices
-    && !(c.prices && (c.prices.usd || c.prices.usd_foil || c.prices.usd_etched)));
+  const wants = c => c && c.lang && c.lang !== 'en' && !c._enChecked
+    && (!(c.prices && (c.prices.usd || c.prices.usd_foil || c.prices.usd_etched)) || imageQuality(c) < 3);
+  const need = cards.filter(c => wants(c) && c.set && c.collector_number);
   for (let i = 0; i < need.length; i += 75) {
     const chunk = need.slice(i, i + 75);
     try {
@@ -2004,11 +2537,31 @@ async function ensureEnglishPrices(cards) {
         const byKey = new Map((data.data || []).map(e => [`${e.set}|${e.collector_number}`, e]));
         chunk.forEach(c => {
           const en = byKey.get(`${c.set}|${c.collector_number}`);
-          if (en) { c._enPrices = en.prices || {}; c._enId = en.id; }
+          if (en) { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
+          c._enChecked = true;
         });
       }
     } catch (err) { /* prices just stay blank */ }
     if (i + 75 < need.length) await sleep(100);
+  }
+  const noPicture = cards.filter(c => c && c.lang && c.lang !== 'en' && !c._enCard && !c._enOracleChecked
+    && imageQuality(c) <= 1 && oracleIdOf(c));
+  for (let i = 0; i < noPicture.length; i += 75) {
+    const chunk = noPicture.slice(i, i + 75);
+    try {
+      const res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ identifiers: chunk.map(c => ({ oracle_id: oracleIdOf(c) })) }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const byOracle = new Map((data.data || []).map(e => [oracleIdOf(e), e]));
+        chunk.forEach(c => { const en = byOracle.get(oracleIdOf(c)); if (en && en.lang === 'en') c._enCard = en; });
+      }
+    } catch (err) { /* keep the placeholder */ }
+    chunk.forEach(c => { c._enOracleChecked = true; });
+    if (i + 75 < noPicture.length) await sleep(100);
   }
   return cards;
 }
@@ -2110,14 +2663,15 @@ function treatmentLabels(p) {
 }
 
 function cardTileHtml(card) {
-  const img = getImage(card);
+  const pic = faceUris(card)[0];
   const names = cardNames(card);
   const colors = getColors(card);
   return `
     <a class="card-tile" href="?card=${encodeURIComponent(card.id)}" data-id="${card.id}">
       <div class="color-bar" style="${colorBarStyle(colors)}"></div>
       <div class="card-thumb-wrap">
-        ${img ? `<img src="${img}" alt="${esc(names.main)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card-thumb-fallback',textContent:this.dataset.fail}))" data-fail="${esc(t('img.fail'))}">`
+        ${pic ? pictureTag(pic, { alt: names.main, sizes: '(max-width: 480px) 46vw, 190px',
+                  extra: ` onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card-thumb-fallback',textContent:this.dataset.fail}))" data-fail="${esc(t('img.fail'))}"` })
               : `<div class="card-thumb-fallback">${t('img.none')}</div>`}
       </div>
       <div class="card-tile-body">
@@ -2165,10 +2719,16 @@ function esc(s) {
   return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Both faces for double-faced cards, otherwise the single image.
-function faceImages(card) {
-  if (card.image_uris) return [card.image_uris.normal || card.image_uris.large].filter(Boolean);
-  return (card.card_faces || []).map(f => f.image_uris && (f.image_uris.normal || f.image_uris.large)).filter(Boolean);
+// Both faces for double-faced cards, otherwise the single picture - large
+// enough for the card page on high-density screens.
+function cardArtHtml(card, alt) {
+  const faces = faceUris(card);
+  if (!faces.length) return `<div class="cp-noimg">${t('img.none')}</div>`;
+  const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false }))
+    .join('<div style="height:10px"></div>');
+  const english = pictureSource(card) !== card;
+  const note = english ? `<p class="cp-img-note">${t(imageQuality(card) === 2 ? 'img.english.lowres' : 'img.english.none')}</p>` : '';
+  return pics + note;
 }
 
 let shownCard = null;   // the card on the card page (re-rendered when the language changes)
@@ -2183,7 +2743,6 @@ function renderCardViewContent(card) {
     return;
   }
   const names = cardNames(card);
-  const images = faceImages(card);
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
   const shopLinks = [
@@ -2197,10 +2756,7 @@ function renderCardViewContent(card) {
 
   box.innerHTML = `
     <div class="card-page">
-      <div class="cp-art">
-        ${images.length ? images.map(src => `<img src="${esc(src)}" alt="${esc(names.main)}">`).join('<div style="height:10px"></div>')
-                        : `<div class="cp-noimg">${t('img.none')}</div>`}
-      </div>
+      <div class="cp-art">${cardArtHtml(card, names.main)}</div>
       <div class="cp-info">
         <div class="cp-title-row">
           <div>
@@ -2247,13 +2803,17 @@ function renderCardViewContent(card) {
 
   loadPrintings(card);
   loadCardCombos(card);
-  if (!card._enPrices && card.lang && card.lang !== 'en' && !effectivePrices(card).usd) {
-    // prices for a Japanese printing come from its English counterpart
+  if (card.lang && card.lang !== 'en' && !card._enChecked && (!effectivePrices(card).usd || imageQuality(card) < 3)) {
+    // a Japanese printing's price - and, when its own picture is a placeholder
+    // or low-resolution, its picture - come from the English printing
     ensureEnglishPrices([card]).then(() => {
-      if (card._enPrices && shownCard === card && getCardIdFromUrl() === card.id) {
+      if (shownCard !== card || getCardIdFromUrl() !== card.id) return;
+      if (card._enPrices) {
         const sec = document.querySelector('#cardViewCard .price-section');
         if (sec) { sec.outerHTML = priceHtml(card); updateYenLabels(document.getElementById('cardViewCard')); }
       }
+      const art = document.querySelector('#cardViewCard .cp-art');
+      if (art && pictureSource(card) !== card) art.innerHTML = cardArtHtml(card, cardNames(card).main);
     });
   }
 }
@@ -2361,8 +2921,8 @@ async function loadPrintings(card) {
         byKey.set(key, entry);
       });
       card._printEntries = [...byKey.values()].map(e => {
-        if (e.ja && e.en) e.ja._enPrices = e.en.prices || {};
-        if (e.other && e.en) e.other._enPrices = e.en.prices || {};
+        if (e.ja && e.en) { e.ja._enPrices = e.en.prices || {}; e.ja._enCard = e.en; }
+        if (e.other && e.en) { e.other._enPrices = e.en.prices || {}; e.other._enCard = e.en; }
         return e;
       });
     }
@@ -2391,14 +2951,13 @@ async function loadPrintings(card) {
     const panel = document.getElementById('versionMenuPanel');
     panel.innerHTML = `<div class="print-grid">${entries.map(({ display, priceCard, ids }) => {
       const isCurrent = ids.includes(card.id);
-      const img = display.image_uris ? display.image_uris.small
-        : (display.card_faces && display.card_faces[0].image_uris ? display.card_faces[0].image_uris.small : '');
+      const thumb = faceUris(display)[0];
       const tags = treatmentLabels(priceCard).map(tag => `<span class="print-tag">${tag}</span>`).join('')
         + (display.lang === 'ja' ? `<span class="print-tag ja">${t('tag.ja')}</span>` : '');
       const pr = priceCard.prices || {};
       const usd = pr.usd || pr.usd_foil || pr.usd_etched;
       return `<button type="button" class="print-item ${isCurrent ? 'current' : ''}" data-id="${display.id}" title="${esc(display.set_name)}">
-        ${img ? `<img src="${img}" alt="" loading="lazy">` : ''}
+        ${thumb ? pictureTag(thumb, { sizes: '130px', use: ['small', 'normal'], main: 'normal' }) : ''}
         <span class="print-set">${esc(display.set_name || display.set.toUpperCase())}</span>
         <span class="print-meta">#${esc(display.collector_number)}${LANG === 'en' ? ' · ' : '・'}${rarityLabel(display.rarity)}</span>
         <span class="print-tags">${tags}</span>
@@ -2758,6 +3317,7 @@ async function runLocalSearch(myToken) {
   localMatchQueue = matches;
   localOffset = 0;
   document.getElementById('translationNote').style.display = 'none';
+  renderMatchNote();
   updateComboHint(matches, myToken);
 
   if (!matches.length) {
@@ -2777,7 +3337,7 @@ async function runLocalSearch(myToken) {
     localOffset = pageRows.length;
     resultInfo = { kind: 'count', n: matches.length };
     renderResultCount();
-    grid.innerHTML = currentCards.map(cardTileHtml).join('');
+    grid.innerHTML = resultTilesHtml(currentCards, currentRows, null);
     attachTileHandlers();
     loadMoreRow.style.display = localOffset < matches.length ? 'block' : 'none';
   } catch (err) {
@@ -2817,6 +3377,8 @@ async function fetchRandomFromScryfall(n, myToken) {
 async function loadRandomCards() {
   const myToken = ++searchToken;
   hideComboHint();
+  searchInfo = null;
+  renderMatchNote();
   showStatus(`<div class="spinner"></div><span class="serif">${t('random.loading')}</span>`);
   resultInfo = null;
   renderResultCount();
@@ -2838,6 +3400,7 @@ async function loadRandomCards() {
     picked = await hydrateRows(rows);
   } else {
     picked = await fetchRandomFromScryfall(12, myToken);
+    await ensureEnglishPrices(picked);
   }
   if (myToken !== searchToken) return;
 
@@ -2856,6 +3419,8 @@ async function loadRandomCards() {
 async function runSearch() {
   const myToken = ++searchToken;
   hideComboHint();
+  searchInfo = null;
+  renderMatchNote();
   nextPageUrl = null;
   currentCards = [];
   currentRows = null;
@@ -2928,10 +3493,11 @@ loadMoreBtn.addEventListener('click', async () => {
     try {
       const nextRows = localMatchQueue.slice(localOffset, localOffset + PAGE_SIZE);
       const hydrated = await hydrateRows(nextRows);
+      const previousRow = currentRows && currentRows.length ? currentRows[currentRows.length - 1] : null;
       currentCards = currentCards.concat(hydrated);
       currentRows = (currentRows || []).concat(nextRows);
       localOffset += nextRows.length;
-      grid.insertAdjacentHTML('beforeend', hydrated.map(cardTileHtml).join(''));
+      grid.insertAdjacentHTML('beforeend', resultTilesHtml(hydrated, nextRows, previousRow));
       attachTileHandlers();
       loadMoreRow.style.display = localOffset < localMatchQueue.length ? 'block' : 'none';
     } catch (err) { /* leave existing results in place */ }
@@ -2979,6 +3545,7 @@ function refreshResults() {
 // The search box lives in the top bar, so it works from any page.
 document.getElementById('searchForm').addEventListener('submit', (e) => {
   e.preventDefault();
+  if (state.query !== searchInput.value) state.showLoose = false;
   state.query = searchInput.value;
   if (routeFromUrl().view !== 'search') {
     history.pushState({ app: true }, '', location.pathname);
@@ -2992,6 +3559,7 @@ document.getElementById('guideExamples').addEventListener('click', (e) => {
   const pill = e.target.closest('.example-pill');
   if (!pill) return;
   searchInput.value = pill.dataset.q;
+  state.showLoose = false;
   state.query = pill.dataset.q;
   refreshResults();
 });
@@ -3339,7 +3907,7 @@ if (SITE === 'main' && /^https?:$/.test(location.protocol)) {
   // only offer a link when that edition's page has actually been uploaded
   Object.keys(EDITIONS).forEach(name => {
     const page = EDITIONS[name].page;
-    if (!page) return;
+    if (!page || EDITIONS[name].hidden) return;
     fetch(page, { method: 'HEAD' })
       .then(r => { editionUploaded[name] = r.ok; renderSiteSwitch(); })
       .catch(() => { /* not there */ });
@@ -3381,8 +3949,10 @@ function relocalizeSearchResults() {
     return;
   }
   if (!currentCards.length) return;
+  renderMatchNote();
   const redraw = () => {
-    grid.innerHTML = currentCards.map(cardTileHtml).join('');
+    grid.innerHTML = (currentRows && currentRows.length === currentCards.length)
+      ? resultTilesHtml(currentCards, currentRows, null) : currentCards.map(cardTileHtml).join('');
     attachTileHandlers();
   };
   redraw();
