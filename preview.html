@@ -1071,6 +1071,59 @@
   .hb-src { margin: 4px 0 0; font-size: 11.5px; color: var(--muted); }
   #homeMoversMore[hidden] { display: none; }
   .mover-yen { display: block; margin-top: 1px; font-size: 11px; color: var(--muted); }
+
+  /* ========================== round 4: prices by market ========================== */
+  .price-section { display: block; }
+  .price-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 10px; }
+  .price-section .price-heading { margin: 0; font-size: 13px; }
+  .seg-btn .wip-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-left: 5px; vertical-align: 2px; opacity: .8; }
+  .seg-btn[aria-pressed="true"] .wip-dot { display: none; }
+  .shop-prices { display: grid; grid-template-columns: repeat(3, minmax(0, max-content)); gap: 0; align-items: stretch; font-variant-numeric: tabular-nums; }
+  .shop-prices > span { padding: 6px 30px 6px 0; border-top: 1px solid var(--line); }
+  .shop-prices > span:nth-child(3n) { padding-right: 4px; }
+  .shop-prices .sp-h { border-top: 0; padding: 0 0 4px; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .sp-shop { font-size: 13px; font-weight: 700; min-width: 0; overflow-wrap: anywhere; padding-top: 8px !important; }
+  .sp-shop a { color: var(--text); text-decoration: none; }
+  .sp-shop a:hover { color: var(--accent); }
+  .sp-shop small { margin-left: 6px; font-size: 11px; font-weight: 500; color: var(--muted); }
+  .sp-val strong { font-size: 15px; color: var(--accent); }
+  .sp-val .jpy { display: block; font-size: 11.5px; color: var(--text-2); }
+  .sp-val.none { color: var(--muted); }
+  .price-wip { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; background: var(--field); border: 1px dashed var(--line-strong); border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
+  .wip-badge { display: inline-block; flex: none; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
+  .price-section .price-avg { margin-top: 8px; }
+  .price-section .price-sub { margin-top: 6px; }
+  .hist-title small.hist-market { margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--muted); font-family: "Noto Sans JP", sans-serif; }
+  /* shop links: smaller, one line per country */
+  .cp-row.shop-links { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 5px; align-items: center; }
+  .cp-row.shop-links > .cp-row-label { grid-row: 1 / span 3; align-self: start; line-height: 22px; margin-right: 0; }
+  .shop-group { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; min-width: 0; }
+  .shop-group .sg-label { width: 2.6em; flex: none; font-size: 10.5px; font-weight: 700; color: var(--muted); }
+  .cp-row.shop-links .external-link-btn { padding: 1px 9px; font-size: 11.5px; line-height: 1.7; }
+  /* home price box: winners and losers */
+  .hb-part + .hb-part { margin-top: 8px; }
+  .hb-part-head { margin: 4px 0 0; font-size: 12px; font-weight: 700; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
+  .hb-part-head .arrow { font-size: 10px; }
+  .hb-part-head.up .arrow { color: var(--accent); }
+  .hb-part-head.down .arrow, .hb-num.down .arrow { color: var(--muted); }
+  .hb-wip { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; line-height: 1.7; }
+  /* 価格 page: winners and losers side by side */
+  .mover-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+  .mover-col { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .mover-col .mover-list { margin: 0; }
+  .mover-col-head { margin: 0 0 6px; font-family: "Shippori Mincho", serif; font-size: 17px; display: flex; align-items: center; gap: 6px; }
+  .mover-col-head.up .arrow, .mover-chg.up .arrow { color: var(--accent); }
+  .mover-col-head.down .arrow { color: var(--muted); }
+  #moverBody .status-line .wip-badge { margin-bottom: 6px; }
+  @media (max-width: 900px) { .mover-cols { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 820px) {
+    .cp-row.shop-links { grid-template-columns: minmax(0, 1fr); overflow: visible; row-gap: 4px; }
+    .cp-row.shop-links > .cp-row-label { grid-row: auto; line-height: 1.4; }
+    .shop-group { grid-column: 1; flex-wrap: wrap; }
+    .cp-row.shop-links .external-link-btn { min-height: 30px; }
+    .shop-prices > span { padding-right: 16px; }
+    .sp-val strong { font-size: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -1338,9 +1391,9 @@
 <div id="pricesView" class="wrap" style="display:none;">
   <div class="meta-head">
     <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
-    <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
+    <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
     <div class="meta-controls">
-      <div class="seg" id="moverDirs" role="group" aria-label="値上がり・値下がり" data-i18n-aria="prices.dirs.aria"></div>
+      <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
     </div>
   </div>
   <p class="result-count" id="moverSummary"></p>
@@ -1351,7 +1404,7 @@
 <footer class="attribution">
   <div class="attribution-inner">
     This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-    <span data-i18n-html="footer.credit">カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）</span><br>
+    <span data-i18n-html="footer.credit">カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）・ショップ別の価格：<a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a></span><br>
     <span id="dbCount"></span>
     <span id="siteSwitch"></span>
     <span id="yawgCredit"></span>
@@ -1432,12 +1485,14 @@ const STR = {
   'hx.none': ['例を表示するには、カードのデータベースが必要です。', 'Examples need the card database.'],
   'home.more': ['すべて見る', 'See all'],
   'home.movers': ['価格の動き（{w}）', 'Price movers ({w})'],
-  'home.movers.none': ['価格の記録が溜まると、値上がりしたカードがここに表示されます。', 'Cards that went up in price appear here once price tracking has a few days of data.'],
+  'home.movers.none': ['価格の記録が溜まると、値動きの大きいカードがここに表示されます。', 'Cards whose prices moved most appear here once price tracking has a few days of data.'],
   'home.market.aria': ['市場', 'Market'],
-  'home.market.us': ['米国市場', 'US market'],
+  'home.market.us': ['米国', 'US'],
+  'home.market.eu': ['欧州', 'Europe'],
   'home.market.jp': ['日本', 'Japan'],
+  'home.market.eu.src': ['Cardmarket（欧州）のトレンド価格・ユーロ建て', 'Cardmarket (Europe) trend prices'],
   'home.market.us.src': ['TCGplayer（米国）の相場・ドル建て', 'TCGplayer (US) market prices'],
-  'home.market.jp.soon': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップの価格がそろい次第、ここに表示します。それまでは米国市場の動きをご覧ください。', 'Japanese shop prices are on the way: they will appear here once the shops that gave permission are added. Until then, see the US market.'],
+  'home.market.jp.soon': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップの価格がそろい次第、ここに表示します。それまでは米国・欧州の動きをご覧ください。', 'Japanese shop prices are a work in progress: they will appear here once the shops that gave permission are added. Until then, see the US or European market.'],
   'home.meta': ['上位デッキ', 'Top decks'],
   'home.meta.more': ['メタゲームを見る', 'Open metagame'],
   'home.meta.none': ['メタゲームのデータがまだありません。', 'No metagame data yet.'],
@@ -1531,8 +1586,8 @@ const STR = {
   'back': ['← 戻る', '← Back'],
   'back.sets': ['← セット一覧に戻る', '← All sets'],
   'footer.credit': [
-    'カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）',
-    'Card images and prices: <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (prices are from TCGplayer / Cardmarket, in US dollars / euros)'],
+    'カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）・ショップ別の価格：<a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>',
+    'Card images and prices: <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (prices are from TCGplayer / Cardmarket, in US dollars / euros) · prices by shop: <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>'],
   'db.count': ['収録カード：{n}枚（日本語版あり {ja}枚）', '{n} cards in the database ({ja} with a Japanese printing)'],
   'db.updated': ['・データ更新日：{d}', ' · data updated {d}'],
   'tab.prices': ['価格', 'Prices'],
@@ -1588,6 +1643,39 @@ const STR = {
   'legal.restricted': ['制限', 'Restricted'],
   'legal.title': ['{f}：{s}', '{f}: {s}'],
   'fx.note': ['為替レート：1ドル＝{rate}円（{date}・欧州中央銀行）', 'Exchange rate: US$1 = ¥{rate} ({date}, European Central Bank)'],
+  'fx.note2': ['為替レート：1ドル＝{rate}円・1ユーロ＝{eur}円（{date}・欧州中央銀行）', 'Exchange rates: US$1 = ¥{rate}, €1 = ¥{eur} ({date}, European Central Bank)'],
+  'market.aria': ['市場', 'Market'],
+  'market.jp': ['日本', 'Japan'],
+  'market.us': ['米国', 'US'],
+  'market.eu': ['欧州', 'Europe'],
+  'market.us.long': ['米国市場', 'US market'],
+  'market.eu.long': ['欧州市場', 'European market'],
+  'market.wip': ['準備中', 'Work in progress'],
+  'price.jp.wip': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップから順に追加します。それまでは下の「ショップで探す」から各ショップでご確認ください。', 'Japanese shop prices are a work in progress: shops will be added as they give permission. Until then, check the shops linked below.'],
+  'price.col.shop': ['ショップ', 'Shop'],
+  'price.shop.market': ['相場', 'market'],
+  'price.shop.trend': ['トレンド', 'trend'],
+  'price.shop.sell': ['販売', 'selling'],
+  'price.shop.buy': ['買取', 'buying'],
+  'price.none.market': ['この版の価格情報はありません', 'No prices for this printing'],
+  'price.src.us': ['TCGplayer は Scryfall 経由の相場（直近の取引の平均）、ほかのショップの価格は MTGJSON より（{date}）。', 'TCGplayer: market price via Scryfall (average of recent sales). Other shops’ prices: via MTGJSON ({date}).'],
+  'price.src.us.nodate': ['TCGplayer は Scryfall 経由の相場（直近の取引の平均）です。', 'TCGplayer: market price via Scryfall (average of recent sales).'],
+  'price.src.eu': ['Cardmarket は Scryfall 経由のトレンド価格です。', 'Cardmarket: trend price via Scryfall.'],
+  'price.src.eu.more': ['Cardmarket のトレンド価格（Scryfall 経由）と MTGJSON の価格（{date}）です。', 'Cardmarket trend price via Scryfall, and prices from MTGJSON ({date}).'],
+  'shops.jp': ['日本', 'Japan'],
+  'shops.us': ['米国', 'US'],
+  'shops.eu': ['欧州', 'Europe'],
+  'hist.note.eu': ['Cardmarket のトレンド価格（ユーロ）を今日のレートで円換算。英語版の同じ版の価格です。', 'Cardmarket trend price (EUR), converted to yen at today’s rate. Prices of the English copy of this printing.'],
+  'hist.note.eu.raw': ['Cardmarket のトレンド価格（ユーロ）。英語版の同じ版の価格です。', 'Cardmarket trend price (EUR), for the English copy of this printing.'],
+  'hist.jp': ['日本の価格の推移は準備中です。「米国」「欧州」で海外の価格の推移を見られます。', 'Japanese price history is a work in progress. Pick “US” or “Europe” to see those markets.'],
+  'prices.markets.aria': ['市場', 'Market'],
+  'prices.jp.wip': ['日本のショップ価格は準備中です', 'Japanese shop prices: work in progress'],
+  'prices.jp.wip.body': ['掲載の許可をいただいたショップの価格がそろい次第、日本市場の値上がり・値下がりをここに表示します。それまでは「米国」「欧州」をご覧ください。', 'Once the shops that gave permission are added, the Japanese market’s winners and losers will appear here. Until then, see the US or European market.'],
+  'prices.eu.none': ['欧州の価格の記録は、次回の価格更新から表示されます。', 'European prices appear here from the next price update.'],
+  'prices.col.up': ['値上がり', 'Winners'],
+  'prices.col.down': ['値下がり', 'Losers'],
+  'prices.none.col': ['大きく動いたカードはありません。', 'No card moved much.'],
+  'prices.note.eu': ['価格は欧州市場の Cardmarket トレンド価格（ユーロ。Scryfall 経由、さかのぼった分は MTGJSON より）で、円は今日のレートでの換算です。€2以上で€0.50以上動いたカードを、1枚につき最も動いた版で表示しています。データ更新：{date}', 'Prices are European Cardmarket trend prices in euros (via Scryfall; earlier days via MTGJSON), with yen at today’s rate. Cards worth €2 or more that moved by at least €0.50, shown once each with the printing that moved most. Updated: {date}'],
   'yen.approx': ['約{y}', '≈ {y}'],
   'img.fail': ['画像を読み込めませんでした', 'Image failed to load'],
   'img.none': ['画像なし', 'No image'],
@@ -3063,22 +3151,34 @@ function legalityCirclesHtml(legalities) {
 // Daily European Central Bank reference rate via Frankfurter (free, no key,
 // works from the browser). Yen amounts appear once it has loaded.
 let USD_JPY = null;
+let EUR_JPY = null;
 let FX_DATE = null;
-const fxReady = (async () => {
+async function fetchJpyRate(base) {
   const sources = [
-    ['https://api.frankfurter.dev/v2/rate/USD/JPY', d => ({ rate: d.rate, date: d.date })],
-    ['https://api.frankfurter.dev/v1/latest?base=USD&symbols=JPY', d => ({ rate: d.rates && d.rates.JPY, date: d.date })],
+    [`https://api.frankfurter.dev/v2/rate/${base}/JPY`, d => ({ rate: d.rate, date: d.date })],
+    [`https://api.frankfurter.dev/v1/latest?base=${base}&symbols=JPY`, d => ({ rate: d.rates && d.rates.JPY, date: d.date })],
   ];
   for (const [url, pick] of sources) {
     try {
       const res = await fetch(url);
       if (!res.ok) continue;
       const v = pick(await res.json());
-      if (v.rate > 0) { USD_JPY = v.rate; FX_DATE = v.date || ''; break; }
+      if (v.rate > 0) return v;
     } catch (err) { /* try the next source */ }
   }
+  return null;
+}
+const fxReady = (async () => {
+  const [usd, eur] = await Promise.all([fetchJpyRate('USD'), fetchJpyRate('EUR')]);
+  if (usd) { USD_JPY = usd.rate; FX_DATE = usd.date || ''; }
+  if (eur) { EUR_JPY = eur.rate; if (!FX_DATE) FX_DATE = eur.date || ''; }
   updateYenLabels();
 })();
+function yenForEur(eur) {
+  const n = parseFloat(eur);
+  if (!EUR_JPY || !(n > 0)) return '';
+  return '¥' + Math.round(n * EUR_JPY).toLocaleString('ja-JP');
+}
 
 function yenFor(usd) {
   const n = parseFloat(usd);
@@ -3086,6 +3186,7 @@ function yenFor(usd) {
   return '¥' + Math.round(n * USD_JPY).toLocaleString('ja-JP');
 }
 function fxNoteText() {
+  if (USD_JPY && EUR_JPY) return t('fx.note2', { rate: USD_JPY.toFixed(2), eur: EUR_JPY.toFixed(2), date: FX_DATE });
   return USD_JPY ? t('fx.note', { rate: USD_JPY.toFixed(2), date: FX_DATE }) : '';
 }
 // Fills every element carrying data-usd with its yen amount. Called when the
@@ -3093,6 +3194,10 @@ function fxNoteText() {
 function updateYenLabels(root = document) {
   root.querySelectorAll('[data-usd]').forEach(el => {
     const y = yenFor(el.dataset.usd);
+    el.textContent = !y ? '' : el.classList.contains('yen-short') ? y : t('yen.approx', { y });
+  });
+  root.querySelectorAll('[data-eur]').forEach(el => {
+    const y = yenForEur(el.dataset.eur);
     el.textContent = !y ? '' : el.classList.contains('yen-short') ? y : t('yen.approx', { y });
   });
   root.querySelectorAll('.fx-note').forEach(el => { el.textContent = fxNoteText(); });
@@ -3107,7 +3212,7 @@ function effectivePrices(card) {
   const own = card.prices || {};
   const en = card._enPrices || {};
   const hasOwn = own.usd || own.usd_foil || own.usd_etched;
-  return hasOwn ? { ...own, _fromEnglish: false } : { ...en, eur: own.eur || en.eur, tix: own.tix || en.tix, _fromEnglish: !!(en.usd || en.usd_foil || en.usd_etched) };
+  return hasOwn ? { ...own, _fromEnglish: false } : { ...en, eur: own.eur || en.eur, eur_foil: own.eur_foil || en.eur_foil, tix: own.tix || en.tix, _fromEnglish: !!(en.usd || en.usd_foil || en.usd_etched) };
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -3323,28 +3428,142 @@ function cardTileHtml(card) {
     </a>`;
 }
 
-function priceHtml(card) {
+// ---- prices on the card page, by market ---------------------------------------
+// 米国: TCGplayer (live, via Scryfall) plus Card Kingdom (selling and buying)
+// and Cardsphere from MTGJSON's daily file; 欧州: Cardmarket (via Scryfall)
+// plus any other euro shop in that file; 日本: work in progress until the
+// Japanese shops' prices can be shown. The choice is remembered.
+const PRICE_MARKETS = ['jp', 'us', 'eu'];
+let priceMarket = (() => { try { const m = localStorage.getItem('akuchie-market'); return PRICE_MARKETS.includes(m) ? m : 'us'; } catch (e) { return 'us'; } })();
+const SHOP_LABELS = { tcgplayer: 'TCGplayer', cardkingdom: 'Card Kingdom', cardsphere: 'Cardsphere', cardmarket: 'Cardmarket', cardtrader: 'CardTrader' };
+const shopLabel = k => SHOP_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
+const dollars = v => (v === null || v === undefined || v === '') ? null : Number(v);
+const fromCents = v => (v === null || v === undefined) ? null : v / 100;
+function marketRows(card, market) {
   const p = effectivePrices(card);
-  const rows = [[t('price.nonfoil'), p.usd], [t('price.foil'), p.usd_foil], [t('price.etched'), p.usd_etched]].filter(([, v]) => v);
-  const extras = [p.eur ? t('price.eur', { v: p.eur }) : '', p.eur_foil ? t('price.eurfoil', { v: p.eur_foil }) : '', p.tix ? `MTGO ${p.tix} tix` : ''].filter(Boolean);
-  const body = rows.length
-    ? `<div class="price-table">${rows.map(([label, usd]) =>
-        `<span class="lbl">${label}</span><span class="usd">$${usd}</span><span class="jpy" data-usd="${usd}">${yenFor(usd) ? t('yen.approx', { y: yenFor(usd) }) : ''}</span>`).join('')}</div>`
-    : `<div class="price-empty">${t('price.none')}</div>`;
-  const avg = card._avg
+  const q = card._quotes || {};
+  const cur = k => ((priceStore.index && priceStore.index.providers) || {})[k] || (k === 'cardmarket' ? 'EUR' : 'USD');
+  const rows = [];
+  const fromQuotes = (k, label, note, i0, i1, url) => {
+    const v = q[k];
+    if (v) rows.push({ label, note, n: fromCents(v[i0]), f: fromCents(v[i1]), url, q: true });
+  };
+  if (market === 'us') {
+    const tq = q.tcgplayer || [];
+    const ln = dollars(p.usd), lf = dollars(p.usd_foil || p.usd_etched);
+    const n = ln ?? fromCents(tq[0]), f = lf ?? fromCents(tq[1]);
+    rows.push({ label: 'TCGplayer', note: t('price.shop.market'), url: tcgplayerUrl(card), n, f, q: (ln === null && n !== null) || (lf === null && f !== null) });
+    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.sell'), 0, 1, cardKingdomUrl(card));
+    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.buy'), 2, 3, '');
+    fromQuotes('cardsphere', 'Cardsphere', '', 0, 1, '');
+    Object.keys(q).filter(k => !['tcgplayer', 'cardkingdom', 'cardsphere'].includes(k) && cur(k) === 'USD')
+      .forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, ''));
+  } else {
+    const cq = q.cardmarket || [];
+    const ln = dollars(p.eur), lf = dollars(p.eur_foil);
+    const n = ln ?? fromCents(cq[0]), f = lf ?? fromCents(cq[1]);
+    rows.push({ label: 'Cardmarket', note: t('price.shop.trend'), url: cardmarketUrl(card), n, f, q: (ln === null && n !== null) || (lf === null && f !== null) });
+    Object.keys(q).filter(k => k !== 'cardmarket' && cur(k) === 'EUR').forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, ''));
+  }
+  return rows.filter(r => (r.n !== null && r.n > 0) || (r.f !== null && r.f > 0));
+}
+function moneyCell(v, market) {
+  if (!(v > 0)) return '<span class="sp-val none">—</span>';
+  const amount = v.toFixed(2);
+  const sym = market === 'eu' ? '€' : '$';
+  const yen = market === 'eu' ? yenForEur(amount) : yenFor(amount);
+  const attr = market === 'eu' ? `data-eur="${amount}"` : `data-usd="${amount}"`;
+  return `<span class="sp-val"><strong>${sym}${amount}</strong><span class="jpy" ${attr}>${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`;
+}
+function priceHtml(card) {
+  const market = priceMarket;
+  const tabs = `<div class="seg seg-sm price-tabs" role="tablist" aria-label="${esc(t('market.aria'))}">${PRICE_MARKETS.map(m =>
+    `<button type="button" class="seg-btn" role="tab" data-pmarket="${m}" aria-selected="${m === market}" aria-pressed="${m === market}">${t('market.' + m)}${m === 'jp' ? `<span class="wip-dot" title="${esc(t('market.wip'))}"></span>` : ''}</button>`).join('')}</div>`;
+  let body = '';
+  const rows = market === 'jp' ? [] : marketRows(card, market);
+  if (market === 'jp') {
+    body = `<div class="price-wip"><span class="wip-badge">${t('market.wip')}</span>${t('price.jp.wip')}</div>`;
+  } else {
+    body = rows.length
+      ? `<div class="shop-prices">
+          <span class="sp-h">${t('price.col.shop')}</span><span class="sp-h">${t('price.nonfoil')}</span><span class="sp-h">${t('price.foil')}</span>
+          ${rows.map(r => `<span class="sp-shop">${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)} ↗</a>` : esc(r.label)}${r.note ? `<small>${esc(r.note)}</small>` : ''}</span>${moneyCell(r.n, market)}${moneyCell(r.f, market)}`).join('')}
+        </div>`
+      : `<div class="price-empty">${t('price.none.market')}</div>`;
+  }
+  const p = effectivePrices(card);
+  const avg = (market === 'us' && card._avg)
     ? `${t('price.avg', { n: card._avg.n })}<strong>$${card._avg.avg}</strong> <span data-usd="${card._avg.avg}"></span>`
       + `　${t('price.min')}<strong>$${card._avg.min}</strong> <span data-usd="${card._avg.min}"></span>`
     : '';
-  return `<div class="price-section cp-section">
-    <div class="price-heading">${t('price.heading')}<small>${t('price.sub')}</small></div>
+  const qdate = card._quotesDate ? dateLabel(card._quotesDate, true) : '';
+  const viaQuotes = qdate && rows.some(r => r.q);
+  const src = market === 'us' ? t(viaQuotes ? 'price.src.us' : 'price.src.us.nodate', { date: esc(qdate) })
+    : market === 'eu' ? t(viaQuotes ? 'price.src.eu.more' : 'price.src.eu', { date: esc(qdate) }) : '';
+  return `<div class="price-section cp-section" data-market="${market}">
+    <div class="price-head"><div class="price-heading">${t('price.heading')}</div>${tabs}</div>
     ${body}
     <div class="price-avg" id="priceAvg">${avg}</div>
-    <div class="price-sub">
+    ${market === 'jp' ? '' : `<div class="price-sub">
       ${p._fromEnglish ? t('price.fromEn') + '<br>' : ''}
-      ${extras.length ? extras.join(LANG === 'en' ? ' · ' : '・') + '<br>' : ''}
+      ${src}${market === 'us' && p.tix ? `${LANG === 'en' ? ' · ' : '・'}MTGO ${esc(p.tix)} tix` : ''}<br>
       <span class="fx-note">${fxNoteText()}</span>
-    </div>
+    </div>`}
   </div>`;
+}
+function rerenderPriceSection(card) {
+  const sec = document.querySelector('#cardViewCard .price-section');
+  if (!sec || shownCard !== card) return;
+  sec.outerHTML = priceHtml(card);
+  updateYenLabels(document.getElementById('cardViewCard'));
+}
+// today's prices at several shops (published with the price history)
+function loadQuoteShard(key) {
+  if (!priceStore.quotes) priceStore.quotes = new Map();
+  if (!priceStore.quotes.has(key)) {
+    priceStore.quotes.set(key, loadPriceIndex()
+      .then(index => (index && index.quotes_date) ? fetchMaybeGzipJson(`${PRICE_DATA_URL}q/${key}.json.gz?d=${encodeURIComponent(index.quotes_date)}`) : null)
+      .catch(() => null));
+  }
+  return priceStore.quotes.get(key);
+}
+async function loadCardQuotes(card) {
+  const id = await priceHistoryId(card);
+  if (!id || shownCard !== card) return;
+  const index = await loadPriceIndex();
+  priceStore.index = index;
+  const shard = await loadQuoteShard(id.slice(0, 2));
+  if (!shard || shownCard !== card) return;
+  card._quotes = (shard.p || {})[id] || null;
+  card._quotesDate = shard.date || '';
+  rerenderPriceSection(card);
+}
+document.getElementById('cardViewCard').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pmarket]');
+  if (!b || b.dataset.pmarket === priceMarket) return;
+  priceMarket = b.dataset.pmarket;
+  try { localStorage.setItem('akuchie-market', priceMarket); } catch (err) { /* fine */ }
+  if (shownCard) rerenderPriceSection(shownCard);
+  const box = document.getElementById('priceHistory');
+  if (box && box._hist && !box.hidden) drawPriceHistory(box);
+});
+
+// shops by country (search links; nothing is copied from them)
+function tcgplayerUrl(card) {
+  const en = englishName(card);
+  return en ? `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(en)}` : '';
+}
+function cardKingdomUrl(card) {
+  const en = englishName(card);
+  return en ? `https://www.cardkingdom.com/catalog/search?search=header&filter%5Bname%5D=${encodeURIComponent(en)}` : '';
+}
+function starCityUrl(card) {
+  const en = englishName(card);
+  return en ? `https://starcitygames.com/search/?search_query=${encodeURIComponent(en)}` : '';
+}
+function cardmarketUrl(card) {
+  const en = englishName(card);
+  return en ? `https://www.cardmarket.com/en/Magic/Products/Search?searchString=${encodeURIComponent(en)}` : '';
 }
 
 function esc(s) {
@@ -3377,9 +3596,11 @@ function renderCardViewContent(card) {
   const names = cardNames(card);
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
-  const shopLinks = [
-    [t('shop.hareruya'), hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], [t('shop.cardrush'), cardRushUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)],
-  ].filter(([, url]) => url);
+  const shopGroups = [
+    ['jp', [[t('shop.hareruya'), hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], [t('shop.cardrush'), cardRushUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)]]],
+    ['us', [['TCGplayer', tcgplayerUrl(card)], ['Card Kingdom', cardKingdomUrl(card)], ['Star City Games', starCityUrl(card)]]],
+    ['eu', [['Cardmarket', cardmarketUrl(card)]]],
+  ].map(([k, links]) => [k, links.filter(([, url]) => url)]).filter(([, links]) => links.length);
   const deckLinks = [['MTGDecks', mtgDecksUrl(card)], ['MTGGoldfish', goldfishUrl(card)]].filter(([, url]) => url);
   const linkRow = links => links.map(([label, url]) =>
     `<a class="external-link-btn" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('');
@@ -3407,8 +3628,9 @@ function renderCardViewContent(card) {
           ${card.scryfall_uri ? `<a href="${esc(card.scryfall_uri)}" target="_blank" rel="noopener">Scryfall ↗</a>` : ''}
         </div>
         ${priceHtml(card)}
-        ${shopLinks.length ? `<div class="cp-row external-links">
-          <span class="cp-row-label">${t('links.shops')}</span>${linkRow(shopLinks)}
+        ${shopGroups.length ? `<div class="cp-row external-links shop-links">
+          <span class="cp-row-label">${t('links.shops')}</span>${shopGroups.map(([k, links]) =>
+            `<span class="shop-group" data-region="${k}"><span class="sg-label">${t('shops.' + k)}</span>${linkRow(links)}</span>`).join('')}
         </div>` : ''}
         ${card.legalities ? `<div class="cp-row cp-wrap"><span class="cp-row-label">${t('legal.short')}</span>${legalityHtml(card.legalities)}</div>` : ''}
         ${deckLinks.length ? `<div class="cp-row external-links">
@@ -3426,6 +3648,7 @@ function renderCardViewContent(card) {
   document.title = `${names.main} — 悪知恵`;
   updateYenLabels(box);
   showPriceHistory(card);
+  if (card._quotes === undefined) loadCardQuotes(card);
 
   const setLink = document.querySelector('#cardViewCard .cp-set-link');
   if (setLink) setLink.addEventListener('click', (e) => {
@@ -3440,10 +3663,7 @@ function renderCardViewContent(card) {
     // or low-resolution, its picture - come from the English printing
     ensureEnglishPrices([card]).then(() => {
       if (shownCard !== card || getCardIdFromUrl() !== card.id) return;
-      if (card._enPrices) {
-        const sec = document.querySelector('#cardViewCard .price-section');
-        if (sec) { sec.outerHTML = priceHtml(card); updateYenLabels(document.getElementById('cardViewCard')); }
-      }
+      if (card._enPrices) rerenderPriceSection(card);
       const art = document.querySelector('#cardViewCard .cp-art');
       if (art && pictureSource(card) !== card) art.innerHTML = cardArtHtml(card, cardNames(card).main);
     });
@@ -3888,7 +4108,7 @@ function routeFromUrl() {
   }
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
-  if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '' };
+  if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '', market: p.get('market') || '' };
   if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1' };
   return { view: 'search' };
 }
@@ -3937,6 +4157,7 @@ function applyRoute(route) {
     showView('prices');
     if (['1', '7', '30'].includes(route.win)) moverState.win = route.win;
     if (['up', 'down'].includes(route.dir)) moverState.dir = route.dir;
+    if (PRICE_MARKETS.includes(route.market)) moverState.market = route.market;
     loadMovers();
     renderMovers();
     Promise.all([moverState.promise, dbReady]).then(() => { if (routeFromUrl().view === 'prices') renderMovers(); });
@@ -4976,7 +5197,7 @@ document.getElementById('metaBody').addEventListener('click', (e) => {
 const PRICE_DATA_URL = '../akuchie-prices/';
 const priceStore = { indexPromise: null, shards: new Map() };
 const histState = { range: '90', foil: false };
-const moverState = { data: null, index: null, status: 'idle', promise: null, win: '7', dir: 'up' };
+const moverState = { data: null, index: null, status: 'idle', promise: null, win: '7', dir: 'up', market: 'us' };
 
 function loadPriceIndex() {
   if (!priceStore.indexPromise) {
@@ -5049,28 +5270,39 @@ function niceTicks(lo, hi, count) {
   for (let v = start; v <= end + step / 2; v += step) ticks.push(Math.round(v * 1e6) / 1e6);
   return ticks;
 }
-function axisMoney(v) {
-  if (USD_JPY) {
+function axisMoney(v, rate = USD_JPY, sym = '$') {
+  if (rate) {
     if (v >= 10000) return LANG === 'en' ? '¥' + (v / 1000).toLocaleString('en-US', { maximumFractionDigits: 1 }) + 'K'
                                          : '¥' + (v / 10000).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '万';
     return '¥' + Math.round(v).toLocaleString('ja-JP');
   }
-  return '$' + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
+  return sym + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
 }
 
 function drawPriceHistory(box) {
   const { dates, series } = box._hist;
-  const has = [0, 1].filter(k => (series[k] || []).some(v => v !== null && v !== undefined));
-  const head = (extra = '', controls = '') => `<div class="hist-head"><span class="hist-title">${t('hist.heading')}</span>${extra}${controls}</div>`;
+  const market = priceMarket;
+  if (market === 'jp') {
+    box.innerHTML = `<div class="hist-head"><span class="hist-title">${t('hist.heading')}</span><span class="hist-change">${t('market.wip')}</span></div><p class="hist-note">${t('hist.jp')}</p>`;
+    return;
+  }
+  const off = market === 'eu' ? 2 : 0;
+  const S = [series[off] || [], series[off + 1] || []];
+  const rate = market === 'eu' ? EUR_JPY : USD_JPY;
+  const sym = market === 'eu' ? '€' : '$';
+  const hraw = c => sym + (c / 100).toFixed(2);
+  const hm = c => rate ? '¥' + Math.round(c / 100 * rate).toLocaleString('ja-JP') : hraw(c);
+  const has = [0, 1].filter(k => (S[k] || []).some(v => v !== null && v !== undefined));
+  const head = (extra = '', controls = '') => `<div class="hist-head"><span class="hist-title">${t('hist.heading')}<small class="hist-market">${t('market.' + market + '.long')}</small></span>${extra}${controls}</div>`;
   if (!has.length) { box.innerHTML = head() + `<p class="hist-note">${t('hist.none')}</p>`; return; }
   const k = has.includes(histState.foil ? 1 : 0) ? (histState.foil ? 1 : 0) : has[0];
-  const vals = series[k];
+  const vals = S[k];
   const last = dates[dates.length - 1];
   const from = histState.range === 'all' ? '' : daysBefore(last, Number(histState.range));
   const pts = [];
   dates.forEach((d, i) => { if (d >= from) pts.push({ d, c: vals[i] === undefined ? null : vals[i] }); });
   const known = pts.filter(p => p.c !== null);
-  const perYen = USD_JPY ? USD_JPY / 100 : 0.01;   // cents -> what the axis shows
+  const perYen = rate ? rate / 100 : 0.01;   // cents -> what the axis shows
   const ranges = ['30', '90', '365', 'all'].map(r =>
     `<button type="button" class="seg-btn" data-range="${r}" aria-pressed="${r === histState.range}">${t('hist.range.' + r)}</button>`).join('');
   const kinds = has.length > 1 ? `<div class="seg seg-sm" role="group">${[0, 1].map(x =>
@@ -5083,9 +5315,9 @@ function drawPriceHistory(box) {
   }
   const n = dates.length;
   const collecting = n < 30 ? `<p class="hist-note">${n === 1 ? t('hist.collecting.one') : t('hist.collecting', { n })}</p>` : '';
-  const note = `<p class="hist-note">${t(USD_JPY ? 'hist.note' : 'hist.note.usd')}</p>`;
+  const note = `<p class="hist-note">${t(market === 'eu' ? (rate ? 'hist.note.eu' : 'hist.note.eu.raw') : (rate ? 'hist.note' : 'hist.note.usd'))}</p>`;
   if (known.length < 2) {
-    box.innerHTML = head('', controls) + (known.length ? `<p class="hist-note"><strong>${esc(moneyText(known[0].c))}</strong>（${esc(dateLabel(known[0].d, true))}）</p>` : '') + (collecting || `<p class="hist-note">${t('hist.none')}</p>`);
+    box.innerHTML = head('', controls) + (known.length ? `<p class="hist-note"><strong>${esc(hm(known[0].c))}</strong>（${esc(dateLabel(known[0].d, true))}）</p>` : '') + (collecting || `<p class="hist-note">${t('hist.none')}</p>`);
     wireHistControls(box);
     return;
   }
@@ -5109,14 +5341,14 @@ function drawPriceHistory(box) {
     ? `<circle class="hist-dot" cx="${X(s[0].d).toFixed(1)}" cy="${Y(s[0].c * perYen).toFixed(1)}" r="3"></circle>`
     : `<path class="hist-area" d="M${X(s[0].d).toFixed(1)},${H - m.b} L${s.map(xy).join(' L')} L${X(s[s.length - 1].d).toFixed(1)},${H - m.b} Z"></path><path class="hist-line" d="M${s.map(xy).join(' L')}"></path>`).join('');
   const grid = ticks.map(v => `<line class="hist-grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"></line>
-      <text class="hist-axis" x="${m.l - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${esc(axisMoney(v))}</text>`).join('');
+      <text class="hist-axis" x="${m.l - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${esc(axisMoney(v, rate, sym))}</text>`).join('');
   const spanDays = (t1 - t0) / 864e5;
   const xIdx = [...new Set([0, Math.round((pts.length - 1) / 2), pts.length - 1])];
   const xLabels = xIdx.map((i, j) => `<text class="hist-axis" x="${X(pts[i].d).toFixed(1)}" y="${H - 6}" text-anchor="${j === 0 ? 'start' : j === xIdx.length - 1 ? 'end' : 'middle'}">${esc(dateLabel(pts[i].d, spanDays > 300 && j !== 1))}</text>`).join('');
   const end = known[known.length - 1];
   const endMark = `<circle class="hist-dot" cx="${X(end.d).toFixed(1)}" cy="${Y(end.c * perYen).toFixed(1)}" r="4"></circle>
-    <text class="hist-end" x="${(X(end.d) + 8).toFixed(1)}" y="${(Y(end.c * perYen) + 4).toFixed(1)}">${esc(moneyText(end.c))}</text>`;
-  const rows = known.slice().reverse().map(p => `<tr><td>${esc(dateLabel(p.d, true))}</td><td>${esc(moneyText(p.c))}</td>${USD_JPY ? `<td>${usdText(p.c)}</td>` : ''}</tr>`).join('');
+    <text class="hist-end" x="${(X(end.d) + 8).toFixed(1)}" y="${(Y(end.c * perYen) + 4).toFixed(1)}">${esc(hm(end.c))}</text>`;
+  const rows = known.slice().reverse().map(p => `<tr><td>${esc(dateLabel(p.d, true))}</td><td>${esc(hm(p.c))}</td>${rate ? `<td>${hraw(p.c)}</td>` : ''}</tr>`).join('');
 
   box.innerHTML = head(change, controls) + `
     <div class="hist-chart">
@@ -5130,7 +5362,7 @@ function drawPriceHistory(box) {
     </div>
     ${note}${collecting}
     <details class="hist-table"><summary>${t('hist.table')}</summary><div class="hist-table-scroll"><table>
-      <thead><tr><th>${t('hist.th.date')}</th><th>${t('hist.th.price')}</th>${USD_JPY ? '<th>USD</th>' : ''}</tr></thead><tbody>${rows}</tbody>
+      <thead><tr><th>${t('hist.th.date')}</th><th>${t('hist.th.price')}</th>${rate ? `<th>${sym === '€' ? 'EUR' : 'USD'}</th>` : ''}</tr></thead><tbody>${rows}</tbody>
     </table></div></details>`;
   wireHistControls(box);
 
@@ -5143,8 +5375,8 @@ function drawPriceHistory(box) {
     const p = known[at], x = X(p.d), y = Y(p.c * perYen);
     cross.setAttribute('x1', x); cross.setAttribute('x2', x); cross.setAttribute('visibility', 'visible');
     dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('visibility', 'visible');
-    tip.querySelector('strong').textContent = moneyText(p.c);
-    tip.querySelector('span').textContent = dateLabel(p.d, true) + (USD_JPY ? ' · ' + usdText(p.c) : '');
+    tip.querySelector('strong').textContent = hm(p.c);
+    tip.querySelector('span').textContent = dateLabel(p.d, true) + (rate ? ' · ' + hraw(p.c) : '');
     tip.hidden = false;
     const sw = svg.getBoundingClientRect().width, scale = sw / W || 1;
     const left = x * scale, wTip = tip.offsetWidth;
@@ -5186,11 +5418,12 @@ window.addEventListener('resize', () => {
 fxReady.then(() => {
   const box = document.getElementById('priceHistory');
   if (box && box._hist && !box.hidden) drawPriceHistory(box);
+  if (shownCard && document.querySelector('#cardViewCard .price-section')) rerenderPriceSection(shownCard);
   if (routeFromUrl().view === 'prices') renderMovers();
 });
 
 // ---- price movers tab
-function moverUrl() { return `?view=prices&win=${moverState.win}&dir=${moverState.dir}`; }
+function moverUrl() { return `?view=prices&market=${moverState.market}&win=${moverState.win}`; }
 function loadMovers() {
   if (!moverState.promise) {
     moverState.status = 'loading';
@@ -5202,15 +5435,29 @@ function loadMovers() {
   }
   return moverState.promise;
 }
+function moverMoney(cents, market) {
+  return market === 'eu' ? '€' + (cents / 100).toFixed(2) : usdText(cents);
+}
+function moverYen(cents, market) {
+  const rate = market === 'eu' ? EUR_JPY : USD_JPY;
+  return rate ? '¥' + Math.round(cents / 100 * rate).toLocaleString('ja-JP') : '';
+}
 function renderMovers() {
   document.title = t('title.prices');
   const body = document.getElementById('moverBody');
   const summary = document.getElementById('moverSummary');
   const note = document.getElementById('moverNote');
   const winBox = document.getElementById('moverWindows');
-  const dirBox = document.getElementById('moverDirs');
+  const market = moverState.market;
+  document.getElementById('moverMarkets').innerHTML = ['us', 'eu', 'jp'].map(m =>
+    `<button type="button" class="seg-btn" role="tab" data-market="${m}" aria-pressed="${m === market}" aria-selected="${m === market}">${t('market.' + m)}${m === 'jp' ? `<span class="wip-dot" title="${esc(t('market.wip'))}"></span>` : ''}</button>`).join('');
+  if (market === 'jp') {
+    winBox.innerHTML = summary.textContent = note.textContent = '';
+    body.innerHTML = `<div class="status-line"><span class="wip-badge">${t('market.wip')}</span><span class="serif">${t('prices.jp.wip')}</span>${t('prices.jp.wip.body')}</div>`;
+    return;
+  }
   if (moverState.status !== 'ready') {
-    winBox.innerHTML = dirBox.innerHTML = summary.textContent = note.textContent = '';
+    winBox.innerHTML = summary.textContent = note.textContent = '';
     body.innerHTML = moverState.status === 'absent'
       ? `<div class="status-line"><span class="serif">${t('prices.absent')}</span>${t('prices.absent.body')}</div>`
       : `<div class="status-line"><div class="spinner"></div><span class="serif">${t('prices.loading')}</span></div>`;
@@ -5218,38 +5465,45 @@ function renderMovers() {
   }
   const data = moverState.data;
   const wins = ['1', '7', '30'].filter(w => data.windows && data.windows[w]);
-  note.innerHTML = t('prices.note', { date: esc(String(data.today || '')) });
+  note.innerHTML = t(market === 'eu' ? 'prices.note.eu' : 'prices.note', { date: esc(String(data.today || '')) });
   if (!wins.length) {
-    winBox.innerHTML = dirBox.innerHTML = summary.textContent = '';
+    winBox.innerHTML = summary.textContent = '';
     body.innerHTML = `<div class="status-line"><span class="serif">${t('prices.wait')}</span>${t('prices.wait.body')}</div>`;
     return;
   }
   if (!wins.includes(moverState.win)) moverState.win = wins.includes('7') ? '7' : wins[0];
   winBox.innerHTML = wins.map(w => `<button type="button" class="seg-btn" data-win="${w}" aria-pressed="${w === moverState.win}">${t('prices.win.' + w)}</button>`).join('');
-  dirBox.innerHTML = ['up', 'down'].map(d => `<button type="button" class="seg-btn" data-dir="${d}" aria-pressed="${d === moverState.dir}">${t('prices.' + d)}</button>`).join('');
   const block = data.windows[moverState.win];
-  const scope = block[EDITION.colors || 'all'] || block.all || { up: [], down: [] };
-  const list = (scope[moverState.dir] || []).filter(e => colorsInScope(String(e.col || '').split('')));
-  summary.textContent = t('prices.summary', { from: dateLabel(block.from, true), to: dateLabel(data.today, true), n: list.length });
-  if (!list.length) {
-    body.innerHTML = `<div class="status-line"><span class="serif">${t(SITE === 'main' ? 'prices.none' : 'prices.none.' + SITE)}</span></div>`;
+  const scope = market === 'eu' ? block.eur : (block.all || { up: [], down: [] });
+  if (!scope) {
+    summary.textContent = '';
+    body.innerHTML = `<div class="status-line"><span class="serif">${t('prices.eu.none')}</span></div>`;
     return;
   }
-  body.innerHTML = `<div class="meta-table"><ol class="mover-list">${list.map((e, i) => moverRowHtml(e, i)).join('')}</ol></div>`;
+  summary.textContent = t('prices.summary', { from: dateLabel(block.from, true), to: dateLabel(data.today, true), n: (scope.up || []).length + (scope.down || []).length });
+  const col = dir => {
+    const list = scope[dir] || [];
+    return `<section class="mover-col" data-dir="${dir}">
+        <h2 class="mover-col-head ${dir}"><span class="arrow" aria-hidden="true">${dir === 'up' ? '▲' : '▼'}</span>${t('prices.col.' + dir)}</h2>
+        ${list.length ? `<ol class="mover-list">${list.map((e, i) => moverRowHtml(e, i, market)).join('')}</ol>` : `<p class="hb-empty">${t('prices.none.col')}</p>`}
+      </section>`;
+  };
+  body.innerHTML = `<div class="mover-cols">${col('up')}${col('down')}</div>`;
 }
-function moverRowHtml(e, i) {
+function moverRowHtml(e, i, market = 'us') {
   const row = (typeof ORACLE_MAP !== 'undefined' && ORACLE_MAP) ? ORACLE_MAP.get(e.o) : null;
   const ja = row && row.name_ja;
   const main = LANG === 'ja' && ja ? ja : e.n;
   const sub = [LANG === 'ja' && ja ? e.n : (LANG === 'en' && ja ? ja : ''), `${String(e.s || '').toUpperCase()} #${e.c || ''}`].filter(Boolean).join(' · ');
   const img = e.img ? `<img src="${esc(e.img)}" alt="" loading="lazy">` : '<span class="mover-noimg"></span>';
+  const yen = moverYen(e.then, market) ? `<small class="mover-yen">${esc(moverYen(e.then, market))} → ${esc(moverYen(e.now, market))}</small>` : '';
   return `<li class="mover-row">
       <span class="meta-rank">${i + 1}</span>
       <a class="mover-card" href="?card=${encodeURIComponent(e.id)}" data-card="${esc(e.id)}">${img}
         <span class="mover-name">${esc(main)}${e.f ? `<span class="mover-foil">${t('prices.foil')}</span>` : ''}<small>${esc(sub)}</small></span></a>
       <span class="mover-nums">
-        <span class="mover-chg"><span class="arrow" aria-hidden="true">${e.pct > 0 ? '▲' : '▼'}</span>${pctText(e.pct)}</span><br>
-        <span class="mover-from">${esc(usdText(e.then))} → ${esc(usdText(e.now))}${USD_JPY ? `<small class="mover-yen">${esc(moneyText(e.then))} → ${esc(moneyText(e.now))}</small>` : ''}</span>
+        <span class="mover-chg ${e.pct > 0 ? 'up' : 'down'}"><span class="arrow" aria-hidden="true">${e.pct > 0 ? '▲' : '▼'}</span>${pctText(e.pct)}</span><br>
+        <span class="mover-from">${esc(moverMoney(e.then, market))} → ${esc(moverMoney(e.now, market))}${yen}</span>
       </span>
     </li>`;
 }
@@ -5259,7 +5513,7 @@ function moverSelect(change) {
   renderMovers();
 }
 document.getElementById('moverWindows').addEventListener('click', (e) => { const b = e.target.closest('.seg-btn'); if (b) moverSelect({ win: b.dataset.win }); });
-document.getElementById('moverDirs').addEventListener('click', (e) => { const b = e.target.closest('.seg-btn'); if (b) moverSelect({ dir: b.dataset.dir }); });
+document.getElementById('moverMarkets').addEventListener('click', (e) => { const b = e.target.closest('.seg-btn'); if (b) moverSelect({ market: b.dataset.market }); });
 document.getElementById('moverBody').addEventListener('click', (e) => {
   const link = e.target.closest('a.mover-card');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
@@ -5966,34 +6220,38 @@ async function renderHomeMovers() {
   const body = document.getElementById('homeMoversBody');
   const title = document.getElementById('homeMoversTitle');
   const more = document.getElementById('homeMoversMore');
-  document.getElementById('homeMoversTabs').innerHTML = ['us', 'jp'].map(m =>
+  document.getElementById('homeMoversTabs').innerHTML = ['us', 'eu', 'jp'].map(m =>
     `<button type="button" class="seg-btn" role="tab" data-market="${m}" aria-pressed="${m === homeMarket}" aria-selected="${m === homeMarket}">${esc(t('home.market.' + m))}</button>`).join('');
   title.textContent = t('home.movers', { w: t('prices.win.7') });
   if (homeMarket === 'jp') {
     more.hidden = true;
-    body.innerHTML = `<p class="hb-empty">${esc(t('home.market.jp.soon'))}</p>`;
+    body.innerHTML = `<p class="hb-empty hb-wip"><span class="wip-badge">${esc(t('market.wip'))}</span>${esc(t('home.market.jp.soon'))}</p>`;
     return;
   }
   more.hidden = false;
+  const market = homeMarket;
   await Promise.all([loadMovers(), dbReady]);
-  if (homeMarket !== 'us') return;
+  if (homeMarket !== market) return;
   const data = moverState.data;
   const win = data && data.windows ? (data.windows['7'] ? '7' : data.windows['1'] ? '1' : data.windows['30'] ? '30' : null) : null;
   if (moverState.status !== 'ready' || !win) { body.innerHTML = `<p class="hb-empty">${esc(t('home.movers.none'))}</p>`; return; }
   title.textContent = t('home.movers', { w: t('prices.win.' + win) });
   const block = data.windows[win];
-  const scope = block[EDITION.colors || 'all'] || block.all || { up: [] };
-  const list = (scope.up || []).slice(0, 5);
-  if (!list.length) { body.innerHTML = `<p class="hb-empty">${esc(t('prices.none'))}</p>`; return; }
-  body.innerHTML = `<ol class="hb-list">${list.map((e, i) => {
-    const row = ORACLE_MAP ? ORACLE_MAP.get(e.o) : null;
-    const name = (LANG !== 'en' && row && row.name_ja) ? row.name_ja : e.n;
-    return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
+  const scope = market === 'eu' ? block.eur : (block.all || { up: [] });
+  if (!scope) { body.innerHTML = `<p class="hb-empty">${esc(t('prices.eu.none'))}</p>`; return; }
+  const up = (scope.up || []).slice(0, 3), down = (scope.down || []).slice(0, 3);
+  if (!up.length && !down.length) { body.innerHTML = `<p class="hb-empty">${esc(t('prices.none'))}</p>`; return; }
+  const part = (dir, list) => `<div class="hb-part" data-dir="${dir}"><h3 class="hb-part-head ${dir}"><span class="arrow" aria-hidden="true">${dir === 'up' ? '▲' : '▼'}</span>${esc(t('prices.col.' + dir))}</h3>
+    ${list.length ? `<ol class="hb-list">${list.map((e, i) => {
+      const row = ORACLE_MAP ? ORACLE_MAP.get(e.o) : null;
+      const name = (LANG !== 'en' && row && row.name_ja) ? row.name_ja : e.n;
+      return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
         <a class="hb-name" href="?card=${encodeURIComponent(e.id)}" data-card="${esc(e.id)}">${esc(name)}</a>
-        <span class="hb-sub">${esc(usdText(e.then))} → ${esc(usdText(e.now))}</span>
-        <span class="hb-num"><span class="arrow" aria-hidden="true">▲</span>${pctText(e.pct)}</span></li>`;
-  }).join('')}</ol><p class="hb-src">${esc(t('home.market.us.src'))}</p>`;
-  more.href = `?view=prices&win=${win}&dir=up`;
+        <span class="hb-sub">${esc(moverMoney(e.then, market))} → ${esc(moverMoney(e.now, market))}</span>
+        <span class="hb-num ${dir}"><span class="arrow" aria-hidden="true">${dir === 'up' ? '▲' : '▼'}</span>${pctText(e.pct)}</span></li>`;
+    }).join('')}</ol>` : `<p class="hb-empty">${esc(t('prices.none.col'))}</p>`}</div>`;
+  body.innerHTML = `${part('up', up)}${part('down', down)}<p class="hb-src">${esc(t(market === 'eu' ? 'home.market.eu.src' : 'home.market.us.src'))}</p>`;
+  more.href = `?view=prices&market=${market}&win=${win}`;
 }
 document.getElementById('homeMoversTabs').addEventListener('click', (e) => {
   const b = e.target.closest('.seg-btn');

@@ -3,13 +3,20 @@
 build_prices.py - daily card price history for 悪知恵
 
 Once a day this reads Scryfall's free 'default_cards' export (every printing,
-with today's TCGplayer US-dollar prices), adds today's price of every printing
-to the stored history, and writes:
+with today's TCGplayer US-dollar and Cardmarket euro prices), adds today's
+prices of every printing to the stored history, and writes:
 
     index.json         the list of dates in the history
     h/00.json.gz ...   the history itself, split into 256 files by card id
-                       (the card page only loads the one file it needs)
-    movers.json        biggest risers and fallers over 1, 7 and 30 days
+                       (the card page only loads the one file it needs):
+                       US dollars (TCGplayer) and euros (Cardmarket),
+                       non-foil and foil
+    q/00.json.gz ...   today's prices at several shops - TCGplayer, Card
+                       Kingdom (selling and buying), Cardsphere, Cardmarket -
+                       from MTGJSON's daily price file
+    movers.json        biggest risers and fallers over 1, 7 and 30 days, for
+                       the US market (dollars) and the European one (euros)
+    ids.json.gz        MTGJSON's card ids matched to Scryfall's (kept for a week)
 
 Scryfall only ever gives today's price. So that charts and price movers work
 from the start, a young history (under 60 days) is filled in with the last
@@ -26,6 +33,7 @@ Usage (normally run by GitHub Actions - see update-prices.yml):
     python3 build_prices.py --out site --bulk cards.jsonl.gz      # test with a saved export
     python3 build_prices.py ... --backfill always    # fill in past prices from MTGJSON now
     python3 build_prices.py ... --backfill never     # never download MTGJSON's archive
+    python3 build_prices.py ... --quotes never       # skip the shop prices of the day
 
 Data: Scryfall (https://scryfall.com/docs/api/bulk-data). Prices are
 TCGplayer market prices supplied through Scryfall; earlier days come from
@@ -52,7 +60,13 @@ WINDOWS = (1, 7, 30)        # movers: change over this many days
 MOVERS_PER_LIST = 50
 MIN_PRICE_CENTS = 200       # movers: the card must be worth at least $2 then or now ...
 MIN_CHANGE_CENTS = 50       # ... and have moved by at least $0.50 (cheap cards jump around)
-SCOPES = {"all": "", "GW": "GW", "BG": "BG"}   # main site, Selesnya and Golgari editions
+SERIES = 4                  # per printing: US dollars non-foil, foil; euros non-foil, foil
+SERIES_NAMES = ["usd", "usd_foil", "eur", "eur_foil"]
+MARKETS = {"all": (0, 1), "eur": (2, 3)}   # movers.json: "all" = US market (dollars), "eur" = Cardmarket (euros)
+HISTORY_PROVIDERS = {"tcgplayer": ("USD", 0), "cardmarket": ("EUR", 2)}   # MTGJSON shop -> currency, first series
+IDS_MAX_AGE_DAYS = 7        # MTGJSON-to-Scryfall id list: downloaded again after a week
+SCRYFALL_SOURCE = "Scryfall (TCGplayer market prices, USD; Cardmarket trend prices, EUR)"
+QUOTES_SOURCE = "MTGJSON (today's prices at several shops)"
 COLOR_ORDER = "WUBRG"
 
 MTGJSON_BASE = os.environ.get("AKUCHIE_MTGJSON_BASE", "https://mtgjson.com/api/v5/")
@@ -124,29 +138,36 @@ def iter_cards(source):
 
 
 # ------------------------------------------------------------------ previous history
-def read_previous(source, allow_fresh):
-    """Returns (dates, {shard: {id: [usd, foil]}}, index). An empty history when
-    nothing has been published yet. Any other failure stops the run, so a
-    network hiccup can never wipe out the collected history."""
-    def load(rel):
-        if source.startswith(("http://", "https://")):
-            url = source.rstrip("/") + "/" + rel
-            try:
-                with http_get(url) as resp:
-                    raw = resp.read()
-            except urllib.error.HTTPError as err:
-                if err.code == 404:
-                    return None
-                raise
-        else:
-            path = os.path.join(source, rel)
-            if not os.path.exists(path):
+def load_published(source, rel):
+    """A file of the currently published data (URL or folder); None if absent."""
+    if not source:
+        return None
+    if source.startswith(("http://", "https://")):
+        url = source.rstrip("/") + "/" + rel
+        try:
+            with http_get(url) as resp:
+                raw = resp.read()
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
                 return None
-            with open(path, "rb") as fh:
-                raw = fh.read()
-        if raw[:2] == b"\x1f\x8b":
-            raw = gzip.decompress(raw)
-        return json.loads(raw.decode("utf-8"))
+            raise
+    else:
+        path = os.path.join(source, rel)
+        if not os.path.exists(path):
+            return None
+        with open(path, "rb") as fh:
+            raw = fh.read()
+    if raw[:2] == b"\x1f\x8b":
+        raw = gzip.decompress(raw)
+    return json.loads(raw.decode("utf-8"))
+
+
+def read_previous(source, allow_fresh):
+    """Returns (dates, {shard: {id: [usd, usd foil, eur, eur foil]}}, index). An
+    empty history when nothing has been published yet. Any other failure stops
+    the run, so a network hiccup can never wipe out the collected history."""
+    def load(rel):
+        return load_published(source, rel)
 
     if not source:
         return [], {}, {}
@@ -175,6 +196,9 @@ def read_previous(source, allow_fresh):
                 cid: [[s[pos[d]] if d in pos and pos[d] < len(s) else None for d in dates] for s in series]
                 for cid, series in data.get("p", {}).items()
             }
+        for series in shards[key].values():   # older files only had the dollar series
+            while len(series) < SERIES:
+                series.append([None] * len(dates))
     print(f"Earlier history: {len(dates)} dates, {sum(len(s) for s in shards.values())} printings")
     return dates, shards, index
 
@@ -270,32 +294,54 @@ def mtgjson_items(source):
                 yield k, reader.value()
 
 
-def backfill(dates, shards, today, prices_src, ids_src):
-    """Adds the days before the stored history (up to BACKFILL_DAYS back) from
-    MTGJSON's TCGplayer prices. Stored values are never replaced."""
-    print("Filling in past prices from MTGJSON...")
-    scryfall_id = {}
+def scryfall_ids(ids_src, previous, today):
+    """MTGJSON card id -> Scryfall id. The list published last time is reused
+    for a week; after that (or without one) MTGJSON's identifier file is read."""
+    old = None
+    try:
+        old = load_published(previous, "ids.json.gz")
+    except Exception as err:
+        print(f"  note: could not read the published id list ({err})")
+    if old and old.get("map") and old.get("date"):
+        age = (date.fromisoformat(today) - date.fromisoformat(old["date"])).days
+        if 0 <= age < IDS_MAX_AGE_DAYS:
+            return old["map"], old["date"]
+    print("Reading MTGJSON's card ids...")
+    found = {}
     for uuid, card in mtgjson_items(ids_src):
         sid = ((card or {}).get("identifiers") or {}).get("scryfallId")
         if sid:
-            scryfall_id[uuid] = sid
-    print(f"  {len(scryfall_id)} MTGJSON printings matched to Scryfall")
-    if not scryfall_id:
+            found[uuid] = sid
+    print(f"  {len(found)} MTGJSON printings matched to Scryfall")
+    if not found:
         raise ValueError("no Scryfall ids in MTGJSON's identifier file")
+    return found, today
+
+
+def backfill(dates, shards, today, prices_src, scryfall_id):
+    """Adds the days before the stored history (up to BACKFILL_DAYS back) from
+    MTGJSON's TCGplayer (dollars) and Cardmarket (euros) prices. Stored values
+    are never replaced."""
+    print("Filling in past prices from MTGJSON...")
 
     have = set(dates)
     first = (date.fromisoformat(today) - timedelta(days=BACKFILL_DAYS)).isoformat()
     col = {}          # date -> column in the arrays below
-    past = {}         # scryfall id -> [normal prices by column, foil prices by column]
+    past = {}         # scryfall id -> [prices by column] for each of the SERIES
     for uuid, formats in mtgjson_items(prices_src):
         sid = scryfall_id.get(uuid)
         if not sid:
             continue
-        tcg = (((formats or {}).get("paper") or {}).get("tcgplayer") or {})
-        if tcg.get("currency", "USD") != "USD":
-            continue
-        retail = tcg.get("retail") or {}
-        for which, points in ((0, retail.get("normal")), (1, retail.get("foil") or retail.get("etched"))):
+        paper = (formats or {}).get("paper") or {}
+        wanted = []
+        for shop, (currency, first_series) in HISTORY_PROVIDERS.items():
+            prov = paper.get(shop) or {}
+            if prov.get("currency", currency) != currency:
+                continue
+            retail = prov.get("retail") or {}
+            wanted.append((first_series, retail.get("normal")))
+            wanted.append((first_series + 1, retail.get("foil") or retail.get("etched")))
+        for which, points in wanted:
             for d, price in (points or {}).items():
                 if d in have or d >= today or d < first:
                     continue
@@ -307,7 +353,7 @@ def backfill(dates, shards, today, prices_src, ids_src):
                     k = col[d] = len(col)
                 series = past.get(sid)
                 if series is None:
-                    series = past[sid] = [[], []]
+                    series = past[sid] = [[] for _ in range(SERIES)]
                 row = series[which]
                 if len(row) <= k:
                     row.extend([None] * (k + 1 - len(row)))
@@ -325,19 +371,62 @@ def backfill(dates, shards, today, prices_src, ids_src):
             shard[cid] = [[s[old_pos[d]] if d in old_pos and old_pos[d] < len(s) else None for d in merged] for s in series]
     where = [(merged.index(d), k) for d, k in col.items()]
     added = 0
-    for sid, (normal, foil) in past.items():
+    for sid, got in past.items():
         shard = shards.setdefault(sid[:2], {})
         series = shard.get(sid)
         if series is None:
-            series = shard[sid] = [[None] * n, [None] * n]
+            series = shard[sid] = [[None] * n for _ in range(SERIES)]
             added += 1
-        for m, k in where:
-            if k < len(normal) and normal[k] is not None and series[0][m] is None:
-                series[0][m] = normal[k]
-            if k < len(foil) and foil[k] is not None and series[1][m] is None:
-                series[1][m] = foil[k]
+        for which, values in enumerate(got):
+            if not values:
+                continue
+            target = series[which]
+            for m, k in where:
+                if k < len(values) and values[k] is not None and target[m] is None:
+                    target[m] = values[k]
     print(f"  added {len(col)} earlier days ({min(col)} - {max(col)}) for {len(past)} printings ({added} new)")
     return merged, shards
+
+
+def shop_prices(today_src, scryfall_id):
+    """Today's prices at every shop in MTGJSON's daily price file, by Scryfall
+    id: {shop: [selling non-foil, selling foil, buying non-foil, buying foil]}
+    in cents (trailing gaps left off), plus each shop's currency."""
+    print("Reading today's shop prices from MTGJSON...")
+    quotes, currencies = {}, {}
+    latest = lambda points: (points[max(points)] if points else None)
+    for uuid, formats in mtgjson_items(today_src):
+        sid = scryfall_id.get(uuid)
+        if not sid:
+            continue
+        for shop, prov in ((formats or {}).get("paper") or {}).items():
+            if not isinstance(prov, dict):
+                continue
+            retail, buy = prov.get("retail") or {}, prov.get("buylist") or {}
+            vals = [cents(latest(retail.get("normal") or {})), cents(latest(retail.get("foil") or retail.get("etched") or {})),
+                    cents(latest(buy.get("normal") or {})), cents(latest(buy.get("foil") or buy.get("etched") or {}))]
+            while vals and vals[-1] is None:
+                vals.pop()
+            if not vals:
+                continue
+            currencies[shop] = prov.get("currency") or currencies.get(shop) or ""
+            quotes.setdefault(sid, {})[shop] = vals
+    if not quotes:
+        raise ValueError("no shop prices in MTGJSON's daily file")
+    print(f"  {len(quotes)} printings with shop prices from {', '.join(sorted(currencies))}")
+    return quotes, currencies
+
+
+def previous_quotes(source, index):
+    """Yesterday's shop prices, republished when today's can't be read."""
+    if not index.get("quotes_date"):
+        return None
+    quotes = {}
+    for key in index.get("shards") or [f"{i:02x}" for i in range(256)]:
+        data = load_published(source, f"q/{key}.json.gz")
+        if data:
+            quotes.update(data.get("p") or {})
+    return (quotes, index.get("providers") or {}, index["quotes_date"]) if quotes else None
 
 
 # ------------------------------------------------------------------ cards
@@ -381,21 +470,49 @@ def build(args):
     today = args.date or datetime.now(timezone.utc).date().isoformat()
     dates, shards, index = read_previous(args.previous, args.allow_fresh)
 
-    # a young history: fill in the days before it from MTGJSON (once)
-    tried = index.get("backfill_tried", "")
-    sources = list(index.get("sources") or ["Scryfall (TCGplayer market prices, USD)"])
+    # a young history (or one from before the euro prices): fill in the days
+    # before it from MTGJSON, once
+    old_format = index.get("series", 2) < SERIES and bool(dates)
+    tried = "" if old_format else index.get("backfill_tried", "")
+    sources = [SCRYFALL_SOURCE if x.startswith("Scryfall") else x for x in (index.get("sources") or [SCRYFALL_SOURCE])]
     wait_over = not tried or (date.fromisoformat(today) - date.fromisoformat(tried)).days >= BACKFILL_RETRY_DAYS
-    if args.backfill == "always" or (args.backfill == "auto" and len(dates) < BACKFILL_IF_FEWER and wait_over):
+    want_backfill = args.backfill == "always" or (
+        args.backfill == "auto" and (len(dates) < BACKFILL_IF_FEWER or old_format) and wait_over)
+    want_quotes = args.quotes != "never"
+    ids, ids_date = None, ""
+    if want_backfill or want_quotes:
+        try:
+            ids, ids_date = scryfall_ids(args.mtgjson_ids or MTGJSON_BASE + "AllIdentifiers.json.xz", args.previous, today)
+        except Exception as err:
+            print(f"  note: MTGJSON's card ids could not be read ({err}); carrying on without MTGJSON.")
+    if want_backfill:
         tried = today
         try:
-            dates, shards = backfill(dates, shards, today,
-                                     args.mtgjson_prices or MTGJSON_BASE + "AllPrices.json.xz",
-                                     args.mtgjson_ids or MTGJSON_BASE + "AllIdentifiers.json.xz")
-            mtgjson = "MTGJSON (TCGplayer prices, USD; earlier days)"
+            if not ids:
+                raise ValueError("no card id list")
+            dates, shards = backfill(dates, shards, today, args.mtgjson_prices or MTGJSON_BASE + "AllPrices.json.xz", ids)
+            mtgjson = "MTGJSON (TCGplayer and Cardmarket prices; earlier days)"
+            sources = [x for x in sources if not x.startswith("MTGJSON (TCGplayer prices")]
             if mtgjson not in sources:
                 sources.append(mtgjson)
         except Exception as err:   # the daily update must go on without it
             print(f"  note: past prices could not be added from MTGJSON ({err}); carrying on without them.")
+    quote_data = None
+    if want_quotes:
+        try:
+            if not ids:
+                raise ValueError("no card id list")
+            quote_data = shop_prices(args.mtgjson_today or MTGJSON_BASE + "AllPricesToday.json.xz", ids) + (today,)
+            if QUOTES_SOURCE not in sources:
+                sources.append(QUOTES_SOURCE)
+        except Exception as err:
+            print(f"  note: today's shop prices could not be read from MTGJSON ({err}).")
+            try:
+                quote_data = previous_quotes(args.previous, index)
+                if quote_data:
+                    print(f"  keeping the shop prices of {quote_data[2]}")
+            except Exception as err2:
+                print(f"  note: the earlier shop prices could not be read either ({err2}).")
 
     if today in dates:
         idx = dates.index(today)
@@ -429,15 +546,15 @@ def build(args):
         foil = cents(p.get("usd_foil"))
         if foil is None:
             foil = cents(p.get("usd_etched"))
-        if usd is None and foil is None:
+        eur, eur_foil = cents(p.get("eur")), cents(p.get("eur_foil"))
+        if usd is None and foil is None and eur is None and eur_foil is None:
             continue
         cid = card["id"]
         shard = shards.setdefault(cid[:2], {})
         series = shard.get(cid)
         if series is None:
-            series = shard[cid] = [[None] * n_dates, [None] * n_dates]
-        series[0][idx] = usd
-        series[1][idx] = foil
+            series = shard[cid] = [[None] * n_dates for _ in range(SERIES)]
+        series[0][idx], series[1][idx], series[2][idx], series[3][idx] = usd, foil, eur, eur_foil
         priced += 1
         if not excluded(card):
             info[cid] = {
@@ -468,7 +585,7 @@ def build(args):
         for cid in [cid for cid, series in shard.items() if all(v is None for s in series for v in s)]:
             del shard[cid]
 
-    write_output(args.out, today, dates, shards, movers(today, dates, shards, info), sources, tried)
+    write_output(args.out, today, dates, shards, movers(today, dates, shards, info), sources, tried, quote_data, ids, ids_date)
 
 
 def movers(today, dates, shards, info):
@@ -487,35 +604,43 @@ def movers(today, dates, shards, info):
                 break
         if j is None:
             continue
-        best = {}   # oracle id -> entry (one printing per card: the biggest move)
-        for shard in shards.values():
-            for cid, (usd, foil) in shard.items():
-                meta = info.get(cid)
-                if not meta:
-                    continue
-                series, is_foil = (usd, 0) if usd[idx] is not None else (foil, 1)
-                now, then = series[idx], series[j]
-                if now is None or then is None or then <= 0:
-                    continue
-                if max(now, then) < MIN_PRICE_CENTS or abs(now - then) < MIN_CHANGE_CENTS:
-                    continue
-                pct = (now - then) / then * 100
-                key = meta["o"] or cid
-                old = best.get(key)
-                if old is None or abs(pct) > abs(old["pct"]):
-                    best[key] = dict(meta, id=cid, f=is_foil, now=now, then=then, pct=round(pct, 1))
-        entries = list(best.values())
         block = {"from": dates[j]}
-        for scope, colors in SCOPES.items():
-            inside = [e for e in entries if not colors or (e["col"] and all(c in colors for c in e["col"]))]
-            up = sorted((e for e in inside if e["pct"] > 0), key=lambda e: (-e["pct"], -e["now"]))[:MOVERS_PER_LIST]
-            down = sorted((e for e in inside if e["pct"] < 0), key=lambda e: (e["pct"], -e["then"]))[:MOVERS_PER_LIST]
-            block[scope] = {"up": up, "down": down}
+        for market, (a, b) in MARKETS.items():
+            best = {}   # oracle id -> entry (one printing per card: the biggest move)
+            for shard in shards.values():
+                for cid, series in shard.items():
+                    meta = info.get(cid)
+                    if not meta:
+                        continue
+                    normal, foil = series[a], series[b]
+                    values, is_foil = (normal, 0) if normal[idx] is not None else (foil, 1)
+                    now, then = values[idx], values[j]
+                    if now is None or then is None or then <= 0:
+                        continue
+                    if max(now, then) < MIN_PRICE_CENTS or abs(now - then) < MIN_CHANGE_CENTS:
+                        continue
+                    pct = (now - then) / then * 100
+                    key = meta["o"] or cid
+                    old = best.get(key)
+                    if old is None or abs(pct) > abs(old["pct"]):
+                        best[key] = dict(meta, id=cid, f=is_foil, now=now, then=then, pct=round(pct, 1))
+            entries = list(best.values())
+            up = sorted((e for e in entries if e["pct"] > 0), key=lambda e: (-e["pct"], -e["now"]))[:MOVERS_PER_LIST]
+            down = sorted((e for e in entries if e["pct"] < 0), key=lambda e: (e["pct"], -e["then"]))[:MOVERS_PER_LIST]
+            block[market] = {"up": up, "down": down}
         result[str(days)] = block
     return result
 
 
-def write_output(out, today, dates, shards, mover_data, sources=None, backfill_tried=""):
+def write_gz(path, obj):
+    payload = json.dumps(obj, separators=(",", ":")).encode("utf-8")
+    with open(path, "wb") as fh:
+        with gzip.GzipFile(fileobj=fh, mode="wb", mtime=0) as gz:
+            gz.write(payload)
+    return os.path.getsize(path)
+
+
+def write_output(out, today, dates, shards, mover_data, sources=None, backfill_tried="", quote_data=None, ids=None, ids_date=""):
     os.makedirs(os.path.join(out, "h"), exist_ok=True)
     total = 0
     keys = sorted(set(f"{i:02x}" for i in range(256)) | set(shards))   # Scryfall ids are hex, so normally just the 256
@@ -525,11 +650,26 @@ def write_output(out, today, dates, shards, mover_data, sources=None, backfill_t
             with gzip.GzipFile(fileobj=fh, mode="wb", mtime=0) as gz:
                 gz.write(payload)
         total += os.path.getsize(os.path.join(out, "h", f"{key}.json.gz"))
+    quotes_date, providers = "", {}
+    if quote_data:
+        quotes, providers, quotes_date = quote_data
+        os.makedirs(os.path.join(out, "q"), exist_ok=True)
+        by_shard = {}
+        for sid, shops in quotes.items():
+            by_shard.setdefault(sid[:2], {})[sid] = shops
+        qsize = sum(write_gz(os.path.join(out, "q", f"{key}.json.gz"), {"date": quotes_date, "p": by_shard.get(key, {})}) for key in keys)
+        print(f"Wrote shop prices of {quotes_date} for {len(quotes)} printings ({qsize / 1e6:.1f} MB)")
+    if ids:
+        write_gz(os.path.join(out, "ids.json.gz"), {"date": ids_date, "map": ids})
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with open(os.path.join(out, "index.json"), "w", encoding="utf-8") as fh:
         meta = {"version": FORMAT_VERSION, "updated": stamp, "today": today, "dates": dates, "shards": keys,
-                "source": "Scryfall (TCGplayer market prices, USD)",
-                "sources": sources or ["Scryfall (TCGplayer market prices, USD)"]}
+                "series": SERIES, "series_names": SERIES_NAMES,
+                "source": "Scryfall (TCGplayer market prices, USD; Cardmarket, EUR)",
+                "sources": sources or [SCRYFALL_SOURCE]}
+        if quotes_date:
+            meta["quotes_date"] = quotes_date
+            meta["providers"] = providers
         if backfill_tried:
             meta["backfill_tried"] = backfill_tried
         json.dump(meta, fh, separators=(",", ":"))
@@ -559,6 +699,8 @@ def main():
                     help="fill in past prices from MTGJSON: auto = while the history is under 60 days")
     ap.add_argument("--mtgjson-prices", default="", help="a saved AllPrices.json(.xz/.gz) to use instead of downloading")
     ap.add_argument("--mtgjson-ids", default="", help="a saved AllIdentifiers.json(.xz/.gz) to use instead of downloading")
+    ap.add_argument("--mtgjson-today", default="", help="a saved AllPricesToday.json(.xz/.gz) to use instead of downloading")
+    ap.add_argument("--quotes", choices=("auto", "never"), default="auto", help="today's prices at several shops, from MTGJSON")
     build(ap.parse_args())
 
 
