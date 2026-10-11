@@ -1,1 +1,77 @@
+# Daily price history for 悪知恵.
+#
+# This file belongs in a SEPARATE repository named  akuchie-prices
+# (not the site's repository), at:
+#     .github/workflows/update-prices.yml
+# next to build_prices.py in the top folder of that repository.
+#
+# Every day it reads today's prices from Scryfall, adds them to the history
+# that is already published, and publishes the result with GitHub Pages at
+#     https://<your-user-name>.github.io/akuchie-prices/
+# The site reads the data from there. Nothing is committed to the repository,
+# so it never grows.
+#
+# While the history is shorter than 60 days, the run also fills in the last
+# 90 days of US (TCGplayer) prices from MTGJSON's free archive - a one-off
+# download of a few hundred MB that takes a few extra minutes - so price
+# charts and price movers work from the first day.
+#
+# One-time setup: repository Settings -> Pages -> Source: "GitHub Actions".
 
+name: Update price history
+
+on:
+  schedule:
+    - cron: "17 12 * * *"   # every day at 12:17 UTC (21:17 in Japan), after Scryfall's daily export
+  workflow_dispatch:         # adds a "Run workflow" button
+
+permissions:
+  contents: read
+  deployments: read          # to tell whether this is the very first run
+  pages: write               # to publish the data
+  id-token: write            # required by GitHub Pages publishing
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+
+      # Where the data is published now (also works after adding a custom domain)
+      - name: Find the published address
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq .html_url 2>/dev/null || true)
+          if [ -z "$url" ]; then url="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"; fi
+          echo "Previous data: $url"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          # never published before -> this is the first run and a new history may be started
+          n=$(gh api "repos/${GITHUB_REPOSITORY}/deployments?environment=github-pages&per_page=1" --jq length 2>/dev/null || echo error)
+          if [ "$n" = "0" ]; then echo "First run - starting a new history."; echo "fresh=--allow-fresh" >> "$GITHUB_OUTPUT"; fi
+
+      # Stops (without publishing) if the old history can't be read or
+      # Scryfall's export looks incomplete, so the history is never lost.
+      # (If MTGJSON can't be reached, the day's update still goes ahead.)
+      - name: Build the price history
+        run: python3 build_prices.py --out site --previous "${{ steps.pages.outputs.url }}" ${{ steps.pages.outputs.fresh }}
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
