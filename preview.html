@@ -1602,7 +1602,7 @@ const STR = {
   'prices.down': ['値下がり', 'Fallers'],
   'prices.loading': ['価格データを読み込み中…', 'Loading price data…'],
   'prices.absent': ['価格データがまだありません', 'No price data yet'],
-  'prices.absent.body': ['価格の記録用リポジトリ（akuchie-prices）が公開されると、ここに値動きが表示されます。', 'Price movers appear here once the price-history repository (akuchie-prices) is published.'],
+  'prices.absent.body': ['価格の記録用リポジトリ（warujie-prices）が公開されると、ここに値動きが表示されます。', 'Price movers appear here once the price-history repository (warujie-prices) is published.'],
   'prices.wait': ['価格の記録を始めたばかりです', 'Price tracking has only just started'],
   'prices.wait.body': ['前日比は2日目から、1週間・1か月の値動きはデータが溜まり次第表示されます。', 'Day-to-day changes appear from the second day; 7- and 30-day changes once enough days are collected.'],
   'prices.summary': ['{from} → {to} の値動き（{n}枚）', 'Changes from {from} to {to} ({n} cards)'],
@@ -5192,9 +5192,9 @@ document.getElementById('metaBody').addEventListener('click', (e) => {
 // ---- price history & price movers ----------------------------------------------
 // Every day build_prices.py (GitHub Actions, in its own repository) stores
 // the TCGplayer price of every printing from Scryfall and publishes the
-// history with GitHub Pages next to this site - luminarc7.github.io/akuchie-prices/.
+// history with GitHub Pages next to this site - luminarc7.github.io/warujie-prices/.
 // Change PRICE_DATA_URL if that repository is published somewhere else.
-const PRICE_DATA_URL = '../akuchie-prices/';
+const PRICE_DATA_URL = '../warujie-prices/';
 const priceStore = { indexPromise: null, shards: new Map() };
 const histState = { range: '90', foil: false };
 const moverState = { data: null, index: null, status: 'idle', promise: null, win: '7', dir: 'up', market: 'us' };
