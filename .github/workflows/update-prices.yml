@@ -5,16 +5,19 @@
 #     .github/workflows/update-prices.yml
 # next to build_prices.py in the top folder of that repository.
 #
-# Every day it reads today's prices from Scryfall, adds them to the history
+# Every day it reads today's prices from Scryfall (TCGplayer in dollars,
+# Cardmarket in euros) and the day's prices at several shops from MTGJSON
+# (TCGplayer, Card Kingdom, Cardsphere, Cardmarket), adds them to the history
 # that is already published, and publishes the result with GitHub Pages at
 #     https://<your-user-name>.github.io/akuchie-prices/
 # The site reads the data from there. Nothing is committed to the repository,
 # so it never grows.
 #
-# While the history is shorter than 60 days, the run also fills in the last
-# 90 days of US (TCGplayer) prices from MTGJSON's free archive - a one-off
-# download of a few hundred MB that takes a few extra minutes - so price
-# charts and price movers work from the first day.
+# While the history is shorter than 60 days (or has no euro prices yet), the
+# run also fills in the last 90 days of US (TCGplayer) and European
+# (Cardmarket) prices from MTGJSON's free archive - a one-off download of a
+# few hundred MB that takes a few extra minutes - so price charts and price
+# movers work from the first day.
 #
 # One-time setup: repository Settings -> Pages -> Source: "GitHub Actions".
 
