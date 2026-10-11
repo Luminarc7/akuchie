@@ -6,21 +6,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
 <script>
-/* Apply the saved theme and language before the page paints (no flash).
-   Without a saved theme, follow the device's light/dark setting. */
+/* Apply the saved theme, language and lightweight mode before the page
+   paints (no flash). Without a saved theme, follow the device's setting.
+   The web fonts are only loaded outside the lightweight mode. */
 (function () {
-  var t = null, l = null;
-  try { t = localStorage.getItem('akuchie-theme'); l = localStorage.getItem('akuchie-lang'); } catch (e) {}
+  var t = null, l = null, lite = null;
+  try { t = localStorage.getItem('akuchie-theme'); l = localStorage.getItem('akuchie-lang'); lite = localStorage.getItem('akuchie-lite'); } catch (e) {}
   if (t !== 'light' && t !== 'dark') {
     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
   }
   document.documentElement.setAttribute('data-theme', t);
   if (l === 'en') document.documentElement.lang = 'en';   // saved language choice (default: Japanese)
+  if (lite === '1') { document.documentElement.setAttribute('data-lite', '1'); return; }
+  var add = function (rel, href, cross) {
+    var el = document.createElement('link'); el.rel = rel; el.href = href;
+    if (cross) el.crossOrigin = 'anonymous';
+    document.head.appendChild(el);
+  };
+  add('preconnect', 'https://fonts.googleapis.com');
+  add('preconnect', 'https://fonts.gstatic.com', true);
+  add('stylesheet', 'https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
 })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+1:wght@400;500;700;800&display=swap" rel="stylesheet">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
 <style>
   /* ============================ theme tokens ============================ */
   :root, html[data-theme="dark"] {
@@ -84,12 +92,12 @@
 
   /* ================================ base ================================ */
   *, *::before, *::after { box-sizing: border-box; }
-  html { background: var(--page); scroll-padding-top: calc(var(--bar-h) + 12px); font-synthesis-weight: none; }
+  html { background: var(--page); scroll-padding-top: calc(var(--bar-h) + 12px); }
   body {
     margin: 0; min-height: 100vh;
     background: var(--page-glow); background-attachment: fixed;
     color: var(--text);
-    font-family: "M PLUS 1", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
     font-size: 15px; line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -98,7 +106,7 @@
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .serif { font-family: "DotGothic16", "M PLUS 1", sans-serif; }
+  .serif { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; }
   code {
     font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.9em;
     background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
@@ -121,7 +129,7 @@
   }
   .brand { grid-area: brand; display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: inherit; }
   .brand-mark {
-    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 30px; line-height: 1.15; letter-spacing: 0.06em;
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 30px; line-height: 1.15; letter-spacing: 0.06em;
     background: linear-gradient(120deg, var(--accent) 0%, var(--brand-hi) 48%, var(--accent) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
   }
@@ -130,7 +138,7 @@
   .search-form input { flex: 1; min-width: 0; padding: 10px 14px; font-size: 15px; }
   .search-form > button, .btn-primary {
     background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px;
-    padding: 0 20px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; white-space: nowrap;
+    padding: 0 20px; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15px; white-space: nowrap;
   }
   .search-form > button:hover { filter: brightness(1.07); }
   .top-tabs { grid-area: tabs; display: flex; gap: 2px; }
@@ -146,13 +154,15 @@
     padding: 5px 12px; font-size: 12px; color: var(--text); white-space: nowrap;
   }
   .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .theme-switch {
-    display: flex; border: 1px solid var(--line); border-radius: 999px;
-    background: var(--field); padding: 2px;
-  }
-  .theme-btn { border: 0; background: none; border-radius: 999px; padding: 5px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .theme-btn:hover { color: var(--text); }
-  .theme-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+  .theme-switch { display: flex; align-items: center; gap: 14px; }
+  .sq-switch { display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; padding: 4px 0; color: var(--text-2); font-size: 12px; white-space: nowrap; cursor: pointer; }
+  .sq-switch:hover { color: var(--text); }
+  .sq-track { position: relative; flex: none; width: 40px; height: 22px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line-strong); transition: background .15s ease, border-color .15s ease; }
+  .sq-knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 2px; background: var(--muted); transition: transform .15s ease, background .15s ease; }
+  .sq-switch[aria-checked="true"] .sq-track { background: var(--accent); border-color: var(--accent); }
+  .sq-switch[aria-checked="true"] .sq-knob { transform: translateX(18px); background: #ffffff; }
+  .sq-switch:focus-visible { outline: none; }
+  .sq-switch:focus-visible .sq-track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* ============================ search layout ============================ */
   .search-layout { display: grid; grid-template-columns: 274px minmax(0, 1fr); gap: 22px; align-items: start; }
@@ -162,7 +172,7 @@
     max-height: calc(100vh - var(--bar-h) - 28px); overflow-y: auto; overscroll-behavior: contain;
   }
   .filter-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
-  .filter-head h2 { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 16px; margin: 0; }
+  .filter-head h2 { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 16px; margin: 0; }
   .filter-close { display: none; }
   .clear-btn { background: none; border: 0; padding: 0; color: var(--accent); font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
   .filter-section + .filter-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -171,7 +181,7 @@
   .chip {
     width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
     display: inline-flex; align-items: center; justify-content: center;
-    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 13px; padding: 0;
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 13px; padding: 0;
   }
   .chip.w { color: #241f16; background: var(--mana-w); }
   .chip.u { color: #eaf3fd; background: var(--mana-u); }
@@ -267,7 +277,7 @@
   .card-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card-thumb-fallback { font-size: 11.5px; color: var(--muted); padding: 10px; text-align: center; }
   .card-tile-body { padding: 9px 11px 8px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card-name-main { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
+  .card-name-main { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
   .card-name-sub { font-size: 11px; color: var(--muted); line-height: 1.4; }
   .type-line { font-size: 11.5px; color: var(--muted); line-height: 1.45; }
   .card-foot {
@@ -301,13 +311,13 @@
   .load-more-row { text-align: center; margin-top: 20px; }
   .load-more-btn {
     background: var(--surface); border: 1px solid var(--line); color: var(--accent); border-radius: 6px;
-    padding: 10px 24px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px;
+    padding: 10px 24px; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14px;
   }
   .load-more-btn:hover { border-color: var(--accent); }
   .load-more-btn:disabled { opacity: 0.5; cursor: default; }
 
   /* ============================== card page ============================== */
-  .back-link { background: none; border: 0; padding: 0 0 12px; color: var(--accent); font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; }
+  .back-link { background: none; border: 0; padding: 0 0 12px; color: var(--accent); font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14px; }
   .back-link:hover { text-decoration: underline; }
   .card-page { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 26px; align-items: start; }
   .cp-art { position: sticky; top: calc(var(--bar-h) + 14px); }
@@ -319,28 +329,28 @@
   }
   .cp-info { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 20px; min-width: 0; }
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .cp-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
+  .cp-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 3px; }
   .pip {
     width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; font-family: "DotGothic16", "M PLUS 1", sans-serif;
+    display: flex; align-items: center; justify-content: center; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
   }
   .pip.w { background: var(--mana-w); color: #241f16; } .pip.u { background: var(--mana-u); color: #eaf3fd; }
   .pip.b { background: var(--mana-b); color: #17131c; } .pip.r { background: var(--mana-r); color: #2a0d09; }
   .pip.g { background: var(--mana-g); color: #0c2011; } .pip.c { background: var(--mana-c); color: #17151d; }
   .cp-typeline { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
-  .cp-pt { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 16px; white-space: nowrap; }
+  .cp-pt { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 16px; white-space: nowrap; }
   .cp-text { font-size: 14.5px; line-height: 1.8; white-space: pre-line; margin: 10px 0 0; max-width: 62ch; }
   .cp-flavor { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.7; margin: 10px 0 0; max-width: 62ch; }
   .cp-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; color: var(--muted); margin-top: 12px; }
   .cp-meta a { color: var(--accent); }
   .cp-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
   .cp-heading, .price-heading, .legal-heading, .external-links-heading, .version-menu-heading {
-    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; margin: 0 0 9px;
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14px; margin: 0 0 9px;
   }
-  .price-heading small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+  .price-heading small { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
   .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 16px; align-items: baseline; font-size: 13px; }
   .price-table .lbl { color: var(--muted); }
   .price-table .usd { color: var(--accent); font-weight: 700; font-size: 17px; }
@@ -352,7 +362,7 @@
   /* price history: one line, accent colour, recessive grid, crosshair + tooltip on hover */
   .price-history { position: relative; }
   .hist-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 8px; }
-  .hist-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; }
+  .hist-title { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15px; }
   .hist-change { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .hist-change strong { color: var(--text); }
   .hist-controls { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-left: auto; }
@@ -414,8 +424,8 @@
 
   /* ========================= combo suggestions ========================= */
   .combos { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 18px; }
-  .combos-heading { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; margin: 0 0 10px; }
-  .combos-heading small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 8px; }
+  .combos-heading { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14px; margin: 0 0 10px; }
+  .combos-heading small { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 8px; }
   .combo-sub { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 0 0 8px; }
   .combo-partners { margin-bottom: 18px; }
   .combo-partners .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -455,7 +465,7 @@
   .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .sets-toolbar input { flex: 1; min-width: 220px; padding: 10px 14px; }
   .set-list { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 14px 12px; }
-  .set-year { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: var(--accent); font-size: 15px; margin: 16px 0 4px; }
+  .set-year { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; color: var(--accent); font-size: 15px; margin: 16px 0 4px; }
   .set-row {
     display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center;
     padding: 8px 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; border-radius: 6px;
@@ -471,7 +481,7 @@
     background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
   }
   .set-header .set-icon { width: 38px; height: 38px; }
-  .set-header-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 20px; line-height: 1.3; }
+  .set-header-title { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 20px; line-height: 1.3; }
   .set-header-sub { font-size: 12px; color: var(--muted); }
   .set-lang-toggle { display: flex; gap: 6px; margin-left: auto; }
   .set-lang-btn { background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font-size: 12.5px; }
@@ -485,7 +495,7 @@
     display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
     background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
   }
-  .meta-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 20px; line-height: 1.3; margin: 0 6px 0 0; }
+  .meta-title { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 20px; line-height: 1.3; margin: 0 6px 0 0; }
   .seg { display: flex; flex-wrap: wrap; gap: 5px; }
   .seg-btn {
     border: 1px solid var(--line); background: var(--field); border-radius: 999px;
@@ -506,9 +516,9 @@
   .mover-card { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
   .mover-card img, .mover-noimg { width: 46px; aspect-ratio: 146 / 204; object-fit: cover; border-radius: 3px; flex: none; background: var(--surface-2); }
   .mover-card:hover .mover-name { color: var(--accent); }
-  .mover-name { min-width: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
-  .mover-name small { display: block; font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); }
-  .mover-foil { display: inline-block; font-family: "M PLUS 1", sans-serif; font-size: 10px; font-weight: 700; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 2px; color: var(--muted); }
+  .mover-name { min-width: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
+  .mover-name small { display: block; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); }
+  .mover-foil { display: inline-block; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 2px; color: var(--muted); }
   .mover-nums { text-align: right; font-variant-numeric: tabular-nums; }
   .mover-chg { font-size: 16px; font-weight: 700; line-height: 1.3; }
   .mover-chg .arrow { font-size: 11px; margin-right: 3px; color: var(--accent); }
@@ -523,11 +533,11 @@
   a.meta-art:hover { border-color: var(--accent); }
   .meta-cols { padding: 9px 16px; font-size: 11.5px; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--line); align-items: end; }
   .meta-row + .meta-row { border-top: 1px solid var(--line); }
-  .meta-rank { grid-area: rank; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .meta-rank { grid-area: rank; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
   .meta-deck { grid-area: deck; min-width: 0; }
   .meta-share { grid-area: share; min-width: 0; }
   .meta-wr { grid-area: wr; min-width: 0; }
-  .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
+  .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
   .meta-name .pip { width: 17px; height: 17px; font-size: 9.5px; }
   .meta-row.unclassified .meta-name-text { color: var(--muted); font-weight: 500; }
   .meta-cards { display: flex; flex-wrap: wrap; gap: 4px 5px; margin-top: 6px; }
@@ -632,7 +642,7 @@
   @media (max-width: 480px) {
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .brand-mark { font-size: 26px; }
-    .theme-btn { padding: 5px 8px; font-size: 11.5px; }
+    .sq-switch { font-size: 11.5px; }
     .lang-btn { padding: 5px 9px; font-size: 11.5px; }
     .top-controls { gap: 6px; }
     .set-row { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; }
@@ -657,7 +667,7 @@
   /* home: the search comes first */
   .hero { display: flex; flex-wrap: wrap; gap: 36px; align-items: flex-start; padding: 22px 0 30px; }
   .hero-main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-  .hero-title { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 30px; line-height: 1.3; text-wrap: balance; }
+  .hero-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 30px; line-height: 1.3; text-wrap: balance; }
   .hero-lead { margin: 0; max-width: 40em; color: var(--text-2); font-size: 15px; line-height: 1.75; }
   .hero-form { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
   .hero-label { font-size: 12.5px; font-weight: 700; color: var(--muted); }
@@ -666,7 +676,7 @@
   .hero-row input { width: 100%; height: 58px; padding: 0 18px; font-size: 17px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--field); }
   .hero-row > button {
     height: 58px; padding: 0 34px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink);
-    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 18px; white-space: nowrap;
+    font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 18px; white-space: nowrap;
   }
   .hero-row > button:hover { filter: brightness(1.07); }
   .hero-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
@@ -700,8 +710,8 @@
   .hx-item { display: flex; gap: 12px; text-decoration: none; color: inherit; }
   .hx-thumb { width: 46px; flex: none; align-self: flex-start; }
   .hx-thumb img, .hx-noimg { display: block; width: 46px; aspect-ratio: 146 / 204; border-radius: 4px; background: var(--surface-2); object-fit: cover; }
-  .hx-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; line-height: 1.4; }
-  .hx-name small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+  .hx-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15px; line-height: 1.4; }
+  .hx-name small { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
   .hx-item:hover .hx-name { color: var(--accent); }
   .hx-text { font-size: 13px; color: var(--text-2); line-height: 1.65; }
   .hx-empty { font-size: 13px; color: var(--muted); }
@@ -711,13 +721,13 @@
   .home-boxes { display: flex; flex-wrap: wrap; gap: 18px; margin: 0 0 30px; }
   .home-box { flex: 1 1 420px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
   .hb-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
-  .hb-head h2 { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 17px; }
+  .hb-head h2 { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 17px; }
   .hb-head a { font-size: 12.5px; color: var(--accent); }
   .hb-list { list-style: none; margin: 0; padding: 0; }
   .hb-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-variant-numeric: tabular-nums; }
   .hb-row + .hb-row { border-top: 1px solid var(--line); }
   .hb-rank { width: 16px; flex: none; font-size: 12.5px; color: var(--muted); text-align: right; }
-  .hb-name { flex: 1; min-width: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+  .hb-name { flex: 1; min-width: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
   a.hb-name:hover { color: var(--accent); }
   .hb-name .sym { margin-right: 2px; }
   .hb-sub { font-size: 12px; color: var(--muted); white-space: nowrap; }
@@ -794,7 +804,7 @@
   .tr-thumb img, .tr-thumb .tr-noimg { width: 100%; aspect-ratio: 488 / 680; border-radius: 4px; object-fit: cover; background: var(--surface-2); display: block; }
   .tr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .tr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
-  .tr-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 16.5px; line-height: 1.4; }
+  .tr-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 16.5px; line-height: 1.4; }
   .tr-sub { font-size: 12px; color: var(--muted); }
   .tr-meta { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 12px; color: var(--muted); }
   .tr-meta .pips { display: inline-flex; gap: 2px; }
@@ -850,7 +860,8 @@
     .top-controls { position: relative; gap: 4px; }
     .top-controls .theme-switch { display: none; position: absolute; right: 0; top: calc(100% + 6px); z-index: 50; flex-direction: column; border-radius: 10px; padding: 4px; box-shadow: var(--shadow); background: var(--surface); }
     .top-controls .theme-switch.open { display: flex; }
-    .top-controls .theme-btn { padding: 9px 16px; text-align: left; border-radius: 6px; font-size: 13px; }
+    .top-controls .theme-switch { gap: 2px; padding: 6px 12px; }
+    .top-controls .sq-switch { padding: 9px 2px; font-size: 13px; justify-content: space-between; flex-direction: row-reverse; gap: 18px; }
     .lang-btn { padding: 5px 10px; font-size: 11.5px; }
     .hero { padding: 14px 0 18px; gap: 16px; }
     .hero-main { gap: 10px; }
@@ -934,12 +945,12 @@
   /* metagame: decks open their own page */
   a.meta-name-text { color: inherit; text-decoration: none; }
   a.meta-name-text:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-  .meta-decklink { margin-left: 2px; font-family: "M PLUS 1", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
+  .meta-decklink { margin-left: 2px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
 
   /* deck pages */
   .deck-head { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 8px; }
   .deck-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
-  .deck-title { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 27px; font-weight: 800; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .deck-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .deck-title .pips { display: inline-flex; gap: 2px; }
   .deck-title .sym { width: 22px; height: 22px; }
   .deck-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -950,8 +961,8 @@
   .deck-src a { color: var(--accent); }
   .deck-note { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .deck-section { margin-top: 22px; }
-  .deck-section > h2 { margin: 0 0 12px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
-  .deck-section > h2 .dg-n { font-family: "M PLUS 1", sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
+  .deck-section > h2 { margin: 0 0 12px; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
+  .deck-section > h2 .dg-n { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
   .deck-sub { margin: -6px 0 10px; font-size: 12.5px; color: var(--muted); }
   .deck-group { margin: 0 0 18px; }
   .dg-head { margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--text-2); display: flex; align-items: baseline; gap: 8px; }
@@ -1038,7 +1049,7 @@
   .wip-badge { display: inline-block; flex: none; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
   .price-section .price-avg { margin-top: 8px; }
   .price-section .price-sub { margin-top: 6px; }
-  .hist-title small.hist-market { margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--muted); font-family: "M PLUS 1", sans-serif; }
+  .hist-title small.hist-market { margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--muted); font-family: "Zen Kaku Gothic New", sans-serif; }
   /* shop links: smaller, one line per country */
   .cp-row.shop-links { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 5px; align-items: center; }
   .cp-row.shop-links > .cp-row-label { grid-row: 1 / span 3; align-self: start; line-height: 22px; margin-right: 0; }
@@ -1056,7 +1067,7 @@
   .mover-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
   .mover-col { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .mover-col .mover-list { margin: 0; }
-  .mover-col-head { margin: 0 0 6px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 17px; display: flex; align-items: center; gap: 6px; }
+  .mover-col-head { margin: 0 0 6px; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 17px; display: flex; align-items: center; gap: 6px; }
   .mover-col-head.up .arrow, .mover-chg.up .arrow { color: var(--accent); }
   .mover-col-head.down .arrow { color: var(--muted); }
   #moverBody .status-line .wip-badge { margin-bottom: 6px; }
@@ -1083,6 +1094,22 @@
   .hb-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
   a.hb-art:hover { border-color: var(--accent); }
   .combos-heading { font-size: 16px; }
+
+  /* ========================== round 7: lightweight mode ========================== */
+  .lite-note { display: none; margin: 0; font-size: 12.5px; color: var(--text-2); line-height: 1.7; }
+  html[data-lite="1"] .lite-note { display: block; }
+  html[data-lite="1"] #heroExample, html[data-lite="1"] #homeBoxes, html[data-lite="1"] #viewToggle,
+  html[data-lite="1"] .card-thumb-wrap, html[data-lite="1"] .tr-thumb, html[data-lite="1"] .hb-art,
+  html[data-lite="1"] #deckBody .view-toggle { display: none !important; }
+  html[data-lite="1"] .meta-cols, html[data-lite="1"] .meta-row { grid-template-columns: 30px 0 minmax(0, 1fr) 176px 176px; column-gap: 16px; }
+  html[data-lite="1"] .meta-art { visibility: hidden; width: 0; border: 0; }
+  html[data-lite="1"] .print-item { flex-basis: 108px; }
+  html[data-lite="1"] *, html[data-lite="1"] *::before, html[data-lite="1"] *::after { transition: none !important; animation-duration: 0s !important; }
+  html[data-lite="1"] .spinner { animation: spin 0.9s linear infinite !important; animation-duration: 0.9s !important; }
+  .lite-load { margin: 4px 0; }
+  @media (max-width: 760px) {
+    html[data-lite="1"] .meta-row { grid-template-columns: 22px 0 minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -1112,9 +1139,9 @@
       <button type="button" class="menu-btn" id="menuBtn" aria-label="メニュー" data-i18n-aria="menu.aria" aria-expanded="false" aria-controls="themeSwitch">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
-      <div class="theme-switch" id="themeSwitch" role="group" aria-label="表示テーマ" data-i18n-aria="theme.aria">
-        <button type="button" class="theme-btn" data-theme="light" aria-pressed="false" data-i18n="theme.light">ライト</button>
-        <button type="button" class="theme-btn" data-theme="dark" aria-pressed="false" data-i18n="theme.dark">ダーク</button>
+      <div class="theme-switch" id="themeSwitch" role="group" aria-label="表示設定" data-i18n-aria="theme.aria">
+        <button type="button" class="sq-switch" id="darkSwitch" role="switch" aria-checked="true"><span class="sq-track" aria-hidden="true"><span class="sq-knob"></span></span><span class="sq-label" data-i18n="theme.dark">ダーク</span></button>
+        <button type="button" class="sq-switch" id="liteSwitch" role="switch" aria-checked="false"><span class="sq-track" aria-hidden="true"><span class="sq-knob"></span></span><span class="sq-label" data-i18n="lite.label">軽量</span></button>
       </div>
     </div>
   </div>
@@ -1136,6 +1163,7 @@
           <button type="submit" data-i18n="search.btn">検索</button>
         </div>
       </form>
+      <p class="lite-note" id="liteNote"><span data-i18n="lite.note">軽量モードで表示中です。画像やフォント、価格・デッキの欄を省いて、すばやく読み込みます。</span> <button type="button" class="link-btn" id="liteOff" data-i18n="lite.off">通常の表示に戻す</button></p>
       <div class="hero-tools">
         <button type="button" class="adv-btn" id="advToggle" aria-expanded="false" aria-controls="filterPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="adv.open">詳しい条件で検索</span> <span class="arrow" aria-hidden="true">▼</span></button>
         <span class="hero-hint" data-i18n="hero.hint">日本語でも英語でも。語順や「を」「の」の違いは気にしなくて大丈夫です。</span>
@@ -1483,7 +1511,13 @@ const STR = {
   'tab.search': ['カード検索', 'Cards'],
   'tab.sets': ['セット一覧', 'Sets'],
   'tab.meta': ['メタゲーム', 'Metagame'],
-  'theme.aria': ['表示テーマ', 'Theme'],
+  'theme.aria': ['表示設定', 'Display'],
+  'lite.label': ['軽量', 'Lite'],
+  'lite.title': ['軽量モード：画像やフォント、ホームの価格・デッキ欄を読み込まず、すばやく表示します', 'Lite mode: no pictures, web fonts or home page boxes, for a faster page'],
+  'lite.note': ['軽量モードで表示中です。画像やフォント、価格・デッキの欄を省いて、すばやく読み込みます。', 'Lite mode is on: pictures, web fonts and the price and deck boxes are skipped so the page loads faster.'],
+  'lite.off': ['通常の表示に戻す', 'Switch back to the full site'],
+  'lite.history': ['価格の推移を表示', 'Show price history'],
+  'lite.combos': ['統率者戦のコンボを表示', 'Show Commander combos'],
   'theme.light': ['ライト', 'Light'],
   'theme.dark': ['ダーク', 'Dark'],
   'filter.aria': ['絞り込み条件', 'Filters'],
@@ -1754,6 +1788,8 @@ const STR = {
   'combo.pop': ['EDHRECで{n}デッキ', '{n} decks on EDHREC'],
   'combo.pop.one': ['EDHRECで{n}デッキ', '{n} deck on EDHREC'],
   'combo.steps': ['前提条件と手順を見る（英語）', 'Prerequisites and steps'],
+  'combo.steps.ja': ['前提条件と手順を見る', 'Prerequisites and steps'],
+  'combo.steps.partial': ['前提条件と手順を見る（一部英語）', 'Prerequisites and steps'],
   'combo.start': ['開始時の配置', 'Starting position'],
   'zone.B': ['戦場', 'battlefield'], 'zone.H': ['手札', 'hand'], 'zone.G': ['墓地', 'graveyard'],
   'zone.E': ['追放領域', 'exile'], 'zone.L': ['ライブラリー', 'library'], 'zone.C': ['統率領域', 'command zone'],
@@ -1761,7 +1797,7 @@ const STR = {
   'zone.any': ['どの領域でも', 'any zone'],
   'combo.more': ['さらに表示（残り{n}件）', 'Show {n} more'],
   'combo.all': ['Commander Spellbook でこのカードのコンボをすべて見る ↗', 'See every combo for this card on Commander Spellbook ↗'],
-  'combo.note': ['コンボの内容は <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a> のデータです（結果と手順は英語）。1枚につき採用の多い順に最大{max}件を表示しています。更新：{d}',
+  'combo.note': ['コンボの内容は <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a> のデータを日本語にしたものです（訳のない部分は英語のまま）。1枚につき採用の多い順に最大{max}件を表示しています。更新：{d}',
                  'Combo data comes from <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a>. Up to {max} combos per card are shown, most played first. Updated: {d}'],
   'combo.hint': ['「{name}」とコンボになるカード：', 'Cards that combo with {name}:'],
   'combo.hint.more': ['コンボ {n}件を見る →', 'See {n} combos →'],
@@ -1891,7 +1927,7 @@ const CREATURE_TYPE_JA = {
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
   keywords: new Set(), manaCosts: new Set(), rarity: '', format: '', sort: 'name',
-  view: (() => { try { return localStorage.getItem('akuchie-view') === 'text' ? 'text' : 'image'; } catch (e) { return 'image'; } })(),
+  view: (() => { if (document.documentElement.dataset.lite === '1') return 'text'; try { return localStorage.getItem('akuchie-view') === 'text' ? 'text' : 'image'; } catch (e) { return 'image'; } })(),
   showLoose: false,   // also show cards that contain the search words only separately
 };
 let nextPageUrl = null;
@@ -1998,6 +2034,9 @@ const LOCAL_FIELDS = ['id','oracle_id','name_en','name_ja','type_en','type_ja',
   'rarity','set','keywords','released_at','alt_names_ja'];
 let LOCAL_DB = null;
 let dbState = 'loading'; // loading | ready | absent
+// Lightweight mode: no web fonts, no card pictures except on a card's own
+// page, no home page boxes, and the card database only once it's needed.
+const LITE = document.documentElement.dataset.lite === '1';
 let localMatchQueue = null;
 let localOffset = 0;
 const PAGE_SIZE = 30; // stays under /cards/collection's 75-identifier limit
@@ -2072,7 +2111,11 @@ async function fetchFirstData(names) {
   throw lastErr || new Error('not found');
 }
 
-const dbReady = fetchFirstData(['ja_cards.json.gz', 'ja_cards.json'])
+// The database download starts at once, or in the lightweight mode the first
+// time anything waits for it (a search, a card page) or a search box is used.
+let startDbLoad;
+const dbGate = new Promise(resolve => { startDbLoad = resolve; });
+const dbLoaded = dbGate.then(() => fetchFirstData(['ja_cards.json.gz', 'ja_cards.json']))
   .then(loadCardDatabase)
   .catch(() => {
     dbState = 'absent';
@@ -2082,6 +2125,12 @@ const dbReady = fetchFirstData(['ja_cards.json.gz', 'ja_cards.json'])
       .then(data => { JA_NAME_INDEX = data; })
       .catch(() => {});
   });
+const dbReady = {
+  then(ok, bad) { startDbLoad(); return dbLoaded.then(ok, bad); },
+  catch(bad) { startDbLoad(); return dbLoaded.catch(bad); },
+  finally(fn) { startDbLoad(); return dbLoaded.finally(fn); },
+};
+if (!LITE) startDbLoad();
 
 // A database row shaped like a Scryfall card object, so tiles and card pages
 // can still show name, type and text when images/prices can't be fetched.
@@ -3056,7 +3105,9 @@ function faceUris(card) {
   return (pic.card_faces || []).map(f => f.image_uris).filter(Boolean);
 }
 const IMAGE_WIDTHS = { small: 146, normal: 488, large: 672 };
-function pictureTag(uris, { alt = '', sizes, use = ['small', 'normal', 'large'], main = 'normal', lazy = true, extra = '' }) {
+function pictureTag(uris, { alt = '', sizes, use = ['small', 'normal', 'large'], main = 'normal', lazy = true, extra = '', keep = false }) {
+  if (LITE && !keep) return '';
+  if (LITE) { use = use.filter(k => k !== 'large'); if (main === 'large') main = 'normal'; }
   const srcset = use.filter(k => uris[k]).map(k => `${uris[k]} ${IMAGE_WIDTHS[k]}w`).join(', ');
   const src = uris[main] || uris.normal || uris.large || uris.small || uris.png;
   return `<img src="${esc(src)}"${srcset ? ` srcset="${esc(srcset)}" sizes="${sizes}"` : ''} alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ''}${extra}>`;
@@ -3563,7 +3614,7 @@ function esc(s) {
 function cardArtHtml(card, alt) {
   const faces = faceUris(card);
   if (!faces.length) return `<div class="cp-noimg">${t('img.none')}</div>`;
-  const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false }))
+  const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false, keep: true }))
     .join('<div style="height:10px"></div>');
   const english = pictureSource(card) !== card;
   const note = english ? `<p class="cp-img-note">${t('img.english.none')}</p>` : '';
@@ -3571,6 +3622,15 @@ function cardArtHtml(card, alt) {
 }
 
 let shownCard = null;   // the card on the card page (re-rendered when the language changes)
+// Lightweight mode: a button that loads a part of the card page on request.
+function liteButton(id, key, load) {
+  const box = document.getElementById(id);
+  if (!box) return;
+  box.hidden = false;
+  box.style.display = '';
+  box.innerHTML = `<button type="button" class="load-more-btn lite-load">${esc(t(key))}</button>`;
+  box.querySelector('button').addEventListener('click', () => { box.innerHTML = ''; load(); }, { once: true });
+}
 
 function renderCardViewContent(card) {
   shownCard = card;
@@ -3636,9 +3696,11 @@ function renderCardViewContent(card) {
     <section class="combos" id="combosBox" style="display:none;"></section>`;
   document.title = `${names.main} — 悪知恵`;
   updateYenLabels(box);
-  showPriceHistory(card);
+  if (LITE) liteButton('priceHistory', 'lite.history', () => showPriceHistory(card));
+  else showPriceHistory(card);
   if (card._quotes === undefined) loadCardQuotes(card);
-  loadCardCombos(card);
+  if (LITE) { if (COMBOS_ON) liteButton('combosBox', 'lite.combos', () => loadCardCombos(card)); }
+  else loadCardCombos(card);
 
   const setLink = document.querySelector('#cardViewCard .cp-set-link');
   if (setLink) setLink.addEventListener('click', (e) => {
@@ -3866,7 +3928,7 @@ function placeFilterPanel() {
 wideMQ.addEventListener('change', placeFilterPanel);
 let homeStarted = false;
 function startHome() {
-  if (homeStarted) return;
+  if (homeStarted || LITE) return;
   homeStarted = true;
   renderHomeMovers();
   renderHomeMeta();
@@ -4689,9 +4751,18 @@ function setTheme(name, save) {
   if (!THEMES.includes(name)) name = 'dark';
   document.documentElement.setAttribute('data-theme', name);
   if (save) { try { localStorage.setItem(THEME_KEY, name); } catch (e) { /* private mode */ } }
-  document.querySelectorAll('.theme-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === name)));
+  document.getElementById('darkSwitch').setAttribute('aria-checked', String(name === 'dark'));
 }
-document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme, true)));
+document.getElementById('darkSwitch').addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark', true));
+// lightweight mode: remembered, and applied by reloading (fonts and data are decided at load)
+document.getElementById('liteSwitch').setAttribute('aria-checked', String(LITE));
+document.getElementById('liteSwitch').title = t('lite.title');
+function setLite(on) {
+  try { if (on) localStorage.setItem('akuchie-lite', '1'); else localStorage.removeItem('akuchie-lite'); } catch (e) { /* private mode */ }
+  location.reload();
+}
+document.getElementById('liteSwitch').addEventListener('click', () => setLite(!LITE));
+document.getElementById('liteOff').addEventListener('click', () => setLite(false));
 setTheme(currentTheme(), false);
 
 // ---- search tips (one set per language) ------------------------------------
@@ -4785,6 +4856,9 @@ function applyStaticText() {
 // Re-draws the results under the search box in the current language. Results
 // from the card database are also fetched again, so their images switch
 // between the Japanese and English printings.
+function relocalizeCombos() {
+  if (shownCard && document.getElementById('combosBox') && document.getElementById('combosBox').style.display !== 'none') loadCardCombos(shownCard);
+}
 function relocalizeHome() {
   if (!homeStarted) return;
   renderHomeMovers();
@@ -4928,6 +5002,7 @@ function deckIconName(a) {
   return spell ? spell.n : '';
 }
 function deckArtHtml(a, href, cls) {
+  if (LITE) return '';
   const name = deckIconName(a);
   if (!name) return `<span class="${cls} empty" aria-hidden="true"></span>`;
   const row = rowByEnglishName(name);
@@ -5485,6 +5560,8 @@ function combosFor(shard, oracleId) {
       }),
       templates: c[F.templates] || [],
       results: (c[F.results] || []).map(i => data.results[i]).filter(Boolean),
+      results_ja: (c[F.results] || []).map(i => data.results[i]).filter(Boolean).map(r => (comboJa() && comboJa().result(r)) || r),
+      templates_ja: (c[F.templates] || []).map(name => (comboJa() && comboJa().template(name)) || name),
       mana: c[F.mana] || '',
       popularity: c[F.popularity] || 0,
       legal: c[F.legal] || 0,
@@ -5545,29 +5622,64 @@ function comboZonesLine(c) {
   }).join(LANG === 'en' ? ' / ' : '／');
 }
 
+// The Japanese for combo text lives in its own file (combo_ja.js), loaded
+// with the first combo panel.
+let comboJaPromise = null;
+function loadComboJa() {
+  if (typeof COMBO_JA !== 'undefined') return Promise.resolve();
+  if (!comboJaPromise) {
+    comboJaPromise = new Promise(resolve => {
+      const el = document.createElement('script');
+      el.src = 'combo_ja.js?v=1';
+      el.onload = el.onerror = () => resolve();
+      document.head.appendChild(el);
+    });
+  }
+  return comboJaPromise;
+}
+const comboJa = () => (typeof COMBO_JA !== 'undefined' ? COMBO_JA : null);
+// A combo's text in the site language: each English line is put into
+// Japanese by COMBO_JA, with the cards' Japanese names; a line it can't
+// handle stays in English.
+function comboText(c, en) {
+  const lines = String(en || '').split('\n').map(s => s.trim()).filter(Boolean);
+  if (LANG === 'en') return { lines, english: false };
+  const names = c.cards.map(k => k.name);
+  let english = false;
+  const out = lines.map(line => {
+    const j = comboJa() ? comboJa().line(line, names, c.templates) : null;
+    if (!j) { english = true; return line; }
+    return j.replace(/«T(\d+)»/g, (m, k) => c.templates_ja[k] || c.templates[k] || '')
+            .replace(/«(\d+)»/g, (m, k) => c.cards[k] ? comboCardLabel(Object.assign({}, c.cards[k], { qty: 1 })) : '');
+  });
+  return { lines: out, english };
+}
 function comboRowHtml(c, oracleId) {
   const sep = LANG === 'en' ? ' · ' : '・';
   const plus = '<span class="combo-plus">＋</span>';
+  const templates = LANG === 'en' ? c.templates : c.templates_ja;
   const cards = c.cards.map(k => comboCardChip(k, k.oracle === oracleId))
-    .concat(c.templates.map(name => `<span class="combo-chip template" title="${esc(t('combo.needs'))}">${esc(name)}</span>`))
+    .concat(templates.map(name => `<span class="combo-chip template" title="${esc(t('combo.needs'))}">${esc(name)}</span>`))
     .join(plus);
+  const results = LANG === 'en' ? c.results : c.results_ja;
   const mana = c.mana
     ? `<span>${t('combo.mana')}${/^(\{[^}]+\})+$/.test(c.mana) ? `<span class="pips">${renderPips(c.mana)}</span>` : esc(c.mana)}</span>`
     : '';
-  const steps = c.steps.split('\n').map(s => s.trim()).filter(Boolean);
+  const steps = comboText(c, c.steps);
+  const pre = comboText(c, c.prerequisites);
   const zones = comboZonesLine(c);
-  const details = (steps.length || c.prerequisites || zones)
-    ? `<details class="combo-steps"><summary>${t('combo.steps')}</summary>
+  const english = steps.english || pre.english;
+  const details = (steps.lines.length || pre.lines.length || zones)
+    ? `<details class="combo-steps"><summary>${t(LANG === 'en' ? 'combo.steps' : (english ? 'combo.steps.partial' : 'combo.steps.ja'))}</summary>
         ${zones ? `<p>${esc(t('combo.start'))}：${esc(zones)}</p>` : ''}
-        ${c.prerequisites ? `<p>${esc(c.prerequisites)}</p>` : ''}
-        ${steps.length ? `<ol>${steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : ''}
+        ${pre.lines.length ? `<p>${pre.lines.map(s => symbolize(esc(s))).join('<br>')}</p>` : ''}
+        ${steps.lines.length ? `<ol>${steps.lines.map(s => `<li>${symbolize(esc(s))}</li>`).join('')}</ol>` : ''}
       </details>`
     : '';
   return `<li class="combo-row">
       <div class="combo-cards">${cards}</div>
-      ${c.results.length ? `<div class="combo-results"><span class="arrow">→</span>${esc(c.results.join(sep))}</div>` : ''}
+      ${results.length ? `<div class="combo-results"><span class="arrow">→</span>${esc(results.join(sep))}</div>` : ''}
       <div class="combo-meta">
-        ${comboLegalHtml(c.legal, c.formats)}
         ${mana}
         ${c.popularity ? `<span>${tn('combo.pop', c.popularity)}</span>` : ''}
         <a href="https://commanderspellbook.com/combo/${encodeURIComponent(c.id)}/" target="_blank" rel="noopener">Commander Spellbook ↗</a>
@@ -5592,7 +5704,7 @@ async function loadCardCombos(card) {
   if (comboData.status === 'off') return;
   const oracleId = oracleIdOf(card);
   if (!oracleId) return;
-  const [shard] = await Promise.all([loadComboShard(oracleId.slice(0, 2).toLowerCase()), dbReady]);
+  const [shard] = await Promise.all([loadComboShard(oracleId.slice(0, 2).toLowerCase()), dbReady, LANG === 'en' ? null : loadComboJa()]);
   const box = document.getElementById('combosBox');
   if (!box || shownCard !== card) return;
   const list = combosFor(shard, oracleId);
@@ -5861,6 +5973,8 @@ function attachNameSuggest(input, list) {
     input.setAttribute('aria-expanded', 'true');
   };
   input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 60); });
+  input.addEventListener('focus', () => startDbLoad());
+  dbLoaded.then(() => { if (document.activeElement === input && input.value.trim()) update(); });
   input.addEventListener('focus', () => { if (input.value.trim()) update(); });
   input.addEventListener('blur', () => setTimeout(close, 150));
   input.addEventListener('keydown', (e) => {
@@ -6217,12 +6331,12 @@ const menuBtn = document.getElementById('menuBtn');
 const themeSwitchEl = document.getElementById('themeSwitch');
 function setMenu(open) { themeSwitchEl.classList.toggle('open', open); menuBtn.setAttribute('aria-expanded', String(open)); }
 menuBtn.addEventListener('click', (e) => { e.stopPropagation(); setMenu(!themeSwitchEl.classList.contains('open')); });
-themeSwitchEl.addEventListener('click', (e) => { if (e.target.closest('.theme-btn')) setMenu(false); });
+themeSwitchEl.addEventListener('click', (e) => { e.stopPropagation(); });
 document.addEventListener('click', (e) => { if (!e.target.closest('#themeSwitch, #menuBtn')) setMenu(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setMenu(false); hideSuggest(); } });
 
 // ---- once the card database is in ------------------------------------------------------
-dbReady.then(() => { renderFormatSelect(); NAME_SUGGEST = null; });
+dbLoaded.then(() => { renderFormatSelect(); NAME_SUGGEST = null; });   // (not a reason to start the download)
 setHomeMode(routeFromUrl().view === 'search');
 
 
@@ -6234,7 +6348,7 @@ setHomeMode(routeFromUrl().view === 'search');
 const DECK_GROUPS = ['creature', 'planeswalker', 'battle', 'instant', 'sorcery', 'artifact', 'enchantment', 'land', 'other'];
 const deckState = {
   data: null, status: 'idle', promise: null, token: 0, current: null, cache: new Map(),
-  view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'list' ? 'list' : 'image'; } catch (e) { return 'image'; } })(),
+  view: (() => { if (LITE) return 'list'; try { return localStorage.getItem('akuchie-deck-view') === 'list' ? 'list' : 'image'; } catch (e) { return 'image'; } })(),
 };
 function loadMetaDecks() {
   if (!deckState.promise) {
