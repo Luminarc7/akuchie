@@ -703,7 +703,9 @@
   .brand-mark { font-size: 30px; line-height: 1.12; letter-spacing: 0; }
   .brand-roman { font-size: 9.5px; letter-spacing: 0.24em; padding-left: 0.24em; color: var(--muted); }
   .brand-sub { border-left: 1px solid var(--line); padding-left: 14px; font-size: 12px; line-height: 1.4; color: var(--text-2); white-space: normal; max-width: 10.5em; }
-  html[data-view="search"][data-home="true"] .topbar .search-form { display: none; }
+  html[data-view="search"][data-home="true"]:not([data-hero-out="true"]) .topbar .search-form { display: none; }
+  html[data-home="true"][data-hero-out="true"] .topbar .search-form { animation: bar-search-in 0.18s ease; }
+  @keyframes bar-search-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
   .search-form .suggest-wrap { flex: 1; min-width: 0; position: relative; display: flex; }
   .search-form .suggest-wrap input { width: 100%; }
   .menu-btn { display: none; width: 44px; height: 44px; border: 0; background: none; color: var(--text); padding: 0; align-items: center; justify-content: center; }
@@ -952,6 +954,100 @@
     .tr-thumb { width: 52px; }
     .tr-meta { margin-left: 0; }
   }
+
+  /* ===================== round 2: sidebar, following search, deck pages ===================== */
+  /* results on wide screens: the advanced search is a sidebar that stays in view */
+  @media (min-width: 1000px) {
+    html[data-home="false"] .search-layout { display: grid; grid-template-columns: 262px minmax(0, 1fr); gap: 24px; align-items: start; }
+    html[data-home="false"] #sideAdvSlot { align-self: stretch; }   /* as tall as the results, so the panel can stay in view */
+    html[data-home="false"] #sideAdvSlot .filter-panel {
+      display: block; position: sticky; top: calc(var(--bar-h) + 14px); margin: 0; padding: 14px 16px 16px;
+      max-height: calc(100vh - var(--bar-h) - 28px); overflow-y: auto; overscroll-behavior: contain;
+    }
+    #sideAdvSlot .filter-head { margin-bottom: 12px; }
+    #sideAdvSlot .filter-close { display: none; }
+    #sideAdvSlot .filter-section + .filter-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+    #sideAdvSlot .chip { width: 34px; height: 34px; }
+    #sideAdvSlot .chip img { width: 25px; height: 25px; }
+    #sideAdvSlot .opt-chip.mv-chip { width: 34px; height: 34px; }
+    #sideAdvSlot .opt-chip.mv-chip img, #sideAdvSlot .opt-chip.mv-chip .mv-txt { width: 23px; height: 23px; }
+    #sideAdvSlot .chip-row.syms .opt-chip.mv-chip { flex: none; }
+    #sideAdvSlot .chip-row.syms:has(.mv-chip) { flex-wrap: wrap; }
+    /* in the sidebar the type suggestions open inside the panel instead of over it */
+    #sideAdvSlot .check-list.dropdown { position: static; margin-top: 6px; max-height: 240px; box-shadow: none; }
+    html[data-home="false"] #filterOpenBtn { display: none; }
+  }
+  /* phones: the top bar stays too - the logo row scrolls away, search and tabs stay */
+  @media (max-width: 820px) {
+    .topbar { position: sticky; top: var(--bar-top, 0px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-home="true"][data-hero-out="true"] .topbar .search-form { animation: none; }
+  }
+
+  /* metagame: decks open their own page */
+  a.meta-name-text { color: inherit; text-decoration: none; }
+  a.meta-name-text:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .meta-decklink { margin-left: 2px; font-family: "Noto Sans JP", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
+
+  /* deck pages */
+  .deck-head { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 8px; }
+  .deck-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+  .deck-title { margin: 0; font-family: "Shippori Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .deck-title .pips { display: inline-flex; gap: 2px; }
+  .deck-title .sym { width: 22px; height: 22px; }
+  .deck-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .deck-meta { margin: 0; font-size: 13.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .deck-meta .sep { color: var(--muted); margin: 0 8px; }
+  .deck-meta .fact { white-space: nowrap; }
+  .deck-src { margin: 0; font-size: 13px; color: var(--muted); }
+  .deck-src a { color: var(--accent); }
+  .deck-note { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
+  .deck-section { margin-top: 22px; }
+  .deck-section > h2 { margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
+  .deck-section > h2 .dg-n { font-family: "Noto Sans JP", sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
+  .deck-sub { margin: -6px 0 10px; font-size: 12.5px; color: var(--muted); }
+  .deck-group { margin: 0 0 18px; }
+  .dg-head { margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--text-2); display: flex; align-items: baseline; gap: 8px; }
+  .dg-head .dg-n { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+  .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 14px 12px; }
+  .deck-flow { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 30px; }
+  .deck-flow > .deck-group { flex: 0 1 auto; min-width: 0; }
+  .deck-flow .deck-grid { display: flex; flex-wrap: wrap; gap: 14px 12px; }
+  .deck-flow .deck-card { width: 128px; }
+  .deck-card { display: flex; flex-direction: column; gap: 5px; min-width: 0; color: inherit; text-decoration: none; }
+  .dc-pic { position: relative; display: block; aspect-ratio: 488 / 680; border-radius: 4.75% / 3.4%; overflow: hidden; background: var(--surface-2); }
+  .dc-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .dc-noimg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 8px; text-align: center; font-size: 12px; line-height: 1.5; color: var(--muted); border: 1px solid var(--line); border-radius: inherit; }
+  .dc-count { position: absolute; left: 6px; top: 6px; min-width: 32px; padding: 2px 8px; border-radius: 999px; background: rgba(8, 8, 9, 0.84); color: #fff; font-weight: 800; font-size: 13.5px; text-align: center; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); font-variant-numeric: tabular-nums; }
+  .dc-name { font-size: 12.5px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+  a.deck-card:hover .dc-name { color: var(--accent); }
+  .dc-rate { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .deck-cols { columns: 2 320px; column-gap: 32px; }
+  .deck-cols .deck-group { break-inside: avoid; }
+  .dl { list-style: none; margin: 0; padding: 0; }
+  .dl-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto 46px; gap: 10px; align-items: center; padding: 5px 0; font-size: 14px; }
+  .dl-row + .dl-row { border-top: 1px dashed var(--line); }
+  .dl-row.more { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .dl-row.more .dl-count { display: none; }
+  .dl-count { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .dl-name { min-width: 0; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+  .dl-name small { margin-left: 7px; font-size: 11px; color: var(--muted); }
+  a.dl-name:hover { color: var(--accent); }
+  .dl-cost { display: inline-flex; gap: 1px; }
+  .dl-cost img.pip { width: 15px; height: 15px; }
+  .dl-rate { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .deck-foot { margin: 20px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
+  #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
+  @media (max-width: 820px) {
+    .deck-title { font-size: 21px; }
+    .deck-flow { display: block; }
+    .deck-grid, .deck-flow .deck-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 8px; }
+    .deck-flow .deck-card { width: auto; }
+    .dc-name { font-size: 11.5px; }
+    .dc-count { left: 4px; top: 4px; min-width: 28px; padding: 1px 6px; font-size: 12px; }
+    .dl-row { font-size: 13.5px; gap: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -1039,6 +1135,7 @@
   </section>
 
   <div class="search-layout">
+    <div id="sideAdvSlot" class="side-slot"></div>
 
     <aside class="filter-panel" id="filterPanel" aria-label="絞り込み条件" data-i18n-aria="filter.aria">
       <div class="filter-head">
@@ -1111,7 +1208,7 @@
       <div class="filter-section">
         <p class="filter-title" data-i18n="filter.kw">キーワード能力</p>
         <div class="combo-input">
-          <input type="text" class="list-filter" id="keywordFilter" placeholder="能力名を入力（例：飛行、flash）" data-i18n-ph="kw.ph" autocomplete="off" aria-label="キーワード能力を探す" data-i18n-aria="kw.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="keywordList">
+          <input type="text" class="list-filter" id="keywordFilter" placeholder="能力名を入力（例：飛行）" data-i18n-ph="kw.ph" autocomplete="off" aria-label="キーワード能力を探す" data-i18n-aria="kw.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="keywordList">
           <div class="check-list dropdown" id="keywordList" data-group="keywords" hidden></div>
         </div>
       </div>
@@ -1210,6 +1307,11 @@
   <p class="meta-note" id="metaNote"></p>
 </div>
 
+<div id="deckView" class="wrap" style="display:none;">
+  <button type="button" class="back-link" id="deckBack" data-i18n="deck.back">← 戻る</button>
+  <div id="deckBody"></div>
+</div>
+
 <div id="pricesView" class="wrap" style="display:none;">
   <div class="meta-head">
     <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
@@ -1256,6 +1358,43 @@ const DATA_DIRS = SITE === 'main' ? [''] : ['', '../'];
 
 const STR = {
   'brand.sub': ['効果テキストで探せるMTGカード検索', 'MTG card search by rules text'],
+  'deck.back': ['← 戻る', '← Back'],
+  'deck.title': ['{name}（{fmt}）のデッキリスト — 悪知恵', '{name} ({fmt}) deck list — 悪知恵'],
+  'deck.loading': ['デッキリストを読み込み中…', 'Loading the deck list…'],
+  'deck.notfound': ['このデッキは見つかりませんでした', 'Deck not found'],
+  'deck.notfound.body': ['集計期間が進んで、デッキが一覧から外れた可能性があります。<a href="{url}">メタゲームを見る</a>', 'It may have dropped out of the list as the period moved on. <a href="{url}">Open the metagame</a>'],
+  'deck.share': ['使用率 {v}%（{n}）', '{v}% of decks ({n})'],
+  'deck.wr': ['勝率 {v}%（{n}）', '{v}% match wins ({n})'],
+  'deck.src': ['このリスト：', 'This list: '],
+  'deck.main': ['メインデッキ', 'Main deck'],
+  'deck.side': ['サイドボード', 'Sideboard'],
+  'deck.cards': ['{n}枚', '{n} cards'],
+  'deck.cards.one': ['{n}枚', '{n} card'],
+  'deck.keycards': ['主要カード', 'Key cards'],
+  'deck.keyonly': ['デッキリストのデータ（meta_decks.json）がまだないため、このデッキの主要カードだけを表示しています。最新の build_meta.py を実行して meta_decks.json をアップロードすると、デッキ全体が表示されます。', 'The deck list file (meta_decks.json) is not there yet, so only this deck’s key cards are shown. Run the latest build_meta.py and upload meta_decks.json to show whole lists.'],
+  'deck.more': ['ほかによく使われるカード', 'Other popular cards'],
+  'deck.more.sub': ['このリストには入っていないものの、このデッキの多くのリストが使っているカードです。', 'Played by many lists of this deck, but not by this one.'],
+  'deck.rate': ['採用率 {v}%', 'in {v}% of lists'],
+  'deck.rate.short': ['{v}%', '{v}%'],
+  'deck.more.rate': ['採用率 {v}%・平均{a}枚', '{v}% · avg. {a}'],
+  'deck.rate.title': ['このデッキのリストのうち、このカードを使っている割合', 'Share of this deck’s lists that play this card'],
+  'deck.note': ['採用率＝{win}にこのデッキとして集計された {n} のうち、そのカードを使っているリストの割合です（メインデッキのカードはメインデッキ、サイドボードのカードはサイドボードでの採用）。表示しているリストは、期間内でもっとも成績のよかったものです。', 'Share = of the {n} of this deck in the {win}, how many play the card (main deck cards in the main deck, sideboard cards in the sideboard). The list shown is the best finish in the period.'],
+  'deck.view.aria': ['表示形式', 'View'],
+  'deck.view.image': ['画像', 'Pictures'],
+  'deck.view.list': ['リスト', 'List'],
+  'deck.copy': ['リストをコピー', 'Copy list'],
+  'deck.copied': ['コピーしました', 'Copied'],
+  'deck.copy.title': ['MTGアリーナ・Magic Online に読み込める英語のリストをコピーします', 'Copies the list in English, ready to import into MTG Arena or Magic Online'],
+  'deck.g.creature': ['クリーチャー', 'Creatures'],
+  'deck.g.planeswalker': ['プレインズウォーカー', 'Planeswalkers'],
+  'deck.g.battle': ['バトル', 'Battles'],
+  'deck.g.instant': ['インスタント', 'Instants'],
+  'deck.g.sorcery': ['ソーサリー', 'Sorceries'],
+  'deck.g.artifact': ['アーティファクト', 'Artifacts'],
+  'deck.g.enchantment': ['エンチャント', 'Enchantments'],
+  'deck.g.land': ['土地', 'Lands'],
+  'deck.g.other': ['その他', 'Other'],
+  'meta.decklist': ['デッキリストを見る →', 'Deck list →'],
   'hero.title': ['書いてあることで、カードを探す。', 'Find cards by what they say.'],
   'hero.lead': ['カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索です。', 'Search Magic cards by name, or by what is written on them, in Japanese or English. '],
   'hero.lead2': ['たとえば「1枚捨てる」や「飛行 絆魂」と入れると、その効果を持つカードが見つかります。', 'Try “discard a card” or “flying lifelink” to find every card with that effect.'],
@@ -1345,7 +1484,7 @@ const STR = {
   'chip.R': ['赤', 'R'], 'chip.G': ['緑', 'G'], 'chip.C': ['無', 'C'],
   'ctype.ph': ['タイプを入力（例：エルフ）', 'Type a creature type (e.g. Elf)'],
   'ctype.aria': ['クリーチャー・タイプを探す', 'Find a creature type'],
-  'kw.ph': ['能力名を入力（例：飛行、flash）', 'Type an ability (e.g. Flying, 飛行)'],
+  'kw.ph': ['能力名を入力（例：飛行）', 'Type an ability (e.g. Flying)'],
   'kw.aria': ['キーワード能力を探す', 'Find a keyword ability'],
   'list.none': ['該当するものがありません', 'Nothing matches'],
   'pill.color': ['色：{c}', 'Color: {c}'],
@@ -2810,11 +2949,12 @@ function renderPips(costStr) {
 }
 
 // ---- card pictures --------------------------------------------------------------
-// Scryfall says how good each printing's picture is (image_status). When a
-// Japanese printing has no real scan - Scryfall then shows a placeholder
-// marked as not available in this language - or only a low-resolution one,
-// the same printing's English picture is shown instead. Every picture comes
-// with a srcset, so the browser downloads the size the screen really needs.
+// Scryfall says how good each printing's picture is (image_status). The
+// Japanese picture is shown whenever Scryfall has one, sharp or low-resolution;
+// only when a Japanese printing has no real scan (Scryfall then shows a
+// placeholder) is the same printing's English picture shown instead. Every
+// picture comes with a srcset, so the browser downloads the size the screen
+// really needs.
 const IMAGE_QUALITY = { missing: 0, placeholder: 1, lowres: 2, highres_scan: 3 };
 function hasPicture(card) {
   return !!(card && (card.image_uris || (card.card_faces && card.card_faces.some(f => f.image_uris))));
@@ -2828,7 +2968,6 @@ function pictureSource(card) {
   if (!en || !card.lang || card.lang === 'en') return card;
   const own = imageQuality(card), alt = imageQuality(en);
   if (own <= 1 && alt >= 2) return en;   // placeholder, or no picture at all
-  if (own === 2 && alt === 3) return en;  // low-resolution scan -> sharp scan
   return card;
 }
 function faceUris(card) {
@@ -2946,8 +3085,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Fetches the English printing with the same set and collector number for
 // Japanese cards that need it: for its price (Japanese printings rarely have
-// one) and, when the Japanese picture is a placeholder or low-resolution,
-// for its picture. Japanese-only printings with no picture at all borrow the
+// one) and, when Scryfall has no Japanese picture, for its picture. Japanese-only printings with no picture at all borrow the
 // card's newest English picture.
 async function ensureEnglishPrices(cards) {
   const wants = c => c && c.lang && c.lang !== 'en' && !c._enChecked
@@ -3016,13 +3154,49 @@ function displayNameJa(card) {
   const row = dbRowFor(card);
   return (row && row.name_ja) || card.printed_name || card.name;
 }
+// English type line -> Japanese, for cards that exist in Japanese but whose
+// Japanese type line Scryfall does not have. Words it does not know stay English.
+const SUPERTYPE_JA = { legendary: '伝説の', basic: '基本', snow: '氷雪', world: 'ワールド' };
+const CARDTYPE_WORD_JA = {
+  creature: 'クリーチャー', instant: 'インスタント', sorcery: 'ソーサリー', artifact: 'アーティファクト',
+  enchantment: 'エンチャント', land: '土地', planeswalker: 'プレインズウォーカー', battle: 'バトル', tribal: '部族', kindred: '同族',
+};
+const SUBTYPE_JA = {
+  aura: 'オーラ', equipment: '装備品', vehicle: '機体', saga: '英雄譚', class: 'クラス', room: '部屋', case: '事件',
+  shrine: '祭殿', curse: '呪い', cartouche: 'カルトーシュ', rune: 'ルーン', role: '役割', background: '背景', adventure: '出来事',
+  arcane: '秘儀', lesson: '講義', trap: '罠', omen: '予兆', food: '食物', treasure: '宝物', clue: '手掛かり', blood: '血',
+  map: '地図', powerstone: '魔力石', gold: '金', incubator: '培養器', fortification: '城砦', forest: '森', island: '島',
+  mountain: '山', plains: '平地', swamp: '沼', gate: '門', desert: '砂漠', lair: '棲み家', locus: '魔力炉', "urza's": 'ウルザの',
+  mine: '鉱山', 'power-plant': '発電所', tower: '塔', cave: '洞窟', sphere: '球体', town: '町', siege: '包囲戦',
+};
+function translateTypeLine(en) {
+  return String(en || '').split(' // ').map(face => {
+    const [left, right] = face.split(/\s+[—-]\s+/);
+    let sup = '';
+    const types = [];
+    (left || '').trim().split(/\s+/).filter(Boolean).forEach(w => {
+      const k = w.toLowerCase();
+      if (SUPERTYPE_JA[k]) sup += SUPERTYPE_JA[k]; else types.push(CARDTYPE_WORD_JA[k] || w);
+    });
+    const kin = types.filter(x => x === '部族' || x === '同族');
+    const main = types.filter(x => x !== '部族' && x !== '同族');
+    const subs = (right || '').trim().split(/\s+/).filter(Boolean).map(w => {
+      const k = w.toLowerCase();
+      return CREATURE_TYPE_JA[k] || SUBTYPE_JA[k] || w;
+    });
+    return sup + kin.join('') + main.join('・') + (subs.length ? ' — ' + subs.join('・') : '');
+  }).join(' // ');
+}
 function displayTypeJa(card) {
   if (card.lang && card.lang !== 'en') {
     const t = card.printed_type_line || (card.card_faces || []).map(f => f.printed_type_line).filter(Boolean).join(' // ');
     if (t) return t;
   }
   const row = dbRowFor(card);
-  return (row && row.type_ja) || card.printed_type_line || card.type_line || '';
+  if (row && row.type_ja) return row.type_ja;
+  const en = card.type_line || (card.card_faces || []).map(f => f.type_line).filter(Boolean).join(' // ') || (row && row.type_en) || '';
+  if (en && (card.lang === 'ja' || (row && row.name_ja))) return translateTypeLine(en);
+  return card.printed_type_line || en;
 }
 function displayTextJa(card) {
   if (card.lang && card.lang !== 'en') {
@@ -3156,7 +3330,7 @@ function cardArtHtml(card, alt) {
   const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false }))
     .join('<div style="height:10px"></div>');
   const english = pictureSource(card) !== card;
-  const note = english ? `<p class="cp-img-note">${t(imageQuality(card) === 2 ? 'img.english.lowres' : 'img.english.none')}</p>` : '';
+  const note = english ? `<p class="cp-img-note">${t('img.english.none')}</p>` : '';
   return pics + note;
 }
 
@@ -3422,11 +3596,13 @@ function showView(name) {
   document.getElementById('setsView').style.display = name === 'sets' ? '' : 'none';
   document.getElementById('metaView').style.display = name === 'meta' ? '' : 'none';
   document.getElementById('pricesView').style.display = name === 'prices' ? '' : 'none';
+  document.getElementById('deckView').style.display = name === 'deck' ? '' : 'none';
   if (name !== 'search') setFilterDrawer(false);
+  if (name !== 'deck') hideDeckPeek();
   if (name !== 'card') {
     document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
     document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
-    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta'));
+    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck'));
     document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices'));
   }
 }
@@ -3439,6 +3615,16 @@ function setFilterDrawer(open) {
 }
 function filterPanelOpen() { return document.getElementById('filterPanel').classList.contains('open'); }
 // Home page (random cards, search box in the middle) or results page.
+const wideMQ = window.matchMedia('(min-width: 1000px)');
+// Home page: under the big search box. Results: a sidebar on wide screens,
+// otherwise folded away above the results.
+function placeFilterPanel() {
+  const home = document.documentElement.dataset.home === 'true';
+  const panel = document.getElementById('filterPanel');
+  const slot = document.getElementById(home ? 'heroAdvSlot' : (wideMQ.matches ? 'sideAdvSlot' : 'resultsAdvSlot'));
+  if (slot && panel.parentElement !== slot) slot.appendChild(panel);
+}
+wideMQ.addEventListener('change', placeFilterPanel);
 let homeStarted = false;
 function startHome() {
   if (homeStarted) return;
@@ -3450,9 +3636,8 @@ function startHome() {
 function setHomeMode(on) {
   document.documentElement.dataset.home = on ? 'true' : 'false';
   if (on) startHome();
-  const panel = document.getElementById('filterPanel');
-  const slot = document.getElementById(on ? 'heroAdvSlot' : 'resultsAdvSlot');
-  if (slot && panel.parentElement !== slot) slot.appendChild(panel);
+  placeFilterPanel();
+  requestAnimationFrame(updateHeroOut);
 }
 function showCardView() { showView('card'); window.scrollTo(0, 0); }
 async function fetchSingleCard(id) {
@@ -3675,6 +3860,7 @@ function routeFromUrl() {
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
   if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '' };
+  if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1' };
   return { view: 'search' };
 }
 function homeTitle() { return t(SITE === 'main' ? 'title.home' : 'title.home.' + SITE); }
@@ -3712,6 +3898,12 @@ function applyRoute(route) {
     renderMeta();
     // card names in the list come from the card database, so draw again once both are in
     Promise.all([metaPromise, dbReady]).then(() => { if (routeFromUrl().view === 'meta') renderMeta(); });
+  } else if (route.view === 'deck') {
+    showView('deck');
+    // "back to the metagame" lands on the same format and period
+    if (META_FORMATS.includes(route.format)) metaState.format = route.format;
+    if (route.days) metaState.days = route.days;
+    renderDeck(route);
   } else if (route.view === 'prices') {
     showView('prices');
     if (['1', '7', '30'].includes(route.win)) moverState.win = route.win;
@@ -3730,14 +3922,38 @@ function goTo(url) {
   history.pushState({ app: true }, '', url);
   applyRoute(routeFromUrl());
   if (routeFromUrl().view !== 'search') window.scrollTo(0, 0);
+  requestAnimationFrame(updateHeroOut);
 }
 
-window.addEventListener('popstate', () => applyRoute(routeFromUrl()));
+window.addEventListener('popstate', () => { applyRoute(routeFromUrl()); requestAnimationFrame(updateHeroOut); });
 document.getElementById('tabSearch').addEventListener('click', () => goTo(location.pathname));
 document.getElementById('tabSets').addEventListener('click', () => goTo('?view=sets'));
 document.getElementById('tabMeta').addEventListener('click', () => goTo(metaUrl()));
 document.getElementById('tabPrices').addEventListener('click', () => goTo(moverUrl()));
-document.getElementById('brandLink').addEventListener('click', (e) => { e.preventDefault(); goTo(location.pathname); });
+document.getElementById('brandLink').addEventListener('click', (e) => {
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  resetToHome();
+});
+function resetToHome() {
+  hideSuggest();
+  const root = document.documentElement;
+  const alreadyHome = routeFromUrl().view === 'search' && root.dataset.home === 'true'
+    && !state.query.trim() && !hasActiveFilters() && grid.children.length > 0;
+  state.query = '';
+  state.showLoose = false;
+  searchInput.value = '';
+  document.getElementById('heroInput').value = '';
+  state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
+  state.keywords.clear(); state.manaCosts.clear(); state.rarity = ''; state.format = '';
+  syncFilterUI();
+  setFilterDrawer(false);
+  if (location.search) history.pushState({ app: true }, '', location.pathname);
+  showView('search');
+  document.title = homeTitle();
+  window.scrollTo(0, 0);
+  if (!alreadyHome) loadRandomCards();
+}
 document.getElementById('backToSetsBtn').addEventListener('click', () => goTo('?view=sets'));
 
 let currentCards = [];
@@ -4542,6 +4758,8 @@ function setLang(lang, save) {
     renderSetList();
   } else if (route.view === 'meta') {
     renderMeta();
+  } else if (route.view === 'deck') {
+    renderDeck(route);
   } else if (route.view === 'prices') {
     renderMovers();
   } else {
@@ -4598,6 +4816,7 @@ function rowByEnglishName(name) {
 
 function metaRowHtml(a, index, maxShare) {
   const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
+  const deckHref = deckUrl(metaState.format, metaState.days, a);
   const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c))
     .map(c => symbolImg(c, `pip ${c.toLowerCase()}`)).join('');
   const played = (a.wins || 0) + (a.losses || 0);
@@ -4636,7 +4855,7 @@ function metaRowHtml(a, index, maxShare) {
   return `<li class="meta-row${a.unclassified ? ' unclassified' : ''}">
       <div class="meta-rank">${index + 1}</div>
       <div class="meta-deck">
-        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<span class="meta-name-text">${esc(name)}</span></div>
+        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a><a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
       </div>
@@ -4741,10 +4960,10 @@ document.getElementById('metaWindows').addEventListener('click', (e) => {
 });
 document.getElementById('metaSort').addEventListener('change', (e) => { metaState.sort = e.target.value; renderMeta(); });
 document.getElementById('metaBody').addEventListener('click', (e) => {
-  const link = e.target.closest('a.meta-card');
+  const link = e.target.closest('a.meta-card, a[data-deck]');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
-  goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
+  goTo(link.dataset.deck ? link.getAttribute('href') : `?card=${encodeURIComponent(link.dataset.card)}`);
 });
 
 // ---- price history & price movers ----------------------------------------------
@@ -5455,7 +5674,8 @@ function attachNameSuggest(input, list) {
   };
   const pick = (row) => {
     close();
-    input.value = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+    const picked = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+    [searchInput, document.getElementById('heroInput')].forEach(el => { el.value = picked; });
     goTo(`?card=${encodeURIComponent(row.id)}`);
   };
   const update = () => {
@@ -5619,7 +5839,8 @@ async function renderHomeMeta() {
   if (metaState.status !== 'ready') { body.innerHTML = `<p class="hb-empty">${esc(t('home.meta.none'))}</p>`; return; }
   const data = metaState.data;
   const keys = Object.keys(data.windows).sort((x, y) => Number(x) - Number(y));
-  const win = data.windows[keys.includes(String(metaState.days)) ? String(metaState.days) : keys[0]];
+  const winKey = keys.includes(String(metaState.days)) ? String(metaState.days) : keys[0];
+  const win = data.windows[winKey];
   const block = win && win.formats && win.formats[homeMetaFormat];
   const rows = block && block.archetypes ? block.archetypes.filter(a => !a.unclassified).slice(0, 5) : [];
   if (!rows.length) { body.innerHTML = `<p class="hb-empty">${esc(t('home.meta.noformat'))}</p>`; return; }
@@ -5628,7 +5849,7 @@ async function renderHomeMeta() {
     const played = (a.wins || 0) + (a.losses || 0);
     const wr = (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) ? t('home.meta.wr', { v: a.winrate.toFixed(1) }) : '';
     return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
-        <span class="hb-name">${syms}${esc(a.name)}</span>
+        <a class="hb-name" href="${esc(deckUrl(homeMetaFormat, winKey, a))}" data-deck="1">${syms}${esc(a.name)}</a>
         <span class="hb-sub">${esc(t('home.meta.share', { v: a.share.toFixed(1) }))}${wr ? `<br>${esc(wr)}` : ''}</span></li>`;
   }).join('')}</ol>`;
 }
@@ -5639,7 +5860,7 @@ document.getElementById('homeMetaTabs').addEventListener('click', (e) => {
   renderHomeMeta();
 });
 document.getElementById('homeBoxes').addEventListener('click', (e) => {
-  const link = e.target.closest('a[data-card], #homeMoversMore, #homeMetaMore');
+  const link = e.target.closest('a[data-card], a[data-deck], #homeMoversMore, #homeMetaMore');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
   if (link.dataset.card) goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
@@ -5659,6 +5880,341 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { setMenu(
 // ---- once the card database is in ------------------------------------------------------
 dbReady.then(() => { renderFormatSelect(); NAME_SUGGEST = null; });
 setHomeMode(routeFromUrl().view === 'search');
+
+
+// ---- deck pages ------------------------------------------------------------------------
+// A deck from the metagame tab on its own page: the best-finishing list of the
+// period from meta_decks.json (written by build_meta.py next to meta.json),
+// every card named from the card database and grouped by card type. Without
+// meta_decks.json the deck's key cards from meta.json are shown instead.
+const DECK_GROUPS = ['creature', 'planeswalker', 'battle', 'instant', 'sorcery', 'artifact', 'enchantment', 'land', 'other'];
+const deckState = {
+  data: null, status: 'idle', promise: null, token: 0, current: null, cache: new Map(),
+  view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'list' ? 'list' : 'image'; } catch (e) { return 'image'; } })(),
+};
+function loadMetaDecks() {
+  if (!deckState.promise) {
+    deckState.status = 'loading';
+    deckState.promise = (async () => {
+      for (const dir of DATA_DIRS) {
+        try {
+          const res = await fetch(dir + 'meta_decks.json', { cache: 'no-cache' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && data.windows) { deckState.data = data; deckState.status = 'ready'; return; }
+        } catch (err) { /* try the next place */ }
+      }
+      deckState.status = 'absent';
+    })();
+  }
+  return deckState.promise;
+}
+function deckUrl(format, days, a) {
+  return `?view=deck&format=${encodeURIComponent(format)}` + (days ? `&days=${encodeURIComponent(days)}` : '')
+    + `&deck=${encodeURIComponent(a.name)}` + (a.unclassified ? '&u=1' : '');
+}
+// Where a card goes in the list: by its (front face's) card type. Lands first
+// among the types, so an artifact land or Urza's Saga counts as a land.
+function deckGroupOf(card, row) {
+  const face = card && card.card_faces && card.card_faces[0] && card.card_faces[0].type_line;
+  const tl = String(face || (card && card.type_line) || (row && row.type_en) || '').split(' // ')[0].toLowerCase();
+  if (!tl) return 'other';
+  const has = w => new RegExp(`\\b${w}\\b`).test(tl);
+  if (has('land')) return 'land';
+  return ['creature', 'planeswalker', 'battle', 'instant', 'sorcery', 'artifact', 'enchantment'].find(has) || 'other';
+}
+// Card details for every name: database row plus Scryfall card (pictures).
+// Without `fetchCards` only the database is used (instant, no pictures).
+async function deckCardInfo(names, fetchCards) {
+  const out = new Map();
+  const withRow = [], noRow = [];
+  names.forEach(n => { const row = rowByEnglishName(n); if (row) withRow.push([n, row]); else noRow.push(n); });
+  if (!fetchCards) {
+    withRow.forEach(([n, row]) => out.set(n, { row, card: rowToCard(row) }));
+    noRow.forEach(n => out.set(n, { row: null, card: null }));
+    return out;
+  }
+  const cards = withRow.length ? await hydrateRows(withRow.map(x => x[1])) : [];
+  withRow.forEach(([n, row], i) => out.set(n, { row, card: cards[i] || rowToCard(row) }));
+  // cards the database does not have yet (brand new ones): ask Scryfall by name
+  for (let i = 0; i < noRow.length; i += 75) {
+    const chunk = noRow.slice(i, i + 75);
+    try {
+      const res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ identifiers: chunk.map(n => ({ name: n })) }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        (data.data || []).forEach(c => {
+          const full = normText(c.name), front = normText(String(c.name).split(' // ')[0]);
+          const n = chunk.find(x => normText(x) === full || normText(x) === front);
+          if (n && !out.has(n)) out.set(n, { row: null, card: c });
+        });
+      }
+    } catch (err) { /* the names are shown anyway */ }
+  }
+  noRow.forEach(n => { if (!out.has(n)) out.set(n, { row: null, card: null }); });
+  return out;
+}
+function deckItem(name, count, pct, infos) {
+  const info = infos.get(name) || { row: null, card: null };
+  const { row, card } = info;
+  let ja = row && row.name_ja ? row.name_ja : (card && card.lang === 'ja' ? displayNameJa(card) : '');
+  if (ja && !name.includes(' // ')) ja = ja.split(' // ')[0];
+  const label = LANG === 'en' ? name : (ja || name);
+  const sub = LANG === 'en' ? (ja && ja !== name ? ja : '') : (ja && ja !== name ? name : '');
+  const cmc = row ? row._cmc : (card && typeof card.cmc === 'number' ? card.cmc : 0);
+  return { name, count, pct, info, group: deckGroupOf(card, row), cmc: Number(cmc) || 0, label, sub };
+}
+function deckCardHtml(it) {
+  const { card, row } = it.info;
+  const pic = card ? faceUris(card)[0] : null;
+  const id = card ? card.id : (row ? row.id : null);
+  const rate = typeof it.pct === 'number'
+    ? `<span class="dc-rate" title="${esc(t('deck.rate.title'))}">${esc(t('deck.rate', { v: it.pct }))}</span>` : '';
+  const inner = `<span class="dc-pic">${pic
+      ? pictureTag(pic, { alt: it.label, sizes: '(max-width: 820px) 31vw, 150px', use: ['small', 'normal'], main: 'normal' })
+      : `<span class="dc-noimg">${esc(it.label)}</span>`}${it.count ? `<span class="dc-count">×${it.count}</span>` : ''}</span>
+    <span class="dc-name">${esc(it.label)}</span>${rate}`;
+  return id
+    ? `<a class="deck-card" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}" title="${esc(it.name)}">${inner}</a>`
+    : `<div class="deck-card" title="${esc(it.name)}">${inner}</div>`;
+}
+function deckRowHtml(it) {
+  const { card, row } = it.info;
+  const id = card ? card.id : (row ? row.id : null);
+  const cost = (row && row.mana_cost) || (card && (card.mana_cost || (card.card_faces && card.card_faces[0] && card.card_faces[0].mana_cost))) || '';
+  const pic = card ? faceUris(card)[0] : null;
+  const peek = pic ? ` data-peek="${esc(pic.normal || pic.large || pic.small)}"` : '';
+  const label = `${esc(it.label)}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}`;
+  const nameHtml = id
+    ? `<a class="dl-name" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}"${peek}>${label}</a>`
+    : `<span class="dl-name">${label}</span>`;
+  const rate = typeof it.pct !== 'number' ? ''
+    : (it.avg !== undefined ? t('deck.more.rate', { v: it.pct, a: it.avg }) : t('deck.rate.short', { v: it.pct }));
+  return `<li class="dl-row${it.avg !== undefined ? ' more' : ''}"><span class="dl-count">${it.count || ''}</span>${nameHtml}`
+    + `<span class="dl-cost">${cost ? renderPips(cost.split(' // ')[0]) : ''}</span>`
+    + `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span></li>`;
+}
+function deckSort(items, byType) {
+  const order = it => DECK_GROUPS.indexOf(it.group);
+  return items.slice().sort((x, y) => (byType ? order(x) - order(y) : 0) || (x.cmc - y.cmc)
+    || ((y.count || 0) - (x.count || 0)) || x.label.localeCompare(y.label, LANG === 'en' ? 'en' : 'ja'));
+}
+// Main deck: one block per card type. Sideboard: one block, in card-type order.
+function deckGroupsHtml(items, view, grouped) {
+  const body = list => view === 'list'
+    ? `<ul class="dl">${list.map(deckRowHtml).join('')}</ul>`
+    : `<div class="deck-grid">${list.map(deckCardHtml).join('')}</div>`;
+  if (!grouped) return view === 'list' ? body(deckSort(items, true)) : `<div class="deck-flow">${body(deckSort(items, true))}</div>`;
+  const sorted = deckSort(items, false);
+  const html = DECK_GROUPS.map(g => {
+    const list = sorted.filter(it => it.group === g);
+    if (!list.length) return '';
+    const n = list.reduce((s, it) => s + (it.count || 0), 0);
+    return `<div class="deck-group" data-group="${g}"><h3 class="dg-head">${t('deck.g.' + g)}${n ? `<span class="dg-n">${fmtNum(n)}</span>` : ''}</h3>${body(list)}</div>`;
+  }).join('');
+  return view === 'list' ? `<div class="deck-cols">${html}</div>` : `<div class="deck-flow">${html}</div>`;
+}
+// "4 Card Name" lines, then a blank line and the sideboard: the text both
+// MTG Arena and Magic Online import.
+function deckListText(entry) {
+  const line = x => `${x[0]} ${x[1]}`;
+  return (entry.main || []).map(line).join('\n')
+    + ((entry.side || []).length ? '\n\n' + entry.side.map(line).join('\n') : '') + '\n';
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (err) { /* older browsers */ }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+  ta.remove();
+  return ok;
+}
+
+async function renderDeck(route) {
+  const token = ++deckState.token;
+  const body = document.getElementById('deckBody');
+  hideDeckPeek();
+  body.innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">${t('deck.loading')}</span></div>`;
+  await Promise.all([loadMeta(), dbReady]);
+  if (token !== deckState.token) return;
+  if (metaState.status !== 'ready') {
+    document.title = t('title.meta');
+    body.innerHTML = `<div class="status-line"><span class="serif">${t('meta.absent')}</span>${t('meta.absent.body')}</div>`;
+    return;
+  }
+  const data = metaState.data;
+  const keys = Object.keys(data.windows).sort((x, y) => Number(x) - Number(y));
+  const days = keys.includes(String(route.days)) ? String(route.days) : keys[0];
+  const win = data.windows[days];
+  const block = win && win.formats && win.formats[route.format];
+  const a = block && (block.archetypes || []).find(x => x.name === route.deck && !!x.unclassified === !!route.u);
+  if (!a) {
+    document.title = t('title.meta');
+    const back = `?view=meta&format=${encodeURIComponent(route.format)}&days=${encodeURIComponent(days)}`;
+    body.innerHTML = `<div class="status-line"><span class="serif">${t('deck.notfound')}</span>${t('deck.notfound.body', { url: esc(back) })}</div>`;
+    return;
+  }
+  await loadMetaDecks();
+  if (token !== deckState.token) return;
+  const key = a.name + (a.unclassified ? '|u' : '');
+  const formats = deckState.status === 'ready' ? (deckState.data.windows[days] || {}) : {};
+  const entry = (formats[route.format] || {})[key] || null;
+  const lists = entry
+    ? { main: entry.main || [], side: entry.side || [], more: entry.more || [] }
+    : { main: (a.cards || []).map(n => [null, n, null]), side: [], more: [] };
+  const names = [...new Set(lists.main.concat(lists.side).map(x => x[1]).concat(lists.more.map(x => x[0])))];
+  const cacheKey = LANG + '\n' + names.join('\n');
+  const cached = deckState.cache.get(cacheKey);
+  deckState.current = { route, a, entry, lists, days, format: route.format, infos: cached || await deckCardInfo(names, false) };
+  drawDeck();
+  if (cached) return;
+  // then the pictures
+  const infos = await deckCardInfo(names, true);
+  if (deckState.cache.size > 20) deckState.cache.clear();
+  deckState.cache.set(cacheKey, infos);
+  if (token !== deckState.token) return;
+  deckState.current.infos = infos;
+  drawDeck();
+}
+function drawDeck() {
+  const cur = deckState.current;
+  if (!cur) return;
+  const { a, entry, lists, infos, days, format } = cur;
+  const view = deckState.view;
+  const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
+  document.title = t('deck.title', { name, fmt: formatName(format) });
+  const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c)).map(c => symbolImg(c, 'sym')).join('');
+  const played = (a.wins || 0) + (a.losses || 0);
+  const facts = [`${esc(formatName(format))}・${esc(t('meta.window', { n: days }))}`,
+    esc(t('deck.share', { v: a.share.toFixed(1), n: tn('meta.decks', a.decks) }))];
+  if (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) facts.push(esc(t('deck.wr', { v: a.winrate.toFixed(1), n: tn('meta.matches', played) })));
+  const factHtml = facts.map(f => `<span class="fact">${f}</span>`).join('<span class="sep">·</span>');
+  const src = entry && entry.list;
+  const srcText = src ? [src.result, src.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (src.date ? `（${src.date}）` : '') : '';
+  const srcHtml = !src ? '' : `<p class="deck-src">${t('deck.src')}${/^https:\/\//.test(src.url || '')
+    ? `<a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(srcText)} ↗</a>` : esc(srcText)}</p>`;
+  const toggle = `<div class="view-toggle" role="tablist" aria-label="${esc(t('deck.view.aria'))}">
+      <button type="button" class="view-btn" role="tab" data-dview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
+      <button type="button" class="view-btn" role="tab" data-dview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
+    </div>`;
+  const copy = entry ? `<button type="button" class="adv-btn" id="deckCopy" title="${esc(t('deck.copy.title'))}">${t('deck.copy')}</button>` : '';
+  const main = lists.main.map(x => deckItem(x[1], x[0], x[2], infos));
+  const side = lists.side.map(x => deckItem(x[1], x[0], x[2], infos));
+  const more = lists.more.map(x => Object.assign(deckItem(x[0], null, x[1], infos), { avg: x[2] }));
+  const total = list => list.reduce((s, it) => s + (it.count || 0), 0);
+  let html = `<div class="deck-head">
+      <div class="deck-title-row">
+        <h1 class="deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(name)}</span></h1>
+        <div class="deck-tools">${copy}${toggle}</div>
+      </div>
+      <p class="deck-meta">${factHtml}</p>
+      ${srcHtml}
+    </div>`;
+  if (!entry) html += `<p class="deck-note">${t('deck.keyonly')}</p>`;
+  html += `<section class="deck-section"><h2>${entry ? t('deck.main') : t('deck.keycards')}${entry ? `<span class="dg-n">${tn('deck.cards', total(main))}</span>` : ''}</h2>${deckGroupsHtml(main, view, true)}</section>`;
+  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
+  if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(deckRowHtml).join('')}</ul></section>`;
+  if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
+  document.getElementById('deckBody').innerHTML = html;
+}
+document.getElementById('deckBody').addEventListener('click', async (e) => {
+  const vb = e.target.closest('[data-dview]');
+  if (vb) {
+    deckState.view = vb.dataset.dview === 'list' ? 'list' : 'image';
+    try { localStorage.setItem('akuchie-deck-view', deckState.view); } catch (err) { /* fine */ }
+    hideDeckPeek();
+    drawDeck();
+    return;
+  }
+  const cp = e.target.closest('#deckCopy');
+  if (cp) {
+    const cur = deckState.current;
+    if (!cur || !cur.entry) return;
+    const ok = await copyText(deckListText(cur.entry));
+    cp.textContent = ok ? t('deck.copied') : t('deck.copy');
+    setTimeout(() => { if (cp.isConnected) cp.textContent = t('deck.copy'); }, 1800);
+    return;
+  }
+  const link = e.target.closest('a[data-card]');
+  if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  hideDeckPeek();
+  goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
+});
+document.getElementById('deckBack').addEventListener('click', () => {
+  if (history.state && history.state.app) history.back();
+  else goTo(metaUrl());
+});
+// list view: the card's picture beside the name while the pointer is on it
+const deckPeek = document.createElement('img');
+deckPeek.id = 'deckPeek';
+deckPeek.alt = '';
+document.body.appendChild(deckPeek);
+function hideDeckPeek() { const p = document.getElementById('deckPeek'); if (p) p.style.display = 'none'; }
+document.getElementById('deckBody').addEventListener('mouseover', (e) => {
+  const a = e.target.closest('[data-peek]');
+  if (!a || !window.matchMedia('(hover: hover)').matches) return;
+  const r = a.getBoundingClientRect();
+  deckPeek.src = a.dataset.peek;
+  const w = 230, h = 321;
+  const left = r.right + 18 + w < window.innerWidth ? r.right + 18 : Math.max(8, r.left - w - 18);
+  deckPeek.style.left = `${left}px`;
+  deckPeek.style.top = `${Math.max(8, Math.min(window.innerHeight - h - 8, r.top + r.height / 2 - h / 2))}px`;
+  deckPeek.style.display = 'block';
+});
+document.getElementById('deckBody').addEventListener('mouseout', (e) => { if (e.target.closest('[data-peek]')) hideDeckPeek(); });
+window.addEventListener('scroll', hideDeckPeek, { passive: true });
+
+// ---- the search box follows the page -----------------------------------------------------
+// On the home page the big search box is the search. Once it has scrolled out
+// of sight the top bar's own box appears, so a search box is always at hand.
+// The top bar stays at the top while scrolling; on phones only its search box
+// and tabs do (the logo row scrolls away).
+function updateHeroOut() {
+  const root = document.documentElement;
+  const bar = document.querySelector('.topbar');
+  const form = document.getElementById('heroForm');
+  let out = false;
+  if (root.dataset.home === 'true' && root.dataset.view === 'search' && form && bar) {
+    const r = form.getBoundingClientRect();
+    const barBottom = Math.max(0, bar.getBoundingClientRect().bottom);
+    // a little slack before switching back, so it never flickers at the edge
+    out = root.dataset.heroOut === 'true' ? r.bottom < barBottom + 40 : r.bottom < barBottom;
+  }
+  const flag = out ? 'true' : 'false';
+  if (root.dataset.heroOut !== flag) root.dataset.heroOut = flag;
+}
+const phoneMQ = window.matchMedia('(max-width: 820px)');
+function updateBarTop() {
+  const bar = document.querySelector('.topbar');
+  if (!phoneMQ.matches) { bar.style.removeProperty('--bar-top'); return; }
+  const form = document.getElementById('searchForm');
+  const formShown = getComputedStyle(form).display !== 'none';
+  const first = formShown ? form : document.querySelector('.top-tabs');
+  bar.style.setProperty('--bar-top', `${-Math.max(0, first.offsetTop - 8)}px`);
+}
+let heroTick = false;
+window.addEventListener('scroll', () => {
+  if (heroTick) return;
+  heroTick = true;
+  requestAnimationFrame(() => { heroTick = false; updateHeroOut(); });
+}, { passive: true });
+window.addEventListener('resize', updateHeroOut);
+phoneMQ.addEventListener('change', updateBarTop);
+if (window.ResizeObserver) new ResizeObserver(updateBarTop).observe(document.querySelector('.topbar'));
+// the two search boxes show the same words
+const heroInputEl = document.getElementById('heroInput');
+heroInputEl.addEventListener('input', () => { searchInput.value = heroInputEl.value; });
+searchInput.addEventListener('input', () => { if (document.documentElement.dataset.home === 'true') heroInputEl.value = searchInput.value; });
 
 // ---- start: fixed text in the saved language, then whatever page the URL asks for
 applyStaticText();

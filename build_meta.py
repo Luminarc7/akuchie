@@ -4,7 +4,9 @@ build_meta.py
 
 Builds `meta.json` - the data behind the metagame tab of the 悪知恵 site:
 for each format, which decks are being played (share of the field) and how
-they are doing (match win rate).
+they are doing (match win rate) - and `meta_decks.json`, the deck lists
+behind each deck's own page (one real list per deck, the best finish in the
+period, with how often each card is played across all lists of that deck).
 
 WHERE THE NUMBERS COME FROM
 ---------------------------
@@ -34,12 +36,14 @@ USAGE
     python build_meta.py
 
 The first run downloads a few months of tournament files (100-200 MB) into a
-cache folder; later runs only fetch what is new. Then upload meta.json next
-to index.html. Run it again whenever you want fresher numbers - or let GitHub
-run it for you every day with the workflow file that comes with this script.
+cache folder; later runs only fetch what is new. Then upload meta.json and
+meta_decks.json next to index.html. Run it again whenever you want fresher
+numbers - or let GitHub run it for you every day with the workflow file that
+comes with this script.
 
 Options (all optional):
     --out PATH          where to write meta.json
+    --decks-out PATH    where to write meta_decks.json (default: next to meta.json)
     --cache DIR         where downloaded files are kept
     --days 30,90        time windows to calculate
     --decklists DIR     use an existing copy of MTGODecklistCache
@@ -91,6 +95,8 @@ MAX_ARCHETYPES = 40          # per format; the rest is summed into one line
 KEY_CARDS = 8                # with the card database (lands filtered out here)
 KEY_CARDS_NO_DB = 14         # without it: send more, the site filters lands itself
 KEY_CARD_PRESENCE = 0.4      # a key card is in at least 40% of the lists
+MORE_PRESENCE = 0.25         # deck page: other cards played in at least 25% of the lists...
+MORE_CARDS = 12              # ...at most this many of them
 
 
 # ---------------------------------------------------------------- utilities
@@ -557,7 +563,8 @@ def place_of(result):
 
 
 class ArchetypeStats:
-    __slots__ = ("name", "unclassified", "decks", "colors", "wins", "losses", "draws", "cards", "copies", "best")
+    __slots__ = ("name", "unclassified", "decks", "colors", "wins", "losses", "draws", "cards", "copies", "best",
+                 "main_in", "main_copies", "side_in", "list_best")
 
     def __init__(self, name, unclassified):
         self.name, self.unclassified = name, unclassified
@@ -567,6 +574,10 @@ class ArchetypeStats:
         self.cards = collections.Counter()   # decks containing the card (main deck, non-land)
         self.copies = collections.Counter()
         self.best = None                     # (sort key, sample dict)
+        self.main_in = collections.Counter()      # decks with the card in the main deck (lands too)
+        self.main_copies = collections.Counter()  # copies of it in those main decks
+        self.side_in = collections.Counter()      # decks with the card in the sideboard
+        self.list_best = None                # (sort key, deck, event): the list shown on the deck page
 
 
 def load_tournaments(decklists_dir, start, end):
@@ -636,12 +647,21 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             for card, count in deck["spells"].items():
                 st.cards[card] += 1
                 st.copies[card] += count
+            for card, count in deck["main"].items():
+                st.main_in[card] += 1
+                st.main_copies[card] += count
+            for card in deck["side"]:
+                st.side_in[card] += 1
+            place = deck["place"] if deck["place"] is not None else 10 ** 6
+            sort_key = (place, -ev["size"], -ev["date"].toordinal())
             if deck["url"]:
-                place = deck["place"] if deck["place"] is not None else 10 ** 6
-                sort_key = (place, -ev["size"], -ev["date"].toordinal())
                 if st.best is None or sort_key < st.best[0]:
                     st.best = (sort_key, {"url": deck["url"], "event": ev["name"],
                                           "date": ev["date"].isoformat(), "result": deck["result"]})
+            # the deck page shows the best finish too (a list with a link to its source first)
+            list_key = (0 if deck["url"] else 1,) + sort_key
+            if st.list_best is None or list_key < st.list_best[0]:
+                st.list_best = (list_key, deck, ev)
         for a, b, outcome in ev["matches"]:
             if a == b:
                 continue  # mirror match
@@ -679,6 +699,8 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             row["unclassified"] = True
         if st.best:
             row["sample"] = st.best[1]
+        if st.list_best:
+            row["_deck"] = deck_entry(st)   # moved to meta_decks.json by main()
         out.append(row)
     result = {
         "events": events, "decks": decks_total, "matches": matches,
@@ -690,6 +712,30 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
         n = sum(s.decks for s in rest)
         result["rest"] = {"archetypes": len(rest), "decks": n, "share": round(100 * n / decks_total, 2)}
     return result
+
+
+def deck_entry(st):
+    """The deck page's data for one archetype: its best-finishing list (every
+    card with its count and the share of all this archetype's lists that play
+    it) and other cards many of its lists play that this one does not."""
+    _, deck, ev = st.list_best
+    n = st.decks
+    by_count = lambda board: sorted(board.items(), key=lambda kv: (-kv[1], kv[0]))
+    entry = {
+        "list": {"url": deck["url"], "event": ev["name"], "date": ev["date"].isoformat(), "result": deck["result"]},
+        "main": [[count, card, round(100 * st.main_in[card] / n)] for card, count in by_count(deck["main"])],
+        "side": [[count, card, round(100 * st.side_in[card] / n)] for card, count in by_count(deck["side"])],
+    }
+    more = [(card, k) for card, k in st.main_in.items() if card not in deck["main"] and k / n >= MORE_PRESENCE]
+    more.sort(key=lambda kv: (-kv[1], kv[0]))
+    entry["more"] = [[card, round(100 * k / n), round(st.main_copies[card] / k, 1)] for card, k in more[:MORE_CARDS]]
+    return entry
+
+
+def deck_key(row):
+    """How meta_decks.json names an archetype: its name, plus |u when it is an
+    unclassified colour group (which could share a name with a real deck)."""
+    return row["name"] + ("|u" if row.get("unclassified") else "")
 
 
 def classify_event(date, src, data, rules, land_names=frozenset()):
@@ -717,6 +763,7 @@ def classify_event(date, src, data, rules, land_names=frozenset()):
         decks.append({
             "name": arch, "color": color, "classified": classified,
             "spells": {c: n for c, n in main.items() if c not in rules.lands and c not in land_names},
+            "main": dict(main), "side": dict(side),
             "url": d.get("AnchorUri") or "", "result": d.get("Result") or "", "place": place,
         })
         # A name used by several players (e.g. anonymised accounts) cannot be
@@ -755,6 +802,7 @@ def default_out_path():
 def main():
     ap = argparse.ArgumentParser(description="Build meta.json for the 悪知恵 metagame tab.")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--decks-out", default=None)
     ap.add_argument("--cache", default=None)
     ap.add_argument("--days", default=",".join(str(d) for d in DEFAULT_WINDOWS))
     ap.add_argument("--decklists", default=None)
@@ -835,12 +883,33 @@ def main():
             "formats": {f.lower(): analyse(events[f], rules[f], start, today, key_cards) for f in FORMATS if f in rules},
         }
 
+    # deck lists go to their own file: only a deck's page needs them
+    decks_payload = {
+        "version": 1,
+        "generated": payload["generated"],
+        "data_through": payload["data_through"],
+        "windows": {},
+    }
+    for days, win in payload["windows"].items():
+        per_format = decks_payload["windows"][days] = {}
+        for fmt, block in win["formats"].items():
+            per_format[fmt] = {}
+            for row in block["archetypes"]:
+                entry = row.pop("_deck", None)
+                if entry:
+                    per_format[fmt][deck_key(row)] = entry
+    decks_path = args.decks_out or os.path.join(os.path.dirname(os.path.abspath(out_path)), "meta_decks.json")
+
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+    os.makedirs(os.path.dirname(os.path.abspath(decks_path)), exist_ok=True)
+    with open(decks_path, "w", encoding="utf-8") as f:
+        json.dump(decks_payload, f, ensure_ascii=False, separators=(",", ":"))
 
     log(f"\nRead {files:,} tournament files. Wrote {out_path} "
-        f"({os.path.getsize(out_path) / 1024:.0f} KB), data through {payload['data_through']}.")
+        f"({os.path.getsize(out_path) / 1024:.0f} KB) and {decks_path} "
+        f"({os.path.getsize(decks_path) / 1024:.0f} KB), data through {payload['data_through']}.")
     show = str(windows[0])
     for fmt, block in payload["windows"][show]["formats"].items():
         unclassified = sum(a["decks"] for a in block["archetypes"] if a.get("unclassified"))
@@ -851,7 +920,7 @@ def main():
             wr = f"{a['winrate']:.1f}% over {a['wins'] + a['losses']} matches" if a["winrate"] is not None else "no match data"
             tag = " (unclassified)" if a.get("unclassified") else ""
             log(f"  {a['share']:5.1f}%  {a['name']}{tag}  -  win rate {wr}")
-    log("\nUpload meta.json next to index.html in your repo.")
+    log("\nUpload meta.json and meta_decks.json next to index.html in your repo.")
 
 
 if __name__ == "__main__":
