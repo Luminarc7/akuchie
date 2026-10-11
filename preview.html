@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" data-theme="dark" data-site="main" data-home="true">
+<html lang="ja" data-theme="dark" data-site="main" data-home="true" data-combos="1">
 <head>
 <meta charset="UTF-8">
 <meta name="robots" content="noindex">
@@ -11,7 +11,7 @@
 (function () {
   var t = null, l = null;
   try { t = localStorage.getItem('akuchie-theme'); l = localStorage.getItem('akuchie-lang'); } catch (e) {}
-  if (t !== 'light' && t !== 'dark' && t !== 'yawgmoth') {
+  if (t !== 'light' && t !== 'dark') {
     t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
   }
   document.documentElement.setAttribute('data-theme', t);
@@ -20,7 +20,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+1:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   /* ============================ theme tokens ============================ */
   :root, html[data-theme="dark"] {
@@ -73,30 +73,6 @@
     --icon-filter: none;
     --scrim: rgba(30,26,50,0.35);
   }
-  html[data-theme="yawgmoth"] {
-    color-scheme: dark;
-    --page: #050706;
-    --page-glow: none;
-    --header: rgba(13,17,15,0.96);
-    --surface: rgba(13,17,15,0.93);
-    --surface-2: rgba(32,41,35,0.96);
-    --field: rgba(4,6,5,0.85);
-    --line: #34443a;
-    --line-strong: #4a5e50;
-    --text: #e9efe4;
-    --text-2: #c9d5c6;
-    --muted: #9aab9b;
-    --hl: rgba(169,216,110,0.24);
-    --accent: #a9d86e;
-    --accent-ink: #0c1407;
-    --brand-hi: #f0f7dd;
-    --ok: #8fd19f;   --ok-bg: rgba(90,156,106,0.22);  --ok-line: rgba(90,156,106,0.55);
-    --bad: #ef8a7c;  --bad-bg: rgba(207,86,71,0.22);  --bad-line: rgba(207,86,71,0.55);
-    --warn: #e0b872; --warn-bg: rgba(201,161,90,0.22); --warn-line: rgba(201,161,90,0.55);
-    --shadow: 0 10px 30px rgba(0,0,0,0.65);
-    --icon-filter: invert(0.88);
-    --scrim: rgba(0,0,0,0.65);
-  }
   :root {
     --mana-w: #e8dfc0; --mana-u: #3d8bd6; --mana-b: #8d7a9e;
     --mana-r: #cf5647; --mana-g: #5a9c6a; --mana-c: #9b95ac;
@@ -108,12 +84,12 @@
 
   /* ================================ base ================================ */
   *, *::before, *::after { box-sizing: border-box; }
-  html { background: var(--page); scroll-padding-top: calc(var(--bar-h) + 12px); }
+  html { background: var(--page); scroll-padding-top: calc(var(--bar-h) + 12px); font-synthesis-weight: none; }
   body {
     margin: 0; min-height: 100vh;
     background: var(--page-glow); background-attachment: fixed;
     color: var(--text);
-    font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+    font-family: "M PLUS 1", "Hiragino Sans", "Yu Gothic", sans-serif;
     font-size: 15px; line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -122,7 +98,7 @@
   button, input, select { font: inherit; color: inherit; }
   button { cursor: pointer; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .serif { font-family: "Shippori Mincho", serif; }
+  .serif { font-family: "DotGothic16", "M PLUS 1", sans-serif; }
   code {
     font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.9em;
     background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
@@ -145,7 +121,7 @@
   }
   .brand { grid-area: brand; display: flex; align-items: baseline; gap: 10px; text-decoration: none; color: inherit; }
   .brand-mark {
-    font-family: "Yuji Syuku", serif; font-size: 30px; line-height: 1.15; letter-spacing: 0.06em;
+    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 30px; line-height: 1.15; letter-spacing: 0.06em;
     background: linear-gradient(120deg, var(--accent) 0%, var(--brand-hi) 48%, var(--accent) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
   }
@@ -154,7 +130,7 @@
   .search-form input { flex: 1; min-width: 0; padding: 10px 14px; font-size: 15px; }
   .search-form > button, .btn-primary {
     background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px;
-    padding: 0 20px; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; white-space: nowrap;
+    padding: 0 20px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; white-space: nowrap;
   }
   .search-form > button:hover { filter: brightness(1.07); }
   .top-tabs { grid-area: tabs; display: flex; gap: 2px; }
@@ -186,7 +162,7 @@
     max-height: calc(100vh - var(--bar-h) - 28px); overflow-y: auto; overscroll-behavior: contain;
   }
   .filter-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
-  .filter-head h2 { font-family: "Shippori Mincho", serif; font-size: 16px; margin: 0; }
+  .filter-head h2 { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 16px; margin: 0; }
   .filter-close { display: none; }
   .clear-btn { background: none; border: 0; padding: 0; color: var(--accent); font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
   .filter-section + .filter-section { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -195,7 +171,7 @@
   .chip {
     width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
     display: inline-flex; align-items: center; justify-content: center;
-    font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 13px; padding: 0;
+    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 13px; padding: 0;
   }
   .chip.w { color: #241f16; background: var(--mana-w); }
   .chip.u { color: #eaf3fd; background: var(--mana-u); }
@@ -291,7 +267,7 @@
   .card-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .card-thumb-fallback { font-size: 11.5px; color: var(--muted); padding: 10px; text-align: center; }
   .card-tile-body { padding: 9px 11px 8px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
-  .card-name-main { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
+  .card-name-main { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14.5px; line-height: 1.35; }
   .card-name-sub { font-size: 11px; color: var(--muted); line-height: 1.4; }
   .type-line { font-size: 11.5px; color: var(--muted); line-height: 1.45; }
   .card-foot {
@@ -325,13 +301,13 @@
   .load-more-row { text-align: center; margin-top: 20px; }
   .load-more-btn {
     background: var(--surface); border: 1px solid var(--line); color: var(--accent); border-radius: 6px;
-    padding: 10px 24px; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px;
+    padding: 10px 24px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px;
   }
   .load-more-btn:hover { border-color: var(--accent); }
   .load-more-btn:disabled { opacity: 0.5; cursor: default; }
 
   /* ============================== card page ============================== */
-  .back-link { background: none; border: 0; padding: 0 0 12px; color: var(--accent); font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; }
+  .back-link { background: none; border: 0; padding: 0 0 12px; color: var(--accent); font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; }
   .back-link:hover { text-decoration: underline; }
   .card-page { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 26px; align-items: start; }
   .cp-art { position: sticky; top: calc(var(--bar-h) + 14px); }
@@ -343,28 +319,28 @@
   }
   .cp-info { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 20px; min-width: 0; }
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .cp-name { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
+  .cp-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 3px; }
   .pip {
     width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; font-family: "Shippori Mincho", serif;
+    display: flex; align-items: center; justify-content: center; font-family: "DotGothic16", "M PLUS 1", sans-serif;
   }
   .pip.w { background: var(--mana-w); color: #241f16; } .pip.u { background: var(--mana-u); color: #eaf3fd; }
   .pip.b { background: var(--mana-b); color: #17131c; } .pip.r { background: var(--mana-r); color: #2a0d09; }
   .pip.g { background: var(--mana-g); color: #0c2011; } .pip.c { background: var(--mana-c); color: #17151d; }
   .cp-typeline { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
-  .cp-pt { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 16px; white-space: nowrap; }
+  .cp-pt { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 16px; white-space: nowrap; }
   .cp-text { font-size: 14.5px; line-height: 1.8; white-space: pre-line; margin: 10px 0 0; max-width: 62ch; }
   .cp-flavor { font-size: 13px; font-style: italic; color: var(--muted); line-height: 1.7; margin: 10px 0 0; max-width: 62ch; }
   .cp-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; color: var(--muted); margin-top: 12px; }
   .cp-meta a { color: var(--accent); }
   .cp-section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
   .cp-heading, .price-heading, .legal-heading, .external-links-heading, .version-menu-heading {
-    font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; margin: 0 0 9px;
+    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; margin: 0 0 9px;
   }
-  .price-heading small { font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+  .price-heading small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
   .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 16px; align-items: baseline; font-size: 13px; }
   .price-table .lbl { color: var(--muted); }
   .price-table .usd { color: var(--accent); font-weight: 700; font-size: 17px; }
@@ -376,7 +352,7 @@
   /* price history: one line, accent colour, recessive grid, crosshair + tooltip on hover */
   .price-history { position: relative; }
   .hist-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 8px; }
-  .hist-title { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; }
+  .hist-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; }
   .hist-change { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .hist-change strong { color: var(--text); }
   .hist-controls { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-left: auto; }
@@ -438,8 +414,8 @@
 
   /* ========================= combo suggestions ========================= */
   .combos { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 18px; }
-  .combos-heading { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 14px; margin: 0 0 10px; }
-  .combos-heading small { font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 8px; }
+  .combos-heading { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 14px; margin: 0 0 10px; }
+  .combos-heading small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 8px; }
   .combo-sub { font-size: 12.5px; font-weight: 700; color: var(--muted); margin: 0 0 8px; }
   .combo-partners { margin-bottom: 18px; }
   .combo-partners .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -479,7 +455,7 @@
   .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .sets-toolbar input { flex: 1; min-width: 220px; padding: 10px 14px; }
   .set-list { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 14px 12px; }
-  .set-year { font-family: "Shippori Mincho", serif; font-weight: 700; color: var(--accent); font-size: 15px; margin: 16px 0 4px; }
+  .set-year { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: var(--accent); font-size: 15px; margin: 16px 0 4px; }
   .set-row {
     display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: center;
     padding: 8px 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; border-radius: 6px;
@@ -495,7 +471,7 @@
     background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
   }
   .set-header .set-icon { width: 38px; height: 38px; }
-  .set-header-title { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; line-height: 1.3; }
+  .set-header-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 20px; line-height: 1.3; }
   .set-header-sub { font-size: 12px; color: var(--muted); }
   .set-lang-toggle { display: flex; gap: 6px; margin-left: auto; }
   .set-lang-btn { background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font-size: 12.5px; }
@@ -509,7 +485,7 @@
     display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
     background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
   }
-  .meta-title { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 20px; line-height: 1.3; margin: 0 6px 0 0; }
+  .meta-title { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 20px; line-height: 1.3; margin: 0 6px 0 0; }
   .seg { display: flex; flex-wrap: wrap; gap: 5px; }
   .seg-btn {
     border: 1px solid var(--line); background: var(--field); border-radius: 999px;
@@ -530,9 +506,9 @@
   .mover-card { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
   .mover-card img, .mover-noimg { width: 46px; aspect-ratio: 146 / 204; object-fit: cover; border-radius: 3px; flex: none; background: var(--surface-2); }
   .mover-card:hover .mover-name { color: var(--accent); }
-  .mover-name { min-width: 0; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
-  .mover-name small { display: block; font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); }
-  .mover-foil { display: inline-block; font-family: "Noto Sans JP", sans-serif; font-size: 10px; font-weight: 700; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 2px; color: var(--muted); }
+  .mover-name { min-width: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
+  .mover-name small { display: block; font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); }
+  .mover-foil { display: inline-block; font-family: "M PLUS 1", sans-serif; font-size: 10px; font-weight: 700; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 2px; color: var(--muted); }
   .mover-nums { text-align: right; font-variant-numeric: tabular-nums; }
   .mover-chg { font-size: 16px; font-weight: 700; line-height: 1.3; }
   .mover-chg .arrow { font-size: 11px; margin-right: 3px; color: var(--accent); }
@@ -547,11 +523,11 @@
   a.meta-art:hover { border-color: var(--accent); }
   .meta-cols { padding: 9px 16px; font-size: 11.5px; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--line); align-items: end; }
   .meta-row + .meta-row { border-top: 1px solid var(--line); }
-  .meta-rank { grid-area: rank; font-family: "Shippori Mincho", serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .meta-rank { grid-area: rank; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
   .meta-deck { grid-area: deck; min-width: 0; }
   .meta-share { grid-area: share; min-width: 0; }
   .meta-wr { grid-area: wr; min-width: 0; }
-  .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
+  .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
   .meta-name .pip { width: 17px; height: 17px; font-size: 9.5px; }
   .meta-row.unclassified .meta-name-text { color: var(--muted); font-weight: 500; }
   .meta-cards { display: flex; flex-wrap: wrap; gap: 4px 5px; margin-top: 6px; }
@@ -593,40 +569,6 @@
   }
   .attribution a { color: var(--accent); }
 
-  /* ============================ Yawgmoth mode ============================ */
-  #yawgBackdrop, #fallLayer { position: fixed; inset: 0; pointer-events: none; display: none; }
-  #yawgBackdrop {
-    z-index: -2; background-color: #050706; background-repeat: no-repeat;
-    background-position: center 16%; background-size: cover;
-  }
-  #fallLayer { z-index: -1; overflow: hidden; }
-  .yawg-window { display: none; }
-  /* the picture themes: Yawgmoth (main and Selesnya), Khalni Garden (Golgari) */
-  html[data-theme="yawgmoth"] #yawgBackdrop, html[data-theme="garden"] #yawgBackdrop,
-  html[data-theme="yawgmoth"] #fallLayer, html[data-theme="garden"] #fallLayer { display: block; }
-  html[data-theme="garden"] #yawgBackdrop { background-color: #060a05; background-position: center 42%; }
-  /* a clear opening under the bar where the picture shows uncovered */
-  html[data-theme="yawgmoth"] .yawg-window, html[data-theme="garden"] .yawg-window { display: block; height: clamp(170px, 40vh, 400px); }
-  /* On card and set pages the content matters more: keep a smaller opening. */
-  html[data-theme="yawgmoth"][data-view="card"] .yawg-window, html[data-theme="garden"][data-view="card"] .yawg-window,
-  html[data-theme="yawgmoth"][data-view="sets"] .yawg-window, html[data-theme="garden"][data-view="sets"] .yawg-window,
-  html[data-theme="yawgmoth"][data-view="meta"] .yawg-window, html[data-theme="garden"][data-view="meta"] .yawg-window { height: clamp(90px, 16vh, 170px); }
-  .faller svg { width: 100%; height: 100%; display: block; }
-  .faller {
-    position: absolute; top: -14vh; left: var(--x); width: var(--size); height: var(--size);
-    font-size: var(--size); line-height: 1; text-align: center; opacity: var(--o, 0.9);
-    animation: fall var(--dur) linear var(--delay) infinite; will-change: transform; user-select: none;
-  }
-  .faller.glyph { color: #a9d86e; font-family: "Shippori Mincho", serif; font-weight: 800; }
-  @keyframes fall {
-    from { transform: translate3d(0, 0, 0) rotate(0deg); }
-    to   { transform: translate3d(var(--drift), 130vh, 0) rotate(var(--spin)); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .faller { animation: none; top: var(--rest); }
-    .spinner { animation-duration: 2.4s; }
-  }
-
   /* ============================== responsive ============================== */
   @media (max-width: 1240px) { .brand-sub { display: none; } }
   /* medium widths: search box drops to its own row so nothing is squeezed */
@@ -647,8 +589,6 @@
       transform: translateX(-104%); transition: transform 0.2s ease; visibility: hidden;
       padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     }
-    html[data-theme="yawgmoth"] .filter-panel { background: #0d110f; }
-    html[data-theme="garden"] .filter-panel { background: #0e140c; }
     .filter-panel.open { transform: none; visibility: visible; }
     .filter-close { display: inline-block; background: none; border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; font-size: 13px; }
     .filter-backdrop.open { display: block; position: fixed; inset: 0; z-index: 55; background: var(--scrim); }
@@ -717,7 +657,7 @@
   /* home: the search comes first */
   .hero { display: flex; flex-wrap: wrap; gap: 36px; align-items: flex-start; padding: 22px 0 30px; }
   .hero-main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-  .hero-title { margin: 0; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 30px; line-height: 1.3; text-wrap: balance; }
+  .hero-title { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 30px; line-height: 1.3; text-wrap: balance; }
   .hero-lead { margin: 0; max-width: 40em; color: var(--text-2); font-size: 15px; line-height: 1.75; }
   .hero-form { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
   .hero-label { font-size: 12.5px; font-weight: 700; color: var(--muted); }
@@ -726,7 +666,7 @@
   .hero-row input { width: 100%; height: 58px; padding: 0 18px; font-size: 17px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--field); }
   .hero-row > button {
     height: 58px; padding: 0 34px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink);
-    font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 18px; white-space: nowrap;
+    font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 800; font-size: 18px; white-space: nowrap;
   }
   .hero-row > button:hover { filter: brightness(1.07); }
   .hero-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
@@ -760,8 +700,8 @@
   .hx-item { display: flex; gap: 12px; text-decoration: none; color: inherit; }
   .hx-thumb { width: 46px; flex: none; align-self: flex-start; }
   .hx-thumb img, .hx-noimg { display: block; width: 46px; aspect-ratio: 146 / 204; border-radius: 4px; background: var(--surface-2); object-fit: cover; }
-  .hx-name { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; line-height: 1.4; }
-  .hx-name small { font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
+  .hx-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 15px; line-height: 1.4; }
+  .hx-name small { font-family: "M PLUS 1", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
   .hx-item:hover .hx-name { color: var(--accent); }
   .hx-text { font-size: 13px; color: var(--text-2); line-height: 1.65; }
   .hx-empty { font-size: 13px; color: var(--muted); }
@@ -771,13 +711,13 @@
   .home-boxes { display: flex; flex-wrap: wrap; gap: 18px; margin: 0 0 30px; }
   .home-box { flex: 1 1 420px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
   .hb-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
-  .hb-head h2 { margin: 0; font-family: "Shippori Mincho", serif; font-size: 17px; }
+  .hb-head h2 { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 17px; }
   .hb-head a { font-size: 12.5px; color: var(--accent); }
   .hb-list { list-style: none; margin: 0; padding: 0; }
   .hb-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; font-variant-numeric: tabular-nums; }
   .hb-row + .hb-row { border-top: 1px solid var(--line); }
   .hb-rank { width: 16px; flex: none; font-size: 12.5px; color: var(--muted); text-align: right; }
-  .hb-name { flex: 1; min-width: 0; font-family: "Shippori Mincho", serif; font-weight: 700; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+  .hb-name { flex: 1; min-width: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
   a.hb-name:hover { color: var(--accent); }
   .hb-name .sym { margin-right: 2px; }
   .hb-sub { font-size: 12px; color: var(--muted); white-space: nowrap; }
@@ -854,7 +794,7 @@
   .tr-thumb img, .tr-thumb .tr-noimg { width: 100%; aspect-ratio: 488 / 680; border-radius: 4px; object-fit: cover; background: var(--surface-2); display: block; }
   .tr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
   .tr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
-  .tr-name { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 16.5px; line-height: 1.4; }
+  .tr-name { font-family: "DotGothic16", "M PLUS 1", sans-serif; font-weight: 700; font-size: 16.5px; line-height: 1.4; }
   .tr-sub { font-size: 12px; color: var(--muted); }
   .tr-meta { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 12px; color: var(--muted); }
   .tr-meta .pips { display: inline-flex; gap: 2px; }
@@ -994,12 +934,12 @@
   /* metagame: decks open their own page */
   a.meta-name-text { color: inherit; text-decoration: none; }
   a.meta-name-text:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-  .meta-decklink { margin-left: 2px; font-family: "Noto Sans JP", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
+  .meta-decklink { margin-left: 2px; font-family: "M PLUS 1", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
 
   /* deck pages */
   .deck-head { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 8px; }
   .deck-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
-  .deck-title { margin: 0; font-family: "Shippori Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .deck-title { margin: 0; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 27px; font-weight: 800; line-height: 1.3; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .deck-title .pips { display: inline-flex; gap: 2px; }
   .deck-title .sym { width: 22px; height: 22px; }
   .deck-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -1010,8 +950,8 @@
   .deck-src a { color: var(--accent); }
   .deck-note { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .deck-section { margin-top: 22px; }
-  .deck-section > h2 { margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
-  .deck-section > h2 .dg-n { font-family: "Noto Sans JP", sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
+  .deck-section > h2 { margin: 0 0 12px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
+  .deck-section > h2 .dg-n { font-family: "M PLUS 1", sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
   .deck-sub { margin: -6px 0 10px; font-size: 12.5px; color: var(--muted); }
   .deck-group { margin: 0 0 18px; }
   .dg-head { margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 700; color: var(--text-2); display: flex; align-items: baseline; gap: 8px; }
@@ -1098,7 +1038,7 @@
   .wip-badge { display: inline-block; flex: none; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
   .price-section .price-avg { margin-top: 8px; }
   .price-section .price-sub { margin-top: 6px; }
-  .hist-title small.hist-market { margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--muted); font-family: "Noto Sans JP", sans-serif; }
+  .hist-title small.hist-market { margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--muted); font-family: "M PLUS 1", sans-serif; }
   /* shop links: smaller, one line per country */
   .cp-row.shop-links { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 5px; align-items: center; }
   .cp-row.shop-links > .cp-row-label { grid-row: 1 / span 3; align-self: start; line-height: 22px; margin-right: 0; }
@@ -1116,7 +1056,7 @@
   .mover-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
   .mover-col { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .mover-col .mover-list { margin: 0; }
-  .mover-col-head { margin: 0 0 6px; font-family: "Shippori Mincho", serif; font-size: 17px; display: flex; align-items: center; gap: 6px; }
+  .mover-col-head { margin: 0 0 6px; font-family: "DotGothic16", "M PLUS 1", sans-serif; font-size: 17px; display: flex; align-items: center; gap: 6px; }
   .mover-col-head.up .arrow, .mover-chg.up .arrow { color: var(--accent); }
   .mover-col-head.down .arrow { color: var(--muted); }
   #moverBody .status-line .wip-badge { margin-bottom: 6px; }
@@ -1136,12 +1076,17 @@
   .best-tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; line-height: 1.6;
     background: var(--accent); color: var(--accent-ink); vertical-align: 2px; }
   .sp-shop.buy, .sp-shop.buy a { color: var(--text-2); }
+
+  /* ========================== round 6 ========================== */
+  .hb-deck { gap: 10px; }
+  .hb-art { flex: none; display: block; width: 44px; height: 32px; border-radius: 5px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); }
+  .hb-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  a.hb-art:hover { border-color: var(--accent); }
+  .combos-heading { font-size: 16px; }
 </style>
 </head>
 <body>
 
-<div id="yawgBackdrop" aria-hidden="true"></div>
-<div id="fallLayer" aria-hidden="true"></div>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -1170,13 +1115,11 @@
       <div class="theme-switch" id="themeSwitch" role="group" aria-label="表示テーマ" data-i18n-aria="theme.aria">
         <button type="button" class="theme-btn" data-theme="light" aria-pressed="false" data-i18n="theme.light">ライト</button>
         <button type="button" class="theme-btn" data-theme="dark" aria-pressed="false" data-i18n="theme.dark">ダーク</button>
-        <button type="button" class="theme-btn" data-theme="yawgmoth" aria-pressed="false" data-i18n="theme.yawgmoth">ヨーグモス</button>
       </div>
     </div>
   </div>
 </header>
 
-<div class="yawg-window" aria-hidden="true"></div>
 
 <div id="searchView" class="wrap">
   <section class="hero" id="homeHero">
@@ -1419,7 +1362,6 @@
     <span data-i18n-html="footer.credit">カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）・ショップ別の価格：<a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a></span><br>
     <span id="dbCount"></span>
     <span id="siteSwitch"></span>
-    <span id="yawgCredit"></span>
   </div>
 </footer>
 
@@ -1544,8 +1486,6 @@ const STR = {
   'theme.aria': ['表示テーマ', 'Theme'],
   'theme.light': ['ライト', 'Light'],
   'theme.dark': ['ダーク', 'Dark'],
-  'theme.yawgmoth': ['ヨーグモス', 'Yawgmoth'],
-  'theme.garden': ['カルニの庭', 'Khalni Garden'],
   'filter.aria': ['絞り込み条件', 'Filters'],
   'filter.title': ['絞り込み', 'Filters'],
   'filter.clear': ['すべてクリア', 'Clear all'],
@@ -1802,11 +1742,9 @@ const STR = {
   'tl.sent': ['送信クエリ：', 'Query sent:'],
   'tl.name.whole': ['（カード名として解決）', ' (resolved as a card name)'],
   'tl.name': ['（カード名）', ' (card name)'],
-  'yawg.credit': ['<br>背景画像：{title}{artist}・画像提供 Scryfall　™ &amp; © Wizards of the Coast', '<br>Background art: {title}{artist} · image from Scryfall　™ &amp; © Wizards of the Coast'],
-  'yawg.artist': ['（絵：{a}）', ' (art by {a})'],
   'meta.own.golgari': ['　ゴルガリカラー（黒・緑）のデッキだけを表示：<strong>{n}</strong> 種類', '　Showing only decks in Golgari colors (black, green): <strong>{n}</strong>'],
   'meta.own.none.golgari': ['この期間にゴルガリカラーのデッキは見つかりませんでした', 'No decks in Golgari colors in this period'],
-  'combo.heading': ['コンボ（{n}件）', 'Combos ({n})'],
+  'combo.heading': ['統率者戦のコンボ（{n}件）', 'Commander combos ({n})'],
   'combo.source': ['データ：Commander Spellbook', 'data from Commander Spellbook'],
   'combo.partners': ['このカードとコンボになるカード', 'Cards that combo with this card'],
   'combo.list': ['コンボ一覧（採用の多い順）', 'Combos, most played first'],
@@ -1823,8 +1761,8 @@ const STR = {
   'zone.any': ['どの領域でも', 'any zone'],
   'combo.more': ['さらに表示（残り{n}件）', 'Show {n} more'],
   'combo.all': ['Commander Spellbook でこのカードのコンボをすべて見る ↗', 'See every combo for this card on Commander Spellbook ↗'],
-  'combo.note': ['コンボの内容は <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a> のデータです（結果と手順は英語）。色の組み合わせが黒・緑に収まるコンボだけを表示しています。更新：{d}',
-                 'Combo data comes from <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a>. Only combos whose color identity fits within black and green are shown. Updated {d}'],
+  'combo.note': ['コンボの内容は <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a> のデータです（結果と手順は英語）。1枚につき採用の多い順に最大{max}件を表示しています。更新：{d}',
+                 'Combo data comes from <a href="https://commanderspellbook.com/" target="_blank" rel="noopener">Commander Spellbook</a>. Up to {max} combos per card are shown, most played first. Updated: {d}'],
   'combo.hint': ['「{name}」とコンボになるカード：', 'Cards that combo with {name}:'],
   'combo.hint.more': ['コンボ {n}件を見る →', 'See {n} combos →'],
   'combo.hint.more.one': ['コンボ {n}件を見る →', 'See {n} combo →'],
@@ -3694,11 +3632,13 @@ function renderCardViewContent(card) {
     <section class="versions" id="versionsBox">
       <div class="version-menu-heading" id="versionMenuHeading">${t('versions.loading')}</div>
       <div class="version-panel" id="versionMenuPanel"></div>
-    </section>`;
+    </section>
+    <section class="combos" id="combosBox" style="display:none;"></section>`;
   document.title = `${names.main} — 悪知恵`;
   updateYenLabels(box);
   showPriceHistory(card);
   if (card._quotes === undefined) loadCardQuotes(card);
+  loadCardCombos(card);
 
   const setLink = document.querySelector('#cardViewCard .cp-set-link');
   if (setLink) setLink.addEventListener('click', (e) => {
@@ -4741,145 +4681,17 @@ document.getElementById('formatSelect').addEventListener('change', (e) => { stat
 
 syncFilterUI();
 
-// ---- themes: light / dark / the edition's picture theme ----------------------
-// Picture themes ("scenes"). Nothing in them is redrawn or bundled from the
-// game: the background is a card's official art and the falling symbols are
-// official mana symbols, both loaded from Scryfall the same way card images
-// are, shown unaltered, with the artist credited in the footer. The extras
-// (cat emoji; a plain eye-in-a-triangle drawn here) are not game artwork.
-const CATS = ['🐈', '🐈‍⬛', '🐱', '😼', '🐈'];
-const EYE_SVG = '<svg viewBox="0 0 100 100" aria-hidden="true">'
-  + '<path d="M50 9 L93 86 H7 Z" fill="#0c1408" stroke="#b5d66a" stroke-width="5" stroke-linejoin="round"/>'
-  + '<path d="M27 60 Q50 38 73 60 Q50 82 27 60 Z" fill="#eef3d6" stroke="#b5d66a" stroke-width="3" stroke-linejoin="round"/>'
-  + '<circle cx="50" cy="60" r="9.5" fill="#3d5a1e"/><circle cx="50" cy="60" r="4.2" fill="#0a1005"/>'
-  + '</svg>';
-const SCENES = {
-  yawgmoth: {
-    card: { exact: 'Yawgmoth, Thran Physician', set: 'mh1' },
-    symbols: ['{W/P}', '{U/P}', '{B/P}', '{R/P}', '{G/P}'],          // Phyrexian mana, picked at random
-    extraEvery: 2,                                                   // every 2nd falling item is a cat
-    extra() { const el = document.createElement('span'); el.textContent = CATS[Math.floor(Math.random() * CATS.length)]; return el; },
-    glyph: 'Φ', cache: 'akuchie-yawg',
-  },
-  garden: {
-    card: { exact: 'Khalni Garden' },
-    symbols: ['{G}', '{B}', '{B/G}'],                                // green, black and the Golgari hybrid symbol, in turn
-    inTurn: true,
-    extraEvery: 4,                                                   // every 4th falling item is the eye
-    extra() { const el = document.createElement('span'); el.classList.add('eye'); el.innerHTML = EYE_SVG; return el; },
-    glyph: '❧', cache: 'akuchie-garden',
-  },
-};
-const SCENIC = EDITION.scene || 'yawgmoth';
-const THEME_KEY = EDITION.themeKey || 'akuchie-theme';
-const THEMES = ['light', 'dark', SCENIC];
-const fallLayer = document.getElementById('fallLayer');
+// ---- themes: light / dark --------------------------------------------------
+const THEME_KEY = 'akuchie-theme';
+const THEMES = ['light', 'dark'];
 function currentTheme() { return document.documentElement.getAttribute('data-theme') || 'dark'; }
-
-// the third theme button is this edition's picture theme
-(() => {
-  const b = document.querySelector('.theme-btn[data-theme="yawgmoth"]');
-  if (b && SCENIC !== 'yawgmoth') { b.dataset.theme = SCENIC; b.dataset.i18n = 'theme.' + SCENIC; }
-})();
-
 function setTheme(name, save) {
-  if (!THEMES.includes(name)) name = EDITION.scene ? SCENIC : 'dark';
+  if (!THEMES.includes(name)) name = 'dark';
   document.documentElement.setAttribute('data-theme', name);
   if (save) { try { localStorage.setItem(THEME_KEY, name); } catch (e) { /* private mode */ } }
   document.querySelectorAll('.theme-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === name)));
-  if (name === SCENIC) startScene(); else stopScene();
 }
 document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme, true)));
-
-const scene = { cfg: SCENES[SCENIC], ready: null, art: '', artist: '', title: '', symbols: [] };
-function loadSceneAssets() {
-  if (scene.ready) return scene.ready;
-  const cfg = scene.cfg;
-  try {
-    const cached = JSON.parse(localStorage.getItem(cfg.cache) || 'null');
-    if (cached && cached.art) Object.assign(scene, { art: cached.art, artist: cached.artist || '', title: cached.title || '', symbols: cached.symbols || [] });
-  } catch (e) { /* no cache */ }
-  scene.ready = (async () => {
-    if (!scene.art) {
-      try {
-        const res = await fetch(`https://api.scryfall.com/cards/named?${new URLSearchParams(cfg.card)}`,
-          { headers: { 'Accept': 'application/json' } });
-        if (res.ok) {
-          const c = await res.json();
-          scene.art = (c.image_uris && c.image_uris.art_crop) || '';
-          scene.artist = c.artist || '';
-          scene.title = c.name || '';
-        }
-      } catch (e) { /* plain dark background instead */ }
-    }
-    if (!scene.symbols.length) {
-      try {
-        const res = await fetch('https://api.scryfall.com/symbology', { headers: { 'Accept': 'application/json' } });
-        if (res.ok) {
-          const d = await res.json();
-          const uri = {};
-          (d.data || []).forEach(sym => { if (sym.svg_uri) uri[sym.symbol] = sym.svg_uri; });
-          scene.symbols = cfg.symbols.map(s => uri[s]).filter(Boolean);
-        }
-      } catch (e) { /* falls back to a plain text character */ }
-    }
-    try { localStorage.setItem(cfg.cache, JSON.stringify({ art: scene.art, artist: scene.artist, title: scene.title, symbols: scene.symbols })); } catch (e) { /* ignore */ }
-  })();
-  return scene.ready;
-}
-
-function buildFallers() {
-  fallLayer.innerHTML = '';
-  const cfg = scene.cfg;
-  const count = window.innerWidth < 700 ? 16 : 30;
-  const rand = (a, b) => a + Math.random() * (b - a);
-  let turn = 0;
-  for (let i = 0; i < count; i++) {
-    let el;
-    if (i % cfg.extraEvery === cfg.extraEvery - 1) {
-      el = cfg.extra();
-    } else if (scene.symbols.length) {
-      el = document.createElement('img');
-      el.alt = '';
-      el.src = cfg.inTurn ? scene.symbols[turn++ % scene.symbols.length]
-                          : scene.symbols[Math.floor(Math.random() * scene.symbols.length)];
-    } else {
-      el = document.createElement('span');
-      el.textContent = cfg.glyph;
-      el.classList.add('glyph');
-    }
-    el.classList.add('faller');
-    const dur = rand(9, 20);
-    el.style.setProperty('--x', `${rand(0, 97).toFixed(2)}%`);
-    el.style.setProperty('--size', `${Math.round(rand(22, 46))}px`);
-    el.style.setProperty('--dur', `${dur.toFixed(1)}s`);
-    el.style.setProperty('--delay', `${(-rand(0, dur)).toFixed(1)}s`);   // already mid-fall on load
-    el.style.setProperty('--drift', `${Math.round(rand(-90, 90))}px`);
-    el.style.setProperty('--spin', `${Math.round(rand(-300, 300))}deg`);
-    el.style.setProperty('--o', rand(0.6, 0.95).toFixed(2));
-    el.style.setProperty('--rest', `${rand(4, 92).toFixed(1)}vh`);        // used when motion is reduced
-    fallLayer.appendChild(el);
-  }
-}
-function startScene() {
-  buildFallers();
-  loadSceneAssets().then(() => {
-    if (currentTheme() !== SCENIC) return;
-    if (scene.art) document.getElementById('yawgBackdrop').style.backgroundImage = `url("${scene.art}")`;
-    renderSceneCredit();
-    buildFallers();
-  });
-}
-function renderSceneCredit() {
-  document.getElementById('yawgCredit').innerHTML = (currentTheme() === SCENIC && scene.art)
-    ? t('yawg.credit', { title: esc(scene.title || scene.cfg.card.exact), artist: scene.artist ? t('yawg.artist', { a: esc(scene.artist) }) : '' })
-    : '';
-}
-function stopScene() {
-  fallLayer.innerHTML = '';
-  document.getElementById('yawgCredit').innerHTML = '';
-}
-
 setTheme(currentTheme(), false);
 
 // ---- search tips (one set per language) ------------------------------------
@@ -4968,7 +4780,6 @@ function applyStaticText() {
   renderGuide();
   updateDbCount();
   renderSiteSwitch();
-  renderSceneCredit();
 }
 
 // Re-draws the results under the search box in the current language. Results
@@ -5095,13 +4906,40 @@ function cardArtUrl(id) {
 function namedArtUrl(name) {
   return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image&version=art_crop`;
 }
-document.getElementById('metaBody').addEventListener('error', (e) => {
+document.getElementById('metaBody').addEventListener('error', (e) => artFallback(e), true);
+document.getElementById('homeMetaBody').addEventListener('error', (e) => artFallback(e), true);
+
+// The card that pictures a deck: the one chosen when the data was built (the
+// card the archetype is named after, else its signature card), or here the
+// key card named like the deck, else the first non-land key card.
+const DECK_NAME_NOISE = new Set(['mono', 'white', 'blue', 'black', 'red', 'green', 'azorius', 'dimir', 'rakdos', 'gruul', 'selesnya', 'orzhov',
+  'izzet', 'golgari', 'boros', 'simic', 'esper', 'grixis', 'jund', 'naya', 'bant', 'abzan', 'jeskai', 'sultai', 'mardu', 'temur', 'color',
+  'colorless', 'aggro', 'control', 'midrange', 'tempo', 'combo', 'ramp', 'unclassified', 'the', 'and']);
+function deckIconName(a) {
+  if (a.icon) return a.icon;
+  const words = String(a.name || '').toLowerCase().split(/[^a-z0-9']+/).filter(w => w.length > 2 && !DECK_NAME_NOISE.has(w));
+  const cards = (a.cards || []).map(n => ({ n, row: rowByEnglishName(n) }));
+  for (const w of words) {
+    const stem = w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : w;
+    const hit = cards.find(c => c.n.toLowerCase().split(/[^a-z0-9']+/).some(x => x === w || x === stem || (stem.length >= 5 && x.startsWith(stem))));
+    if (hit) return hit.n;
+  }
+  const spell = cards.find(c => !(c.row && c.row._typeWords.has('land') && !c.row._typeWords.has('creature')));
+  return spell ? spell.n : '';
+}
+function deckArtHtml(a, href, cls) {
+  const name = deckIconName(a);
+  if (!name) return `<span class="${cls} empty" aria-hidden="true"></span>`;
+  const row = rowByEnglishName(name);
+  return `<a class="${cls}" href="${esc(href)}" data-deck="1" tabindex="-1" aria-hidden="true" title="${esc(name)}"><img src="${esc(row ? cardArtUrl(row.id) : namedArtUrl(name))}" data-fallback="${esc(row ? namedArtUrl(name) : '')}" alt="" loading="lazy" decoding="async"></a>`;
+}
+function artFallback(e) {
   const img = e.target;
-  if (!img || img.tagName !== 'IMG' || !img.closest('.meta-art')) return;
+  if (!img || img.tagName !== 'IMG' || !img.closest('.meta-art, .hb-art')) return;
   if (img.dataset.fallback) { const next = img.dataset.fallback; img.dataset.fallback = ''; img.src = next; return; }
-  img.closest('.meta-art').classList.add('empty');
+  img.parentElement.classList.add('empty');
   img.remove();
-}, true);
+}
 
 function metaRowHtml(a, index, maxShare) {
   const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
@@ -5128,10 +4966,7 @@ function metaRowHtml(a, index, maxShare) {
   // key cards: lands are left out; names follow the site language and link to the card page
   const keyCards = (a.cards || []).map(n => ({ n, row: rowByEnglishName(n) }))
     .filter(c => !(c.row && c.row._typeWords.has('land') && !c.row._typeWords.has('creature')));
-  const main = keyCards[0] || null;
-  const art = main
-    ? `<a class="meta-art" href="${esc(deckHref)}" data-deck="1" tabindex="-1" aria-hidden="true"><img src="${esc(main.row ? cardArtUrl(main.row.id) : namedArtUrl(main.n))}" data-fallback="${esc(main.row ? namedArtUrl(main.n) : '')}" alt="" loading="lazy" decoding="async"></a>`
-    : '<span class="meta-art empty" aria-hidden="true"></span>';
+  const art = deckArtHtml(a, deckHref, 'meta-art');
   const cards = keyCards
     .slice(0, 5)
     .map(c => {
@@ -5598,46 +5433,49 @@ document.getElementById('moverBody').addEventListener('click', (e) => {
 // part of and the cards it combos with. The file is built by build_combos.py
 // from Commander Spellbook's published combo database and loaded only when
 // first needed.
-const comboData = { status: EDITION.combos ? 'idle' : 'off', promise: null, data: null, F: null, byOracle: new Map() };
+// Combos come from Commander Spellbook, rebuilt weekly with the price data
+// (warujie-prices/c/): one file per first two characters of a card's oracle id.
+const COMBOS_ON = document.documentElement.dataset.combos === '1';
+const comboData = { status: COMBOS_ON ? 'idle' : 'off', index: null, shards: new Map() };
 const COMBO_FIELDS = ['id', 'identity', 'cards', 'templates', 'results', 'mana', 'popularity', 'legal', 'prerequisites', 'steps'];
 const COMBOS_FIRST = 6;    // combos shown at first
 const COMBOS_MAX = 40;     // after "show more"; the rest is a link to Commander Spellbook
 const COMBO_PARTNERS = 10; // card tiles suggested
+const COMBO_URL = PRICE_DATA_URL + 'c/';
 
-function loadCombos() {
-  if (comboData.status === 'off') return Promise.resolve();
-  if (!comboData.promise) {
-    comboData.status = 'loading';
-    comboData.promise = fetchFirstData([EDITION.combos]).then(data => {
-      if (!data || !Array.isArray(data.combos) || !Array.isArray(data.cards)) throw new Error('unexpected combo file');
-      const F = {};
-      (Array.isArray(data.fields) ? data.fields : COMBO_FIELDS).forEach((f, i) => { F[f] = i; });
-      data.combos.forEach((c, idx) => {
-        (c[F.cards] || []).forEach(u => {
-          const oid = (data.cards[u[0]] || [])[1];
-          if (!oid) return;
-          const list = comboData.byOracle.get(oid);
-          if (!list) comboData.byOracle.set(oid, [idx]);
-          else if (list[list.length - 1] !== idx) list.push(idx);
-        });
-      });
-      comboData.data = data;
-      comboData.F = F;
-      comboData.status = 'ready';
-    }).catch(() => { comboData.status = 'absent'; });
+function loadComboIndex() {
+  if (!comboData.index) {
+    comboData.index = fetch(COMBO_URL + 'index.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : null).catch(() => null);
   }
-  return comboData.promise;
+  return comboData.index;
 }
+function loadComboShard(key) {
+  if (!comboData.shards.has(key)) {
+    comboData.shards.set(key, loadComboIndex().then(index => {
+      if (!index || !(index.shards || []).includes(key)) return null;
+      return fetchMaybeGzipJson(`${COMBO_URL}${key}.json.gz?d=${encodeURIComponent(index.generated || '')}`).then(data => {
+        if (!data || !Array.isArray(data.combos)) return null;
+        const F = {};
+        (Array.isArray(data.fields) ? data.fields : COMBO_FIELDS).forEach((f, i) => { F[f] = i; });
+        return { data, F, index };
+      });
+    }).catch(() => null));
+  }
+  return comboData.shards.get(key);
+}
+// for the old search-result hint (not used on the main site)
+function loadCombos() { return Promise.resolve(); }
 
 function oracleIdOf(card) {
   return card.oracle_id || (card.card_faces && card.card_faces[0] && card.card_faces[0].oracle_id) || '';
 }
 
-// The combos a card is part of (the file lists them most played first).
-function combosFor(oracleId) {
-  if (comboData.status !== 'ready' || !oracleId) return [];
-  const { data, F } = comboData;
-  return (comboData.byOracle.get(oracleId) || []).map(idx => {
+// The combos a card is part of, most played first.
+function combosFor(shard, oracleId) {
+  if (!shard || !oracleId) return [];
+  const { data, F } = shard;
+  return ((data.by || {})[oracleId] || []).map(idx => {
     const c = data.combos[idx];
     return {
       id: String(c[F.id] || ''),
@@ -5652,6 +5490,7 @@ function combosFor(oracleId) {
       legal: c[F.legal] || 0,
       prerequisites: c[F.prerequisites] || '',
       steps: c[F.steps] || '',
+      formats: data.formats || [],
     };
   });
 }
@@ -5683,8 +5522,7 @@ function comboCardChip(k, isThis) {
   return `<span class="combo-chip" title="${esc(k.name)}">${label}</span>`;
 }
 
-function comboLegalHtml(mask) {
-  const formats = (comboData.data && comboData.data.formats) || [];
+function comboLegalHtml(mask, formats = []) {
   return `<div class="legal-circles">${FORMAT_BADGES.map(([fmt, code]) => {
     const bit = formats.indexOf(fmt);
     const status = (bit >= 0 && ((mask >> bit) & 1)) ? 'legal' : 'not_legal';
@@ -5729,7 +5567,7 @@ function comboRowHtml(c, oracleId) {
       <div class="combo-cards">${cards}</div>
       ${c.results.length ? `<div class="combo-results"><span class="arrow">→</span>${esc(c.results.join(sep))}</div>` : ''}
       <div class="combo-meta">
-        ${comboLegalHtml(c.legal)}
+        ${comboLegalHtml(c.legal, c.formats)}
         ${mana}
         ${c.popularity ? `<span>${tn('combo.pop', c.popularity)}</span>` : ''}
         <a href="https://commanderspellbook.com/combo/${encodeURIComponent(c.id)}/" target="_blank" rel="noopener">Commander Spellbook ↗</a>
@@ -5749,31 +5587,33 @@ function renderComboList(oracleId, list, shown) {
   if (more) more.addEventListener('click', () => renderComboList(oracleId, list, COMBOS_MAX));
 }
 
-// The combo panel on a card page.
+// The combo panel at the bottom of a card page.
 async function loadCardCombos(card) {
   if (comboData.status === 'off') return;
-  await Promise.all([loadCombos(), dbReady]);
+  const oracleId = oracleIdOf(card);
+  if (!oracleId) return;
+  const [shard] = await Promise.all([loadComboShard(oracleId.slice(0, 2).toLowerCase()), dbReady]);
   const box = document.getElementById('combosBox');
   if (!box || shownCard !== card) return;
-  const oracleId = oracleIdOf(card);
-  const list = combosFor(oracleId);
+  const list = combosFor(shard, oracleId);
   if (!list.length) { box.style.display = 'none'; return; }
+  const total = ((shard.data.total || {})[oracleId]) || list.length;
 
   const partnerRows = comboPartners(oracleId, list).map(p => p.card.row).filter(r => r && inScope(r)).slice(0, COMBO_PARTNERS);
-  const data = comboData.data;
   const english = englishName(card);
   const allUrl = english
-    ? `https://commanderspellbook.com/search/?q=${encodeURIComponent(`card:"${english}" ci:${EDITION.colors.toLowerCase()}`)}`
+    ? `https://commanderspellbook.com/search/?q=${encodeURIComponent(`card:"${english}"`)}`
     : 'https://commanderspellbook.com/';
+  const src = shard.index || {};
   box.innerHTML = `
-    <div class="combos-heading">${t('combo.heading', { n: fmtNum(list.length) })}<small>${t('combo.source')}</small></div>
+    <div class="combos-heading">${t('combo.heading', { n: fmtNum(total) })}<small>${t('combo.source')}</small></div>
     ${partnerRows.length ? `<div class="combo-partners">
       <p class="combo-sub">${t('combo.partners')}</p>
       <div class="grid" id="comboPartnerGrid"></div>
     </div>` : ''}
     <p class="combo-sub">${t('combo.list')}</p>
     <div id="comboListWrap"></div>
-    <p class="combo-note">${t('combo.note', { d: esc(String((data.source && data.source.timestamp) || data.generated || '').slice(0, 10)) })}
+    <p class="combo-note">${t('combo.note', { max: COMBOS_MAX, d: esc(String((src.source && src.source.timestamp) || src.generated || '').slice(0, 10)) })}
       <br><a href="${esc(allUrl)}" target="_blank" rel="noopener">${t('combo.all')}</a></p>`;
   box.style.display = '';
   renderComboList(oracleId, list, COMBOS_FIRST);
@@ -5804,7 +5644,7 @@ function hideComboHint() {
 }
 async function updateComboHint(matches, myToken) {
   hideComboHint();
-  if (comboData.status === 'off' || !state.query.trim()) return;
+  return;   // (the Golgari edition's search hint; not used on this site)
   const row = matches.find(r => relevance(r, state.query) === 0);
   if (!row) return;
   await loadCombos();
@@ -6351,8 +6191,9 @@ async function renderHomeMeta() {
     const syms = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c)).map(c => symbolImg(c, 'sym')).join('');
     const played = (a.wins || 0) + (a.losses || 0);
     const wr = (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) ? t('home.meta.wr', { v: a.winrate.toFixed(1) }) : '';
-    return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
-        <a class="hb-name" href="${esc(deckUrl(homeMetaFormat, winKey, a))}" data-deck="1">${syms}${esc(a.name)}</a>
+    const href = deckUrl(homeMetaFormat, winKey, a);
+    return `<li class="hb-row hb-deck"><span class="hb-rank">${i + 1}</span>${deckArtHtml(a, href, 'hb-art')}
+        <a class="hb-name" href="${esc(href)}" data-deck="1">${syms}${esc(a.name)}</a>
         <span class="hb-sub">${esc(t('home.meta.share', { v: a.share.toFixed(1) }))}${wr ? `<br>${esc(wr)}` : ''}</span></li>`;
   }).join('')}</ol>`;
 }
