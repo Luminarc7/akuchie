@@ -380,6 +380,63 @@ def spaced(name):
     return re.sub(r"\s+", " ", _PASCAL_SPLIT.sub(" ", name)).strip()
 
 
+# Words in archetype names that say nothing about the deck's signature card.
+_NAME_NOISE = {w.lower() for w in " ".join(spaced(v) for v in COLOR_NAMES.values()).split()} | {
+    "mono", "white", "blue", "black", "red", "green", "colorless", "color", "colors", "4c", "5c", "4", "5",
+    "aggro", "control", "midrange", "tempo", "combo", "ramp", "prison", "stompy", "burn", "tron", "toolbox",
+    "the", "and", "of", "deck", "pile", "good", "stuff", "big", "little", "generic"}
+
+
+def _words(text):
+    return [w for w in re.findall(r"[a-z0-9']+", text.lower().replace("’", "'"))]
+
+
+NOTABLE_CARDS = set()   # creatures and planeswalkers (from the card database), preferred as deck pictures
+
+
+def _name_matches(word, card):
+    stem = word[:-1] if word.endswith("s") and len(word) > 4 else word
+    for x in _words(card):
+        if x in (word, stem) or (len(stem) >= 5 and x.startswith(stem)) or (len(word) >= 7 and len(x) >= 7 and x[:6] == word[:6]):
+            return True
+    return False
+
+
+def pick_icon(arch_name, candidates, main, side, lands=frozenset()):
+    """The card that pictures a deck, as MTGDecks-style sites do: the card the
+    archetype is named after (Broodscale -> Basking Broodscale, Mono Blue
+    Terror -> Tolarian Terror), else the most characteristic card of the
+    archetype's rules that the deck plays (a creature or planeswalker first)."""
+    seen, ordered = set(), []
+    for c in candidates:
+        if c and c not in seen:
+            seen.add(c)
+            ordered.append(c)
+    present = [c for c in ordered if c in main or c in side]
+    wanted = [w for w in _words(arch_name) if w not in _NAME_NOISE and len(w) > 2]
+    rank = lambda c, pool: (c not in lands, c in NOTABLE_CARDS, main.get(c, 0), -pool.index(c))
+    for w in wanted:   # 1. a rule card named like the deck
+        pool = present or ordered
+        hits = [c for c in pool if _name_matches(w, c)]
+        if hits:
+            best = max(hits, key=lambda c: rank(c, pool))
+            if best in lands:   # a spell named like the deck pictures it better than a land
+                spells = [c for c in sorted(main) if c not in lands and _name_matches(w, c)]
+                if spells:
+                    return max(spells, key=lambda c: rank(c, sorted(main)))
+            return best
+    for w in wanted:   # 2. any card of the main deck named like the deck
+        pool = sorted(main)
+        hits = [c for c in pool if c not in lands and _name_matches(w, c)]
+        if hits:
+            return max(hits, key=lambda c: rank(c, pool))
+    pool = [c for c in present if c in main] or present or ordered
+    if not pool:
+        return None
+    # 3. the rule card the deck plays most, creatures and planeswalkers first, lands last
+    return max(pool, key=lambda c: rank(c, pool))
+
+
 def archetype_name(arch, color):
     name = (arch.get("Name") or "").replace("Generic", "")
     if arch.get("IncludeColorInName"):
@@ -477,8 +534,22 @@ class FormatRules:
                 return False
         return True
 
+    @staticmethod
+    def _rule_cards(*rule_sets):
+        """The cards named by the positive conditions of the given rules."""
+        out = []
+        for rules in rule_sets:
+            for cond in (rules or {}).get("Conditions") or []:
+                if not (cond.get("Type") or "").lower().startswith("doesnotcontain"):
+                    out.extend(cond.get("Cards") or [])
+        return out
+
     def detect(self, main, side):
         """Returns (archetype name, colour string, classified?)."""
+        return self.detect_full(main, side)[:3]
+
+    def detect_full(self, main, side):
+        """Returns (archetype name, colour string, classified?, icon card)."""
         color = self.colors(main, side)
         hits = []
         for arch in self.specific:
@@ -489,12 +560,13 @@ class FormatRules:
                 if variant.get("Conditions") and self._matches(main, side, variant):
                     variant_hit = True
                     complexity = len(arch["Conditions"]) + len(variant["Conditions"])
-                    hits.append((complexity, archetype_name(variant, color)))
+                    hits.append((complexity, archetype_name(variant, color), self._rule_cards(variant, arch)))
             if not variant_hit:
-                hits.append((len(arch["Conditions"]), archetype_name(arch, color)))
+                hits.append((len(arch["Conditions"]), archetype_name(arch, color), self._rule_cards(arch)))
         if hits:
             hits.sort(key=lambda h: h[0])  # several rules matched: prefer the simpler one
-            return hits[0][1], color, True
+            name = hits[0][1]
+            return name, color, True, pick_icon(name, hits[0][2], main, side, self.lands)
 
         best = None
         for fb in self.fallbacks:
@@ -505,8 +577,11 @@ class FormatRules:
                 best = (weight, fb)
         entries = len(main) + len(side)
         if best and entries and best[0] / entries > 0.1:
-            return archetype_name(best[1], color), color, True
-        return color_label(color), color, False
+            name = archetype_name(best[1], color)
+            common = [c for c in best[1]["CommonCards"] if c in main and c not in self.lands]
+            common.sort(key=lambda c: -main[c])
+            return name, color, True, pick_icon(name, common, main, side, self.lands)
+        return color_label(color), color, False, None
 
 
 # ------------------------------------------------------- card database
@@ -542,6 +617,9 @@ def load_land_names(path):
         if re.search(r"\bLand\b", front_type):
             lands.add(name)
             lands.add(name.split(" // ")[0])
+        elif re.search(r"\b(Creature|Planeswalker)\b", front_type):
+            NOTABLE_CARDS.add(name)
+            NOTABLE_CARDS.add(name.split(" // ")[0])
     return lands
 
 
@@ -564,7 +642,7 @@ def place_of(result):
 
 class ArchetypeStats:
     __slots__ = ("name", "unclassified", "decks", "colors", "wins", "losses", "draws", "cards", "copies", "best",
-                 "main_in", "main_copies", "side_in", "list_best")
+                 "main_in", "main_copies", "side_in", "list_best", "icons")
 
     def __init__(self, name, unclassified):
         self.name, self.unclassified = name, unclassified
@@ -578,6 +656,7 @@ class ArchetypeStats:
         self.main_copies = collections.Counter()  # copies of it in those main decks
         self.side_in = collections.Counter()      # decks with the card in the sideboard
         self.list_best = None                # (sort key, deck, event): the list shown on the deck page
+        self.icons = collections.Counter()   # the card picturing the deck, per list
 
 
 def load_tournaments(decklists_dir, start, end):
@@ -644,6 +723,8 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             st.decks += 1
             decks_total += 1
             st.colors[deck["color"]] += 1
+            if deck.get("icon"):
+                st.icons[deck["icon"]] += 1
             for card, count in deck["spells"].items():
                 st.cards[card] += 1
                 st.copies[card] += count
@@ -695,6 +776,8 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             "ci": wilson_interval(st.wins, played),
             "cards": key_cards,
         }
+        if st.icons:
+            row["icon"] = st.icons.most_common(1)[0][0]
         if st.unclassified:
             row["unclassified"] = True
         if st.best:
@@ -755,13 +838,13 @@ def classify_event(date, src, data, rules, land_names=frozenset()):
         main, side = board(d.get("Mainboard")), board(d.get("Sideboard"))
         if sum(main.values()) < MIN_MAINBOARD:
             continue
-        arch, color, classified = rules.detect(main, side)
+        arch, color, classified, icon = rules.detect_full(main, side)
         player = d.get("Player")
         place = place_of(d.get("Result"))
         if place is None and isinstance(ranks.get(player), int):
             place = ranks[player]
         decks.append({
-            "name": arch, "color": color, "classified": classified,
+            "name": arch, "color": color, "classified": classified, "icon": icon,
             "spells": {c: n for c, n in main.items() if c not in rules.lands and c not in land_names},
             "main": dict(main), "side": dict(side),
             "url": d.get("AnchorUri") or "", "result": d.get("Result") or "", "place": place,
