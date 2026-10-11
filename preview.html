@@ -3435,7 +3435,7 @@ function cardTileHtml(card) {
 // Japanese shops' prices can be shown. The choice is remembered.
 const PRICE_MARKETS = ['jp', 'us', 'eu'];
 let priceMarket = (() => { try { const m = localStorage.getItem('akuchie-market'); return PRICE_MARKETS.includes(m) ? m : 'us'; } catch (e) { return 'us'; } })();
-const SHOP_LABELS = { tcgplayer: 'TCGplayer', cardkingdom: 'Card Kingdom', cardsphere: 'Cardsphere', cardmarket: 'Cardmarket', cardtrader: 'CardTrader' };
+const SHOP_LABELS = { tcgplayer: 'TCGplayer', cardkingdom: 'Card Kingdom', cardsphere: 'Cardsphere', cardmarket: 'Cardmarket', cardtrader: 'CardTrader', manapool: 'Mana Pool' };
 const shopLabel = k => SHOP_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
 const dollars = v => (v === null || v === undefined || v === '') ? null : Number(v);
 const fromCents = v => (v === null || v === undefined) ? null : v / 100;
