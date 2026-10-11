@@ -36,10 +36,10 @@
     --text: #ededed;
     --text-2: #c4c4c8;
     --muted: #9d9da4;
-    --accent: #d0a75c;
-    --accent-ink: #1a1406;
-    --brand-hi: #f5ecd4;
-    --hl: rgba(208,167,92,0.28);
+    --accent: #b5e655;
+    --accent-ink: #13200a;
+    --brand-hi: #effbd6;
+    --hl: rgba(181,230,85,0.24);
     --ok: #8fd19f;   --ok-bg: rgba(90,156,106,0.20);  --ok-line: rgba(90,156,106,0.50);
     --bad: #ef8a7c;  --bad-bg: rgba(207,86,71,0.20);  --bad-line: rgba(207,86,71,0.55);
     --warn: #e0b872; --warn-bg: rgba(201,161,90,0.20); --warn-line: rgba(201,161,90,0.55);
@@ -52,7 +52,7 @@
     --page: #f1f0f5;
     --page-glow:
       radial-gradient(1100px circle at 8% -10%, rgba(88,110,200,0.08), transparent 60%),
-      radial-gradient(900px circle at 100% 0%, rgba(160,120,40,0.07), transparent 55%);
+      radial-gradient(900px circle at 100% 0%, rgba(110,170,30,0.07), transparent 55%);
     --header: #ffffff;
     --surface: #ffffff;
     --surface-2: #eceaf3;
@@ -62,10 +62,10 @@
     --text: #1d1a2b;
     --text-2: #3b3750;
     --muted: #5f5a75;
-    --hl: rgba(160,110,20,0.20);
-    --accent: #7a5510;
+    --hl: rgba(100,150,20,0.20);
+    --accent: #4a7a0a;
     --accent-ink: #ffffff;
-    --brand-hi: #2b2238;
+    --brand-hi: #1f3a08;
     --ok: #1e6b34;   --ok-bg: #dff1e3;  --ok-line: #9fcfab;
     --bad: #a52a1d;  --bad-bg: #fbe2de; --bad-line: #e8a59c;
     --warn: #7a5510; --warn-bg: #f6ebd3; --warn-line: #dcc08a;
@@ -152,11 +152,11 @@
   .brand-sub { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
   .search-form { grid-area: search; display: flex; gap: 8px; min-width: 0; }
   .search-form input { flex: 1; min-width: 0; padding: 10px 14px; font-size: 15px; }
-  .search-form button, .btn-primary {
+  .search-form > button, .btn-primary {
     background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px;
     padding: 0 20px; font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; white-space: nowrap;
   }
-  .search-form button:hover { filter: brightness(1.07); }
+  .search-form > button:hover { filter: brightness(1.07); }
   .top-tabs { grid-area: tabs; display: flex; gap: 2px; }
   .top-tab {
     background: none; border: 0; border-bottom: 2px solid transparent;
@@ -539,9 +539,12 @@
   .mover-from { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
   .meta-list { list-style: none; margin: 0; padding: 0; }
   .meta-cols, .meta-row {
-    display: grid; grid-template-columns: 30px minmax(0, 1fr) 176px 176px;
-    grid-template-areas: "rank deck share wr"; gap: 4px 20px; align-items: center; padding: 12px 16px;
+    display: grid; grid-template-columns: 30px 64px minmax(0, 1fr) 176px 176px;
+    grid-template-areas: "rank art deck share wr"; gap: 4px 16px; align-items: center; padding: 12px 16px;
   }
+  .meta-art { grid-area: art; display: block; width: 64px; height: 46px; border-radius: 6px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); align-self: center; }
+  .meta-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  a.meta-art:hover { border-color: var(--accent); }
   .meta-cols { padding: 9px 16px; font-size: 11.5px; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--line); align-items: end; }
   .meta-row + .meta-row { border-top: 1px solid var(--line); }
   .meta-rank { grid-area: rank; font-family: "Shippori Mincho", serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
@@ -673,9 +676,10 @@
   @media (max-width: 760px) {
     .meta-cols { display: none; }
     .meta-row {
-      grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1fr);
-      grid-template-areas: "rank deck deck" ". share wr"; gap: 10px 14px; padding: 12px 12px; align-items: start;
+      grid-template-columns: 22px 48px minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas: "rank art deck deck" ". . share wr"; gap: 10px 12px; padding: 12px 12px; align-items: start;
     }
+    .meta-art { width: 48px; height: 36px; align-self: start; margin-top: 2px; }
     .meta-rank { text-align: left; padding-top: 1px; }
     .meta-lbl { display: block; }
     .meta-controls { margin-left: 0; }
@@ -720,11 +724,11 @@
   .hero-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .hero-row .suggest-wrap { position: relative; flex: 1 1 320px; min-width: 0; }
   .hero-row input { width: 100%; height: 58px; padding: 0 18px; font-size: 17px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--field); }
-  .hero-row button {
+  .hero-row > button {
     height: 58px; padding: 0 34px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink);
     font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 18px; white-space: nowrap;
   }
-  .hero-row button:hover { filter: brightness(1.07); }
+  .hero-row > button:hover { filter: brightness(1.07); }
   .hero-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
   .adv-btn {
     display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface);
@@ -793,7 +797,8 @@
     width: 100%; min-height: 40px; display: flex; align-items: baseline; gap: 10px; padding: 8px 10px; border: 0; border-radius: 6px;
     background: none; color: var(--text); text-align: left; font-size: 15px; line-height: 1.4;
   }
-  .suggest-item[aria-selected="true"], .suggest-item:hover { background: var(--surface-2); }
+  .suggest-item[aria-selected="true"], .suggest-item:hover { background: var(--surface-2); color: var(--text); }
+  .suggest-item[aria-selected="true"] { box-shadow: inset 2px 0 0 var(--muted); }
   .suggest-item .s-main { min-width: 0; }
   .suggest-item .s-main b { font-weight: 800; }
   .suggest-item .s-sub { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
@@ -916,7 +921,7 @@
     .hero-row { flex-wrap: nowrap; gap: 8px; }
     .hero-row .suggest-wrap { flex: 1 1 auto; }
     .hero-row input { height: 50px; font-size: 16px; padding: 0 12px; }
-    .hero-row button { height: 50px; padding: 0 16px; font-size: 16px; }
+    .hero-row > button { height: 50px; padding: 0 16px; font-size: 16px; }
     .hero-tools, .hero-try { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; }
     .hero-tools::-webkit-scrollbar, .hero-try::-webkit-scrollbar { display: none; }
     .hero-hint { display: none; }
@@ -1124,6 +1129,13 @@
     .shop-prices > span { padding-right: 16px; }
     .sp-val strong { font-size: 14px; }
   }
+
+  /* ========================== round 5 ========================== */
+  .sp-val strong { color: var(--text); }
+  .sp-val.best strong { color: var(--accent); }
+  .best-tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; line-height: 1.6;
+    background: var(--accent); color: var(--accent-ink); vertical-align: 2px; }
+  .sp-shop.buy, .sp-shop.buy a { color: var(--text-2); }
 </style>
 </head>
 <body>
@@ -1654,6 +1666,18 @@ const STR = {
   'price.jp.wip': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップから順に追加します。それまでは下の「ショップで探す」から各ショップでご確認ください。', 'Japanese shop prices are a work in progress: shops will be added as they give permission. Until then, check the shops linked below.'],
   'price.col.shop': ['ショップ', 'Shop'],
   'price.shop.market': ['相場', 'market'],
+  'price.shop.low': ['最安出品', 'lowest listing'],
+  'price.best': ['最安', 'cheapest'],
+  'src.tcglow': ['TCGplayer の最安出品：TCGCSV（TCGplayer のデータ）', 'TCGplayer lowest listing: TCGCSV (TCGplayer data)'],
+  'src.mtgjson': ['ほかのショップ：MTGJSON', 'other shops: MTGJSON'],
+  'src.tcgmarket': ['TCGplayer の相場（直近の取引の平均）：Scryfall', 'TCGplayer market price (average of recent sales): Scryfall'],
+  'src.cmlow': ['Cardmarket の最安出品：Cardmarket の価格ガイド', 'Cardmarket lowest offer: Cardmarket price guide'],
+  'src.cmtrend': ['Cardmarket のトレンド価格：Scryfall', 'Cardmarket trend price: Scryfall'],
+  'src.cmtrend_mj': ['Cardmarket のトレンド価格：MTGJSON', 'Cardmarket trend price: MTGJSON'],
+  'src.tcgmarket_mj': ['TCGplayer の相場：MTGJSON', 'TCGplayer market price: MTGJSON'],
+  'src.when': ['（{date}時点）', ' (as of {date})'],
+  'src.low.us': ['最安出品は、状態を問わない出品の中でいちばん安い価格です。', 'Lowest listing: the cheapest copy for sale, in any condition.'],
+  'src.low.eu': ['最安出品は、状態・言語を問わない出品の中でいちばん安い価格です。', 'Lowest offer: the cheapest copy for sale, in any condition or language.'],
   'price.shop.trend': ['トレンド', 'trend'],
   'price.shop.sell': ['販売', 'selling'],
   'price.shop.buy': ['買取', 'buying'],
@@ -3436,44 +3460,67 @@ function cardTileHtml(card) {
 const PRICE_MARKETS = ['jp', 'us', 'eu'];
 let priceMarket = (() => { try { const m = localStorage.getItem('akuchie-market'); return PRICE_MARKETS.includes(m) ? m : 'us'; } catch (e) { return 'us'; } })();
 const SHOP_LABELS = { tcgplayer: 'TCGplayer', cardkingdom: 'Card Kingdom', cardsphere: 'Cardsphere', cardmarket: 'Cardmarket', cardtrader: 'CardTrader', manapool: 'Mana Pool' };
+const LOW_KEYS = ['tcgplayer_low', 'cardmarket_low'];
 const shopLabel = k => SHOP_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
 const dollars = v => (v === null || v === undefined || v === '') ? null : Number(v);
 const fromCents = v => (v === null || v === undefined) ? null : v / 100;
 function marketRows(card, market) {
+  // Selling prices first (cheapest listing, then shops' own prices), then
+  // Card Kingdom's buying price. The market/trend price is only shown when no
+  // selling price is known for the printing.
   const p = effectivePrices(card);
   const q = card._quotes || {};
-  const cur = k => ((priceStore.index && priceStore.index.providers) || {})[k] || (k === 'cardmarket' ? 'EUR' : 'USD');
+  const cur = k => ((priceStore.index && priceStore.index.providers) || {})[k] || (k === 'cardmarket' || k === 'cardmarket_low' ? 'EUR' : 'USD');
   const rows = [];
-  const fromQuotes = (k, label, note, i0, i1, url) => {
+  const fromQuotes = (k, label, note, i0, i1, url, src, kind = 'sell') => {
     const v = q[k];
-    if (v) rows.push({ label, note, n: fromCents(v[i0]), f: fromCents(v[i1]), url, q: true });
+    if (v) rows.push({ label, note, n: fromCents(v[i0]), f: fromCents(v[i1]), url, q: true, src, kind });
   };
   if (market === 'us') {
-    const tq = q.tcgplayer || [];
-    const ln = dollars(p.usd), lf = dollars(p.usd_foil || p.usd_etched);
-    const n = ln ?? fromCents(tq[0]), f = lf ?? fromCents(tq[1]);
-    rows.push({ label: 'TCGplayer', note: t('price.shop.market'), url: tcgplayerUrl(card), n, f, q: (ln === null && n !== null) || (lf === null && f !== null) });
-    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.sell'), 0, 1, cardKingdomUrl(card));
-    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.buy'), 2, 3, '');
-    fromQuotes('cardsphere', 'Cardsphere', '', 0, 1, '');
-    Object.keys(q).filter(k => !['tcgplayer', 'cardkingdom', 'cardsphere'].includes(k) && cur(k) === 'USD')
-      .forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, ''));
+    fromQuotes('tcgplayer_low', 'TCGplayer', t('price.shop.low'), 0, 1, tcgplayerUrl(card), 'tcglow');
+    fromQuotes('manapool', 'Mana Pool', t('price.shop.sell'), 0, 1, '', 'mtgjson');
+    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.sell'), 0, 1, cardKingdomUrl(card), 'mtgjson');
+    fromQuotes('cardsphere', 'Cardsphere', '', 0, 1, '', 'mtgjson');
+    Object.keys(q).filter(k => !['tcgplayer', 'tcgplayer_low', 'manapool', 'cardkingdom', 'cardsphere'].includes(k) && cur(k) === 'USD')
+      .forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, '', 'mtgjson'));
+    if (!rows.some(r => (r.n > 0) || (r.f > 0))) {
+      const tq = q.tcgplayer || [];
+      const ln = dollars(p.usd), lf = dollars(p.usd_foil || p.usd_etched);
+      rows.length = 0;
+      rows.push({ label: 'TCGplayer', note: t('price.shop.market'), url: tcgplayerUrl(card), kind: 'sell',
+                  n: ln ?? fromCents(tq[0]), f: lf ?? fromCents(tq[1]), src: (ln !== null || lf !== null) ? 'tcgmarket' : 'tcgmarket_mj', q: ln === null && lf === null });
+    }
+    fromQuotes('cardkingdom', 'Card Kingdom', t('price.shop.buy'), 2, 3, '', 'mtgjson', 'buy');
   } else {
-    const cq = q.cardmarket || [];
-    const ln = dollars(p.eur), lf = dollars(p.eur_foil);
-    const n = ln ?? fromCents(cq[0]), f = lf ?? fromCents(cq[1]);
-    rows.push({ label: 'Cardmarket', note: t('price.shop.trend'), url: cardmarketUrl(card), n, f, q: (ln === null && n !== null) || (lf === null && f !== null) });
-    Object.keys(q).filter(k => k !== 'cardmarket' && cur(k) === 'EUR').forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, ''));
+    fromQuotes('cardmarket_low', 'Cardmarket', t('price.shop.low'), 0, 1, cardmarketUrl(card), 'cmlow');
+    Object.keys(q).filter(k => !['cardmarket', 'cardmarket_low'].includes(k) && cur(k) === 'EUR')
+      .forEach(k => fromQuotes(k, shopLabel(k), '', 0, 1, '', 'mtgjson'));
+    if (!rows.some(r => (r.n > 0) || (r.f > 0))) {
+      const cq = q.cardmarket || [];
+      const ln = dollars(p.eur), lf = dollars(p.eur_foil);
+      rows.length = 0;
+      rows.push({ label: 'Cardmarket', note: t('price.shop.trend'), url: cardmarketUrl(card), kind: 'sell',
+                  n: ln ?? fromCents(cq[0]), f: lf ?? fromCents(cq[1]), src: (ln !== null || lf !== null) ? 'cmtrend' : 'cmtrend_mj', q: ln === null && lf === null });
+    }
   }
-  return rows.filter(r => (r.n !== null && r.n > 0) || (r.f !== null && r.f > 0));
+  const out = rows.filter(r => (r.n !== null && r.n > 0) || (r.f !== null && r.f > 0));
+  // the cheapest selling price in each column is marked
+  ['n', 'f'].forEach(k => {
+    const sells = out.filter(r => r.kind === 'sell' && r[k] > 0);
+    if (sells.length) {
+      const min = Math.min(...sells.map(r => r[k]));
+      sells.forEach(r => { if (r[k] === min) r['best_' + k] = sells.length > 1 ? 'tag' : 'plain'; });
+    }
+  });
+  return out;
 }
-function moneyCell(v, market) {
+function moneyCell(v, market, best = false) {
   if (!(v > 0)) return '<span class="sp-val none">—</span>';
   const amount = v.toFixed(2);
   const sym = market === 'eu' ? '€' : '$';
   const yen = market === 'eu' ? yenForEur(amount) : yenFor(amount);
   const attr = market === 'eu' ? `data-eur="${amount}"` : `data-usd="${amount}"`;
-  return `<span class="sp-val"><strong>${sym}${amount}</strong><span class="jpy" ${attr}>${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`;
+  return `<span class="sp-val${best ? ' best' : ''}"><strong>${sym}${amount}</strong>${best === 'tag' ? `<span class="best-tag">${t('price.best')}</span>` : ''}<span class="jpy" ${attr}>${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`;
 }
 function priceHtml(card) {
   const market = priceMarket;
@@ -3487,7 +3534,7 @@ function priceHtml(card) {
     body = rows.length
       ? `<div class="shop-prices">
           <span class="sp-h">${t('price.col.shop')}</span><span class="sp-h">${t('price.nonfoil')}</span><span class="sp-h">${t('price.foil')}</span>
-          ${rows.map(r => `<span class="sp-shop">${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)} ↗</a>` : esc(r.label)}${r.note ? `<small>${esc(r.note)}</small>` : ''}</span>${moneyCell(r.n, market)}${moneyCell(r.f, market)}`).join('')}
+          ${rows.map(r => `<span class="sp-shop${r.kind === 'buy' ? ' buy' : ''}">${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.label)} ↗</a>` : esc(r.label)}${r.note ? `<small>${esc(r.note)}</small>` : ''}</span>${moneyCell(r.n, market, r.best_n)}${moneyCell(r.f, market, r.best_f)}`).join('')}
         </div>`
       : `<div class="price-empty">${t('price.none.market')}</div>`;
   }
@@ -3497,9 +3544,12 @@ function priceHtml(card) {
       + `　${t('price.min')}<strong>$${card._avg.min}</strong> <span data-usd="${card._avg.min}"></span>`
     : '';
   const qdate = card._quotesDate ? dateLabel(card._quotesDate, true) : '';
-  const viaQuotes = qdate && rows.some(r => r.q);
-  const src = market === 'us' ? t(viaQuotes ? 'price.src.us' : 'price.src.us.nodate', { date: esc(qdate) })
-    : market === 'eu' ? t(viaQuotes ? 'price.src.eu.more' : 'price.src.eu', { date: esc(qdate) }) : '';
+  const used = new Set(rows.map(r => r.src));
+  const parts = ['tcglow', 'cmlow', 'mtgjson', 'tcgmarket', 'tcgmarket_mj', 'cmtrend', 'cmtrend_mj'].filter(k => used.has(k)).map(k => t('src.' + k));
+  const dated = qdate && rows.some(r => r.q);
+  const lowNote = used.has('tcglow') ? t('src.low.us') : used.has('cmlow') ? t('src.low.eu') : '';
+  const src = market === 'jp' || !parts.length ? ''
+    : parts.join(LANG === 'en' ? '; ' : '・') + (dated ? t('src.when', { date: esc(qdate) }) : '') + (LANG === 'en' ? '. ' : '。') + lowNote;
   return `<div class="price-section cp-section" data-market="${market}">
     <div class="price-head"><div class="price-heading">${t('price.heading')}</div>${tabs}</div>
     ${body}
@@ -5037,6 +5087,22 @@ function rowByEnglishName(name) {
   return NAME_MAP.get(normText(name)) || null;
 }
 
+// Art of a card (no text, so any language's printing will do): straight from
+// Scryfall's image server by card id, or through its name lookup otherwise.
+function cardArtUrl(id) {
+  return `https://cards.scryfall.io/art_crop/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg`;
+}
+function namedArtUrl(name) {
+  return `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}&format=image&version=art_crop`;
+}
+document.getElementById('metaBody').addEventListener('error', (e) => {
+  const img = e.target;
+  if (!img || img.tagName !== 'IMG' || !img.closest('.meta-art')) return;
+  if (img.dataset.fallback) { const next = img.dataset.fallback; img.dataset.fallback = ''; img.src = next; return; }
+  img.closest('.meta-art').classList.add('empty');
+  img.remove();
+}, true);
+
 function metaRowHtml(a, index, maxShare) {
   const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
   const deckHref = deckUrl(metaState.format, metaState.days, a);
@@ -5060,8 +5126,13 @@ function metaRowHtml(a, index, maxShare) {
   }
 
   // key cards: lands are left out; names follow the site language and link to the card page
-  const cards = (a.cards || []).map(n => ({ n, row: rowByEnglishName(n) }))
-    .filter(c => !(c.row && c.row._typeWords.has('land') && !c.row._typeWords.has('creature')))
+  const keyCards = (a.cards || []).map(n => ({ n, row: rowByEnglishName(n) }))
+    .filter(c => !(c.row && c.row._typeWords.has('land') && !c.row._typeWords.has('creature')));
+  const main = keyCards[0] || null;
+  const art = main
+    ? `<a class="meta-art" href="${esc(deckHref)}" data-deck="1" tabindex="-1" aria-hidden="true"><img src="${esc(main.row ? cardArtUrl(main.row.id) : namedArtUrl(main.n))}" data-fallback="${esc(main.row ? namedArtUrl(main.n) : '')}" alt="" loading="lazy" decoding="async"></a>`
+    : '<span class="meta-art empty" aria-hidden="true"></span>';
+  const cards = keyCards
     .slice(0, 5)
     .map(c => {
       const label = (LANG !== 'en' && c.row && c.row.name_ja) ? c.row.name_ja.split(' // ')[0] : c.n;
@@ -5077,6 +5148,7 @@ function metaRowHtml(a, index, maxShare) {
 
   return `<li class="meta-row${a.unclassified ? ' unclassified' : ''}">
       <div class="meta-rank">${index + 1}</div>
+      ${art}
       <div class="meta-deck">
         <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a><a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
@@ -5160,7 +5232,7 @@ function renderMeta() {
     : '';
   body.innerHTML = `<div class="meta-table">
       <div class="meta-cols" aria-hidden="true">
-        <span></span><span>${t('meta.col.deck')}</span><span>${t('meta.col.share')}</span>
+        <span></span><span></span><span>${t('meta.col.deck')}</span><span>${t('meta.col.share')}</span>
         <span>${t('meta.col.wr')}<span class="wr-axis"><span>30%</span><span>50%</span><span>70%</span></span></span>
       </div>
       <ol class="meta-list">${rows.map((a, i) => metaRowHtml(a, i, maxShare)).join('')}</ol>
