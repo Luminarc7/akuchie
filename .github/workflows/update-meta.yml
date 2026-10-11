@@ -1,4 +1,6 @@
-# Rebuilds meta.json (the data behind the metagame tab) once a day.
+# Keeps the metagame data fresh, rebuilt every day:
+#   meta.json        - the metagame tab and the home page's top decks
+#   meta_decks.json  - the deck lists shown on each deck's own page
 #
 # Where this file goes in your repository:
 #     .github/workflows/update-meta.yml
@@ -12,7 +14,7 @@ on:
   workflow_dispatch:        # adds a "Run workflow" button so you can also run it by hand
 
 permissions:
-  contents: write           # to save meta.json into the repository
+  contents: write           # to save the data files into the repository
   pages: write              # to ask GitHub Pages to republish the site afterwards
 
 concurrency:
@@ -22,24 +24,24 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
 
-      - name: Build meta.json
-        run: python3 build_meta.py --out meta.json --cache "$RUNNER_TEMP/meta_cache"
+      - name: Build meta.json and meta_decks.json
+        run: python3 build_meta.py --out meta.json --decks-out meta_decks.json --cache "$RUNNER_TEMP/meta_cache"
 
-      - name: Save meta.json if it changed
+      - name: Save the files if they changed
         id: save
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add meta.json
+          git add meta.json meta_decks.json
           if git diff --cached --quiet; then
             echo "Nothing new."
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "Update metagame data"
+            git commit -m "Update site data"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
