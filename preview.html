@@ -754,7 +754,8 @@
   .hx-query svg, .search-ico { width: 16px; height: 16px; flex: none; color: var(--muted); }
   .hx-list { display: flex; flex-direction: column; gap: 12px; }
   .hx-item { display: flex; gap: 12px; text-decoration: none; color: inherit; }
-  .hx-item img, .hx-noimg { width: 46px; flex: none; aspect-ratio: 146 / 204; border-radius: 4px; background: var(--surface-2); object-fit: cover; align-self: flex-start; }
+  .hx-thumb { width: 46px; flex: none; align-self: flex-start; }
+  .hx-thumb img, .hx-noimg { display: block; width: 46px; aspect-ratio: 146 / 204; border-radius: 4px; background: var(--surface-2); object-fit: cover; }
   .hx-name { font-family: "Shippori Mincho", serif; font-weight: 700; font-size: 15px; line-height: 1.4; }
   .hx-name small { font-family: "Noto Sans JP", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); margin-left: 6px; }
   .hx-item:hover .hx-name { color: var(--accent); }
@@ -921,7 +922,7 @@
     .hero-hint { display: none; }
     .adv-btn, .try-pill { flex: none; min-height: 36px; }
     .hero-example { padding: 14px; gap: 10px; }
-    .hx-item img, .hx-noimg { width: 36px; }
+    .hx-thumb, .hx-thumb img, .hx-noimg { width: 36px; }
     .hx-name { font-size: 14px; }
     .hx-text { font-size: 12.5px; }
     .home-boxes { gap: 14px; margin-bottom: 20px; }
@@ -1048,6 +1049,28 @@
     .dc-count { left: 4px; top: 4px; min-width: 28px; padding: 1px 6px; font-size: 12px; }
     .dl-row { font-size: 13.5px; gap: 8px; }
   }
+
+  /* ========================== round 3: effects box, home without card grid ========================== */
+  .hx-list { gap: 0; }
+  .hx-entry { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; }
+  .hx-entry:first-child { padding-top: 2px; }
+  .hx-entry:last-child { padding-bottom: 0; }
+  .hx-entry + .hx-entry { border-top: 1px solid var(--line); }
+  .hx-effect {
+    align-self: flex-start; max-width: 100%; display: inline-flex; align-items: center; gap: 6px; text-align: left;
+    border: 1px solid var(--line); background: var(--field); color: var(--text); border-radius: 999px;
+    padding: 4px 12px 4px 9px; font-size: 13px; font-weight: 700; line-height: 1.4;
+  }
+  .hx-effect svg { width: 13px; height: 13px; flex: none; color: var(--accent); }
+  .hx-effect:hover { border-color: var(--accent); }
+  .hx-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .hx-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .hx-text img.sym, .tr-text img.sym { width: 1.05em; height: 1.05em; vertical-align: -0.16em; }
+  html[data-home="true"] .search-layout { display: none; }
+  #homeMoversTabs { align-self: flex-start; }
+  .hb-src { margin: 4px 0 0; font-size: 11.5px; color: var(--muted); }
+  #homeMoversMore[hidden] { display: none; }
+  .mover-yen { display: block; margin-top: 1px; font-size: 11px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -1117,7 +1140,6 @@
         <span class="hx-label" id="hxLabel" data-i18n="hx.label">検索の例</span>
         <button type="button" class="hx-next" id="hxNext" data-i18n="hx.next">別の例</button>
       </div>
-      <button type="button" class="hx-query" id="hxQuery"><svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span id="hxQueryText"></span></button>
       <div class="hx-list" id="hxList"></div>
     </aside>
   </section>
@@ -1125,6 +1147,7 @@
   <section class="home-boxes" id="homeBoxes">
     <div class="home-box" id="homeMovers">
       <div class="hb-head"><h2 id="homeMoversTitle">価格の動き</h2><a href="?view=prices" id="homeMoversMore" data-i18n="home.more">すべて見る</a></div>
+      <div class="seg seg-sm" id="homeMoversTabs" role="tablist" aria-label="市場" data-i18n-aria="home.market.aria"></div>
       <div id="homeMoversBody"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
     </div>
     <div class="home-box" id="homeMeta">
@@ -1403,12 +1426,18 @@ const STR = {
   'hero.hint': ['日本語でも英語でも。語順や「を」「の」の違いは気にしなくて大丈夫です。', 'Japanese or English. Word order and small words don’t matter.'],
   'hero.try': ['試してみる', 'Try'],
   'adv.open': ['詳しい条件で検索', 'Advanced search'],
-  'hx.label': ['検索の例', 'Example search'],
-  'hx.next': ['別の例', 'Another'],
+  'hx.label': ['効果の例', 'Effects to try'],
+  'hx.next': ['別の例', 'Shuffle'],
+  'hx.search': ['「{q}」で検索', 'Search for “{q}”'],
   'hx.none': ['例を表示するには、カードのデータベースが必要です。', 'Examples need the card database.'],
   'home.more': ['すべて見る', 'See all'],
   'home.movers': ['価格の動き（{w}）', 'Price movers ({w})'],
   'home.movers.none': ['価格の記録が溜まると、値上がりしたカードがここに表示されます。', 'Cards that went up in price appear here once price tracking has a few days of data.'],
+  'home.market.aria': ['市場', 'Market'],
+  'home.market.us': ['米国市場', 'US market'],
+  'home.market.jp': ['日本', 'Japan'],
+  'home.market.us.src': ['TCGplayer（米国）の相場・ドル建て', 'TCGplayer (US) market prices'],
+  'home.market.jp.soon': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップの価格がそろい次第、ここに表示します。それまでは米国市場の動きをご覧ください。', 'Japanese shop prices are on the way: they will appear here once the shops that gave permission are added. Until then, see the US market.'],
   'home.meta': ['上位デッキ', 'Top decks'],
   'home.meta.more': ['メタゲームを見る', 'Open metagame'],
   'home.meta.none': ['メタゲームのデータがまだありません。', 'No metagame data yet.'],
@@ -1525,7 +1554,7 @@ const STR = {
   'prices.none': ['この期間に大きく動いたカードはありません。', 'No card moved much in this period.'],
   'prices.none.selesnya': ['この期間に大きく動いた緑・白のカードはありません。', 'No green or white card moved much in this period.'],
   'prices.none.golgari': ['この期間に大きく動いた緑・黒のカードはありません。', 'No green or black card moved much in this period.'],
-  'prices.note': ['価格は Scryfall 経由の TCGplayer 相場（米ドル）を今日のレートで円換算したものです。$2以上で$0.50以上動いたカードを、1枚につき最も動いた版で表示しています。データ更新：{date}', 'Prices are TCGplayer market prices (US dollars) via Scryfall, converted to yen at today’s rate. Cards worth $2 or more that moved by at least $0.50, shown once each with the printing that moved most. Updated: {date}'],
+  'prices.note': ['価格は米国市場の TCGplayer 相場（米ドル。Scryfall 経由、さかのぼった分は MTGJSON より）で、円は今日のレートでの換算です。$2以上で$0.50以上動いたカードを、1枚につき最も動いた版で表示しています。データ更新：{date}', 'Prices are US TCGplayer market prices in dollars (via Scryfall; earlier days via MTGJSON), with yen at today’s rate. Cards worth $2 or more that moved by at least $0.50, shown once each with the printing that moved most. Updated: {date}'],
   'prices.foil': ['Foil', 'Foil'],
   'hist.heading': ['価格の推移', 'Price history'],
   'hist.aria': ['価格の推移のグラフ。左右の矢印キーで日付を移動できます。', 'Price history chart. Use the left and right arrow keys to move between dates.'],
@@ -3914,7 +3943,7 @@ function applyRoute(route) {
   } else {
     showView('search');
     document.title = homeTitle();
-    if (!grid.children.length) loadRandomCards();
+    if (!grid.children.length && !resultInfo) loadRandomCards();
   }
 }
 
@@ -3939,7 +3968,7 @@ function resetToHome() {
   hideSuggest();
   const root = document.documentElement;
   const alreadyHome = routeFromUrl().view === 'search' && root.dataset.home === 'true'
-    && !state.query.trim() && !hasActiveFilters() && grid.children.length > 0;
+    && !state.query.trim() && !hasActiveFilters();
   state.query = '';
   state.showLoose = false;
   searchInput.value = '';
@@ -4057,50 +4086,23 @@ async function fetchRandomFromScryfall(n, myToken) {
   return cards;
 }
 
+// The home page: the big search box, effects to try, prices and decks - no
+// card grid (the example box already shows cards).
 async function loadRandomCards() {
-  const myToken = ++searchToken;
+  ++searchToken;
   setHomeMode(true);
   grid.classList.remove('text-mode');
   hideComboHint();
   searchInfo = null;
   renderMatchNote();
-  showStatus(`<div class="spinner"></div><span class="serif">${t('random.loading')}</span>`);
   resultInfo = null;
   renderResultCount();
   loadMoreRow.style.display = 'none';
   localMatchQueue = null;
   currentCards = [];
   currentRows = null;
-
-  if (dbState === 'loading') await dbReady;
-  if (myToken !== searchToken) return;
-
-  let picked = [];
-  let rows = null;
-  if (LOCAL_DB && LOCAL_DB.length) {
-    // no basic lands; in Japanese mode only cards that exist in Japanese
-    const scoped = LOCAL_DB.filter(r => inScope(r) && !r._typeWords.has('basic'));
-    const pool = LANG === 'en' ? scoped : scoped.filter(r => r.name_ja);
-    rows = sampleRows(pool.length ? pool : scoped, RANDOM_COUNT);
-    picked = await hydrateRows(rows);
-  } else {
-    picked = await fetchRandomFromScryfall(12, myToken);
-    await ensureEnglishPrices(picked);
-  }
-  if (myToken !== searchToken) return;
-
-  if (!picked.length) {
-    showStatus(`<span class="serif">${t('random.empty')}</span>${t('random.empty.body')}`);
-    return;
-  }
-  currentCards = picked;
-  currentRows = rows;
-  resultInfo = { kind: 'random' };
-  renderResultCount();
-  grid.innerHTML = currentCards.map(cardTileHtml).join('');
-  attachTileHandlers();
+  grid.innerHTML = '';
 }
-
 async function runSearch() {
   const myToken = ++searchToken;
   setHomeMode(false);
@@ -4705,7 +4707,7 @@ function relocalizeHome() {
   if (!homeStarted) return;
   renderHomeMovers();
   renderHomeMeta();
-  if (heroExampleState.q) renderHeroExample(0);
+  if (heroFx.entries.length) renderHeroExample(0);
 }
 function relocalizeSearchResults() {
   renderResultCount();
@@ -5247,7 +5249,7 @@ function moverRowHtml(e, i) {
         <span class="mover-name">${esc(main)}${e.f ? `<span class="mover-foil">${t('prices.foil')}</span>` : ''}<small>${esc(sub)}</small></span></a>
       <span class="mover-nums">
         <span class="mover-chg"><span class="arrow" aria-hidden="true">${e.pct > 0 ? '▲' : '▼'}</span>${pctText(e.pct)}</span><br>
-        <span class="mover-from">${esc(moneyText(e.then))} → ${esc(moneyText(e.now))}</span>
+        <span class="mover-from">${esc(usdText(e.then))} → ${esc(usdText(e.now))}${USD_JPY ? `<small class="mover-yen">${esc(moneyText(e.then))} → ${esc(moneyText(e.now))}</small>` : ''}</span>
       </span>
     </li>`;
 }
@@ -5552,7 +5554,7 @@ function highlightRanges(text, plan) {
     const re = /\{[^}]+\}|[A-Za-z0-9]+(?:'[a-z]+)?/g;
     let m;
     while ((m = re.exec(text))) {
-      if (enStems.has(enStem(m[0].toLowerCase()))) ranges.push([m.index, m.index + m[0].length]);
+      if (!/^[a-z]$/i.test(m[0]) && enStems.has(enStem(m[0].toLowerCase()))) ranges.push([m.index, m.index + m[0].length]);
     }
   }
   ranges.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
@@ -5725,79 +5727,233 @@ function renderHeroTry() {
     .map(q => `<button type="button" class="try-pill" data-q="${esc(q)}">${esc(q)}</button>`).join('');
 }
 
-// ---- home: a real search, run on the card database, as an example ------------------------
-const HERO_EXAMPLES = {
-  ja: ['カードを1枚引く', '飛行 絆魂', '1枚捨てる', 'パーマネント2つを生け贄', '宝物・トークンを生成', '墓地から戦場に戻す', '呪文1つを対象とし、それを打ち消す', 'ライフを得る'],
-  en: ['draw a card', 'flying lifelink', 'discard a card', 'sacrifice two permanents', 'create a treasure token', 'return from your graveyard to the battlefield', 'counter target spell', 'gain life'],
-};
-const heroExampleState = { idx: -1, q: '', rows: [] };
-function sampleOf(list, n) {
+// ---- home: three effects to try, each with a card that has it ----------------------------
+// Keywords, keyword actions and common game actions, drawn at random. Each is
+// [Japanese, Japanese search (when it differs), English, English search]; the
+// searches use the wording printed on cards, so they find the cards that do it.
+const HERO_EFFECTS = [
+  ["手札をすべて捨てる", "", "Discard your hand", "discard your hand"],
+  ["ゲームに勝利する", "", "Win the game", "win the game"],
+  ["ゲームに敗北する", "", "Lose the game", "loses the game"],
+  ["カードを1枚引く", "", "Draw a card", "draw a card"],
+  ["カードを2枚引く", "", "Draw two cards", "draw two cards"],
+  ["カードを1枚捨てる", "", "Discard a card", "discard a card"],
+  ["各対戦相手はカードを1枚捨てる", "各対戦相手はそれぞれカード1枚を捨てる", "Each opponent discards a card", "each opponent discards a card"],
+  ["ライフを得る", "", "Gain life", "gain life"],
+  ["ライフを失う", "", "Lose life", "loses life"],
+  ["宝物・トークンを生成する", "宝物・トークン1つを生成する", "Create a treasure token", "create a treasure token"],
+  ["食物・トークンを生成する", "食物・トークン1つを生成する", "Create a food token", "create a food token"],
+  ["墓地から戦場に戻す", "", "Return from your graveyard to the battlefield", "from your graveyard to the battlefield"],
+  ["墓地から手札に戻す", "墓地 手札に戻す", "Return from your graveyard to your hand", "from your graveyard to your hand"],
+  ["呪文を打ち消す", "呪文1つを対象とする。それを打ち消す", "Counter target spell", "counter target spell"],
+  ["クリーチャーを破壊する", "クリーチャー1体を対象とする。それを破壊する", "Destroy target creature", "destroy target creature"],
+  ["すべてのクリーチャーを破壊する", "", "Destroy all creatures", "destroy all creatures"],
+  ["クリーチャーを追放する", "クリーチャー1体を対象とする。それを追放する", "Exile target creature", "exile target creature"],
+  ["オーナーの手札に戻す", "", "Return to its owner's hand", "return to its owner's hand"],
+  ["コントロールを得る", "", "Gain control of target", "gain control of target"],
+  ["追加のターン", "追加の1ターン", "Extra turn", "extra turn"],
+  ["呪文をコピーする", "呪文1つを対象とする。それをコピーする", "Copy target spell", "copy target spell"],
+  ["+1/+1カウンターを置く", "+1/+1カウンター1個を置く", "Put a +1/+1 counter", "put a +1/+1 counter"],
+  ["クリーチャーをタップする", "クリーチャー1体を対象とする。それをタップする", "Tap target creature", "tap target creature"],
+  ["アンタップする", "", "Untap target", "untap target"],
+  ["ライブラリーから探す", "ライブラリーから 探し", "Search your library", "search your library"],
+  ["好きな色のマナを加える", "好きな色1色のマナ1点を加える", "Add one mana of any color", "add one mana of any color"],
+  ["ブロックされない", "", "Can't be blocked", "can't be blocked"],
+  ["打ち消されない", "", "Can't be countered", "can't be countered"],
+  ["コピーであるトークンを生成する", "コピーであるトークン1つを生成する", "Create a token that's a copy", "create a token that's a copy"],
+  ["ダメージを与える", "", "Damage to any target", "damage to any target"],
+  ["クリーチャーを生け贄に捧げる", "クリーチャー1体を生け贄に捧げる", "Sacrifice a creature", "sacrifice a creature"],
+  ["戦闘ダメージを軽減する", "戦闘ダメージをすべて軽減する", "Prevent all combat damage", "prevent all combat damage"],
+  ["ライブラリーの一番上を見る", "ライブラリーの一番上から", "Look at the top", "look at the top"],
+  ["手札を公開する", "", "Reveal a hand", "reveals their hand"],
+  ["死亡したとき", "", "When it dies", "dies"],
+  ["戦場に出たとき", "", "When it enters", "enters"],
+  ["攻撃するたび", "", "Whenever it attacks", "whenever attacks"],
+  ["呪文を唱えるたび", "", "Whenever you cast a spell", "whenever you cast"],
+  ["土地を戦場に出す", "手札から土地・カード1枚を戦場に出", "Put a land onto the battlefield", "land card from your hand onto the battlefield"],
+  ["毒カウンター", "", "Poison counter", "poison counter"],
+  ["戦闘ダメージを与えるたび", "", "Deals combat damage to a player", "deals combat damage to a player"],
+  ["飛行", "", "Flying", "flying"],
+  ["先制攻撃", "", "First strike", "first strike"],
+  ["二段攻撃", "", "Double strike", "double strike"],
+  ["接死", "", "Deathtouch", "deathtouch"],
+  ["速攻", "", "Haste", "haste"],
+  ["呪禁", "", "Hexproof", "hexproof"],
+  ["破壊不能", "", "Indestructible", "indestructible"],
+  ["絆魂", "", "Lifelink", "lifelink"],
+  ["威迫", "", "Menace", "menace"],
+  ["到達", "", "Reach", "reach"],
+  ["トランプル", "", "Trample", "trample"],
+  ["警戒", "", "Vigilance", "vigilance"],
+  ["瞬速", "", "Flash", "flash"],
+  ["防衛", "", "Defender", "defender"],
+  ["護法", "", "Ward", "ward"],
+  ["果敢", "", "Prowess", "prowess"],
+  ["被覆", "", "Shroud", "shroud"],
+  ["プロテクション", "", "Protection", "protection"],
+  ["畏怖", "", "Fear", "fear"],
+  ["威嚇", "", "Intimidate", "intimidate"],
+  ["賛美", "", "Exalted", "exalted"],
+  ["感染", "", "Infect", "infect"],
+  ["毒性", "", "Toxic", "toxic"],
+  ["萎縮", "", "Wither", "wither"],
+  ["頑強", "", "Persist", "persist"],
+  ["不死", "", "Undying", "undying"],
+  ["続唱", "", "Cascade", "cascade"],
+  ["フラッシュバック", "", "Flashback", "flashback"],
+  ["キッカー", "", "Kicker", "kicker"],
+  ["想起", "", "Evoke", "evoke"],
+  ["探査", "", "Delve", "delve"],
+  ["召集", "", "Convoke", "convoke"],
+  ["即席", "", "Improvise", "improvise"],
+  ["親和", "", "Affinity", "affinity"],
+  ["待機", "", "Suspend", "suspend"],
+  ["蘇生", "", "Unearth", "unearth"],
+  ["脱出", "", "Escape", "escape"],
+  ["授与", "", "Bestow", "bestow"],
+  ["変異", "", "Morph", "morph"],
+  ["忍術", "", "Ninjutsu", "ninjutsu"],
+  ["発掘", "", "Dredge", "dredge"],
+  ["刹那", "", "Split second", "split second"],
+  ["超過", "", "Overload", "overload"],
+  ["進化", "", "Evolve", "evolve"],
+  ["搭乗", "", "Crew", "crew"],
+  ["濫用", "", "Exploit", "exploit"],
+  ["奇跡", "", "Miracle", "miracle"],
+  ["反復", "", "Rebound", "rebound"],
+  ["サイクリング", "", "Cycling", "cycling"],
+  ["マッドネス", "", "Madness", "madness"],
+  ["ストーム", "", "Storm", "storm"],
+  ["バイバック", "", "Buyback", "buyback"],
+  ["エコー", "", "Echo", "echo"],
+  ["装備", "", "Equip", "equip"],
+  ["双呪", "", "Entwine", "entwine"],
+  ["回顧", "", "Retrace", "retrace"],
+  ["消失", "", "Vanishing", "vanishing"],
+  ["消散", "", "Fading", "fading"],
+  ["現出", "", "Emerge", "emerge"],
+  ["不朽", "", "Embalm", "embalm"],
+  ["永遠", "", "Eternalize", "eternalize"],
+  ["教導", "", "Mentor", "mentor"],
+  ["暴動", "", "Riot", "riot"],
+  ["適応", "", "Adapt", "adapt"],
+  ["変容", "", "Mutate", "mutate"],
+  ["相棒", "", "Companion", "companion"],
+  ["予顕", "", "Foretell", "foretell"],
+  ["降霊", "", "Disturb", "disturb"],
+  ["魂力", "", "Channel", "channel"],
+  ["強請", "", "Extort", "extort"],
+  ["怪物化", "", "Monstrosity", "monstrosity"],
+  ["英雄的", "", "Heroic", "heroic"],
+  ["上陸", "", "Landfall", "landfall"],
+  ["昂揚", "", "Delirium", "delirium"],
+  ["紛争", "", "Revolt", "revolt"],
+  ["製造", "", "Fabricate", "fabricate"],
+  ["占術", "", "Scry", "scry"],
+  ["諜報", "", "Surveil", "surveil"],
+  ["切削", "", "Mill", "mill"],
+  ["増殖", "", "Proliferate", "proliferate"],
+  ["探検", "", "Explore", "explore"],
+  ["調査", "", "Investigate", "investigate"],
+  ["増員", "", "Amass", "amass"],
+  ["履修", "", "Learn", "learn"],
+  ["発見", "", "Discover", "discover"],
+  ["培養", "", "Incubate", "incubate"],
+  ["再生", "", "Regenerate", "regenerate"],
+  ["格闘", "", "Fight", "fight"],
+  ["扇動", "", "Goad", "goad"],
+  ["居住", "", "Populate", "populate"],
+  ["予示", "", "Manifest", "manifest"],
+  ["ダンジョンを探索する", "", "Venture into the dungeon", "venture into the dungeon"],
+];
+const SEARCH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+const heroFx = { entries: [], lang: '', token: 0 };
+function effectOf(fx) {
+  return LANG === 'en' ? { label: fx[2], q: fx[3] || fx[2] } : { label: fx[0], q: fx[1] || fx[0] };
+}
+function shuffled(list) {
   const a = list.slice();
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a.slice(0, n);
+  return a;
 }
-async function renderHeroExample(step) {
-  const box = document.getElementById('heroExample');
-  if (dbState === 'loading') await dbReady;
-  if (!LOCAL_DB || !LOCAL_DB.length) { box.hidden = true; return; }
-  const list = HERO_EXAMPLES[LANG];
-  if (step || heroExampleState.idx < 0) {
-    let idx = heroExampleState.idx < 0 ? Math.floor(Math.random() * list.length) : (heroExampleState.idx + 1) % list.length;
-    heroExampleState.idx = idx;
-  }
-  const q = list[heroExampleState.idx % list.length];
-  const plan = buildSearchPlan(q);
-  if (heroExampleState.q !== q || !heroExampleState.rows.length) {
+const heroText = row => (LANG === 'en' ? row.oracle_en : (row.oracle_ja || row.oracle_en)) || '';
+// Three effects that have cards (in Japanese: cards with a Japanese printing),
+// each with a different card - a short one, so the box stays compact.
+async function pickHeroEffects(token) {
+  const before = new Set(heroFx.entries.map(e => e.fx));
+  const picked = [], used = new Set();
+  const started = Date.now();
+  for (const fx of shuffled(HERO_EFFECTS.filter(f => !before.has(f)))) {
+    if (picked.length === 3 || Date.now() - started > 800) break;   // a full database finds three in a few tries
+    const plan = buildSearchPlan(effectOf(fx).q);
     const hits = [];
     for (const row of LOCAL_DB) {
-      if (!inScope(row) || (LANG !== 'en' && !row.name_ja)) continue;
+      if (!inScope(row) || used.has(row.oracle_id) || (LANG !== 'en' && !row.name_ja)) continue;
       const r = evaluateRow(row, plan);
       if (r && r.tier === 1) hits.push(row);
     }
-    const textOf = row => (LANG === 'en' ? row.oracle_en : (row.oracle_ja || row.oracle_en)) || '';
-    const short = hits.filter(row => textOf(row).length <= 120);
-    heroExampleState.rows = sampleOf(short.length >= 3 ? short : hits, 3);
-    heroExampleState.q = q;
+    if (hits.length) {
+      const short = hits.filter(row => heroText(row).length <= 110);
+      const pool = short.length ? short : hits;
+      const row = pool[Math.floor(Math.random() * pool.length)];
+      used.add(row.oracle_id);
+      picked.push({ fx, row, plan });
+    }
+    await sleep(0);   // let the page breathe between scans
+    if (token !== heroFx.token) return null;
   }
-  const rows = heroExampleState.rows;
-  if (!rows.length && (heroExampleState.skipped || 0) < list.length - 1) {
-    heroExampleState.skipped = (heroExampleState.skipped || 0) + 1;
-    return renderHeroExample(1);
-  }
-  heroExampleState.skipped = 0;
-  document.getElementById('hxQueryText').textContent = q;
+  return picked;
+}
+function heroEntryHtml(entry, card) {
+  const { fx, row, plan } = entry;
+  const { label, q } = effectOf(fx);
+  const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+  const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : '';
+  const pic = card ? faceUris(card)[0] : null;
+  return `<div class="hx-entry">
+      <button type="button" class="hx-effect" data-q="${esc(q)}" title="${esc(t('hx.search', { q: label }))}">${SEARCH_ICON}<span>${esc(label)}</span></button>
+      <a class="hx-item" href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">
+        <span class="hx-thumb">${pic ? pictureTag(pic, { alt: '', sizes: '46px', use: ['small'], main: 'small' }) : '<span class="hx-noimg"></span>'}</span>
+        <span class="hx-body"><span class="hx-name">${esc(main)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="hx-text">${highlightHtml(heroText(row), plan)}</span></span>
+      </a>
+    </div>`;
+}
+async function renderHeroExample(step) {
+  const box = document.getElementById('heroExample');
   const listEl = document.getElementById('hxList');
-  if (!rows.length) { listEl.innerHTML = `<p class="hx-empty">${esc(t('res.none'))}</p>`; box.hidden = false; return; }
-  const itemHtml = (row, card) => {
-    const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
-    const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : '';
-    const text = (LANG === 'en' ? row.oracle_en : (row.oracle_ja || row.oracle_en)) || '';
-    const pic = card ? faceUris(card)[0] : null;
-    return `<a class="hx-item" href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">
-        ${pic ? pictureTag(pic, { alt: '', sizes: '46px', use: ['small'], main: 'small' }) : '<span class="hx-noimg"></span>'}
-        <span><span class="hx-name">${esc(main)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="hx-text" style="display:block">${highlightHtml(text, plan)}</span></span>
-      </a>`;
-  };
-  listEl.innerHTML = rows.map(row => itemHtml(row, null)).join('');
+  const token = ++heroFx.token;
+  if (dbState === 'loading') await dbReady;
+  if (token !== heroFx.token) return;
+  if (!LOCAL_DB || !LOCAL_DB.length) { box.hidden = true; return; }
+  if (step || !heroFx.entries.length || heroFx.lang !== LANG) {
+    const picked = await pickHeroEffects(token);
+    if (!picked) return;
+    heroFx.entries = picked;
+    heroFx.lang = LANG;
+  }
+  const entries = heroFx.entries;
+  if (!entries.length) { box.hidden = true; return; }
+  listEl.innerHTML = entries.map(e => heroEntryHtml(e, null)).join('');
   box.hidden = false;
   try {
-    const cards = await hydrateRows(rows);
-    if (heroExampleState.q !== q) return;
-    listEl.innerHTML = rows.map((row, i) => itemHtml(row, cards[i])).join('');
+    const cards = await hydrateRows(entries.map(e => e.row));
+    if (token !== heroFx.token) return;
+    listEl.innerHTML = entries.map((e, i) => heroEntryHtml(e, cards[i])).join('');
   } catch (err) { /* text only */ }
 }
-document.getElementById('hxNext').addEventListener('click', () => { heroExampleState.rows = []; renderHeroExample(1); });
-document.getElementById('hxQuery').addEventListener('click', () => {
-  const q = heroExampleState.q;
-  if (!q) return;
-  searchInput.value = q;
-  document.getElementById('heroInput').value = q;
-  state.showLoose = false;
-  state.query = q;
-  refreshResults();
-  window.scrollTo(0, 0);
-});
+document.getElementById('hxNext').addEventListener('click', () => renderHeroExample(1));
 document.getElementById('hxList').addEventListener('click', (e) => {
+  const fxBtn = e.target.closest('.hx-effect');
+  if (fxBtn) {
+    const q = fxBtn.dataset.q;
+    searchInput.value = q;
+    document.getElementById('heroInput').value = q;
+    state.showLoose = false;
+    state.query = q;
+    refreshResults();
+    window.scrollTo(0, 0);
+    return;
+  }
   const link = e.target.closest('a[data-card]');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
@@ -5805,11 +5961,22 @@ document.getElementById('hxList').addEventListener('click', (e) => {
 });
 
 // ---- home: biggest price risers and the top decks of a format -------------------------
+let homeMarket = 'us';
 async function renderHomeMovers() {
   const body = document.getElementById('homeMoversBody');
   const title = document.getElementById('homeMoversTitle');
+  const more = document.getElementById('homeMoversMore');
+  document.getElementById('homeMoversTabs').innerHTML = ['us', 'jp'].map(m =>
+    `<button type="button" class="seg-btn" role="tab" data-market="${m}" aria-pressed="${m === homeMarket}" aria-selected="${m === homeMarket}">${esc(t('home.market.' + m))}</button>`).join('');
   title.textContent = t('home.movers', { w: t('prices.win.7') });
+  if (homeMarket === 'jp') {
+    more.hidden = true;
+    body.innerHTML = `<p class="hb-empty">${esc(t('home.market.jp.soon'))}</p>`;
+    return;
+  }
+  more.hidden = false;
   await Promise.all([loadMovers(), dbReady]);
+  if (homeMarket !== 'us') return;
   const data = moverState.data;
   const win = data && data.windows ? (data.windows['7'] ? '7' : data.windows['1'] ? '1' : data.windows['30'] ? '30' : null) : null;
   if (moverState.status !== 'ready' || !win) { body.innerHTML = `<p class="hb-empty">${esc(t('home.movers.none'))}</p>`; return; }
@@ -5823,11 +5990,17 @@ async function renderHomeMovers() {
     const name = (LANG !== 'en' && row && row.name_ja) ? row.name_ja : e.n;
     return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
         <a class="hb-name" href="?card=${encodeURIComponent(e.id)}" data-card="${esc(e.id)}">${esc(name)}</a>
-        <span class="hb-sub">${esc(moneyText(e.then))} → ${esc(moneyText(e.now))}</span>
+        <span class="hb-sub">${esc(usdText(e.then))} → ${esc(usdText(e.now))}</span>
         <span class="hb-num"><span class="arrow" aria-hidden="true">▲</span>${pctText(e.pct)}</span></li>`;
-  }).join('')}</ol>`;
-  document.getElementById('homeMoversMore').href = `?view=prices&win=${win}&dir=up`;
+  }).join('')}</ol><p class="hb-src">${esc(t('home.market.us.src'))}</p>`;
+  more.href = `?view=prices&win=${win}&dir=up`;
 }
+document.getElementById('homeMoversTabs').addEventListener('click', (e) => {
+  const b = e.target.closest('.seg-btn');
+  if (!b || b.dataset.market === homeMarket) return;
+  homeMarket = b.dataset.market;
+  renderHomeMovers();
+});
 const HOME_META_FORMATS = ['standard', 'pioneer', 'modern', 'legacy'];
 let homeMetaFormat = 'standard';
 async function renderHomeMeta() {
