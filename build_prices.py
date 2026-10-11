@@ -174,8 +174,12 @@ def read_previous(source, allow_fresh):
     index = load("index.json")
     if index is None:
         if not allow_fresh:
+            hint = ""
+            if source.startswith("http") and "akuchie-prices" not in source:
+                hint = (" This address is not the akuchie-prices site: the workflow seems to be running in the wrong"
+                        " repository. It belongs in its own repository named akuchie-prices.")
             raise SystemExit(f"No index.json at {source} - stopping so a published history is never replaced by an "
-                             "empty one. On the very first run, pass --allow-fresh.")
+                             "empty one. On the very first run, pass --allow-fresh." + hint)
         print("No earlier history found - starting a new one.")
         return [], {}, {}
     dates = index.get("dates", [])
