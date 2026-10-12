@@ -1,0 +1,1171 @@
+{
+ "singlestar.jp": {
+  "home": [
+   200,
+   "https://www.singlestar.jp/"
+  ],
+  "forms": [],
+  "title": "【シングルスター｜MTG専門店】新商品の品揃えが日本最大級",
+  "base": "https://www.singlestar.jp",
+  "tries": [
+   {
+    "url": "https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 1
+   },
+   {
+    "url": "https://www.singlestar.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.singlestar.jp/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "cardshop-serra.com": {
+  "home": [
+   200,
+   "https://cardshop-serra.com/"
+  ],
+  "forms": [
+   {
+    "action": "/search",
+    "method": "get",
+    "names": [
+     "q"
+    ]
+   },
+   {
+    "action": "/search",
+    "method": "get",
+    "names": [
+     "q"
+    ]
+   }
+  ],
+  "title": "MtG通販・買取ならカードショップセラ｜マジック：ザ・ギャザリング専門店",
+  "base": "https://www.cardshop-serra.com",
+  "tries": [
+   {
+    "url": "https://www.cardshop-serra.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.cardshop-serra.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://cardshop-serra.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "hits": 156
+   }
+  ]
+ },
+ "dorasuta.jp": {
+  "home": [
+   403,
+   "https://dorasuta.jp"
+  ]
+ },
+ "enndalgames.com": {
+  "home": [
+   200,
+   "https://www.enndalgames.com/"
+  ],
+  "forms": [],
+  "title": "MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES",
+  "base": "https://www.enndalgames.com",
+  "tries": [
+   {
+    "url": "https://www.enndalgames.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.enndalgames.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "blackfrog.jp": {
+  "home": [
+   200,
+   "https://blackfrog.jp/"
+  ],
+  "forms": [
+   {
+    "action": "/shop/shopbrand.html",
+    "method": "post",
+    "names": [
+     "search"
+    ]
+   },
+   {
+    "action": "/shop/shopbrand.html",
+    "method": "post",
+    "names": [
+     "search",
+     "content1"
+    ]
+   },
+   {
+    "action": "/shop/shopbrand.html",
+    "method": "post",
+    "names": [
+     "search"
+    ]
+   }
+  ],
+  "title": "BLACK FROG（ブラックフロッグ） | MTG / FABシングル |  MTG・FAB・ロルカナ シングル通販ショップ",
+  "base": "https://blackfrog.jp",
+  "tries": [
+   {
+    "url": "https://blackfrog.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://blackfrog.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://blackfrog.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://blackfrog.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://blackfrog.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 102
+   }
+  ]
+ },
+ "johnnymagic.jp": {
+  "home": [
+   503,
+   "https://johnnymagic.jp"
+  ]
+ },
+ "eternal-blue.jp": {
+  "home": [
+   200,
+   "https://www.eternal-blue.jp/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.eternal-blue.jp/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "Submit"
+    ]
+   }
+  ],
+  "title": "MTGシングルカード通販・エターナルブルー",
+  "base": "https://www.eternal-blue.jp",
+  "tries": [
+   {
+    "url": "https://www.eternal-blue.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 161
+   }
+  ]
+ },
+ "bigredmtg.com": {
+  "home": [
+   200,
+   "https://www.bigredmtg.com/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.bigredmtg.com/product-list",
+    "method": "get",
+    "names": [
+     "search_tmp",
+     "keyword"
+    ]
+   }
+  ],
+  "title": "カードショップBIGRED",
+  "base": "https://www.bigredmtg.com",
+  "tries": [
+   {
+    "url": "https://www.bigredmtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 66
+   }
+  ]
+ },
+ "amenitydream.com": {
+  "home": [
+   200,
+   "https://www.amenitydream.com/"
+  ],
+  "forms": [
+   {
+    "action": "/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "searchBtn4"
+    ]
+   }
+  ],
+  "title": "アメニティードリーム通販部",
+  "base": "https://www.amenitydream.com",
+  "tries": [
+   {
+    "url": "https://www.amenitydream.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 103
+   }
+  ]
+ },
+ "ka-nabell.com": {
+  "home": [
+   "<urlopen error timed out>",
+   "https://ka-nabell.com"
+  ]
+ },
+ "mtg-guild.com": {
+  "home": [
+   200,
+   "https://mtg-guild.com/"
+  ],
+  "forms": [
+   {
+    "action": "https://mtg-guild.com/",
+    "method": "GET",
+    "names": [
+     "mode",
+     "keyword"
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "method": "GET",
+    "names": [
+     "mode",
+     "keyword"
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "method": "GET",
+    "names": [
+     "mode",
+     "keyword"
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "method": "GET",
+    "names": [
+     "mode",
+     "keyword"
+    ]
+   }
+  ],
+  "title": "マジック：ザ・ギャザリング（MTG）の通販専門店　「 MTG Guild 」",
+  "base": "https://www.mtg-guild.com",
+  "tries": [
+   {
+    "url": "https://www.mtg-guild.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://mtg-guild.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.mtg-guild.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "arcana-tcg.com": {
+  "home": [
+   200,
+   "https://www.arcana-tcg.com/"
+  ],
+  "forms": [],
+  "title": "TCG専門店 アルカナ|ARCANA トレカ",
+  "base": "https://www.arcana-tcg.com",
+  "tries": [
+   {
+    "url": "https://www.arcana-tcg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.arcana-tcg.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "cantripmtg.com": {
+  "home": [
+   200,
+   "https://cantripmtg.com/"
+  ],
+  "forms": [
+   {
+    "action": "/search",
+    "method": "get",
+    "names": [
+     "q",
+     "options[prefix]"
+    ]
+   },
+   {
+    "action": "/search",
+    "method": "get",
+    "names": [
+     "filter.p.m.custom.title_",
+     "q",
+     "type",
+     "options[prefix]",
+     "options[unavailable_products]"
+    ]
+   }
+  ],
+  "title": "TCG専門店CANTRIP（キャントリップ）\n – TCG専門店 CANTRIP",
+  "base": "https://www.cantripmtg.com",
+  "tries": [
+   {
+    "url": "https://www.cantripmtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.cantripmtg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://cantripmtg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "hits": 537
+   }
+  ]
+ },
+ "hasuya.jp": {
+  "home": [
+   200,
+   "https://www.hasuya.jp/"
+  ],
+  "forms": [],
+  "title": "TCG専門店 蓮屋 MtG & FaB & GA & Riftbound / TOPページ",
+  "base": "https://www.hasuya.jp",
+  "tries": [
+   {
+    "url": "https://www.hasuya.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hasuya.jp/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "pinocchio-mtg.jp": {
+  "home": [
+   "<urlopen error [Errno -2] Name or service not known>",
+   "https://pinocchio-mtg.jp"
+  ]
+ },
+ "azumayamtg.com": {
+  "home": [
+   200,
+   "https://azumayamtg.com/"
+  ],
+  "forms": [],
+  "title": "カードショップあずまや | マジック：ザ・ギャザリング | TCG | 通販",
+  "base": "https://www.azumayamtg.com",
+  "tries": [
+   {
+    "url": "https://www.azumayamtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://azumayamtg.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.azumayamtg.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "cardshophamaya.com": {
+  "home": [
+   200,
+   "https://www.cardshophamaya.com/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.cardshophamaya.com/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "Submit"
+    ]
+   }
+  ],
+  "title": "MTGの通販ショップ「はま屋.net」",
+  "base": "https://www.cardshophamaya.com",
+  "tries": [
+   {
+    "url": "https://www.cardshophamaya.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 169
+   }
+  ]
+ },
+ "toretoku.jp": {
+  "home": [
+   200,
+   "https://www.toretoku.jp/"
+  ],
+  "forms": [],
+  "title": "トレカの激安通販｜トレトク【公式】",
+  "base": "https://www.toretoku.jp",
+  "tries": [
+   {
+    "url": "https://www.toretoku.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.toretoku.jp/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "fullcomp.jp": {
+  "home": [
+   200,
+   "https://www.fullcomp.jp/"
+  ],
+  "forms": [],
+  "title": "フルコンプ　トレカ販売・買取専門店",
+  "base": "https://www.fullcomp.jp",
+  "tries": [
+   {
+    "url": "https://www.fullcomp.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.fullcomp.jp/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "suruga-ya.jp": {
+  "home": [
+   403,
+   "https://suruga-ya.jp"
+  ]
+ },
+ "c-labo-online.jp": {
+  "home": [
+   200,
+   "https://www.c-labo-online.jp/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.c-labo-online.jp/product-list",
+    "method": "get",
+    "names": [
+     "keyword"
+    ]
+   },
+   {
+    "action": "https://www.c-labo-online.jp/product-list",
+    "method": "get",
+    "names": [
+     "search_tmp",
+     "keyword"
+    ]
+   }
+  ],
+  "title": "トレカ(TCG)通販ならカードラボ",
+  "base": "https://www.c-labo-online.jp",
+  "tries": [
+   {
+    "url": "https://www.c-labo-online.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 37
+   }
+  ]
+ },
+ "yellowsubmarine.co.jp": {
+  "home": [
+   200,
+   "https://www.yellowsubmarine.co.jp/"
+  ],
+  "forms": [],
+  "title": "ゲーム・ホビー商品の販売買取はイエローサブマリン｜委託販売・郵送買取も対応！",
+  "base": "https://www.yellowsubmarine.co.jp",
+  "tries": [
+   {
+    "url": "https://www.yellowsubmarine.co.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.yellowsubmarine.co.jp/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "cardrush-mtg.jp": {
+  "home": [
+   200,
+   "https://www.cardrush-mtg.jp/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.cardrush-mtg.jp/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "Submit"
+    ]
+   }
+  ],
+  "title": "【カードラッシュ】MTGが日本最安級の通販サイト",
+  "base": "https://www.cardrush-mtg.jp",
+  "tries": [
+   {
+    "url": "https://www.cardrush-mtg.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 206
+   }
+  ]
+ },
+ "hareruyamtg.com": {
+  "home": [
+   200,
+   "https://www.hareruyamtg.com/ja/"
+  ],
+  "forms": [
+   {
+    "action": "/ja/products/search",
+    "method": "GET",
+    "names": [
+     "suggest_type",
+     "product",
+     "category",
+     "image"
+    ]
+   },
+   {
+    "action": "/ja/products/search",
+    "method": "GET",
+    "names": [
+     "product"
+    ]
+   },
+   {
+    "action": "/ja/products/search",
+    "method": "get",
+    "names": [
+     "sort",
+     "order",
+     "cardId",
+     "product",
+     "cardset",
+     "colors[]",
+     "colors[]",
+     "colors[]"
+    ]
+   },
+   {
+    "action": "/ja/products/search",
+    "method": "GET",
+    "names": [
+     "cardId"
+    ]
+   }
+  ],
+  "title": "【晴れる屋 | MTG通販】品揃え日本最大級の通販サイト",
+  "base": "https://www.hareruyamtg.com",
+  "tries": [
+   {
+    "url": "https://www.hareruyamtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/?keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/?q=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 500,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 500,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/?keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/?keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   },
+   {
+    "url": "https://www.hareruyamtg.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "https://www.hareruyamtg.com/ja/?keyword=%E7%A8%B2%E5%A6%BB",
+    "hits": 0
+   }
+  ]
+ },
+ "mtg.bigweb.co.jp": {
+  "home": [
+   403,
+   "https://mtg.bigweb.co.jp"
+  ]
+ },
+ "tokyomtg.com": {
+  "home": [
+   200,
+   "https://www.tokyomtg.com/"
+  ],
+  "forms": [
+   {
+    "action": "cardpage.html",
+    "method": "get",
+    "names": [
+     "query",
+     "p"
+    ]
+   },
+   {
+    "action": "search.html",
+    "method": "get",
+    "names": []
+   }
+  ],
+  "title": "【MTG専門店|東京MTG】MTGカード・アート通販サイト",
+  "base": "https://www.tokyomtg.com",
+  "tries": [
+   {
+    "url": "https://www.tokyomtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/search?q=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/?mode=srh&keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/products/search?product=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/shop/shopbrand.html?search=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/search?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/products?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   },
+   {
+    "url": "https://www.tokyomtg.com/search.php?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 404,
+    "final": "",
+    "hits": 0
+   }
+  ]
+ },
+ "mtgnage.jp": {
+  "home": [
+   "<urlopen error [Errno -2] Name or service not known>",
+   "https://mtgnage.jp"
+  ]
+ },
+ "playfirstgames.jp": {
+  "home": [
+   503,
+   "https://playfirstgames.jp"
+  ]
+ },
+ "shikanotsunomtg.com": {
+  "home": [
+   200,
+   "https://www.shikanotsunomtg.com/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.shikanotsunomtg.com/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "Submit"
+    ]
+   }
+  ],
+  "title": "MTG専門店しかのつの",
+  "base": "https://www.shikanotsunomtg.com",
+  "tries": [
+   {
+    "url": "https://www.shikanotsunomtg.com/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 3
+   }
+  ]
+ },
+ "advantagemtg.jp": {
+  "home": [
+   200,
+   "https://www.advantagemtg.jp/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.advantagemtg.jp/product-list",
+    "method": "get",
+    "names": [
+     "keyword",
+     "Submit"
+    ]
+   }
+  ],
+  "title": "アドバンテージMTG店",
+  "base": "https://www.advantagemtg.jp",
+  "tries": [
+   {
+    "url": "https://www.advantagemtg.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 208
+   }
+  ]
+ },
+ "cardshopsatopin.net": {
+  "home": [
+   200,
+   "https://www.cardshopsatopin.net/"
+  ],
+  "forms": [
+   {
+    "action": "https://www.cardshopsatopin.net/product-list",
+    "method": "get",
+    "names": [
+     "search_tmp",
+     "keyword"
+    ]
+   }
+  ],
+  "title": "MTG専門通販ショップ　カードショップサトPin",
+  "base": "https://www.cardshopsatopin.net",
+  "tries": [
+   {
+    "url": "https://www.cardshopsatopin.net/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+    "status": 200,
+    "final": "",
+    "hits": 49
+   }
+  ]
+ }
+}
