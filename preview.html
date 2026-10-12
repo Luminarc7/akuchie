@@ -461,6 +461,54 @@
   }
   .combo-hint-more { color: var(--accent); margin-left: 4px; white-space: nowrap; }
 
+  /* =============================== roles =============================== */
+  .match-note b { color: var(--text); font-weight: 700; }
+  .match-note .role-literal { margin-left: 2px; }
+  .match-note .role-count { color: var(--muted); }
+  .cp-roles { margin-top: 10px; }
+  .role-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .role-chip {
+    border: 1px solid var(--line); background: var(--field); color: var(--text); border-radius: 999px;
+    padding: 2px 11px; font-size: 12.5px; line-height: 1.6;
+  }
+  .role-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* =========================== similar cards =========================== */
+  .similar { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 18px; }
+  .sim-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 12px; }
+  .sim-title { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 14px; margin: 0; }
+  .sim-sws { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sim-sw {
+    border: 1px solid var(--line); background: var(--field); color: var(--text); border-radius: 999px;
+    padding: 3px 12px; font-size: 12.5px; line-height: 1.5;
+  }
+  .sim-sw::before { content: ""; display: inline-block; width: 9px; height: 9px; border: 1.5px solid var(--muted); border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .sim-sw[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .sim-sw[aria-pressed="true"]::before { background: var(--accent); border-color: var(--accent); }
+  .sim-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .sim-status { color: var(--muted); font-size: 13px; margin: 6px 0; display: flex; align-items: center; gap: 8px; }
+  .sim-more { display: inline-block; margin-top: 12px; color: var(--accent); font-size: 13px; }
+  .sim-list { list-style: none; margin: 0; padding: 0; }
+  .sim-list li + li { border-top: 1px solid var(--line); }
+  .sim-row { padding: 8px 4px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+  .sim-row .tr-meta { margin-left: auto; }
+  .spinner.sm { width: 14px; height: 14px; margin: 0; border-width: 2px; flex: none; }
+
+  /* ===================== help when nothing is found ===================== */
+  .zero-help { margin: 18px auto 0; max-width: 640px; text-align: left; }
+  .zero-help:empty { display: none; }
+  .zh-title { font-size: 13px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+  .zh-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 7px 0; border-top: 1px solid var(--line); }
+  .zh-kind { font-size: 12px; font-weight: 700; color: var(--muted); min-width: 7.5em; }
+  .zh-btn {
+    border: 1px solid var(--line); background: var(--field); color: var(--text); border-radius: 999px;
+    padding: 3px 12px; font-size: 13px; line-height: 1.5; text-decoration: none;
+  }
+  .zh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .zh-n { color: var(--muted); font-size: 11.5px; margin-left: 6px; }
+  .zh-loading { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin: 8px 0 0; }
+  .suggest-item .s-sub.s-role { color: var(--accent); font-weight: 700; }
+
   /* ============================= set browser ============================= */
   .sets-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .sets-toolbar input { flex: 1; min-width: 220px; padding: 10px 14px; }
@@ -649,6 +697,11 @@
   }
   @media (max-width: 480px) {
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .similar { padding: 14px 14px 16px; }
+    /* phones: the similar cards in a strip to swipe through, like the printings */
+    .sim-grid { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 6px; scroll-snap-type: x proximity; }
+    .sim-grid .card-tile { flex: 0 0 150px; scroll-snap-align: start; }
+    .zh-kind { min-width: 0; width: 100%; }
     .brand-mark { font-size: 26px; }
     .sq-switch { font-size: 11.5px; }
     .lang-btn { padding: 5px 9px; font-size: 11.5px; }
@@ -1318,6 +1371,14 @@
       </div>
 
       <div class="filter-section">
+        <p class="filter-title" data-i18n="filter.role">役割</p>
+        <div class="combo-input">
+          <input type="text" class="list-filter" id="roleFilter" placeholder="役割を入力（例：除去、ドロー）" data-i18n-ph="role.ph" autocomplete="off" aria-label="役割を探す" data-i18n-aria="role.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="roleList">
+          <div class="check-list dropdown" id="roleList" data-group="roles" hidden></div>
+        </div>
+      </div>
+
+      <div class="filter-section">
         <p class="filter-title" data-i18n="filter.ctype">クリーチャー・タイプ</p>
         <div class="combo-input">
           <input type="text" class="list-filter" id="creatureTypeFilter" placeholder="タイプを入力（例：エルフ）" data-i18n-ph="ctype.ph" autocomplete="off" aria-label="クリーチャー・タイプを探す" data-i18n-aria="ctype.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="creatureTypeList">
@@ -1449,7 +1510,7 @@
   <div class="attribution-inner">
     <p class="foot-fcp">悪知恵 (Warujie) is unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank" rel="noopener">Fan Content Policy</a>. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
       <span class="foot-ja" data-i18n="footer.fcp">悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。</span></p>
-    <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a></p>
+    <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・役割 <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a>・採用数 <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a>・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a></p>
     <p class="combos-only" data-i18n-html="footer.combos"></p>
     <p data-i18n="footer.disclaimer">価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。</p>
     <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）はお使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
@@ -1646,8 +1707,8 @@ const STR = {
   'art.title': ['{name}（イラスト：{a}　© Wizards of the Coast）', '{name} (art by {a} © Wizards of the Coast)'],
   'home.meta.illus': ['アイコンのイラスト：{list}　© Wizards of the Coast', 'Icon art: {list} © Wizards of the Coast'],
   'footer.credit': [
-    'データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a>',
-    'Data: card details, pictures and prices <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (TCGplayer / Cardmarket prices) · prices by shop <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a> · cheapest listings <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a> (TCGplayer) and <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a> · exchange rates <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a> (European Central Bank) · metagame <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a> · listings and stock <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>, <a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a> and <a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a>'],
+    'データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・役割 <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a>・採用数 <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a>・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a>',
+    'Data: card details, pictures and prices <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (TCGplayer / Cardmarket prices) · roles <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a> · how often cards are played <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a> · prices by shop <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a> · cheapest listings <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a> (TCGplayer) and <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a> · exchange rates <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a> (European Central Bank) · metagame <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a> · listings and stock <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>, <a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a> and <a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a>'],
   'db.count': ['収録カード：{n}枚（日本語版あり {ja}枚）', '{n} cards in the database ({ja} with a Japanese printing)'],
   'db.updated': ['・データ更新日：{d}', ' · data updated {d}'],
   'tab.prices': ['価格', 'Prices'],
@@ -1854,6 +1915,58 @@ const STR = {
   'card.notfound.body': ['URLを確認するか、検索からやり直してください。', 'Check the address, or start again from the search.'],
   'res.none': ['該当するカードが見つかりませんでした', 'No cards found'],
   'res.none.body': ['条件を変えて再度検索してください。', 'Try different search terms or filters.'],
+  'filter.role': ['役割', 'Role'],
+  'role.ph': ['役割を入力（例：除去、ドロー）', 'Type a role (e.g. removal)'],
+  'role.aria': ['役割を探す', 'Find a role'],
+  'pill.role': ['役割：{r}', 'Role: {r}'],
+  'role.loading': ['役割のデータを読み込み中…', 'Loading the role data…'],
+  'role.note.one': ['役割「{r}」のカードを表示しています。', 'Showing cards with the role “{r}”.'],
+  'role.note.word': ['「{w}」を役割「{r}」として検索しました。', 'Searched “{w}” as the role “{r}”.'],
+  'role.note.many': ['役割（{r}）で検索しました。', 'Searched for the roles {r}.'],
+  'role.note.not': ['役割「{r}」のカードを除いています。', 'Leaving out cards with the role “{r}”.'],
+  'role.note.with': ['条件：{d}。', 'Narrowed to {d}.'],
+  'role.note.order': ['よく使われているカードから順に並べています。', 'Most played first.'],
+  'role.literal': ['「{w}」をカード名・効果文から探す', 'Search names and rules text for “{w}” instead'],
+  'role.asrole': ['役割「{r}」として探す', 'Search for the role “{r}” instead'],
+  'role.absent': ['役割のデータを読み込めなかったため、効果文から検索しました。', 'The role data could not be loaded, so the rules text was searched instead.'],
+  'role.unknown': ['「{w}」という役割はありません。', 'There is no role called “{w}”.'],
+  'role.d.color': ['{c}', '{c}'],
+  'role.d.multi': ['多色', 'multicolored'],
+  'role.d.mv': ['マナ総量{n}', 'mana value {n}'],
+  'role.d.mv.le': ['マナ総量{n}以下', 'mana value {n} or less'],
+  'role.d.mv.ge': ['マナ総量{n}以上', 'mana value {n} or more'],
+  'role.d.type': ['{t}', '{t}'],
+  'n.count': ['{n}件', '{n}'],
+  'cp.roles': ['役割', 'Roles'],
+  'cp.roles.title': ['役割「{r}」のカードを検索', 'Find cards with the role “{r}”'],
+  'sim.heading': ['似た効果のカード', 'Cards with similar effects'],
+  'sim.aria': ['似たカードの条件', 'Conditions for similar cards'],
+  'sim.color': ['同じ色', 'Same colors'],
+  'sim.color.title': ['このカードの色の中に収まるカード（無色を含む）', 'Only cards within this card’s colors (colorless included)'],
+  'sim.cmc': ['マナ総量が同じか軽い', 'Same or lower mana value'],
+  'sim.type': ['同じカード・タイプ', 'Same card type'],
+  'sim.more': ['もっと見る・条件で絞り込む', 'See more and filter'],
+  'sim.none': ['この条件に合う似たカードは見つかりませんでした。', 'No similar cards match these conditions.'],
+  'sim.loading': ['似たカードを探しています…', 'Finding similar cards…'],
+  'sim.note': ['「{name}」に効果が近い順に表示しています（効果文の言葉と役割の近さで比べています）。', 'Sorted by how close the effect is to “{name}” (rules text and roles compared).'],
+  'sim.note.sorted': ['「{name}」に効果が近いカードを表示しています。', 'Showing cards with effects close to “{name}”.'],
+  'sim.unknown': ['「{q}」という名前のカードが見つかりませんでした。', 'No card is called “{q}”.'],
+  'sim.building': ['似たカードの索引を作っています…', 'Indexing the cards for similar effects…'],
+  'lite.similar': ['似た効果のカードと役割を表示', 'Show similar cards and roles'],
+  'help.title': ['こんな探し方はいかがですか', 'Try one of these'],
+  'help.loading': ['ほかの探し方を調べています…', 'Looking for other searches…'],
+  'help.names': ['もしかして', 'Did you mean'],
+  'help.words': ['近い言葉', 'Close words'],
+  'help.roles': ['役割の例', 'Roles'],
+  'help.word': ['「{from}」→「{to}」', '“{from}” → “{to}”'],
+  'help.drop': ['言葉を減らす', 'Fewer words'],
+  'help.without': ['「{w}」を外す', 'Without “{w}”'],
+  'help.filters': ['絞り込みを外す', 'Fewer filters'],
+  'help.unfilter': ['「{f}」を外す', 'Remove “{f}”'],
+  'help.unfilter.all': ['絞り込みをすべて外す', 'Remove all filters'],
+  'help.count': ['{n}件', '{n} cards'],
+  'suggest.role': ['役割で探す', 'Search by role'],
+  'suggest.role.as': ['役割「{r}」で探す', 'Search for the role “{r}”'],
   'res.zero': ['<strong>0</strong> 件', '<strong>0</strong> cards'],
   'res.hydrating': ['画像・価格・legalityを取得中…', 'Fetching images, prices and legality…'],
   'res.count': ['<strong>{n}</strong> 件見つかりました', '<strong>{n}</strong> cards found'],
@@ -2025,7 +2138,7 @@ const CREATURE_TYPE_JA = {
 
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
-  keywords: new Set(), manaCosts: new Set(), rarity: '', format: '', sort: 'name',
+  keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name',
   view: (() => { if (document.documentElement.dataset.lite === '1') return 'text'; try { return localStorage.getItem('akuchie-view') === 'text' ? 'text' : 'image'; } catch (e) { return 'image'; } })(),
   showLoose: false,   // also show cards that contain the search words only separately
 };
@@ -2098,6 +2211,7 @@ const JA_OPERATORS = {
   'マナ総量':'cmc', 'マナ':'cmc',
   'パワー':'pow', 'タフネス':'tou',
   'キーワード':'kw', 'キーワード能力':'kw',
+  '役割':'role', 'タグ':'tag', '似':'sim', '類似':'sim', '似た':'sim',
 };
 
 // ---- Japanese card-name index (legacy, name-only) -----------------------
@@ -2141,6 +2255,9 @@ let localOffset = 0;
 const PAGE_SIZE = 30; // stays under /cards/collection's 75-identifier limit
 
 function normText(s) { return String(s ?? '').normalize('NFKC').toLowerCase(); }
+// Some recent Japanese printings carry furigana in the name: 吹（ふ）きさらしの要（よう）塞（さい）.
+// It is left out, so 吹きさらしの要塞 finds the card and the name reads normally.
+function stripRuby(s) { return String(s ?? '').replace(/([\u3400-\u9fff\uf900-\ufaff々〆ヶ])[（(][\u3041-\u3096ー]+[）)]/g, '$1'); }
 function normJa(s) { return normText(s).replace(/\s+/g, ''); }
 
 function indexRow(arr, fields) {
@@ -2149,6 +2266,7 @@ function indexRow(arr, fields) {
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
    'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja'].forEach(f => { if (o[f] == null) o[f] = ''; });
+  ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
   o._altJa = o.alt_names_ja ? o.alt_names_ja.split('|').map(normJa).filter(Boolean) : [];
@@ -2376,6 +2494,7 @@ function localOperatorMatch(row, op, sep, val) {
       const wanted = [...String(val).toUpperCase()].map(ch => jaColor[ch] || ch).filter(ch => 'WUBRG'.includes(ch));
       if (!wanted.length) return false;
       if (sep === '=') return [...rowColors].sort().join('') === [...new Set(wanted)].sort().join('');
+      if (sep === '<=') return rowColors.every(c => wanted.includes(c));   // within these colors (colorless too)
       return wanted.every(c => rowColors.includes(c));
     }
     case 'r': {
@@ -2417,34 +2536,39 @@ function localQueryMatch(row, rawQuery) {
   });
 }
 
-function localFilterRow(row) {
-  if (state.colors.size) {
+function localFilterRow(row, st = state) {
+  if (st.colors.size) {
     const rowColors = row._colors ? row._colors.split('') : ['C'];
     let hit = false;
-    state.colors.forEach(c => { if (rowColors.includes(c)) hit = true; });
+    st.colors.forEach(c => { if (rowColors.includes(c)) hit = true; });
     if (!hit) return false;
   }
-  if (state.types.size) {
+  if (st.types.size) {
     let hit = false;
-    state.types.forEach(t => { if (hasTypeWord(row, t)) hit = true; });
+    st.types.forEach(t => { if (hasTypeWord(row, t)) hit = true; });
     if (!hit) return false;
   }
-  if (state.creatureTypes.size) {
+  if (st.creatureTypes.size) {
     let hit = false;
-    state.creatureTypes.forEach(t => { if (hasTypeWord(row, t)) hit = true; });
+    st.creatureTypes.forEach(t => { if (hasTypeWord(row, t)) hit = true; });
     if (!hit) return false;
   }
-  if (state.keywords.size) {
+  if (st.keywords.size) {
     let hit = false;
-    state.keywords.forEach(k => { if (row._kw.has(normText(k))) hit = true; });
+    st.keywords.forEach(k => { if (row._kw.has(normText(k))) hit = true; });
     if (!hit) return false;
   }
-  if (state.rarity && row.rarity !== state.rarity) return false;
-  if (state.format && row.legal != null && !String(row.legal).includes(FORMAT_CODE[state.format])) return false;
-  if (state.manaCosts.size) {
+  if (st.rarity && row.rarity !== st.rarity) return false;
+  if (st.format && row.legal != null && !String(row.legal).includes(FORMAT_CODE[st.format])) return false;
+  if (st.roles && st.roles.size) {
+    let hit = false;
+    st.roles.forEach(id => { if (!hit && hasRole(row, id)) hit = true; });
+    if (!hit) return false;
+  }
+  if (st.manaCosts.size) {
     const bucket = row._cmc >= 7 ? '7+' : String(Math.floor(row._cmc));
     let hit = false;
-    state.manaCosts.forEach(m => {
+    st.manaCosts.forEach(m => {
       if (m === 'X') { if (row._hasX) hit = true; }
       else if (m === bucket) hit = true;
     });
@@ -2462,6 +2586,393 @@ function relevance(row, query) {
   if (row._nameJa === qJa || row._nameEn === q || row._altJa.includes(qJa)) return 0;
   if ((qJa && (row._nameJa.includes(qJa) || row._altJa.some(n => n.includes(qJa)))) || row._nameEn.includes(q)) return 1;
   return 2;
+}
+
+// ============================================================================
+// Roles: what a card does - 除去 (removal), ドロー (card draw), ランプ (ramp),
+// サクり台 (sac outlet)... - the words players search with.
+//
+// Most roles come from Scryfall Tagger's oracle tags (made by the community;
+// t/tags.json.gz in the price data, rebuilt weekly), a few are read from the
+// English rules text (ETB, pump spells, shock lands...). A role word counts as
+// a role only when it is a whole search word and not in quotes, so the card
+// text search works as before: 「ランプ」 finds ramp, 「トランプル」 is still
+// trample, and 「"ランプ"」 searches the text for ランプ.
+// Role results come most played first (EDHREC rank, from the same file);
+// cards that mainly do something else come a little later.
+// ============================================================================
+const ROLE_TEXT = {
+  etb: /\bwhen(?:ever)? (?:~|this (?:creature|artifact|enchantment|land|permanent|planeswalker|battle|vehicle|equipment|aura|saga|spacecraft))(?: or (?:another|one or more)[^,.]*)? enters\b/,
+  ltb: /\bwhen(?:ever)? (?:~|this (?:creature|artifact|enchantment|land|permanent|planeswalker))(?: or (?:another|one or more)[^,.]*)? leaves the battlefield\b/,
+  pump: /\btarget (?:attacking |blocking |tapped |untapped )?creature(?: you control)? gets \+(?:\d+|x)\/\+(?:\d+|x)\b/,
+  clone: /\b(?:enters?|enter the battlefield) as a copy of\b|\bbecomes? a copy of\b/,
+  shock: /\byou may pay 2 life\. if you don't, (?:~|it|this land) enters (?:the battlefield )?tapped\b/,
+  steal: /(?:^|[.:—•\n]\s*|\byou (?:may )?|\band )gain control of\b|\byou control enchanted (?:creature|permanent|artifact|land|planeswalker)\b|\bexchange control of\b/m,
+  mill: /\b(?:target player|target opponent|each opponent|each player|that player|defending player|an opponent|any number of target players)(?: then)? mills?\b/,
+};
+// effects that only help an opponent: Path to Exile's land, Swords to Plowshares' life
+const ROLE_NOT = {
+  oppSearch: /\b(?:its controller|that player|its owner|target opponent|each opponent|target player) (?:may )?(?:search|searches)\b/,
+  oppGain: /\b(?:its controller|that player|its owner|target opponent|each opponent|target player|each player|that creature's controller) gains? (?:\d+ |x )?life\b/,
+};
+const ROLE_NOT_UNLESS = { oppGain: /\byou gain\b|\blifelink\b/ };
+const TOKEN_SENTENCE = /\bcreates?\b[^.]*\btokens?\b/;
+const OPP_CREATES = /\b(?:its controller|that player|its owner|target opponent|each opponent|an opponent|target player|that spell's controller|defending player)(?: may)? creates?\b/;
+function makesOwnTokens(text) {
+  return text.split(/[.\n]/).some(s => TOKEN_SENTENCE.test(s) && !(OPP_CREATES.test(s) && !/\byou create\b/.test(s)));
+}
+
+// [id, Japanese label, English label, Tagger tags, options, more Japanese words, English words]
+// The Japanese label is a search word too. English words are only player
+// slang: words printed on cards (mill, protection, haste, draw...) stay text.
+const ROLE_LIST = [
+  ['removal', '除去', 'Removal', ['removal'], null, '除去呪文|除去スペル|除去カード', 'removal'],
+  ['creature-removal', 'クリーチャー除去', 'Creature removal', ['creature-removal'], null, 'クリ除去', 'creature removal'],
+  ['artifact-removal', 'アーティファクト除去', 'Artifact removal', ['artifact-removal'], null, 'アーティファクト破壊|アーティファクト対策', 'artifact removal'],
+  ['enchantment-removal', 'エンチャント除去', 'Enchantment removal', ['enchantment-removal'], null, 'エンチャント破壊', 'enchantment removal'],
+  ['noncreature-removal', '置物除去', 'Artifact/enchantment removal', ['artifact-removal', 'enchantment-removal'], null, '置物破壊|置物対策', ''],
+  ['land-removal', '土地破壊', 'Land destruction', ['land-removal'], { demote: ['creature-removal'] }, '土地除去|ランデス', 'land destruction|land removal'],
+  ['boardwipe', '全体除去', 'Board wipe', ['boardwipe'], null, '全除去|全体破壊|ワイプ|ボードワイプ|リセット', 'board wipe|boardwipe|boardwipes|wrath|wraths|sweeper|sweepers|mass removal'],
+  ['bounce', 'バウンス', 'Bounce', ['bounce'], { minus: ['bounce-land'] }, '', 'bounce'],
+  ['edict', '生け贄要求', 'Edict', ['edict'], null, 'エディクト|生贄要求', 'edict|edicts'],
+  ['burn', '火力', 'Burn', ['burn'], null, 'バーン|火力呪文|本体火力', 'burn'],
+  ['tapper', 'タッパー', 'Tapper', ['tapper'], null, '', 'tapper|tappers'],
+  ['counterspell', '打ち消し', 'Counterspell', ['counterspell'], null, '打ち消し呪文|打消し|カウンター呪文|カウンタースペル', 'counterspell|counterspells|counter spell|counter magic'],
+  ['hand-disruption', 'ハンデス', 'Hand disruption', ['hand-disruption'], { demote: ['wheel', 'loot', 'rummage', 'draw'] }, '手札破壊|手札攻撃', 'hand disruption'],
+  ['graveyard-hate', '墓地対策', 'Graveyard hate', ['graveyard-hate'], null, '墓地メタ|墓地除去', 'graveyard hate|grave hate'],
+  ['hatebear', 'ヘイトベアー', 'Hatebear', ['hatebear'], null, 'メタクリーチャー|メタクリ', 'hatebear|hatebears|hate bear|hate bears'],
+  ['fog', 'フォグ', 'Fog', ['fog'], null, '', 'fog|fogs'],
+  ['draw', 'ドロー', 'Card draw', ['draw'], null, 'カードドロー|ドロソ|ドローソース|ドロー呪文|手札補充', 'card draw'],
+  ['cantrip', 'キャントリップ', 'Cantrip', ['cantrip'], null, '', 'cantrip|cantrips'],
+  ['loot', 'ルーター', 'Looting', ['loot', 'rummage'], null, 'ルーティング|ラメージ', 'looter|looters|looting|rummage'],
+  ['wheel', 'ホイール', 'Wheel', ['wheel'], null, 'ウィール', 'wheel|wheels'],
+  ['impulse', '衝動的ドロー', 'Impulse draw', ['impulse-draw'], null, 'インパルスドロー', 'impulse draw'],
+  ['tutor', 'サーチ', 'Tutor', ['tutor', 'tutor-any'], { minus: ['tutor-land'], keep: ['tutor-any'] }, 'チューター|サーチカード', 'tutor|tutors'],
+  ['land-tutor', '土地サーチ', 'Land tutor', ['tutor-land'], { notText: 'oppSearch' }, '', 'land tutor|land tutors'],
+  ['ramp', 'マナ加速', 'Ramp', ['ramp'], { notText: 'oppSearch' }, 'ランプ|加速', 'ramp'],
+  ['mana-dork', 'マナ・クリーチャー', 'Mana dork', ['mana-dork'], null, 'マナクリ', 'mana dork|mana dorks|dork|dorks|mana creature|mana creatures'],
+  ['mana-rock', 'マナ・アーティファクト', 'Mana rock', ['mana-rock'], null, 'マナファクト|マナロック', 'mana rock|mana rocks|manarock'],
+  ['cost-reducer', 'コスト軽減', 'Cost reducer', ['cost-reducer'], null, 'コスト減少', 'cost reducer|cost reducers|cost reduction'],
+  ['mana-doubler', 'マナ倍増', 'Mana doubler', ['mana-doubler'], null, 'マナ2倍|マナ二倍', 'mana doubler|mana doublers'],
+  ['untapper', 'アンタッパー', 'Untapper', ['untapper'], null, '', 'untapper|untappers'],
+  ['reanimate', 'リアニメイト', 'Reanimation', ['reanimate'], null, 'リアニ|釣り上げ|釣り上げる', 'reanimate|reanimation|reanimator'],
+  ['regrowth', '墓地回収', 'Regrowth', ['regrowth'], null, '', 'regrowth|recursion'],
+  ['self-mill', '墓地肥やし', 'Self-mill', ['self-mill'], null, '自己切削|自己ミル', 'self mill|self-mill|selfmill'],
+  ['mill', 'ライブラリー破壊', 'Mill (opponents)', [], { rule: 'mill' }, 'ライブラリーアウト|ライブラリー切削|LO', ''],
+  ['cheat', '踏み倒し', 'Cheat into play', ['cheat-into-play'], { demote: ['ramp', 'tutor-land'] }, '', 'cheat into play'],
+  ['flicker', '明滅', 'Flicker', ['flicker'], null, 'ブリンク|フリッカー', 'blink|flicker'],
+  ['etb', 'ETB', 'ETB', [], { rule: 'etb', perm: true, demote: 'noncreature' }, 'CIP', 'etb|cip|enters trigger'],
+  ['ltb', 'LTB', 'LTB', [], { rule: 'ltb', perm: true, demote: 'noncreature' }, '', 'ltb'],
+  ['sac-outlet', 'サクり台', 'Sac outlet', ['sacrifice-outlet'], { perm: true }, 'サクリ台|サク台|生け贄台|生贄台|サクリファイス台', 'sac outlet|sac outlets|sacrifice outlet|sacrifice outlets'],
+  ['death-trigger', '死亡誘発', 'Death trigger', ['deathtrigger'], null, '死亡時誘発', 'death trigger|death triggers|dies trigger'],
+  ['tokens', 'トークン生成', 'Token maker', ['repeatable-token-generator'], { rule: 'tokens' }, 'トークン作成', 'token maker|token makers|token generator|token generation'],
+  ['clone', 'クローン', 'Clone', ['clone'], { rule: 'clone' }, '', 'clone|clones'],
+  ['copy-spell', '呪文コピー', 'Spell copy', ['copy-spell'], null, 'コピー呪文', 'spell copy'],
+  ['steal', 'コントロール奪取', 'Steal', [], { rule: 'steal' }, '奪取|寝取り|寝取る', 'steal|theft'],
+  ['extra-turn', '追加ターン', 'Extra turn', ['extra-turn'], null, '', 'extra turns'],
+  ['extra-combat', '追加戦闘', 'Extra combat', ['extra-combat-phase'], null, '', 'extra combat|extra combats'],
+  ['lifegain', 'ライフ回復', 'Life gain', ['lifegain'], { notText: 'oppGain' }, 'ライフゲイン|ライフ獲得', 'lifegain|life gain'],
+  ['drain', 'ドレイン', 'Drain', ['drain-life'], null, '', 'drain'],
+  ['anthem', '全体強化', 'Anthem', ['anthem'], null, 'アンセム|全体パンプ', 'anthem|anthems'],
+  ['pump', 'パンプ', 'Pump', [], { rule: 'pump', demote: 'noninstant' }, 'パンプ呪文|強化呪文', 'pump|pump spell|pump spells'],
+  ['combat-trick', 'コンバット・トリック', 'Combat trick', ['combat-trick'], null, '', 'combat trick|combat tricks'],
+  ['haste', '速攻付与', 'Haste enabler', ['gives-haste'], null, '速攻を与える', 'haste enabler|haste enablers|give haste'],
+  ['evasion', '回避能力付与', 'Evasion', ['gives-evasion'], null, '回避能力', 'evasion'],
+  ['protection', '除去対策', 'Protection', ['protection', 'gives-hexproof', 'gives-indestructible'], null, '', ''],
+  ['fetchland', 'フェッチランド', 'Fetch land', ['fetchland'], null, 'フェッチ', 'fetchland|fetchlands|fetch land|fetch lands'],
+  ['bounceland', 'バウンスランド', 'Bounce land', ['bounce-land'], null, 'カルー', 'bounceland|bouncelands|bounce land|bounce lands|karoo|karoos'],
+  ['shockland', 'ショックランド', 'Shock land', [], { rule: 'shock', land: true }, '', 'shockland|shocklands|shock land|shock lands'],
+];
+// What else a card does, roughly: a card searched for one role ranks a little
+// lower for every other kind of job it has (Mind Stone is ramp first, card draw second).
+const ROLE_TAG_GROUP = {};
+Object.entries({
+  interaction: 'removal creature-removal artifact-removal enchantment-removal land-removal boardwipe bounce edict burn tapper counterspell hand-disruption graveyard-hate fog hatebear',
+  cards: 'draw cantrip loot rummage wheel impulse-draw tutor tutor-any tutor-land',
+  mana: 'ramp mana-dork mana-rock cost-reducer mana-doubler untapper',
+  graveyard: 'reanimate regrowth self-mill mill cheat-into-play',
+  board: 'flicker sacrifice-outlet deathtrigger lifegain drain-life anthem combat-trick repeatable-token-generator clone copy-spell theft extra-turn extra-combat-phase gives-haste protection gives-hexproof gives-indestructible gives-evasion',
+  lands: 'fetchland bounce-land',
+}).forEach(([g, list]) => list.split(' ').forEach(tag => { ROLE_TAG_GROUP[tag] = g; }));
+const ROLE_RULE_GROUP = { etb: 'board', ltb: 'board', pump: 'board', tokens: 'board', clone: 'board', steal: 'board', mill: 'graveyard', shock: 'lands' };
+
+const ROLES = ROLE_LIST.map(([id, ja, en, tags, opts, jaWords, enWords]) => Object.assign({
+  id, ja, en, tags,
+  jaWords: jaWords ? jaWords.split('|') : [], enWords: enWords ? enWords.split('|') : [],
+}, opts || {}));
+ROLES.forEach(r => {
+  r.groups = new Set(r.tags.map(tg => ROLE_TAG_GROUP[tg]).concat(r.rule ? [ROLE_RULE_GROUP[r.rule]] : []).filter(Boolean));
+});
+const ROLE_BY_ID = new Map(ROLES.map(r => [r.id, r]));
+// the same word however it's typed: ひらがな/カタカナ, full/half width, spaces, ・ and -
+function roleKey(s) { return kanaFold(normText(s)).replace(/[\s・･\-_'’]/g, ''); }
+const ROLE_BY_WORD = new Map();
+ROLES.forEach(r => {
+  [r.ja, ...r.jaWords, ...r.enWords].forEach(w => { const k = roleKey(w); if (k && !ROLE_BY_WORD.has(k)) ROLE_BY_WORD.set(k, r.id); });
+});
+function roleLabel(id) { const r = ROLE_BY_ID.get(id); return r ? (LANG === 'en' ? r.en : r.ja) : id; }
+// what to type to find a role: its Japanese label, or its English slang (role:<id> when it has none)
+function roleQuery(id) {
+  const r = ROLE_BY_ID.get(id);
+  if (!r) return '';
+  if (LANG !== 'en') return r.ja;
+  const w = r.enWords[0];
+  return w ? w : `role:${r.id}`;
+}
+// role:, 役割:, tag: ... accept an id, a label or any of the role's words
+function lookupRole(val) {
+  const v = String(val || '').trim();
+  if (ROLE_BY_ID.has(v.toLowerCase())) return v.toLowerCase();
+  const k = roleKey(v);
+  if (ROLE_BY_WORD.has(k)) return ROLE_BY_WORD.get(k);
+  const byLabel = ROLES.find(r => roleKey(r.en) === k || roleKey(r.ja) === k);
+  return byLabel ? byLabel.id : null;
+}
+const ROLE_OPS = new Set(['role', 'roles', '役割', 'タグ', 'tag', 'otag', 'oracletag', 'function']);
+
+// ---- the tag file ---------------------------------------------------------------
+let TAG_NAMES = [];
+let TAG_MAP = null;          // first 12 characters of an oracle id -> [EDHREC rank or null, tag numbers]
+let tagsState = 'idle';      // idle | loading | ready | absent
+let tagsPromise = null;
+function loadTags() {
+  if (!tagsPromise) {
+    tagsState = 'loading';
+    tagsPromise = fetchMaybeGzipJson(PRICE_DATA_URL + 't/tags.json.gz')
+      .then(data => {
+        if (!data || !Array.isArray(data.tags) || !Array.isArray(data.cards)) throw new Error('bad tag file');
+        TAG_NAMES = data.tags;
+        TAG_MAP = new Map();
+        data.cards.forEach(row => { if (Array.isArray(row) && typeof row[0] === 'string') TAG_MAP.set(row[0], row); });
+        tagsState = 'ready';
+      })
+      .catch(() => { TAG_MAP = new Map(); tagsState = 'absent'; })
+      .then(() => { if (LOCAL_DB) LOCAL_DB.forEach(row => { row._roles = undefined; row._roleSet = undefined; row._tags = undefined; }); });
+  }
+  return tagsPromise;
+}
+const tagsSettled = () => tagsState === 'ready' || tagsState === 'absent';
+function rowTagEntry(row) { return TAG_MAP && row.oracle_id ? TAG_MAP.get(String(row.oracle_id).slice(0, 12)) : null; }
+function rowTags(row) {
+  if (row._tags === undefined || !tagsSettled()) {
+    const e = rowTagEntry(row);
+    const set = new Set(e ? e.slice(2).map(i => TAG_NAMES[i]).filter(Boolean) : []);
+    if (!tagsSettled()) return set;
+    row._tags = set;
+  }
+  return row._tags;
+}
+function rowEdhrec(row) { const e = rowTagEntry(row); return e && Number.isInteger(e[1]) ? e[1] : null; }
+// English rules text with the card's own name as ~ and reminder text left out
+function roleText(row) {
+  if (row._roleText === undefined) {
+    let text = String(row.oracle_en || '');
+    const names = [];
+    String(row.name_en || '').split(' // ').forEach(face => {
+      face = face.trim();
+      if (!face) return;
+      names.push(face);
+      if (face.includes(',')) names.push(face.split(',')[0].trim());
+    });
+    [...new Set(names)].sort((a, b) => b.length - a.length).forEach(n => { if (n.length > 1) text = text.split(n).join('~'); });
+    row._roleText = text.replace(/\([^)]*\)/g, '').toLowerCase().replace(/[’‘]/g, "'");
+  }
+  return row._roleText;
+}
+function isPermanentRow(row) { return !/\b(?:instant|sorcery)\b/.test(String(row._typeEn || '').split(' // ')[0]); }
+function roleTest(row, r, tags) {
+  let hit = r.tags.some(tg => tags.has(tg));
+  if (hit && r.minus && r.minus.some(tg => tags.has(tg)) && !(r.keep && r.keep.some(tg => tags.has(tg)))) hit = false;
+  if (!hit && r.rule && (!r.land || hasTypeWord(row, 'land'))) {
+    hit = r.rule === 'tokens' ? makesOwnTokens(roleText(row)) : ROLE_TEXT[r.rule].test(roleText(row));
+  }
+  if (hit && r.notText) {
+    const tx = roleText(row);
+    if (ROLE_NOT[r.notText].test(tx) && !(ROLE_NOT_UNLESS[r.notText] && ROLE_NOT_UNLESS[r.notText].test(tx))) hit = false;
+  }
+  if (hit && r.perm && !isPermanentRow(row)) hit = false;
+  return hit;
+}
+// every role of a card, in the list's order
+function rowRoles(row) {
+  if (row._roles === undefined || !tagsSettled()) {
+    const tags = rowTags(row);
+    const ids = ROLES.filter(r => roleTest(row, r, tags)).map(r => r.id);
+    if (!tagsSettled()) return ids;
+    row._roles = ids;
+    row._roleSet = new Set(ids);
+  }
+  return row._roles;
+}
+// one role: tested on its own unless the card's roles are known already (a search tests every card)
+function hasRole(row, id) {
+  if (row._roles !== undefined && row._roleSet && tagsSettled()) return row._roleSet.has(id);
+  const r = ROLE_BY_ID.get(id);
+  return r ? roleTest(row, r, rowTags(row)) : false;
+}
+function roleDemoted(row, r) {
+  if (!r.demote) return false;
+  if (r.demote === 'noncreature') return !hasTypeWord(row, 'creature');
+  if (r.demote === 'noninstant') return !hasTypeWord(row, 'instant');
+  const tags = rowTags(row);
+  return r.demote.some(tg => tags.has(tg));
+}
+// EDHREC rank, a little worse for every other kind of job the card has
+function roleRankFor(row, roles) {
+  const rank = rowEdhrec(row);
+  if (rank === null) return Infinity;
+  const own = new Set();
+  roles.forEach(r => r.groups.forEach(g => own.add(g)));
+  const other = new Set();
+  rowTags(row).forEach(tg => { const g = ROLE_TAG_GROUP[tg]; if (g && !own.has(g)) other.add(g); });
+  return rank * (1 + 0.5 * other.size);
+}
+// does a role word name the card itself? 0 = its whole name (Counterspell, クローン, 濃霧), 1 = a face's name, 2 = no
+function roleNameMatcher(word) {
+  const ja = normJa(stripRuby(word)), en = normText(word).trim();
+  return row => {
+    if (row._nameJa === ja || row._altJa.includes(ja) || row._nameEn === en) return 0;
+    if (String(row.name_en || '').includes(' // ') && String(row.name_en).split(' // ').some(f => normText(f).trim() === en)) return 1;
+    return 2;
+  };
+}
+
+// ---- reading role words in the search box ------------------------------------------
+// Words that narrow a role search: colors (赤の除去, red removal), mana values
+// (2マナの除去, 軽い除去, cheap removal) and card types (インスタントの除去).
+const ROLE_COLOR_WORD = { '白': 'W', '青': 'U', '黒': 'B', '赤': 'R', '緑': 'G', white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' };
+const ROLE_TYPE_WORD = { creature: 'creature', creatures: 'creature', instant: 'instant', instants: 'instant', sorcery: 'sorcery', sorceries: 'sorcery',
+  artifact: 'artifact', artifacts: 'artifact', enchantment: 'enchantment', enchantments: 'enchantment', land: 'land', lands: 'land',
+  planeswalker: 'planeswalker', planeswalkers: 'planeswalker', battle: 'battle' };
+function colorFilterLabel(colors) { return colors.map(c => (LANG === 'en' ? t('color.' + c).toLowerCase() : t('color.' + c))).join(LANG === 'en' ? '/' : '・'); }
+function derivedFromWord(word) {
+  const w = String(word || '').normalize('NFKC').trim();
+  const lw = w.toLowerCase();
+  if (/^[白青黒赤緑]+$/.test(w) || ROLE_COLOR_WORD[lw]) {
+    const cols = [...new Set(ROLE_COLOR_WORD[lw] ? [ROLE_COLOR_WORD[lw]] : [...w].map(ch => ROLE_COLOR_WORD[ch]))];
+    const label = t('role.d.color', { c: colorFilterLabel(cols) });
+    if (cols.length === 1) return { label, test: row => (row._colors || '').includes(cols[0]) };
+    // 白黒の除去: cards a white-black deck can play
+    return { label, test: row => { const rc = (row._colors || '').split('').filter(Boolean); return rc.length > 0 && rc.every(c => cols.includes(c)); } };
+  }
+  if (w === '無色' || lw === 'colorless') return { label: t('role.d.color', { c: colorFilterLabel(['C']) }), test: row => !row._colors };
+  if (w === '多色' || lw === 'multicolor' || lw === 'multicolored' || lw === 'gold') return { label: t('role.d.multi'), test: row => (row._colors || '').length >= 2 };
+  let m = w.match(/^(\d{1,2})マナ(以下|以上)?$/);
+  if (m) {
+    const n = Number(m[1]), op = m[2] === '以下' ? '<=' : m[2] === '以上' ? '>=' : '=';
+    return { label: t('role.d.mv' + (op === '=' ? '' : op === '<=' ? '.le' : '.ge'), { n }), test: row => compareNumLocal(row._cmc, op, n) };
+  }
+  if (w === '軽い' || lw === 'cheap') return { label: t('role.d.mv.le', { n: 2 }), test: row => row._cmc <= 2 };
+  const type = ROLE_TYPE_WORD[lw] || (CARD_TYPE_JA[w] && ROLE_TYPE_WORD[CARD_TYPE_JA[w]] ? CARD_TYPE_JA[w] : null);
+  if (type) return { label: t('role.d.type', { t: LANG === 'en' ? titleCase(type) : (CARDTYPE_WORD_JA[type] || type) }), test: row => hasTypeWord(row, type) };
+  return null;
+}
+// 赤の除去, 2マナの除去, 白黒の全体除去, インスタントの除去...: [role, narrowing words]
+function splitRoleToken(bare) {
+  const direct = ROLE_BY_WORD.get(roleKey(bare));
+  if (direct) return { role: direct, derived: [] };
+  const s = String(bare).normalize('NFKC');
+  if (!JA_CHARS.test(s) || s.length < 3) return null;
+  for (let i = 1; i < s.length - 1; i++) {
+    let rest = s.slice(i);
+    const head = s.slice(0, i);
+    if (rest.startsWith('の')) rest = rest.slice(1);
+    const role = ROLE_BY_WORD.get(roleKey(rest));
+    if (!role) continue;
+    const parts = head.replace(/の$/, '').split('の').filter(Boolean);
+    const derived = parts.map(derivedFromWord);
+    if (derived.length && derived.every(Boolean)) return { role, derived };
+  }
+  return null;
+}
+// Finds role words among the search words. tokens: the search split into words.
+// Returns, per token index, what it became, so the rest of the search ignores those words.
+function findRoleWords(tokens) {
+  const out = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: [] };
+  const plain = tokens.map(tok => {
+    let negate = false, body = tok;
+    if (body.startsWith('-') && body.length > 1) { negate = true; body = body.slice(1); }
+    const quoted = /^".*"$/.test(body);
+    const isOp = /^([^\s:<>=!"]+)(:|>=|<=|>|<|=)(.+)$/.test(body);
+    return { negate, body, quoted, isOp, bare: body.replace(/^"|"$/g, '').trim() };
+  });
+  // English phrases of up to four words: "card draw", "sac outlet", "board wipe"...
+  for (let i = 0; i < plain.length; i++) {
+    const p = plain[i];
+    if (out.used.has(i) || p.isOp || p.quoted || !p.bare) continue;
+    let found = null;
+    for (let len = Math.min(4, plain.length - i); len >= 2; len--) {
+      const span = plain.slice(i, i + len);
+      if (span.some((q, k) => q.isOp || q.quoted || (k > 0 && q.negate) || JA_CHARS.test(q.bare))) continue;
+      const id = ROLE_BY_WORD.get(roleKey(span.map(q => q.bare).join('')));
+      if (id) { found = { id, len }; break; }
+    }
+    if (found) {
+      for (let k = i; k < i + found.len; k++) { out.used.add(k); out.roleIdx.add(k); }
+      out.roles.push({ id: found.id, negate: p.negate, word: plain.slice(i, i + found.len).map(q => q.bare).join(' '), idx: [...Array(found.len).keys()].map(k => i + k) });
+      continue;
+    }
+    const split = splitRoleToken(p.bare);
+    if (split) {
+      out.used.add(i);
+      out.roleIdx.add(i);
+      out.roles.push({ id: split.role, negate: p.negate, word: p.bare, idx: [i] });
+      if (!p.negate) split.derived.forEach(d => out.derived.push(d));
+    }
+  }
+  // a quoted role word: offered as a role search in the note
+  plain.forEach((p, i) => {
+    if (p.quoted && !p.isOp && !p.negate && !/\s/.test(p.bare)) {
+      const id = ROLE_BY_WORD.get(roleKey(p.bare));
+      if (id) out.quotedRoles.push({ id, word: p.bare, idx: i });
+    }
+  });
+  // with a role in the search, plain color / mana value / type words narrow it: 除去 赤, removal red
+  if (out.roles.some(r => !r.negate)) {
+    plain.forEach((p, i) => {
+      if (out.used.has(i) || p.isOp || p.quoted || p.negate || !p.bare) return;
+      const d = derivedFromWord(p.bare);
+      if (d) { out.used.add(i); out.derived.push(d); }
+    });
+  }
+  return out;
+}
+// The search with the role words in quotes (searched as text, the way it used to be).
+// groups: the token numbers of each role word (a phrase is one group)
+function literalQuery(tokens, groups) {
+  const first = new Map(), skip = new Set();
+  groups.forEach(g => { first.set(g[0], g); g.slice(1).forEach(k => skip.add(k)); });
+  const out = [];
+  tokens.forEach((tok, i) => {
+    if (skip.has(i)) return;
+    const g = first.get(i);
+    if (!g) { out.push(tok); return; }
+    out.push((tok.startsWith('-') ? '-' : '') + `"${g.map(k => tokens[k].replace(/^-/, '')).join(' ')}"`);
+  });
+  return out.join(' ');
+}
+// Scryfall syntax for a role, for when the card database could not be loaded
+function roleScryfallClause(id) {
+  const r = ROLE_BY_ID.get(id);
+  if (!r) return '';
+  const tags = r.tags.map(tg => `otag:${tg}`);
+  const rule = { etb: 'o:"when ~ enters"', ltb: 'o:"leaves the battlefield"', pump: 'o:"target creature gets +"', clone: 'o:"as a copy of"',
+    shock: 't:land o:"you may pay 2 life"', steal: 'o:"gain control of"', mill: 'o:"target player mills"', tokens: 'o:"create" o:token' }[r.rule];
+  const parts = tags.concat(rule ? [rule] : []);
+  return parts.length > 1 ? `(${parts.join(' or ')})` : (parts[0] || '');
+}
+
+// Role words for the suggestions under the search boxes: ドロ -> ドロー, サク -> サクり台, rem -> removal
+function roleSuggestions(raw) {
+  const q = roleKey(raw);
+  if (!q || /[:<>="]/.test(raw) || /^-/.test(String(raw).trim())) return [];
+  if (/^[a-z0-9]+$/.test(q) ? q.length < 3 : (!/[㐀-鿿]/.test(q) && q.length < 2)) return [];
+  const out = [];
+  const add = (r, w) => { if (out.length < 2 && !out.some(o => o.role === r.id)) out.push({ role: r.id, word: w }); };
+  // the label first (ドロー), then the other words (ランプ -> マナ加速)
+  ROLES.forEach(r => { const w = LANG === 'en' ? r.enWords[0] : r.ja; if (w && roleKey(w).startsWith(q)) add(r, w); });
+  ROLES.forEach(r => { const w = [r.ja, ...r.jaWords, ...r.enWords].find(x => roleKey(x).startsWith(q)); if (w) add(r, w); });
+  return out;
 }
 
 // ============================================================================
@@ -2639,14 +3150,48 @@ function correctEnglish(stem) {
 }
 
 // ---- reading the search box
+// A search of several words that is (part of) a card name is a name search, not a
+// role search: "wheel of sun and moon", "demonic tutor", 「ドロー ン」...
+function rolesLookLikeAName(tokens) {
+  const words = tokens.filter(tok => !/^-?[^\s:<>=!"]+(?::|>=|<=|>|<|=).+$/.test(tok)).map(tok => tok.replace(/^-/, '').replace(/^"|"$/g, ''));
+  if (words.length < 2 || !LOCAL_DB) return false;
+  const en = normText(words.join(' ')).trim(), ja = normJa(words.join(''));
+  const jaOk = JA_CHARS.test(ja);
+  return LOCAL_DB.some(row => (en.length >= 4 && row._nameEn.includes(en)) || (jaOk && (row._nameJa.includes(ja) || row._altJa.some(n => n.includes(ja)))));
+}
+function roleFromOperator(op, val, negate, i) {
+  const id = lookupRole(val);
+  if (id) return { id, negate, word: val, explicit: true, idx: [i] };
+  if (op !== 'role' && /^[a-z0-9-]+$/.test(String(val).toLowerCase())) return { tag: String(val).toLowerCase(), negate, word: val, explicit: true, idx: [i] };
+  return { unknown: true, negate, word: val, explicit: true, idx: [i] };
+}
 function parseSearch(raw) {
-  const out = { filters: [], words: [], ja: [], phrases: [] };
-  tokenizeQuery(String(raw || '').normalize('NFKC').trim()).forEach(token => {
+  const out = { filters: [], words: [], ja: [], phrases: [], roles: [], derived: [], sim: null, quotedRoles: [], tokens: [], rolesOff: false };
+  const tokens = tokenizeQuery(String(raw || '').normalize('NFKC').trim());
+  out.tokens = tokens;
+  let found = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: [] };
+  if (tagsState !== 'absent') {
+    found = findRoleWords(tokens);
+    // words besides the role words and the words that narrow them (colors, mana values, types)
+    const extra = tokens.some((tok, i) => !found.used.has(i) && !/^-?[^\s:<>=!"]+(?::|>=|<=|>|<|=).+$/.test(tok));
+    if (found.roles.length && extra && rolesLookLikeAName(tokens)) found = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: found.quotedRoles };
+  } else {
+    out.rolesOff = findRoleWords(tokens).roles.length > 0;
+  }
+  out.roles = found.roles;
+  out.derived = found.derived;
+  out.quotedRoles = found.quotedRoles;
+  tokens.forEach((token, i) => {
+    if (found.used.has(i)) return;
     let negate = false, body = token;
     if (body.startsWith('-') && body.length > 1) { negate = true; body = body.slice(1); }
     const m = body.match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)(.+)$/);
     if (m) {
-      out.filters.push({ negate, op: JA_OPERATORS[m[1]] || m[1].toLowerCase(), sep: m[2], val: m[3].replace(/^"|"$/g, ''), text: body.replace(/^"|"$/g, '') });
+      const op = JA_OPERATORS[m[1]] || m[1].toLowerCase();
+      const val = m[3].replace(/^"|"$/g, '');
+      if (ROLE_OPS.has(op) && m[2] === ':') { out.roles.push(roleFromOperator(op, val, negate, i)); return; }
+      if (SIM_OPS.has(op) && m[2] === ':') { if (!negate) out.sim = { val, idx: i }; return; }
+      out.filters.push({ negate, op, sep: m[2], val, text: body.replace(/^"|"$/g, '') });
       return;
     }
     const quoted = /^".+"$/.test(body);
@@ -2660,6 +3205,7 @@ function parseSearch(raw) {
   return out;
 }
 function passesFilter(row, f) {
+  if (f.test) { const r = f.test(row); return f.negate ? !r : r; }
   let r = f.op ? localOperatorMatch(row, f.op, f.sep, f.val) : null;
   if (r === null) r = textMatches(row, f.text, true);
   return f.negate ? !r : r;
@@ -2824,8 +3370,9 @@ function unitsTier(locs) {
 
 function buildSearchPlan(query) {
   const parsed = parseSearch(query);
-  const plan = { filters: parsed.filters, phrases: parsed.phrases.map(p => JA_CHARS.test(p) ? { ja: normJaSearch(p) } : { en: enTokens(p) }),
-                 en: null, enWord: false, ja: [], fixes: [], free: false, graded: false, tier2: 'tier.2' };
+  const plan = { filters: parsed.filters.concat(parsed.derived), phrases: parsed.phrases.map(p => JA_CHARS.test(p) ? { ja: normJaSearch(p) } : { en: enTokens(p) }),
+                 en: null, enWord: false, ja: [], fixes: [], free: false, graded: false, tier2: 'tier.2',
+                 roles: parsed.roles, derived: parsed.derived, sim: parsed.sim, quotedRoles: parsed.quotedRoles, tokens: parsed.tokens, rolesOff: parsed.rolesOff };
   if (parsed.words.length) {
     const en = prepareEnglish(parsed.words);
     if (en.units.length) { plan.en = en; plan.fixes = en.fixes; }
@@ -2868,10 +3415,35 @@ function evaluateRow(row, plan) {
 // group headings between tiers.
 let searchInfo = null;
 
+function roleMatches(row, r) {
+  if (r.id) return hasRole(row, r.id);
+  if (r.tag) return rowTags(row).has(r.tag);
+  return false;
+}
 function localSearchAndFilter() {
-  const plan = buildSearchPlan(state.query);
-  const base = LOCAL_DB.filter(row => inScope(row) && localFilterRow(row)
-    && plan.filters.every(f => passesFilter(row, f)) && plan.phrases.every(p => phraseInRow(row, p)));
+  const r = searchRows(state.query, state);
+  searchInfo = r.info;
+  return r.rows;
+}
+// The search: rows in order, and what the note above the results says.
+// st: the panel's filters, sort and "show loose matches" (normally `state`).
+function searchRows(query, st) {
+  st = st || state;
+  const plan = buildSearchPlan(query);
+  const roles = plan.roles;
+  const pos = roles.filter(r => !r.negate && !r.unknown);
+  const single = roles.length === 1 && pos.length === 1 && !roles[0].explicit && !plan.free && !plan.phrases.length;
+  const nameOf = single ? roleNameMatcher(roles[0].word) : null;
+  const rolesOk = row => roles.every(r => roleMatches(row, r) !== r.negate);
+  let simScores = null, simTarget = null;
+  if (plan.sim) {
+    simTarget = findCardRow(plan.sim.val);
+    simScores = new Map(simTarget && SIM ? similarTo(simTarget, 400).map(x => [x.row, x.score]) : []);
+  }
+  const base = LOCAL_DB.filter(row => inScope(row) && localFilterRow(row, st)
+    && plan.filters.every(f => passesFilter(row, f)) && plan.phrases.every(p => phraseInRow(row, p))
+    && (!roles.length || rolesOk(row) || (nameOf !== null && nameOf(row) < 2))
+    && (!simScores || simScores.has(row)));
   const grades = new Map();
   let rows = base;
   if (plan.free) {
@@ -2882,26 +3454,48 @@ function localSearchAndFilter() {
   rows.forEach(row => { counts[grades.has(row) ? grades.get(row).tier : 1]++; });
   let shown = rows, fellBack = false;
   if (plan.graded) {
-    if (counts[1] + counts[2]) { if (!state.showLoose) shown = rows.filter(row => grades.get(row).tier < 3); }
+    if (counts[1] + counts[2]) { if (!st.showLoose) shown = rows.filter(row => grades.get(row).tier < 3); }
     else fellBack = counts[3] > 0;
   }
   const tierOf = row => (grades.has(row) ? grades.get(row).tier : 1);
   const scoreOf = row => (grades.has(row) ? grades.get(row).score : 0);
-  const q = state.query || '';
+  const q = query || '';
   const rel = new Map();
-  if (!state.sort || state.sort === 'name') shown.forEach(row => rel.set(row, relevance(row, q)));
   const byName = (a, b) => (a.name_en < b.name_en ? -1 : a.name_en > b.name_en ? 1 : 0);
+  let recommended;
+  if (simScores) {
+    // 似:<card>: the closest effects first
+    recommended = (a, b) => simScores.get(b) - simScores.get(a) || byName(a, b);
+  } else if (pos.length || (st.roles && st.roles.size)) {
+    // a role search (or the role filter): the card the word names, then the cards that mainly do this, most played first
+    const specs = (pos.length ? pos.filter(r => r.id).map(r => r.id) : [...st.roles]).map(id => ROLE_BY_ID.get(id)).filter(Boolean);
+    const dem = new Map(), rank = new Map();
+    shown.forEach(row => {
+      rel.set(row, nameOf ? nameOf(row) : Math.min(relevance(row, q), 2));
+      dem.set(row, specs.some(sp => roleDemoted(row, sp)) ? 1 : 0);
+      rank.set(row, roleRankFor(row, specs));
+    });
+    recommended = (a, b) => rel.get(a) - rel.get(b) || dem.get(a) - dem.get(b) || (rank.get(a) - rank.get(b) || 0) || scoreOf(a) - scoreOf(b) || byName(a, b);
+  } else {
+    shown.forEach(row => rel.set(row, relevance(row, q)));
+    recommended = (a, b) => rel.get(a) - rel.get(b) || scoreOf(a) - scoreOf(b) || byName(a, b);
+  }
   const bySort = {
     cmc_asc: (a, b) => a._cmc - b._cmc || byName(a, b),
     cmc_desc: (a, b) => b._cmc - a._cmc || byName(a, b),
     released_desc: (a, b) => (b.released_at || '').localeCompare(a.released_at || ''),
-  }[state.sort] || ((a, b) => rel.get(a) - rel.get(b) || scoreOf(a) - scoreOf(b) || byName(a, b));
+  }[st.sort] || recommended;
   shown = shown.slice().sort((a, b) => tierOf(a) - tierOf(b) || bySort(a, b));
-  searchInfo = {
+  const asText = roles.filter(r => !r.explicit && !r.negate);
+  const literal = asText.length ? [{ word: asText.map(r => r.word).join(LANG === 'en' ? ', ' : '・'), query: literalQuery(plan.tokens, asText.map(r => r.idx)) }] : [];
+  const asRole = plan.quotedRoles.map(r => ({ id: r.id, query: plan.tokens.map((tok, i) => (i === r.idx ? r.word : tok)).join(' ') }));
+  const info = {
     graded: plan.graded, grades, counts, fellBack, fixes: plan.fixes, tier2: plan.tier2,
     groups: plan.graded ? new Set(shown.map(tierOf)).size > 1 : false,
+    roles, single, derived: plan.derived.map(d => d.label), literal, asRole, rolesOff: plan.rolesOff,
+    sorted: !st.sort || st.sort === 'name', sim: plan.sim ? { target: simTarget, val: plan.sim.val } : null, n: shown.length,
   };
-  return shown;
+  return { rows: shown, info, plan };
 }
 
 // Result tiles, with a heading wherever a new tier starts.
@@ -2919,11 +3513,59 @@ function resultTilesHtml(cards, rows, previousRow) {
     return heading + (state.view === 'text' ? textRowHtml(card, rows ? rows[i] : null) : cardTileHtml(card));
   }).join('');
 }
+// what a role search did, with a way back to searching the words as text
+// (the templates hold no markup, so escaped words and <b> labels can go straight in)
+function roleNoteParts(info) {
+  const parts = [];
+  if (info.sim) {
+    const row = info.sim.target;
+    if (row) {
+      const name = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+      parts.push(t(info.sorted ? 'sim.note' : 'sim.note.sorted', { name: `<a href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">${esc(name)}</a>` }));
+    } else {
+      parts.push(t('sim.unknown', { q: esc(info.sim.val) }));
+    }
+  }
+  if (info.rolesOff) parts.push(esc(t('role.absent')));
+  const roles = info.roles || [];
+  const pos = roles.filter(r => !r.negate && !r.unknown && (r.id || r.tag));
+  const label = r => `<b>${esc(r.id ? roleLabel(r.id) : r.tag)}</b>`;
+  roles.filter(r => r.unknown).forEach(r => parts.push(t('role.unknown', { w: esc(r.word) })));
+  if (pos.length === 1) {
+    const r = pos[0];
+    const same = r.explicit || roleKey(r.word) === roleKey(roleLabel(r.id));
+    parts.push(same ? t('role.note.one', { r: label(r) }) : t('role.note.word', { w: esc(r.word), r: label(r) }));
+  } else if (pos.length > 1) {
+    parts.push(t('role.note.many', { r: pos.map(label).join(LANG === 'en' ? ', ' : '・') }));
+  }
+  roles.filter(r => r.negate && (r.id || r.tag)).forEach(r => parts.push(t('role.note.not', { r: label(r) })));
+  if (pos.length && info.derived && info.derived.length) parts.push(t('role.note.with', { d: esc(info.derived.join(LANG === 'en' ? ', ' : '・')) }));
+  if (pos.length && info.sorted && !info.sim && info.n) parts.push(esc(t('role.note.order')));
+  (info.literal || []).forEach((l, i) => {
+    parts.push(`<button type="button" class="link-btn role-literal" data-q="${esc(l.query)}">${t('role.literal', { w: esc(l.word) })}</button><span class="role-count" data-i="${i}"></span>`);
+  });
+  (info.asRole || []).forEach(a => parts.push(`<button type="button" class="link-btn role-literal" data-q="${esc(a.query)}">${t('role.asrole', { r: esc(roleLabel(a.id)) })}</button>`));
+  return parts;
+}
+// how many cards the text search would find, filled in once the results are shown
+function fillLiteralCounts(info, myToken) {
+  if (!info || !(info.literal || []).length) return;
+  setTimeout(() => {
+    if (myToken !== searchToken || searchInfo !== info) return;
+    info.literal.forEach((l, i) => {
+      const el = document.querySelector(`#matchNote .role-count[data-i="${i}"]`);
+      if (!el) return;
+      const n = searchRows(l.query, state).rows.length;
+      if (!n) { const b = el.previousElementSibling; if (b) b.remove(); el.remove(); return; }   // the text search would find nothing
+      el.textContent = LANG === 'en' ? ` (${fmtNum(n)})` : `（${fmtNum(n)}件）`;
+    });
+  }, 30);
+}
 function renderMatchNote() {
   const el = document.getElementById('matchNote');
   const info = searchInfo;
   if (!info) { el.innerHTML = ''; return; }
-  const parts = info.fixes.map(f => `<span class="fix">${esc(t('match.fixed', { from: f.from, to: f.to }))}</span>`);
+  const parts = roleNoteParts(info).concat(info.fixes.map(f => `<span class="fix">${esc(t('match.fixed', { from: f.from, to: f.to }))}</span>`));
   if (info.graded) {
     if (info.fellBack) parts.push(esc(t('match.fallback')));
     else if (info.counts[3]) {
@@ -2936,6 +3578,12 @@ function renderMatchNote() {
   const toggle = document.getElementById('looseToggle');
   if (toggle) toggle.addEventListener('click', () => { state.showLoose = !state.showLoose; runSearch(); });
 }
+document.getElementById('matchNote').addEventListener('click', (e) => {
+  const b = e.target.closest('.role-literal');
+  if (b) { startSearch(b.dataset.q); return; }
+  const a = e.target.closest('a[data-card]');
+  if (a && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1)) { e.preventDefault(); goTo(`?card=${encodeURIComponent(a.dataset.card)}`); }
+});
 
 // ---- format legality -----------------------------------------------------
 const FORMAT_JA = {
@@ -3060,6 +3708,12 @@ function translateQuery(raw) {
       let [, op, sep, val] = m;
       const opEn = JA_OPERATORS[op] || op;
       const valBare = val.replace(/^"|"$/g, '');
+      if (ROLE_OPS.has(String(opEn).toLowerCase())) {
+        const id = lookupRole(valBare);
+        const clause = id ? roleScryfallClause(id) : `otag:${valBare}`;
+        notes.push(`${body} → ${clause}`);
+        return prefix + clause;
+      }
 
       // o:飛行 is really asking for the keyword ability -> use kw:
       if ((opEn === 'o' || opEn === 'kw') && JA_KEYWORDS[valBare]) {
@@ -3081,6 +3735,15 @@ function translateQuery(raw) {
       return `${prefix}${opEn}${sep}${val}`;
     }
 
+    // a role word: 除去, ドロー, ランプ...
+    if (!/^"/.test(body)) {
+      const split = splitRoleToken(body);
+      if (split) {
+        const clause = roleScryfallClause(split.role);
+        notes.push(`${body} → ${clause}`);
+        return prefix + clause;
+      }
+    }
     // bare Japanese term
     const translated = translateTerm(body);
     if (translated) {
@@ -3129,6 +3792,7 @@ function buildSearchQuery() {
   if (state.types.size) parts.push('(' + [...state.types].map(t => `t:${t}`).join(' or ') + ')');
   if (state.creatureTypes.size) parts.push('(' + [...state.creatureTypes].map(t => `t:${t}`).join(' or ') + ')');
   if (state.keywords.size) parts.push('(' + [...state.keywords].map(k => `kw:"${k}"`).join(' or ') + ')');
+  if (state.roles.size) parts.push('(' + [...state.roles].map(roleScryfallClause).join(' or ') + ')');
   if (state.rarity) parts.push(`r:${state.rarity}`);
   if (state.manaCosts.size) {
     const clauses = [...state.manaCosts].map(m => {
@@ -3392,7 +4056,8 @@ function tilePriceHtml(card) {
 function dbRowFor(card) {
   return (typeof ORACLE_MAP !== 'undefined' && ORACLE_MAP && card && card.oracle_id) ? ORACLE_MAP.get(card.oracle_id) : null;
 }
-function displayNameJa(card) {
+function displayNameJa(card) { return stripRuby(displayNameJaRaw(card)); }
+function displayNameJaRaw(card) {
   if (card.lang && card.lang !== 'en' && card.printed_name) return card.printed_name;
   if (card.lang && card.lang !== 'en' && card.card_faces && card.card_faces.some(f => f.printed_name)) {
     return card.card_faces.map(f => f.printed_name || f.name).join(' // ');
@@ -3433,7 +4098,8 @@ function translateTypeLine(en) {
     return sup + kin.join('') + main.join('・') + (subs.length ? ' — ' + subs.join('・') : '');
   }).join(' // ');
 }
-function displayTypeJa(card) {
+function displayTypeJa(card) { return stripRuby(displayTypeJaRaw(card)); }
+function displayTypeJaRaw(card) {
   if (card.lang && card.lang !== 'en') {
     const t = card.printed_type_line || (card.card_faces || []).map(f => f.printed_type_line).filter(Boolean).join(' // ');
     if (t) return t;
@@ -3444,7 +4110,8 @@ function displayTypeJa(card) {
   if (en && (card.lang === 'ja' || (row && row.name_ja))) return translateTypeLine(en);
   return card.printed_type_line || en;
 }
-function displayTextJa(card) {
+function displayTextJa(card) { return stripRuby(displayTextJaRaw(card)); }
+function displayTextJaRaw(card) {
   if (card.lang && card.lang !== 'en') {
     const t = getText(card, 'printed_text', 'printed_text');
     if (t) return t;
@@ -3452,7 +4119,8 @@ function displayTextJa(card) {
   const row = dbRowFor(card);
   return (row && row.oracle_ja) || getText(card, 'printed_text', 'oracle_text');
 }
-function japaneseFrontName(card) {
+function japaneseFrontName(card) { return stripRuby(japaneseFrontNameRaw(card)); }
+function japaneseFrontNameRaw(card) {
   if (card.lang === 'ja') {
     const face = card.card_faces && card.card_faces[0];
     const n = (face && face.printed_name) || card.printed_name;
@@ -3913,6 +4581,7 @@ function renderCardViewContent(card) {
         <div class="cp-typeline"><span>${esc(displayType(card))}</span>${pt}</div>
         <div class="cp-text">${symbolize(esc(displayText(card))) || t('notext')}</div>
         ${card.flavor_text ? `<p class="cp-flavor">${esc(card.flavor_text)}</p>` : ''}
+        <div class="cp-row cp-roles" id="cpRoles" hidden></div>
         <div class="cp-meta">
           <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
           ${card.set ? `<a href="?set=${encodeURIComponent(card.set)}" class="cp-set-link" data-set="${esc(card.set)}">${esc(setLabel)}</a>` : ''}
@@ -3942,6 +4611,7 @@ function renderCardViewContent(card) {
       <div class="version-menu-heading" id="versionMenuHeading">${t('versions.loading')}</div>
       <div class="version-panel" id="versionMenuPanel"></div>
     </section>
+    <section class="similar" id="similarBox" hidden></section>
     <section class="combos" id="combosBox" style="display:none;"></section>
     <section class="price-notes" id="priceNotes" hidden></section>`;
   document.title = `${names.main} — 悪知恵`;
@@ -3954,6 +4624,9 @@ function renderCardViewContent(card) {
   if (card._quotes === undefined) loadCardQuotes(card);
   if (LITE) { if (COMBOS_ON) liteButton('combosBox', 'lite.combos', () => loadCardCombos(card)); }
   else loadCardCombos(card);
+  showCardRoles(card);
+  if (LITE) liteButton('similarBox', 'lite.similar', () => { showSimilar(card); showCardRoles(card, true); });
+  else showSimilar(card);
 
   const setLink = document.querySelector('#cardViewCard .cp-set-link');
   if (setLink) setLink.addEventListener('click', (e) => {
@@ -4500,7 +5173,7 @@ function resetToHome() {
   searchInput.value = '';
   document.getElementById('heroInput').value = '';
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
   syncFilterUI();
   setFilterDrawer(false);
   if (location.search) history.pushState({ app: true }, '', location.pathname);
@@ -4558,11 +5231,14 @@ async function runLocalSearch(myToken) {
   updateComboHint(matches, myToken);
 
   if (!matches.length) {
-    showStatus(`<span class="serif">${t('res.none')}</span>${t('res.none.body')}`);
+    showStatus(`<span class="serif">${t('res.none')}</span>${t('res.none.body')}<div class="zero-help" id="zeroHelp"></div>`);
     resultInfo = { kind: 'zero' };
     renderResultCount();
+    renderZeroHelp(myToken);
+    fillLiteralCounts(searchInfo, myToken);
     return;
   }
+  fillLiteralCounts(searchInfo, myToken);
 
   showStatus(`<div class="spinner"></div><span class="serif">${t('res.hydrating')}</span>`);
   const pageRows = matches.slice(0, PAGE_SIZE);
@@ -4650,6 +5326,18 @@ async function runSearch() {
   }
 
   if (LOCAL_DB) {
+    // role words and the role filter need the role data; 似: needs the similar-card index
+    const plan = buildSearchPlan(state.query);
+    if ((plan.roles.length || plan.sim || state.roles.size) && !tagsSettled()) {
+      showStatus(`<div class="spinner"></div><span class="serif">${t('role.loading')}</span>`);
+      await loadTags();
+      if (myToken !== searchToken) return;
+    }
+    if (plan.sim && !SIM) {
+      showStatus(`<div class="spinner"></div><span class="serif">${t('sim.building')}</span>`);
+      try { await buildSimIndex(); } catch (err) { /* no index: the search finds nothing and says so */ }
+      if (myToken !== searchToken) return;
+    }
     showStatus(`<div class="spinner"></div><span class="serif">${t('searching')}</span>`);
     return runLocalSearch(myToken);
   }
@@ -4748,7 +5436,7 @@ const searchInput = document.getElementById('searchInput');
 
 function hasActiveFilters() {
   return !!(state.colors.size || state.types.size || state.creatureTypes.size ||
-            state.keywords.size || state.manaCosts.size || state.rarity || state.format);
+            state.keywords.size || state.manaCosts.size || state.roles.size || state.rarity || state.format);
 }
 // Search when there is something to search for, otherwise show random cards.
 function refreshResults() {
@@ -4831,6 +5519,7 @@ function activeFilterItems() {
   if (state.format) items.push({ group: 'format', value: state.format, label: t('pill.format', { f: formatName(state.format) }) });
   state.creatureTypes.forEach(v => items.push({ group: 'creatureTypes', value: v, label: (!en && CREATURE_TYPE_JA[v]) || titleCase(v) }));
   state.keywords.forEach(v => items.push({ group: 'keywords', value: v, label: (!en && KEYWORD_JA_BY_EN[v]) || titleCase(v) }));
+  state.roles.forEach(v => items.push({ group: 'roles', value: v, label: t('pill.role', { r: roleLabel(v) }) }));
   return items;
 }
 
@@ -4886,7 +5575,7 @@ document.getElementById('activeFilters').addEventListener('click', (e) => {
 });
 document.getElementById('clearBtn').addEventListener('click', () => {
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
   syncFilterUI();
   refreshResults();
 });
@@ -4909,7 +5598,7 @@ function renderCheckList(listEl, items, filterText) {
   let shown = items;
   if (f) {
     shown = items.map((it, i) => {
-      const r = [matchRank(it.ja, f), matchRank(it.en, f)].filter(x => x >= 0);
+      const r = [matchRank(it.ja, f), matchRank(it.en, f)].concat((it.alt || []).map(a => matchRank(a, f) >= 0 ? 3 : -1)).filter(x => x >= 0);
       return { it, i, rank: r.length ? Math.min(...r) : -1 };
     }).filter(x => x.rank >= 0).sort((a, b) => a.rank - b.rank || a.i - b.i).map(x => x.it);
   }
@@ -4987,6 +5676,10 @@ fetch('https://api.scryfall.com/catalog/creature-types', { headers: { 'Accept': 
 
 const keywordItems = () => sortForList(Object.entries(KEYWORD_JA_BY_EN).map(([en, ja]) => ({ value: en, ja, en: titleCase(en) })));
 const keywordList = wireCheckList('keywordList', 'keywordFilter', keywordItems);
+// roles, in the list's order (removal, card draw, mana, graveyard...); slang finds them too (ランプ -> マナ加速)
+const roleItems = () => ROLES.map(r => ({ value: r.id, ja: r.ja, en: r.en, alt: r.jaWords.concat(r.enWords) }));
+const roleList = wireCheckList('roleList', 'roleFilter', roleItems);
+document.getElementById('roleFilter').addEventListener('focus', () => { loadTags(); });
 
 // Phone layout: the filter panel opens as a drawer.
 document.getElementById('filterOpenBtn').addEventListener('click', () => setFilterDrawer(!filterPanelOpen()));
@@ -4995,6 +5688,440 @@ document.getElementById('filterClose').addEventListener('click', () => setFilter
 document.getElementById('formatSelect').addEventListener('change', (e) => { state.format = e.target.value; syncFilterUI(); refreshResults(); });
 
 syncFilterUI();
+
+// ============================================================================
+// Similar cards: rules text compared word by word - words and pairs of words,
+// rare ones counting more (TF-IDF), the card's own name as ~, numbers as #,
+// reminder text left out - and the roles two cards share (60% text, 40% roles).
+// The index is built in the background the first time it's needed.
+// ============================================================================
+const SIM_STOP = new Set([...SEARCH_STOP, 'may', 'if', 'then', 'their', 'they', 'them', 'those', 'can', 'do', 'does', 'have', 'has', 'was', 'were']);
+const SIM_TYPE_SKIP = new Set(['', 'legendary', 'basic', 'snow', 'world', 'token']);
+const SIM_OPS = new Set(['sim', 'similar', 'like', '似', '類似', '似た', '似てる']);
+let SIM = null, simPromise = null;
+function simTermsOf(row) {
+  const terms = [];
+  roleText(row).replace(/~/g, ' cardname ').split('\n').forEach(line => {
+    const toks = [];
+    (line.match(EN_TOKEN_RE) || []).forEach(w => {
+      let s = enStem(w);
+      if (/^\d+$/.test(s)) s = '#';
+      else if (/^\{\d+\}$/.test(s)) s = '{#}';
+      else if (s.includes('/') && /\d/.test(s)) s = s.replace(/\d+/g, '#');
+      if (!SIM_STOP.has(s)) toks.push(s);
+    });
+    toks.forEach((tk, i) => { terms.push(tk); if (i) terms.push(toks[i - 1] + ' ' + tk); });
+  });
+  String(row._typeEn || '').split(/[^a-z']+/).forEach(w => { if (!SIM_TYPE_SKIP.has(w)) terms.push('t:' + w); });
+  return terms;
+}
+const simYield = () => new Promise(r => setTimeout(r, 0));
+function buildSimIndex() {
+  if (simPromise) return simPromise;
+  simPromise = (async () => {
+    await dbReady;
+    if (!LOCAL_DB) throw new Error('no card database');
+    const rows = LOCAL_DB, N = rows.length;
+    const df = new Map();
+    for (let i = 0; i < N; i++) {
+      new Set(simTermsOf(rows[i])).forEach(tm => df.set(tm, (df.get(tm) || 0) + 1));
+      if (i % 1500 === 1499) await simYield();
+    }
+    const vocab = new Map(), idf = [];
+    df.forEach((n, tm) => { if (n >= 2) { vocab.set(tm, idf.length); idf.push(Math.log(N / n) * (tm.startsWith('t:') ? 0.6 : 1)); } });
+    df.clear();
+    const ids = new Array(N), wts = new Array(N), norms = new Float32Array(N);
+    for (let i = 0; i < N; i++) {
+      const counts = new Map();
+      simTermsOf(rows[i]).forEach(tm => { const id = vocab.get(tm); if (id !== undefined) counts.set(id, (counts.get(id) || 0) + 1); });
+      const a = new Int32Array(counts.size), w = new Float32Array(counts.size);
+      let k = 0, norm = 0;
+      counts.forEach((c, id) => { const x = (1 + Math.log(c)) * idf[id]; a[k] = id; w[k] = x; norm += x * x; k++; });
+      ids[i] = a; wts[i] = w; norms[i] = Math.sqrt(norm) || 1;
+      rows[i]._simIdx = i;
+      if (tagsSettled()) rowRoles(rows[i]);
+      if (i % 1500 === 1499) await simYield();
+    }
+    SIM = { ids, wts, norms, scratch: new Float32Array(idf.length) };
+  })().catch(err => { simPromise = null; throw err; });
+  return simPromise;
+}
+// [{row, score}], most similar first
+function similarTo(target, limit = 300) {
+  if (!SIM || target._simIdx === undefined) return [];
+  const key = tagsSettled() ? 'r' : 'n';
+  if (target._sim && target._sim.key === key) return target._sim.list.slice(0, limit);
+  const ti = target._simIdx, s = SIM.scratch;
+  const tIds = SIM.ids[ti], tW = SIM.wts[ti], tNorm = SIM.norms[ti];
+  for (let k = 0; k < tIds.length; k++) s[tIds[k]] = tW[k];
+  const tRoles = tagsSettled() ? new Set(rowRoles(target)) : new Set();
+  const out = [];
+  for (let i = 0; i < LOCAL_DB.length; i++) {
+    if (i === ti) continue;
+    const ids = SIM.ids[i], w = SIM.wts[i];
+    let dot = 0;
+    for (let k = 0; k < ids.length; k++) { const v = s[ids[k]]; if (v) dot += v * w[k]; }
+    let score = dot / (tNorm * SIM.norms[i]);
+    if (tRoles.size) {
+      // what the cards do counts as much as how they're worded: sac outlets first for a sac outlet
+      let inter = 0;
+      const rr = rowRoles(LOCAL_DB[i]);
+      rr.forEach(id => { if (tRoles.has(id)) inter++; });
+      score = 0.6 * score + 0.4 * (inter ? inter / (tRoles.size + rr.length - inter) : 0);
+    }
+    if (score > 0.08) out.push({ row: LOCAL_DB[i], score });
+  }
+  for (let k = 0; k < tIds.length; k++) s[tIds[k]] = 0;
+  out.sort((a, b) => b.score - a.score);
+  const list = out.slice(0, 500);
+  target._sim = { key, list };
+  return list.slice(0, limit);
+}
+// the card a 似:<name> search means: exact name (Japanese, English, a face, an older name), else the best name match
+function findCardRow(val) {
+  const v = String(val || '').trim();
+  if (!v || !LOCAL_DB) return null;
+  const ja = normJa(stripRuby(v)), en = normText(v).trim();
+  const hit = LOCAL_DB.find(row => inScope(row) && (row._nameJa === ja || row._nameEn === en))
+    || LOCAL_DB.find(row => inScope(row) && row._altJa.includes(ja))
+    || LOCAL_DB.find(row => inScope(row) && String(row.name_en || '').includes(' // ') && String(row.name_en).split(' // ').some(f => normText(f).trim() === en));
+  if (hit) return hit;
+  const sug = nameSuggestions(v);
+  return sug.length ? sug[0] : null;
+}
+// Main card type, for "same card type": creature for an artifact creature, land for an artifact land
+function primaryType(row) {
+  for (const tp of ['creature', 'planeswalker', 'battle', 'land', 'instant', 'sorcery', 'artifact', 'enchantment']) if (hasTypeWord(row, tp)) return tp;
+  return '';
+}
+function simPasses(target, prefs) {
+  const tc = (target._colors || '').split('').filter(Boolean);
+  const tType = primaryType(target);
+  return row => {
+    if (prefs.color && !(row._colors || '').split('').filter(Boolean).every(c => tc.includes(c))) return false;
+    if (prefs.cmc && row._cmc > target._cmc) return false;
+    if (prefs.type && tType && !hasTypeWord(row, tType)) return false;
+    return true;
+  };
+}
+// The card page's toggles as search syntax, for 「もっと見る」
+function simSearchQuery(target, prefs) {
+  const name = (LANG !== 'en' && target.name_ja) ? target.name_ja : String(target.name_en || '').split(' // ')[0];
+  const parts = [`${LANG === 'en' ? 'sim' : '似'}:${/[\s"]/.test(name) ? `"${name.replace(/"/g, '')}"` : name}`];
+  if (prefs.color) parts.push(`${LANG === 'en' ? 'c' : '色'}<=${(target._colors || 'c').toLowerCase()}`);
+  if (prefs.cmc) parts.push(`${LANG === 'en' ? 'cmc' : 'マナ総量'}<=${target._cmc}`);
+  if (prefs.type) { const tp = primaryType(target); if (tp) parts.push(LANG === 'en' ? `t:${tp}` : `タイプ:${CARDTYPE_WORD_JA[tp] || tp}`); }
+  return parts.join(' ');
+}
+const SIM_PREF_KEY = 'akuchie-similar';
+let simPrefs = (() => {
+  try { const v = JSON.parse(localStorage.getItem(SIM_PREF_KEY) || '{}'); return { color: !!v.color, cmc: !!v.cmc, type: !!v.type }; }
+  catch (e) { return { color: false, cmc: false, type: false }; }
+})();
+function saveSimPrefs() { try { localStorage.setItem(SIM_PREF_KEY, JSON.stringify(simPrefs)); } catch (e) { /* private mode */ } }
+const SIM_SHOWN = 12;
+let simCards = [];
+function similarHeadHtml() {
+  const sw = (k, label, title) => `<button type="button" class="sim-sw" data-k="${k}" aria-pressed="${simPrefs[k]}"${title ? ` title="${esc(title)}"` : ''}>${esc(label)}</button>`;
+  return `<div class="sim-head">
+      <h2 class="sim-title">${esc(t('sim.heading'))}</h2>
+      <div class="sim-sws" role="group" aria-label="${esc(t('sim.aria'))}">${sw('color', t('sim.color'), t('sim.color.title'))}${sw('cmc', t('sim.cmc'))}${sw('type', t('sim.type'))}</div>
+    </div>`;
+}
+// The card page's 似た効果のカード section
+async function showSimilar(card) {
+  const box = document.getElementById('similarBox');
+  if (!box) return;
+  box.hidden = false;
+  box.innerHTML = similarHeadHtml() + `<p class="sim-status"><span class="spinner sm"></span>${esc(t('sim.loading'))}</p>`;
+  try {
+    await dbReady;
+    const row = dbRowFor(card);
+    if (!LOCAL_DB || !row) { box.hidden = true; return; }
+    await loadTags();
+    await buildSimIndex();
+    if (shownCard !== card) return;
+    await renderSimilar(card, row);
+  } catch (err) {
+    if (shownCard === card) box.hidden = true;
+  }
+}
+async function renderSimilar(card, row) {
+  const box = document.getElementById('similarBox');
+  if (!box || shownCard !== card) return;
+  const passes = simPasses(row, simPrefs);
+  const list = similarTo(row).filter(x => inScope(x.row) && passes(x.row)).slice(0, SIM_SHOWN).map(x => x.row);
+  const more = `<a class="sim-more" href="?" data-q="${esc(simSearchQuery(row, simPrefs))}">${esc(t('sim.more'))} →</a>`;
+  if (!list.length) {
+    box.innerHTML = similarHeadHtml() + `<p class="sim-status">${esc(t('sim.none'))}</p>` + more;
+    return;
+  }
+  let cards = list.map(rowToCard);
+  if (!LITE) {
+    box.innerHTML = similarHeadHtml() + `<p class="sim-status"><span class="spinner sm"></span>${esc(t('sim.loading'))}</p>`;
+    cards = await hydrateRows(list);
+    if (shownCard !== card) return;
+  }
+  simCards = cards;
+  const body = LITE
+    ? `<ul class="sim-list">${cards.map(c => { const n = cardNames(c); return `<li><a class="text-row sim-row" href="?card=${encodeURIComponent(c.id)}" data-id="${c.id}"><span class="tr-name">${esc(n.main)}</span><span class="tr-meta"><span class="pips">${renderPips(c.mana_cost)}</span><span>${esc(displayType(c))}</span></span></a></li>`; }).join('')}</ul>`
+    : `<div class="grid sim-grid">${cards.map(cardTileHtml).join('')}</div>`;
+  box.innerHTML = similarHeadHtml() + body + more;
+  attachTileHandlersIn(box, () => simCards);
+}
+document.getElementById('cardView').addEventListener('click', (e) => {
+  const sw = e.target.closest('.sim-sw');
+  if (sw && shownCard) {
+    simPrefs[sw.dataset.k] = !simPrefs[sw.dataset.k];
+    saveSimPrefs();
+    const row = dbRowFor(shownCard);
+    if (row) renderSimilar(shownCard, row);
+    return;
+  }
+  const more = e.target.closest('.sim-more');
+  if (more) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    e.preventDefault();
+    startSearch(more.dataset.q);
+    return;
+  }
+  const chip = e.target.closest('.role-chip');
+  if (chip) { e.preventDefault(); startSearch(roleQuery(chip.dataset.role)); }
+});
+// The card page's 役割 chips
+async function showCardRoles(card, force) {
+  const box = document.getElementById('cpRoles');
+  if (!box) return;
+  if (LITE && !force && !tagsSettled()) return;   // lightweight mode: only when the role data is already here
+  try {
+    await dbReady;
+    await loadTags();
+  } catch (e) { return; }
+  if (shownCard !== card) return;
+  const row = dbRowFor(card);
+  const ids = row && tagsState === 'ready' ? rowRoles(row) : [];
+  if (!ids.length) { box.hidden = true; return; }
+  box.innerHTML = `<span class="cp-row-label">${esc(t('cp.roles'))}</span><span class="role-chips">${ids.map(id =>
+    `<button type="button" class="role-chip" data-role="${id}" title="${esc(t('cp.roles.title', { r: roleLabel(id) }))}">${esc(roleLabel(id))}</button>`).join('')}</span>`;
+  box.hidden = false;
+}
+// Search from anywhere (role chips, 「もっと見る」, suggestions)
+function startSearch(q) {
+  hideSuggest();
+  searchInput.value = q;
+  document.getElementById('heroInput').value = q;
+  state.query = q;
+  state.showLoose = false;
+  if (routeFromUrl().view !== 'search' || location.search) history.pushState({ app: true }, '', location.pathname);
+  showView('search');
+  document.title = homeTitle();
+  window.scrollTo(0, 0);
+  refreshResults();
+  requestAnimationFrame(updateHeroOut);
+}
+// ============================================================================
+// When nothing is found: a close card name, a role or keyword the search may
+// have meant, the search without one of its words or without one of its
+// filters - each with how many cards it finds. All of it counts with the
+// filters that are on, so every suggestion really has cards behind it.
+// ============================================================================
+const helpYield = () => new Promise(r => setTimeout(r, 0));
+// card names close to what was typed (a typo, or the start of a name with a typo)
+function fuzzyNameRows(text, keep, limit) {
+  const q = String(text || '').trim();
+  if (q.length < 2 || !LOCAL_DB) return [];
+  const isJa = JA_CHARS.test(q);
+  const key = isJa ? kanaFold(normJa(stripRuby(q))) : normText(q).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (key.length < 2) return [];
+  const max = key.length <= 3 ? 1 : key.length <= 7 ? 2 : 3;
+  const hits = [];
+  for (const row of LOCAL_DB) {
+    if (!keep(row)) continue;
+    const names = isJa ? [row._nameJa, ...row._altJa].filter(Boolean).map(kanaFold)
+      : String(row.name_en || '').split(' // ').concat([row.name_en]).map(n => normText(n).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim());
+    let best = max + 1, prefix = false;
+    for (const n of names) {
+      if (!n) continue;
+      if (Math.abs(n.length - key.length) <= max) best = Math.min(best, editDistance(key, n, max));
+      if (n.length > key.length + 1) {
+        const d = editDistance(key, n.slice(0, key.length), max);
+        if (d < best) { best = d; prefix = true; }
+      }
+    }
+    if (best >= 1 && best <= max) hits.push({ row, d: best + (prefix ? 0.5 : 0) });
+  }
+  hits.sort((a, b) => a.d - b.d || (rowEdhrec(a.row) ?? 1e9) - (rowEdhrec(b.row) ?? 1e9) || a.row.name_en.localeCompare(b.row.name_en));
+  return hits.slice(0, limit).map(h => h.row);
+}
+// words the search understands (roles, keyword abilities, card types): the closest one to a typed word
+function closestKnownWord(word) {
+  const k = roleKey(word);
+  if (k.length < 2 || ROLE_BY_WORD.has(k) || JA_KEYWORDS[word] || JA_PHRASES[word]) return null;
+  const isJa = JA_CHARS.test(word);
+  const words = [];
+  ROLES.forEach(r => [r.ja, ...r.jaWords, ...(isJa ? [] : r.enWords)].forEach(w => words.push({ w, role: r.id })));
+  if (isJa) Object.keys(JA_KEYWORDS).forEach(w => words.push({ w, kw: true }));
+  const max = k.length <= 3 ? 1 : 2;
+  let best = null;
+  words.forEach(({ w, role, kw }) => {
+    const wk = roleKey(w);
+    if (Math.abs(wk.length - k.length) > max) return;
+    const d = editDistance(k, wk, max);
+    if (d >= 1 && d <= max && (!best || d < best.d)) best = { d, w, role, kw };
+  });
+  // a role word at the start or end of a longer word: 除去カード -> 除去, ドロー効果 -> ドロー
+  if (!best && isJa) {
+    for (const r of ROLES) {
+      const w = [r.ja, ...r.jaWords].find(x => x !== word && (x.length >= 3 || /^[\u3400-\u9fff]{2,}$/.test(x)) && (word.startsWith(x) || word.endsWith(x)));
+      if (w) { best = { d: 0, w, role: r.id }; break; }
+    }
+  }
+  return best;
+}
+function helpCountLabel(n) { return t('help.count', { n: fmtNum(n) }); }
+async function renderZeroHelp(myToken) {
+  const box = document.getElementById('zeroHelp');
+  if (!box || !LOCAL_DB) return;
+  const alive = () => myToken === searchToken && document.getElementById('zeroHelp') === box;
+  const query = state.query.trim();
+  const tokens = tokenizeQuery(query.normalize('NFKC'));
+  const isOp = tok => /^-?[^\s:<>=!"]+(?::|>=|<=|>|<|=).+$/.test(tok);
+  const opIdx = tokens.map((tok, i) => i).filter(i => isOp(tokens[i]));
+  const wordIdx = tokens.map((tok, i) => i).filter(i => !isOp(tokens[i]));
+  const plan = buildSearchPlan(query);
+  const groups = [];
+  const render = (done) => {
+    if (!alive()) return;
+    const html = groups.filter(g => g.items.length).map(g => `<div class="zh-group"><span class="zh-kind">${esc(g.title)}</span>${g.items.join('')}</div>`).join('');
+    box.innerHTML = (html ? `<p class="zh-title">${esc(t('help.title'))}</p>${html}` : '')
+      + (done ? '' : `<p class="zh-loading"><span class="spinner sm"></span>${esc(t('help.loading'))}</p>`);
+  };
+  const count = (q, st) => searchRows(q, st || state).rows.length;
+  const qBtn = (q, label, n) => `<button type="button" class="zh-btn" data-q="${esc(q)}">${esc(label)}${n === undefined ? '' : `<span class="zh-n">${esc(helpCountLabel(n))}</span>`}</button>`;
+  render(false);
+  await helpYield();
+  if (!alive()) return;
+  // 1. a card name close to the search (or to the card a 似: search names)
+  const nameGroup = { title: t('help.names'), items: [] };
+  groups.push(nameGroup);
+  const opFilters = plan.filters;
+  const keep = row => inScope(row) && localFilterRow(row, state) && opFilters.every(f => passesFilter(row, f));
+  const nameText = plan.sim ? plan.sim.val : wordIdx.map(i => tokens[i].replace(/^"|"$/g, '')).join(' ');
+  // only for what looks like a name: a few words, no role words
+  const nameish = !plan.roles.some(r => !r.negate) && wordIdx.length >= 1 && wordIdx.length <= 3;
+  let close = plan.sim || nameish ? fuzzyNameRows(nameText, plan.sim ? inScope : keep, 4) : [];
+  if (!close.length && nameish && !plan.sim) close = fuzzyNameRows(nameText, inScope, 4);   // a card the filters leave out is still worth a link
+  close.forEach(row => {
+    const name = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+    if (plan.sim) {
+      const q = tokens.map((tok, i) => (i === plan.sim.idx ? tok.replace(/:.*$/, ':') + (/[\s"]/.test(name) ? `"${name.replace(/"/g, '')}"` : name) : tok)).join(' ');
+      nameGroup.items.push(qBtn(q, name));
+    } else {
+      nameGroup.items.push(`<a class="zh-btn zh-card" href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">${esc(name)}</a>`);
+    }
+  });
+  render(false);
+  await helpYield();
+  if (!alive()) return;
+  // 2. a word that's close to a role or keyword ability; a role name that doesn't exist
+  const wordGroup = { title: t('help.words'), items: [] };
+  groups.push(wordGroup);
+  for (const i of wordIdx) {
+    const raw = tokens[i].replace(/^-/, '').replace(/^"|"$/g, '');
+    if (/^".*"$/.test(tokens[i].replace(/^-/, ''))) continue;
+    const near = closestKnownWord(raw);
+    if (!near) continue;
+    const q = tokens.map((tok, k) => (k === i ? (tok.startsWith('-') ? '-' : '') + near.w : tok)).join(' ');
+    const n = count(q);
+    if (n) wordGroup.items.push(qBtn(q, t('help.word', { from: raw, to: near.w }), n));
+    await helpYield();
+    if (!alive()) return;
+  }
+  const roleGroup = { title: t('help.roles'), items: [] };
+  groups.push(roleGroup);
+  plan.roles.filter(r => r.unknown).forEach(r => {
+    const k = roleKey(r.word);
+    const max = k.length <= 3 ? 1 : 2;
+    let near = ROLES.map(x => ({ x, d: Math.min(...[x.ja, x.en, ...x.jaWords, ...x.enWords].map(w => editDistance(k, roleKey(w), max))) }))
+      .filter(o => o.d <= max).sort((a, b) => a.d - b.d).slice(0, 3);
+    // nothing close: the roles people look for most
+    if (!near.length) near = ['removal', 'draw', 'ramp', 'counterspell', 'tutor', 'boardwipe'].map(id => ({ x: ROLE_BY_ID.get(id) }));
+    near.forEach(({ x }) => {
+        const q = tokens.map((tok, k2) => (r.idx && k2 === r.idx[0] ? tok.replace(/:.*$/, ':') + (LANG === 'en' ? x.id : x.ja) : tok)).join(' ');
+        roleGroup.items.push(qBtn(q, roleLabel(x.id)));
+      });
+  });
+  render(false);
+  // 3. the search without one of its words
+  const dropGroup = { title: t('help.drop'), items: [] };
+  groups.push(dropGroup);
+  if (wordIdx.length >= 2) {
+    const found = [];
+    for (const i of wordIdx.slice(0, 6)) {
+      const q = tokens.filter((tok, k) => k !== i).join(' ');
+      const n = count(q);
+      if (n) found.push({ q, n, word: tokens[i] });
+      await helpYield();
+      if (!alive()) return;
+    }
+    found.sort((a, b) => b.n - a.n).slice(0, 4).forEach(f => dropGroup.items.push(qBtn(f.q, t('help.without', { w: f.word }), f.n)));
+    render(false);
+  }
+  // 4. without one of the filters (the panel's, or the search's own 色:r, マナ総量<=2...), or without all of them
+  const filterGroup = { title: t('help.filters'), items: [] };
+  groups.push(filterGroup);
+  const panel = activeFilterItems();
+  const nFilters = panel.length + opIdx.length;
+  for (const it of panel) {
+    if (!query && panel.length === 1) continue;   // that would be every card
+    const st = Object.assign({}, state, { colors: new Set(state.colors), types: new Set(state.types), creatureTypes: new Set(state.creatureTypes),
+      keywords: new Set(state.keywords), manaCosts: new Set(state.manaCosts), roles: new Set(state.roles) });
+    if (it.group === 'rarity') st.rarity = ''; else if (it.group === 'format') st.format = ''; else st[it.group].delete(it.value);
+    const n = count(query, st);
+    if (n) filterGroup.items.push(`<button type="button" class="zh-btn" data-group="${esc(it.group)}" data-value="${esc(it.value)}">${esc(t('help.unfilter', { f: it.label }))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
+    await helpYield();
+    if (!alive()) return;
+  }
+  for (const i of opIdx) {
+    const q = tokens.filter((tok, k) => k !== i).join(' ');
+    if (!q.trim() && !panel.length) continue;   // that would be every card
+    const n = count(q);
+    if (n) filterGroup.items.push(qBtn(q, t('help.unfilter', { f: tokens[i] }), n));
+    await helpYield();
+    if (!alive()) return;
+  }
+  if (nFilters >= 2) {
+    const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(),
+      roles: new Set(), rarity: '', format: '' });
+    const q = tokens.filter((tok, k) => !opIdx.includes(k)).join(' ');
+    const n = q.trim() ? count(q, st) : 0;
+    if (n) filterGroup.items.push(`<button type="button" class="zh-btn zh-all" data-clear="1" data-q="${esc(q)}">${esc(t('help.unfilter.all'))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
+  }
+  render(true);
+  if (!groups.some(g => g.items.length)) box.innerHTML = '';
+}
+document.getElementById('cardGrid').addEventListener('click', (e) => {
+  const b = e.target.closest('.zh-btn');
+  if (!b) return;
+  if (b.dataset.card) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+    e.preventDefault();
+    goTo(`?card=${encodeURIComponent(b.dataset.card)}`);
+    return;
+  }
+  if (b.dataset.clear) {
+    state.colors.clear(); state.types.clear(); state.creatureTypes.clear(); state.keywords.clear(); state.manaCosts.clear();
+    state.roles.clear(); state.rarity = ''; state.format = '';
+    syncFilterUI();
+  }
+  if (b.dataset.group) {
+    removeFilter(b.dataset.group, b.dataset.value);
+    syncFilterUI();
+    refreshResults();
+    return;
+  }
+  if (b.dataset.q !== undefined) startSearch(b.dataset.q);
+});
 
 // ---- themes: light / dark --------------------------------------------------
 const THEME_KEY = 'akuchie-theme';
@@ -5029,6 +6156,9 @@ const GUIDE_ROWS = {
   ja: [
     ['稲妻', 'カード名（日本語名・英語名どちらでも）'],
     ['1枚捨てる', '効果文をそのまま検索'],
+    ['除去', '役割で探す（ドロー・ランプ・サクり台・打ち消し・サーチなど。<code>赤の除去</code> のように色やマナ総量も）'],
+    ['"ドロー"', '<code>"</code> で囲むと役割ではなく文字として検索'],
+    ['似:稲妻', '似た効果のカード（ほかの条件と組み合わせも可）'],
     ['飛行', 'キーワード能力'],
     ['絆魂 接死', '複数の語を並べると、すべてを満たすカード'],
     ['効果:ダメージ', '効果文だけを対象に検索（<code>o:</code> も可）'],
@@ -5041,6 +6171,8 @@ const GUIDE_ROWS = {
   en: [
     ['Lightning Bolt', 'Card name (English or Japanese)'],
     ['"draw a card"', 'An exact phrase from the rules text'],
+    ['removal', 'Search by role (card draw, ramp, sac outlet, counterspell, tutor…; also <code>red removal</code>, <code>cheap removal</code>)'],
+    ['sim:"Lightning Bolt"', 'Cards with similar effects (works with other conditions)'],
     ['flying', 'Keyword ability'],
     ['lifelink deathtouch', 'Several words: cards that match all of them'],
     ['o:damage', 'Search the rules text only'],
@@ -5052,8 +6184,8 @@ const GUIDE_ROWS = {
   ],
 };
 const GUIDE_EXAMPLES = {
-  main: { ja: ['飛行 絆魂', '効果:ダメージ 色:r', '果敢 マナ総量<=2', '接死 -飛行'],
-          en: ['flying lifelink', 'o:damage c:r', 'prowess cmc<=2', 'deathtouch -flying'] },
+  main: { ja: ['飛行 絆魂', '効果:ダメージ 色:r', '赤の除去', '似:稲妻 マナ総量<=1'],
+          en: ['flying lifelink', 'o:damage c:r', 'red removal', 'sim:"Lightning Bolt" cmc<=1'] },
   selesnya: { ja: ['飛行 絆魂', '効果:トークン 色:g', '警戒 マナ総量<=2', '接死 -飛行'],
               en: ['flying lifelink', 'o:token c:g', 'vigilance cmc<=2', 'deathtouch -flying'] },
   golgari: { ja: ['接死 絆魂', '効果:墓地 色:b', '威迫 マナ総量<=2', '接死 -飛行'],
@@ -6276,16 +7408,24 @@ function attachNameSuggest(input, list) {
   };
   const pick = (row) => {
     close();
+    if (row.role) { startSearch(row.word); return; }
     const picked = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
     [searchInput, document.getElementById('heroInput')].forEach(el => { el.value = picked; });
     goTo(`?card=${encodeURIComponent(row.id)}`);
   };
   const update = () => {
     const q = input.value;
-    items = nameSuggestions(q);
+    const roleItems = roleSuggestions(q);
+    items = roleItems.concat(nameSuggestions(q).slice(0, 8 - roleItems.length));
     active = -1;
     if (!items.length || document.activeElement !== input) { close(); return; }
     list.innerHTML = items.map((row, i) => {
+      if (row.role) {
+        const label = roleLabel(row.role);
+        const sub = roleKey(label) === roleKey(row.word) ? t('suggest.role') : t('suggest.role.as', { r: label });
+        return `<li role="presentation"><button type="button" class="suggest-item role-suggest" role="option" id="${list.id}-${i}" aria-selected="false" data-i="${i}" tabindex="-1">
+        <span class="s-main">${boldMatch(row.word, q)}</span><span class="s-sub s-role">${esc(sub)}</span></button></li>`;
+      }
       const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
       const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : row.name_ja;
       return `<li role="presentation"><button type="button" class="suggest-item" role="option" id="${list.id}-${i}" aria-selected="false" data-i="${i}" tabindex="-1">
@@ -6319,8 +7459,8 @@ document.getElementById('searchForm').addEventListener('submit', hideSuggest);
 
 // ---- home: example searches under 「試してみる」 ------------------------------------------
 const HERO_TRY = {
-  ja: ['カードを1枚引く', '飛行 絆魂', '1枚捨てる', '効果:墓地 色:b'],
-  en: ['draw a card', 'flying lifelink', 'discard a card', 'o:graveyard c:b'],
+  ja: ['黒の除去', '飛行 絆魂', '1枚捨てる', 'サクり台'],
+  en: ['black removal', 'flying lifelink', 'discard a card', 'sac outlet'],
 };
 function renderHeroTry() {
   const box = document.getElementById('heroTry');
