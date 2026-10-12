@@ -1,0 +1,30 @@
+{
+ "index": {
+  "status": 200,
+  "bytes": 499354,
+  "sha1": "6a8d6348097ab826ba8de645abe003d48f96e86e",
+  "markers": {
+   "class=\"meta-bar\"": true,
+   "JP_SHOP_SEARCH": true,
+   "シングルスター": true,
+   "HERO_SLANG": true,
+   "similarBox": true,
+   "meta-illus\"": false,
+   "noindex": false
+  }
+ },
+ "preview.html": {
+  "status": 200,
+  "bytes": 499409,
+  "sha1": "49ebf73b6905a6d247c28113b35967bd6ab0f082",
+  "markers": {
+   "class=\"meta-bar\"": true,
+   "JP_SHOP_SEARCH": true,
+   "シングルスター": true,
+   "HERO_SLANG": true,
+   "similarBox": true,
+   "meta-illus\"": false,
+   "noindex": true
+  }
+ }
+}
