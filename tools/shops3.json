@@ -1,0 +1,1002 @@
+{
+ "enndal": {
+  "url": "https://www.enndalgames.com/products/list.php?mode=search&name=%E7%A8%B2%E5%A6%BB",
+  "status": 200,
+  "final": "https://www.enndalgames.com/products/list.php?mode=search&name=%E7%A8%B2%E5%A6%BB",
+  "enc": "utf-8",
+  "len": 106710,
+  "title": "MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES / 検索結果",
+  "hits_ja": 35,
+  "hits_en": 4,
+  "forms": [
+   {
+    "action": "https://www.enndalgames.com/frontparts/login_check.php",
+    "fields": [
+     [
+      "mode",
+      "login"
+     ],
+     [
+      "transactionid",
+      "1050b9ee7fb6bae38f7c30c7b6c7fb465714b780"
+     ],
+     [
+      "url",
+      "/products/list.php?mode=search&amp;name=%E7%A8%B2%E5%A6%BB"
+     ],
+     [
+      "login_email",
+      ""
+     ],
+     [
+      "login_pass",
+      ""
+     ],
+     [
+      "login_memory",
+      "1"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.enndalgames.com/products/list.php",
+    "fields": [
+     [
+      "transactionid",
+      "1050b9ee7fb6bae38f7c30c7b6c7fb465714b780"
+     ],
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "disp_number",
+      "50"
+     ],
+     [
+      "name",
+      "稲妻"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.enndalgames.com/products/list.php",
+    "fields": [
+     [
+      "transactionid",
+      "1050b9ee7fb6bae38f7c30c7b6c7fb465714b780"
+     ],
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "disp_number",
+      "50"
+     ],
+     [
+      "name",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "r",
+      "mythic"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "category_id",
+      "0"
+     ],
+     [
+      "maker_id",
+      "0"
+     ],
+     [
+      "name",
+      "稲妻"
+     ],
+     [
+      "orderby",
+      ""
+     ],
+     [
+      "disp_number",
+      "15"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "transactionid",
+      "1050b9ee7fb6bae38f7c30c7b6c7fb465714b780"
+     ],
+     [
+      "disp_number",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "transactionid",
+      "1050b9ee7fb6bae38f7c30c7b6c7fb465714b780"
+     ],
+     [
+      "disp_number",
+      ""
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   "ショップ。商品点数10万点以上、MTGシングルすべて取り扱い。Foilも多数あります!\" /> <meta property=\"og:description\" content=\"国内最大級のMTG通販ショップ。商品点数10万点以上、MTGシングルすべて取り扱い。Foilも多数あります!\"> <meta name=\"keywords\" content=\"MTG,シングル,通販,マジック:ザ・ギャザリング,通信販売,ショッピング,オンラインショップ,Magic: The Gathering\" /> <link rel=\"stylesheet\" href=\"/contents/packages/default/css/common",
+   "=1.0\">--> <link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"https://www.enndalgames.com/rss/\" /> <title>MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES / 検索結果</title> <link rel=\"shortcut icon\" type=\"image/vnd.microsoft.icon\" href=\"/contents/ex/img/common/favicon.ico\" /> <link rel=\"icon\" type=\"image/vnd.microsoft.ic",
+   "js/craftcart.js?1809\"></script> <meta property=\"og:locale\" content=\"ja_JP\" /> <meta property=\"og:type\" content=\"website\" /> <meta property=\"og:title\" content=\"検索結果-MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES\"> <meta property=\"og:url\" content=\"https://www.enndalgames.com/products/list.php?mode=search&amp;name=%E7%A8%B2%E5%A6%BB"
+  ],
+  "result_snip": [
+   "65714b780\" /> <input type=\"hidden\" name=\"mode\" value=\"search\" /> <input type=\"hidden\" name=\"disp_number\" value=\"50\" /> <input type=\"text\" name=\"name\" value=\"稲妻\" placeholder=\"商品名、キーワードを入力\" title=\"キーワードを入力\" id=\"search_ex\" /> <input class=\"search_btn_ex\" type=\"submit\" value=\"\"> </form> </div> <div class=\"header",
+   "=\"hidden\" name=\"disp_number\" value=\"50\" /> <input type=\"hidden\" name=\"name\" value=\"\" /> <div id=\"advanced_search_form_text_wrapper\"><input type=\"text\" value=\"稲妻\" placeholder=\"カード名を入力\" title=\"キーワードを入力\" id=\"advanced_search_ex\" class=\"form-control\" /><span class=\"clear_form\" onclick=\"clearText()\"><i class=\"fa fa-undo fa-s"
+  ]
+ },
+ "enndal_en": {
+  "url": "https://www.enndalgames.com/products/list.php?mode=search&name=Lightning%20Bolt",
+  "status": 200,
+  "final": "https://www.enndalgames.com/products/list.php?mode=search&name=Lightning%20Bolt",
+  "enc": "utf-8",
+  "len": 103949,
+  "title": "MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES / 検索結果",
+  "hits_ja": 30,
+  "hits_en": 35,
+  "forms": [
+   {
+    "action": "https://www.enndalgames.com/frontparts/login_check.php",
+    "fields": [
+     [
+      "mode",
+      "login"
+     ],
+     [
+      "transactionid",
+      "01633cfc982be87e9eeb5ea33cd232fddb82b2e0"
+     ],
+     [
+      "url",
+      "/products/list.php?mode=search&amp;name=Lightning%20Bolt"
+     ],
+     [
+      "login_email",
+      ""
+     ],
+     [
+      "login_pass",
+      ""
+     ],
+     [
+      "login_memory",
+      "1"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.enndalgames.com/products/list.php",
+    "fields": [
+     [
+      "transactionid",
+      "01633cfc982be87e9eeb5ea33cd232fddb82b2e0"
+     ],
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "disp_number",
+      "50"
+     ],
+     [
+      "name",
+      "Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.enndalgames.com/products/list.php",
+    "fields": [
+     [
+      "transactionid",
+      "01633cfc982be87e9eeb5ea33cd232fddb82b2e0"
+     ],
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "disp_number",
+      "50"
+     ],
+     [
+      "name",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "r",
+      "mythic"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      "search"
+     ],
+     [
+      "category_id",
+      "0"
+     ],
+     [
+      "maker_id",
+      "0"
+     ],
+     [
+      "name",
+      "Lightning Bolt"
+     ],
+     [
+      "orderby",
+      ""
+     ],
+     [
+      "disp_number",
+      "15"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "transactionid",
+      "01633cfc982be87e9eeb5ea33cd232fddb82b2e0"
+     ],
+     [
+      "disp_number",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "transactionid",
+      "01633cfc982be87e9eeb5ea33cd232fddb82b2e0"
+     ],
+     [
+      "disp_number",
+      ""
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   "ショップ。商品点数10万点以上、MTGシングルすべて取り扱い。Foilも多数あります!\" /> <meta property=\"og:description\" content=\"国内最大級のMTG通販ショップ。商品点数10万点以上、MTGシングルすべて取り扱い。Foilも多数あります!\"> <meta name=\"keywords\" content=\"MTG,シングル,通販,マジック:ザ・ギャザリング,通信販売,ショッピング,オンラインショップ,Magic: The Gathering\" /> <link rel=\"stylesheet\" href=\"/contents/packages/default/css/common",
+   "=1.0\">--> <link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS\" href=\"https://www.enndalgames.com/rss/\" /> <title>MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES / 検索結果</title> <link rel=\"shortcut icon\" type=\"image/vnd.microsoft.icon\" href=\"/contents/ex/img/common/favicon.ico\" /> <link rel=\"icon\" type=\"image/vnd.microsoft.ic",
+   "js/craftcart.js?1809\"></script> <meta property=\"og:locale\" content=\"ja_JP\" /> <meta property=\"og:type\" content=\"website\" /> <meta property=\"og:title\" content=\"検索結果-MTG, マジック:ザ・ギャザリング 通販 | ENNDAL GAMES\"> <meta property=\"og:url\" content=\"https://www.enndalgames.com/products/list.php?mode=search&amp;name=Lightning%20Bolt\">"
+  ],
+  "result_snip": [
+   "A25-UR-141-JP-NM-normal/\" class=\"over\"><!--商品写真--><div id=\"pdctimg52150\"><img src=\"/contents/ex/img/items/otherset/A25/A25_141.png\" alt=\"(A25-UR)Lightning Bolt/稲妻\" class=\"picture\" /></div></a> <!--商品ステータス--> <ul class=\"product_status\"> </ul> <!--/商品ステータス--> </div> <!-- リスト",
+   "nndalgames.com/%28A25-UR%29Lightning+Bolt%2F%E7%A8%B2%E5%A6%BB/product/A25-UR-141-JP-NM-normal/\" class=\"product_name\" id=\"pdctname52150\">(A25-UR)Lightning Bolt/稲妻</a> </h3> <!--価格--> <!--バリエーションごとの表示はコメントをオフ--> <table class=item_stock_table> "
+  ]
+ },
+ "hasuya": {
+  "url": "https://www.hasuya.jp/products/list?name=%E7%A8%B2%E5%A6%BB",
+  "status": 200,
+  "final": "https://www.hasuya.jp/products/list?name=%E7%A8%B2%E5%A6%BB",
+  "enc": "utf-8",
+  "len": 506065,
+  "title": "TCG専門店 蓮屋 MtG & FaB & GA & Riftbound / 検索結果",
+  "hits_ja": 209,
+  "hits_en": 0,
+  "forms": [
+   {
+    "action": "/products/list",
+    "fields": [
+     [
+      "name",
+      "稲妻"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "name",
+      "稲妻"
+     ],
+     [
+      "pageno",
+      ""
+     ],
+     [
+      "disp_number",
+      "0"
+     ],
+     [
+      "orderby",
+      "0"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91852",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91852"
+     ],
+     [
+      "ProductClass",
+      "91852"
+     ],
+     [
+      "_token",
+      "ftXTLXGATqm3knGLoPAqaPAs7ISronQfUb6vA8p9jfE"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91853",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91853"
+     ],
+     [
+      "ProductClass",
+      "91853"
+     ],
+     [
+      "_token",
+      "ftXTLXGATqm3knGLoPAqaPAs7ISronQfUb6vA8p9jfE"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91984",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91984"
+     ],
+     [
+      "ProductClass",
+      "91984"
+     ],
+     [
+      "_token",
+      "ftXTLXGATqm3knGLoPAqaPAs7ISronQfUb6vA8p9jfE"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91985",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91985"
+     ],
+     [
+      "ProductClass",
+      "91985"
+     ],
+     [
+      "_token",
+      "ftXTLXGATqm3knGLoPAqaPAs7ISronQfUb6vA8p9jfE"
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   " <a href=\"/user_data/category-list\">商品カテゴリ<i class=\"fa fa-chevron-right\" aria-hidden=\"true\"></i></a> </div> <div class=\"ec-headerSearch__keyword\"> <div class=\"ec-input\"> <input type=\"search\" name=\"name\" maxlength=\"50\" class=\"search-name\" placeholder=\"商品名・キーワードを入力してください\" autoc",
+   "ame=\"name\" maxlength=\"50\" class=\"search-name\" placeholder=\"商品名・キーワードを入力してください\" autocomplete=\"off\" value=\"稲妻\" /> <button class=\"ec-headerSearch__keywordBtn\" type=\"submit\"> <div class=\"ec-icon\"> <img src=\"/html/template/default/assets/icon/search-dark.svg\" alt=\"\"> ",
+   "e=1.0\"> <meta name=\"eccube-csrf-token\" content=\"R3fwcjf7osLRxxX8rknw5OJSLFwFPvHoBNgj2RPkpUg\"> <title>TCG専門店 蓮屋 MtG &amp; FaB &amp; GA &amp; Riftbound / 検索結果</title> <meta property=\"og:type\" content=\"article\"/> <meta property=\"og:site_name\" content=\"TCG専門店 蓮屋 MtG &amp; FaB &amp; GA &amp; Riftb",
+   "ody id=\"page_product_list\" class=\"product_page\"> <div class=\"ec-layoutRole\"> <div class=\"ec-layoutRole__header\"> <!-- ▼ヘッダー(商品検索・ログインナビ・カート) --> <div class=\"ec-headerNaviRole\"> <div class=\"ec-headerNaviRole__left\"> <div class=\"ec-headerRole__navSP\"> <"
+  ],
+  "result_snip": [
+   "lass=\"ec-input\"> <input type=\"search\" name=\"name\" maxlength=\"50\" class=\"search-name\" placeholder=\"商品名・キーワードを入力してください\" autocomplete=\"off\" value=\"稲妻\" /> <button class=\"ec-headerSearch__keywordBtn\" type=\"submit\"> <div class=\"ec-icon\"> <img src=\"/htm",
+   " /> <input type=\"hidden\" id=\"name\" name=\"name\" value=\"稲妻\" /> <input type=\"hidden\" id=\"pageno\" name=\"pageno\" /> "
+  ]
+ },
+ "hasuya_en": {
+  "url": "https://www.hasuya.jp/products/list?name=Lightning%20Bolt",
+  "status": 200,
+  "final": "https://www.hasuya.jp/products/list?name=Lightning%20Bolt",
+  "enc": "utf-8",
+  "len": 238800,
+  "title": "TCG専門店 蓮屋 MtG & FaB & GA & Riftbound / 検索結果",
+  "hits_ja": 0,
+  "hits_en": 9,
+  "forms": [
+   {
+    "action": "/products/list",
+    "fields": [
+     [
+      "name",
+      "Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "name",
+      "Lightning Bolt"
+     ],
+     [
+      "pageno",
+      ""
+     ],
+     [
+      "disp_number",
+      "0"
+     ],
+     [
+      "orderby",
+      "0"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91966",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91966"
+     ],
+     [
+      "ProductClass",
+      "91966"
+     ],
+     [
+      "_token",
+      "AqRo3BGiKtqG2mvrjwIBSSbkVMPu1bkdGlsN8Xub-EI"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91967",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91967"
+     ],
+     [
+      "ProductClass",
+      "91967"
+     ],
+     [
+      "_token",
+      "AqRo3BGiKtqG2mvrjwIBSSbkVMPu1bkdGlsN8Xub-EI"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91968",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91968"
+     ],
+     [
+      "ProductClass",
+      "91968"
+     ],
+     [
+      "_token",
+      "AqRo3BGiKtqG2mvrjwIBSSbkVMPu1bkdGlsN8Xub-EI"
+     ]
+    ]
+   },
+   {
+    "action": "https://www.hasuya.jp/products/add_cart/91969",
+    "fields": [
+     [
+      "quantity",
+      "1"
+     ],
+     [
+      "product_id",
+      "91969"
+     ],
+     [
+      "ProductClass",
+      "91969"
+     ],
+     [
+      "_token",
+      "AqRo3BGiKtqG2mvrjwIBSSbkVMPu1bkdGlsN8Xub-EI"
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   " <a href=\"/user_data/category-list\">商品カテゴリ<i class=\"fa fa-chevron-right\" aria-hidden=\"true\"></i></a> </div> <div class=\"ec-headerSearch__keyword\"> <div class=\"ec-input\"> <input type=\"search\" name=\"name\" maxlength=\"50\" class=\"search-name\" placeholder=\"商品名・キーワードを入力してください\" autoc",
+   "axlength=\"50\" class=\"search-name\" placeholder=\"商品名・キーワードを入力してください\" autocomplete=\"off\" value=\"Lightning Bolt\" /> <button class=\"ec-headerSearch__keywordBtn\" type=\"submit\"> <div class=\"ec-icon\"> <img src=\"/html/template/default/assets/icon/search-dark.svg\" alt=\"\"> ",
+   "e=1.0\"> <meta name=\"eccube-csrf-token\" content=\"eNz3TnSfa5QTZJm6y8dmnSDEGW3YfIg5DuImItFDTas\"> <title>TCG専門店 蓮屋 MtG &amp; FaB &amp; GA &amp; Riftbound / 検索結果</title> <meta property=\"og:type\" content=\"article\"/> <meta property=\"og:site_name\" content=\"TCG専門店 蓮屋 MtG &amp; FaB &amp; GA &amp; Riftb",
+   "ody id=\"page_product_list\" class=\"product_page\"> <div class=\"ec-layoutRole\"> <div class=\"ec-layoutRole__header\"> <!-- ▼ヘッダー(商品検索・ログインナビ・カート) --> <div class=\"ec-headerNaviRole\"> <div class=\"ec-headerNaviRole__left\"> <div class=\"ec-headerRole__navSP\"> <"
+  ],
+  "result_snip": []
+ },
+ "azumaya": {
+  "url": "https://azumayamtg.com/products/list?name=%E7%A8%B2%E5%A6%BB",
+  "status": 200,
+  "final": "https://azumayamtg.com/products/list?name=%E7%A8%B2%E5%A6%BB",
+  "enc": "utf-8",
+  "len": 470136,
+  "title": "検索結果 | カードショップあずまや",
+  "hits_ja": 35,
+  "hits_en": 11,
+  "forms": [
+   {
+    "action": "/products/list",
+    "fields": [
+     [
+      "name",
+      "稲妻"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "name",
+      "稲妻"
+     ],
+     [
+      "pageno",
+      ""
+     ],
+     [
+      "disp_number",
+      ""
+     ],
+     [
+      "orderby",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "disp_number",
+      ""
+     ],
+     [
+      "orderby",
+      ""
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   "Official Page. We deal in Magic: The Gathering | MTG. We have a physical store in Akihabara, Tokyo, and are holding Flesh and Blood | Fab events!\"> <meta name=\"keywords\" content=\"通販,通信販売,オンラインショップ,買い物,ショッピング,マジック：ザ・ギャザリング,MTG,あずま屋,あずまや,Flesh and Blood,fab,tcg\"> <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-i",
+   "<!doctype html> <html lang=\"ja\"> <head> <meta charset=\"utf-8\"> <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"> <title>検索結果 | カードショップあずまや</title> <meta name=\"description\" content=\"カードショップあずまやTCG通販公式ページ。マジック：ザ・ギャザリング | MTGを取り扱っています。東京 秋葉原に実店舗がありFlesh and Blood | Fabのイベントも開催中。Card S",
+   "r_logo\"><a href=\"https://azumayamtg.com/\"><img src=\"/user_data/azuma_lgo.png\" alt=\"カードショップあずまや\" /></a></h1> </div> <!-- ▲ロゴ --> <!-- ▼商品検索 --> <div class=\"drawer_block pc header_bottom_area\"> <div id=\"search\" class=\"search\"> <form method=\"get\" id=\"searchform\" ac"
+  ],
+  "result_snip": [
+   "class=\"input_search clearfix\"> <input type=\"search\" id=\"name\" name=\"name\" maxlength=\"50\" placeholder=\"キーワードを入力\" class=\"form-control\" value=\"稲妻\" /> <button type=\"submit\" class=\"bt_search\"><svg class=\"cb cb-search\"><use xlink:href=\"#cb-search\" /></svg></button> </div>",
+   " <input type=\"hidden\" value=\"\" id=\"category_id\" name=\"category_id\" /><input type=\"hidden\" id=\"name\" name=\"name\" maxlength=\"50\" value=\"稲妻\" /><input type=\"hidden\" id=\"pageno\" name=\"pageno\" /> <input type=\"hidden\" value=\"32\" id=\"disp_number\" name=\"disp_num"
+  ]
+ },
+ "azumaya_en": {
+  "url": "https://azumayamtg.com/products/list?name=Lightning%20Bolt",
+  "status": 200,
+  "final": "https://azumayamtg.com/products/list?name=Lightning%20Bolt",
+  "enc": "utf-8",
+  "len": 465105,
+  "title": "検索結果 | カードショップあずまや",
+  "hits_ja": 27,
+  "hits_en": 33,
+  "forms": [
+   {
+    "action": "/products/list",
+    "fields": [
+     [
+      "name",
+      "Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "mode",
+      ""
+     ],
+     [
+      "category_id",
+      ""
+     ],
+     [
+      "name",
+      "Lightning Bolt"
+     ],
+     [
+      "pageno",
+      ""
+     ],
+     [
+      "disp_number",
+      ""
+     ],
+     [
+      "orderby",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "?",
+    "fields": [
+     [
+      "disp_number",
+      ""
+     ],
+     [
+      "orderby",
+      ""
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   "Official Page. We deal in Magic: The Gathering | MTG. We have a physical store in Akihabara, Tokyo, and are holding Flesh and Blood | Fab events!\"> <meta name=\"keywords\" content=\"通販,通信販売,オンラインショップ,買い物,ショッピング,マジック：ザ・ギャザリング,MTG,あずま屋,あずまや,Flesh and Blood,fab,tcg\"> <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/apple-touch-i",
+   "<!doctype html> <html lang=\"ja\"> <head> <meta charset=\"utf-8\"> <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"> <title>検索結果 | カードショップあずまや</title> <meta name=\"description\" content=\"カードショップあずまやTCG通販公式ページ。マジック：ザ・ギャザリング | MTGを取り扱っています。東京 秋葉原に実店舗がありFlesh and Blood | Fabのイベントも開催中。Card S",
+   "r_logo\"><a href=\"https://azumayamtg.com/\"><img src=\"/user_data/azuma_lgo.png\" alt=\"カードショップあずまや\" /></a></h1> </div> <!-- ▲ロゴ --> <!-- ▼商品検索 --> <div class=\"drawer_block pc header_bottom_area\"> <div id=\"search\" class=\"search\"> <form method=\"get\" id=\"searchform\" ac"
+  ],
+  "result_snip": [
+   "l--156164\"> <!--▼規格別値段テーブル--> <dt id=\"result_list__name--156164\" class=\"item_name\">[プロモ][Foil][ENG]稲妻/Lightning Bolt</dt> <table summary=\"商品の価格\"> <thead> <tr>",
+   "list__detail--171445\"> <!--▼規格別値段テーブル--> <dt id=\"result_list__name--171445\" class=\"item_name\">[ENG]稲妻/Lightning Bolt</dt> <table summary=\"商品の価格\"> <thead> <tr>"
+  ]
+ },
+ "blackfrog_other": {
+  "url": "https://blackfrog.jp/shop/shopbrand.html?search=%A5%BC%A5%ED%BD%FC%BB%BB",
+  "status": 200,
+  "final": "https://blackfrog.jp/shop/shopbrand.html?search=%A5%BC%A5%ED%BD%FC%BB%BB",
+  "enc": "euc-jp",
+  "len": 138844,
+  "title": "BLACK FROG（ブラックフロッグ） | MTG / FABシングル | 商品一覧 MTG・FAB・ロルカナ シングル通販ショップ",
+  "hits_ja": 0,
+  "hits_en": 0,
+  "forms": [
+   {
+    "action": "/shop/shopbrand.html",
+    "fields": [
+     [
+      "search",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "/shop/shopbrand.html",
+    "fields": [
+     [
+      "search",
+      ""
+     ],
+     [
+      "content1",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "/shop/shopbrand.html",
+    "fields": []
+   },
+   {
+    "action": "https://www.makeshop.jp/ssl/?ssltype=main&db=blackfrog",
+    "fields": []
+   },
+   {
+    "action": "/shop/shopbrand.html",
+    "fields": [
+     [
+      "search",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "shopbrand.html",
+    "fields": []
+   }
+  ],
+  "kw": [
+   "button--> <!--top button--> <div class=\"nav dropdown\"> <!-- <div class=\"button-search\"><i class=\"fa fa-reply\"></i> &nbsp;検索</div>--> <!--▼検索窓--> <div id=\"headerSearch\"> <form action=\"/shop/shopbrand.html\" method=\"post\" name=\"top_search\" id=\"searchform2\"> ",
+   "!--top button--> <div class=\"nav dropdown\"> <!-- <div class=\"button-search\"><i class=\"fa fa-reply\"></i> &nbsp;検索</div>--> <!--▼検索窓--> <div id=\"headerSearch\"> <form action=\"/shop/shopbrand.html\" method=\"post\" name=\"top_search\" id=\"searchform2\"> <input type=\"hi"
+  ],
+  "result_snip": []
+ },
+ "singlestar": {
+  "url": "https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+  "status": 200,
+  "final": "https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB",
+  "enc": "utf-8",
+  "len": 1438910,
+  "title": "稲妻 - シングルスター",
+  "hits_ja": 134,
+  "hits_en": 20,
+  "forms": [
+   {
+    "action": "https://www.singlestar.jp/product-list",
+    "fields": [
+     [
+      "keyword",
+      ""
+     ],
+     [
+      "Submit",
+      "商品検索"
+     ]
+    ]
+   },
+   {
+    "action": "",
+    "fields": [
+     [
+      "keyword",
+      ""
+     ],
+     [
+      "color",
+      ""
+     ],
+     [
+      "rarity",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "https://www.singlestar.jp/product-list/0/0/photo",
+    "fields": [
+     [
+      "keyword",
+      "稲妻"
+     ],
+     [
+      "num",
+      ""
+     ],
+     [
+      "img",
+      ""
+     ],
+     [
+      "available",
+      "1"
+     ],
+     [
+      "order",
+      ""
+     ]
+    ]
+   },
+   {
+    "action": "",
+    "fields": []
+   },
+   {
+    "action": "",
+    "fields": []
+   },
+   {
+    "action": "",
+    "fields": []
+   }
+  ],
+  "kw": [
+   "<!DOCTYPE html><html lang=\"ja\"> <head> <meta charset=\"utf-8\" /> <title>稲妻 - シングルスター</title> <meta name=\"keywords\" content=\"ネットショップ,ショッピングカート,TCG,トレーディングカード,トレカ,MTG,マジック：ザ・ギャザリング,シングル,通販,通信販売,中古,スタンダード,パイオニア,モダン,特殊セット,統率者,EDH,カード,Secret Lair,トークン,基本土地,アートカード,FOIL,ブースターファン",
+   "tps://www.singlestar.jp/rss/rss.php\" /> <link rel=\"alternate\" media=\"only screen and (max-width: 640px)\" href=\"https://www.singlestar.jp/phone/product-list?keyword=%E7%A8%B2%E5%A6%BB\" /> <link rel=\"next\" href=\"https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB&amp;page=2\" /> <link rel=\"canonical\" hr",
+   "th: 640px)\" href=\"https://www.singlestar.jp/phone/product-list?keyword=%E7%A8%B2%E5%A6%BB\" /> <link rel=\"next\" href=\"https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB&amp;page=2\" /> <link rel=\"canonical\" href=\"https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB\" /> <link href=\"/res/la",
+   "\" href=\"https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB&amp;page=2\" /> <link rel=\"canonical\" href=\"https://www.singlestar.jp/product-list?keyword=%E7%A8%B2%E5%A6%BB\" /> <link href=\"/res/layout001/style/public/font-awesome-4.7.0/css/font-awesome.min.css\" rel=\"stylesheet\" /> <link href=\"https://www",
+   "nd > 0){ cardname = cardname.substr(0,end); } if(cardname.length > 0){ url = \"https://www.singlestar.jp/product-list?keyword=\" + cardname + \"&Submit=商品検索\" $('#product_form_area').append('<div class=\\\"search_section\\\"><table class=\"search_button\\\"><tr><td><a href=\\\"' + url + '\\\" target=\\\"_blank\\\" rel=\\\"noopener",
+   "area').append('<div class=\\\"search_section\\\"><table class=\"search_button\\\"><tr><td><a href=\\\"' + url + '\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\"><div>同名検索</div></tr></td></a></table></div>'); }; cardname=cardname.replace(/ /g ,\"_\"); cardname=cardname.replace(/,/g, \"%2C\"); if(cardname.length > 0){ ur"
+  ],
+  "result_snip": [
+   "<!DOCTYPE html><html lang=\"ja\"> <head> <meta charset=\"utf-8\" /> <title>稲妻 - シングルスター</title> <meta name=\"keywords\" content=\"ネットショップ,ショッピングカート,TCG,トレーディングカード,トレカ,MTG,マジック：ザ・ギャザリング,シングル,通販,通信販売,中古,スタンダード,パイオニア,モダン,特殊セット,統率者,EDH,カード,",
+   "an class=\"gt\">&gt;</span> <span class=\"search_result_title\" itemprop=\"name\"><span class=\"search_result_text\"><span class=\"search_result_value\">\"稲妻\"</span> の</span>検索結果</span> <meta itemprop=\"position\" content=\"2\"> </li> </ol> </div> <div id=\"leftcol\" class=\"side_col\" r"
+  ]
+ },
+ "mtgguild_en": {
+  "url": "https://mtg-guild.com/?mode=srh&keyword=Lightning%20Bolt",
+  "status": 200,
+  "final": "https://mtg-guild.com/?mode=srh&keyword=Lightning%20Bolt",
+  "enc": "euc-jp",
+  "len": 477435,
+  "title": "商品検索 - マジック：ザ・ギャザリング（MTG）の通販専門店　「 MTG Guild 」",
+  "hits_ja": 168,
+  "hits_en": 170,
+  "forms": [
+   {
+    "action": "https://mtg-guild.com/cart/proxy/basket?shop_id=PA01300643&shop_domain=mtg-guild.com",
+    "fields": [
+     [
+      "reference_token",
+      "bd3580f9bc404166878b1844a3ac3e92"
+     ],
+     [
+      "shop_id",
+      "PA01300643"
+     ],
+     [
+      "shop_domain",
+      "mtg-guild.com"
+     ]
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/cart/proxy/basket?shop_id=PA01300643&shop_domain=mtg-guild.com",
+    "fields": [
+     [
+      "reference_token",
+      "bd3580f9bc404166878b1844a3ac3e92"
+     ],
+     [
+      "shop_id",
+      "PA01300643"
+     ],
+     [
+      "shop_domain",
+      "mtg-guild.com"
+     ]
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "fields": [
+     [
+      "mode",
+      "srh"
+     ],
+     [
+      "keyword",
+      "稲妻/Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "fields": [
+     [
+      "mode",
+      "srh"
+     ],
+     [
+      "keyword",
+      "稲妻/Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "fields": [
+     [
+      "mode",
+      "srh"
+     ],
+     [
+      "keyword",
+      "稲妻/Lightning Bolt"
+     ]
+    ]
+   },
+   {
+    "action": "https://mtg-guild.com/",
+    "fields": [
+     [
+      "mode",
+      "srh"
+     ],
+     [
+      "keyword",
+      "稲妻/Lightning Bolt"
+     ]
+    ]
+   }
+  ],
+  "kw": [
+   "on/rss+xml\" title=\"rss\" href=\"https://mtg-guild.com/?mode=rss\" /> <link rel=\"alternate\" media=\"handheld\" type=\"text/html\" href=\"https://mtg-guild.com/?mode=srh&keyword=Lightning+Bolt\" /> <link rel=\"shortcut icon\" href=\"https://img20.shop-pro.jp/PA01300/643/favicon.ico?cmsp_timestamp=20260912022549\" /> <script type=\"text/javas",
+   "n\" content=\"マジック：ザ・ギャザリングのカードならMTG Guildにお任せください。希少なカードから最新カードまで5万点以上掲載中。最新弾シングルカードの予約も受付中。\" /> <meta property=\"og:url\" content=\"https://mtg-guild.com?mode=srh&keyword=Lightning+Bolt\" /> <meta property=\"og:site_name\" content=\"マジック：ザ・ギャザリング（MTG）の通販専門店 「 MTG Guild 」\" /> <meta name=\"google-site-verification\" content=\"rFubIhvRC5e",
+   " <select class=\"c-select__value js-sort-switch\"> <option value=\"\" selected>おすすめ順</option> <option value=\"?mode=srh&keyword=Lightning%20Bolt&sort=p\">価格順</option> <option value=\"?mode=srh&keyword=Lightning%20Bolt&sort=n\">新着順</option> </select> ",
+   "すすめ順</option> <option value=\"?mode=srh&keyword=Lightning%20Bolt&sort=p\">価格順</option> <option value=\"?mode=srh&keyword=Lightning%20Bolt&sort=n\">新着順</option> </select> <svg class=\"c-select__icon\" role=\"img\" aria-hidden=\"true\"><use xlink:href=\"#angle-down\"><",
+   "=\"ltr\"> <head> <meta http-equiv=\"content-type\" content=\"text/html; charset=euc-jp\" /> <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\" /> <title>商品検索 - マジック：ザ・ギャザリング（MTG）の通販専門店 「 MTG Guild 」</title> <meta name=\"Keywords\" content=\"商品検索,MTG,mtg,Magic,Magic:The Gathering,マジック：ザ・ギャザリング,マジック,ギャザ,通信販売,通販,ネットショップ,ト",
+   " <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\" /> <title>商品検索 - マジック：ザ・ギャザリング（MTG）の通販専門店 「 MTG Guild 」</title> <meta name=\"Keywords\" content=\"商品検索,MTG,mtg,Magic,Magic:The Gathering,マジック：ザ・ギャザリング,マジック,ギャザ,通信販売,通販,ネットショップ,トレーディングカードゲーム,トレカ,カードゲーム,カード,guild,ギルド\" /> <meta name=\"Description\" content=\"マジック：ザ・ギャ"
+  ],
+  "result_snip": [
+   "mage-wrap--link\"> <div class=\"c-image-box\"> <img src=\"https://img20.shop-pro.jp/PA01300/643/product/83492973_th.jpg\" alt=\"稲妻/Lightning Bolt\" class=\"c-image-box__image js-lazyload\" /> </div> ",
+   " </a> <a href=\"?pid=83492973\" class=\"c-product-list__name\"> 稲妻/Lightning Bolt </a> <div class=\"c-product-info__soldout c-product-list__soldout\"> SOLD OUT </div> "
+  ]
+ }
+}
