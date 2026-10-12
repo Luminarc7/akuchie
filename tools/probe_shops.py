@@ -1,55 +1,69 @@
-"""One-off: how each Japanese MTG shop's product search works (form action and
-field names, and which search URL answers with results for a card name)."""
+"""One-off (2): Single Star's search, Dragon Star, and shops whose search may
+need EUC-JP (Color Me Shop) or English names."""
 import json, re, urllib.request, urllib.parse, html
-H = {"User-Agent": "Mozilla/5.0 (warujie.jp link check)", "Accept-Language": "ja"}
-SHOPS = """singlestar.jp cardshop-serra.com dorasuta.jp enndalgames.com blackfrog.jp johnnymagic.jp eternal-blue.jp bigredmtg.com
-amenitydream.com ka-nabell.com mtg-guild.com arcana-tcg.com cantripmtg.com hasuya.jp pinocchio-mtg.jp azumayamtg.com cardshophamaya.com
-toretoku.jp fullcomp.jp suruga-ya.jp c-labo-online.jp yellowsubmarine.co.jp cardrush-mtg.jp hareruyamtg.com mtg.bigweb.co.jp tokyomtg.com
-mtgnage.jp playfirstgames.jp shikanotsunomtg.com advantagemtg.jp cardshopsatopin.net""".split()
-TRY = ["/product-list?keyword={q}", "/search?q={q}", "/?mode=srh&keyword={q}", "/products/search?product={q}", "/shop/shopbrand.html?search={q}",
-       "/search?keyword={q}", "/products?keyword={q}", "/search.php?keyword={q}"]
+from concurrent.futures import ThreadPoolExecutor
+H = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36", "Accept-Language": "ja,en;q=0.8"}
 def get(url):
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=10) as r:
-            b = r.read(800000)
-            enc = r.headers.get_content_charset() or "utf-8"
+        with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=12) as r:
+            b = r.read(1500000)
+            enc = r.headers.get_content_charset()
+            if not enc:
+                m = re.search(rb'charset=["\']?([\w-]+)', b[:3000]); enc = m.group(1).decode() if m else "utf-8"
             try: t = b.decode(enc, "replace")
             except LookupError: t = b.decode("utf-8", "replace")
-            return r.status, r.geturl(), t
+            return r.status, r.geturl(), t, enc
     except Exception as e:
-        return getattr(e, "code", None) or str(e)[:80], url, ""
-from concurrent.futures import ThreadPoolExecutor
-def probe(d):
-    rec = {}
-    for base in (f"https://www.{d}", f"https://{d}"):
-        st, final, t = get(base + "/")
-        if t:
-            rec["home"] = [st, final]
-            forms = []
-            for m in re.finditer(r"<form\b([^>]*)>(.*?)</form>", t, re.S | re.I):
-                attrs, body = m.group(1), m.group(2)
-                act = re.search(r'action=["\']([^"\']*)', attrs)
-                names = re.findall(r'<(?:input|select)\b[^>]*name=["\']([^"\']+)', body, re.I)
-                if act and (re.search(r"search|keyword|srh|find|query", (act.group(1) + " ".join(names)), re.I)):
-                    forms.append({"action": html.unescape(act.group(1)), "method": (re.search(r'method=["\'](\w+)', attrs) or [None, "get"])[1], "names": names[:8]})
-            rec["forms"] = forms[:4]
-            rec["title"] = html.unescape((re.search(r"<title>(.*?)</title>", t, re.S | re.I) or [None, ""])[1].strip())[:80]
-            rec["base"] = base
-            break
-    else:
-        rec["home"] = [st, base]
-    base = rec.get("base")
-    if base:
-        tries = []
-        acts = [f["action"] for f in rec.get("forms", [])]
-        for pat in TRY:
-            url = base + pat.format(q=urllib.parse.quote("稲妻"))
-            st, final, t = get(url)
-            tries.append({"url": url, "status": st, "final": final if final != url else "", "hits": t.count("稲妻")})
-            if t.count("稲妻") >= 3: break
-        rec["tries"] = tries
-    print(d, rec.get("home"), rec.get("forms"), flush=True)
-    return d, rec
-with ThreadPoolExecutor(12) as ex:
-    out = dict(ex.map(probe, SHOPS))
-json.dump(out, open("tools/shops.json", "w"), ensure_ascii=False, indent=1)
+        return getattr(e, "code", None) or str(e)[:80], url, "", ""
+def snip(t, word, n=3, w=160):
+    out = []
+    for m in re.finditer(re.escape(word), t):
+        out.append(re.sub(r"\s+", " ", t[max(0, m.start() - w):m.end() + w]))
+        if len(out) >= n: break
+    return out
+Q = "稲妻"
+E = urllib.parse.quote(Q.encode("euc-jp")); S = urllib.parse.quote(Q.encode("shift_jis")); U = urllib.parse.quote(Q)
+EN = urllib.parse.quote("Lightning Bolt")
+URLS = {
+ "singlestar_home": "https://www.singlestar.jp/",
+ "singlestar_pl": f"https://www.singlestar.jp/product-list?keyword={U}",
+ "singlestar_pl_submit": f"https://www.singlestar.jp/product-list?keyword={U}&Submit=",
+ "singlestar_en": f"https://www.singlestar.jp/product-list?keyword={EN}",
+ "dorasuta_mtg": "https://dorasuta.jp/mtg/",
+ "dorasuta_search": f"https://dorasuta.jp/mtg/product-list?kw={U}",
+ "mtgguild_utf8": f"https://mtg-guild.com/?mode=srh&keyword={U}",
+ "mtgguild_euc": f"https://mtg-guild.com/?mode=srh&keyword={E}",
+ "mtgguild_en": f"https://mtg-guild.com/?mode=srh&keyword={EN}",
+ "enndal_home": "https://www.enndalgames.com/",
+ "enndal_euc": f"https://www.enndalgames.com/?mode=srh&keyword={E}",
+ "arcana_home": "https://www.arcana-tcg.com/",
+ "arcana_euc": f"https://www.arcana-tcg.com/?mode=srh&keyword={E}",
+ "hasuya_home": "https://www.hasuya.jp/",
+ "hasuya_euc": f"https://www.hasuya.jp/?mode=srh&keyword={E}",
+ "azumaya_home": "https://azumayamtg.com/",
+ "azumaya_euc": f"https://azumayamtg.com/?mode=srh&keyword={E}",
+ "toretoku_home": "https://www.toretoku.jp/",
+ "fullcomp_home": "https://www.fullcomp.jp/",
+ "yellow_home": "https://www.yellowsubmarine.co.jp/",
+ "blackfrog_euc": f"https://blackfrog.jp/shop/shopbrand.html?search={E}",
+ "blackfrog_utf8": f"https://blackfrog.jp/shop/shopbrand.html?search={U}",
+ "cardrush_en": f"https://www.cardrush-mtg.jp/product-list?keyword={EN}",
+ "serra_en": f"https://cardshop-serra.com/search?q={EN}",
+ "cantrip_en": f"https://cantripmtg.com/search?q={EN}",
+ "hamaya_en": f"https://www.cardshophamaya.com/product-list?keyword={EN}",
+}
+def probe(item):
+    k, url = item
+    st, final, t, enc = get(url)
+    forms = []
+    for m in re.finditer(r"<form\b([^>]*)>(.*?)</form>", t, re.S | re.I):
+        act = re.search(r'action=["\']([^"\']*)', m.group(1))
+        names = re.findall(r'name=["\']([^"\']+)["\'](?:[^>]*value=["\']([^"\']*))?', m.group(2))
+        forms.append({"action": html.unescape(act.group(1)) if act else "", "fields": names[:6]})
+    return k, {"url": url, "status": st, "final": final, "enc": enc, "len": len(t),
+               "title": html.unescape((re.search(r"<title>(.*?)</title>", t, re.S | re.I) or [None, ""])[1].strip())[:90],
+               "hits_ja": t.count(Q), "hits_en": t.count("Lightning Bolt"), "forms": forms[:6],
+               "kw": snip(t, "keyword", 4) + snip(t, "検索", 2), "result_snip": snip(t, Q, 2)}
+with ThreadPoolExecutor(10) as ex:
+    out = dict(ex.map(probe, URLS.items()))
+json.dump(out, open("tools/shops2.json", "w"), ensure_ascii=False, indent=1)
