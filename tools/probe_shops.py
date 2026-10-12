@@ -10,7 +10,7 @@ TRY = ["/product-list?keyword={q}", "/search?q={q}", "/?mode=srh&keyword={q}", "
        "/search?keyword={q}", "/products?keyword={q}", "/search.php?keyword={q}"]
 def get(url):
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=25) as r:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=H), timeout=10) as r:
             b = r.read(800000)
             enc = r.headers.get_content_charset() or "utf-8"
             try: t = b.decode(enc, "replace")
@@ -18,8 +18,8 @@ def get(url):
             return r.status, r.geturl(), t
     except Exception as e:
         return getattr(e, "code", None) or str(e)[:80], url, ""
-out = {}
-for d in SHOPS:
+from concurrent.futures import ThreadPoolExecutor
+def probe(d):
     rec = {}
     for base in (f"https://www.{d}", f"https://{d}"):
         st, final, t = get(base + "/")
@@ -41,12 +41,15 @@ for d in SHOPS:
     base = rec.get("base")
     if base:
         tries = []
+        acts = [f["action"] for f in rec.get("forms", [])]
         for pat in TRY:
-            for q in ("稲妻", "Lightning Bolt"):
-                url = base + pat.format(q=urllib.parse.quote(q))
-                st, final, t = get(url)
-                tries.append({"url": url, "status": st, "final": final if final != url else "", "hits": t.count("稲妻") if q == "稲妻" else t.count("Lightning Bolt")})
+            url = base + pat.format(q=urllib.parse.quote("稲妻"))
+            st, final, t = get(url)
+            tries.append({"url": url, "status": st, "final": final if final != url else "", "hits": t.count("稲妻")})
+            if t.count("稲妻") >= 3: break
         rec["tries"] = tries
-    out[d] = rec
-    print(d, rec.get("home"), rec.get("forms"))
+    print(d, rec.get("home"), rec.get("forms"), flush=True)
+    return d, rec
+with ThreadPoolExecutor(12) as ex:
+    out = dict(ex.map(probe, SHOPS))
 json.dump(out, open("tools/shops.json", "w"), ensure_ascii=False, indent=1)
