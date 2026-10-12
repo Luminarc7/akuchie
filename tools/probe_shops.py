@@ -25,32 +25,15 @@ Q = "稲妻"
 E = urllib.parse.quote(Q.encode("euc-jp")); S = urllib.parse.quote(Q.encode("shift_jis")); U = urllib.parse.quote(Q)
 EN = urllib.parse.quote("Lightning Bolt")
 URLS = {
- "singlestar_home": "https://www.singlestar.jp/",
- "singlestar_pl": f"https://www.singlestar.jp/product-list?keyword={U}",
- "singlestar_pl_submit": f"https://www.singlestar.jp/product-list?keyword={U}&Submit=",
- "singlestar_en": f"https://www.singlestar.jp/product-list?keyword={EN}",
- "dorasuta_mtg": "https://dorasuta.jp/mtg/",
- "dorasuta_search": f"https://dorasuta.jp/mtg/product-list?kw={U}",
- "mtgguild_utf8": f"https://mtg-guild.com/?mode=srh&keyword={U}",
- "mtgguild_euc": f"https://mtg-guild.com/?mode=srh&keyword={E}",
+ "enndal": f"https://www.enndalgames.com/products/list.php?mode=search&name={U}",
+ "enndal_en": f"https://www.enndalgames.com/products/list.php?mode=search&name={EN}",
+ "hasuya": f"https://www.hasuya.jp/products/list?name={U}",
+ "hasuya_en": f"https://www.hasuya.jp/products/list?name={EN}",
+ "azumaya": f"https://azumayamtg.com/products/list?name={U}",
+ "azumaya_en": f"https://azumayamtg.com/products/list?name={EN}",
+ "blackfrog_other": f"https://blackfrog.jp/shop/shopbrand.html?search={urllib.parse.quote('ゼロ除算'.encode('euc-jp'))}",
+ "singlestar": f"https://www.singlestar.jp/product-list?keyword={U}",
  "mtgguild_en": f"https://mtg-guild.com/?mode=srh&keyword={EN}",
- "enndal_home": "https://www.enndalgames.com/",
- "enndal_euc": f"https://www.enndalgames.com/?mode=srh&keyword={E}",
- "arcana_home": "https://www.arcana-tcg.com/",
- "arcana_euc": f"https://www.arcana-tcg.com/?mode=srh&keyword={E}",
- "hasuya_home": "https://www.hasuya.jp/",
- "hasuya_euc": f"https://www.hasuya.jp/?mode=srh&keyword={E}",
- "azumaya_home": "https://azumayamtg.com/",
- "azumaya_euc": f"https://azumayamtg.com/?mode=srh&keyword={E}",
- "toretoku_home": "https://www.toretoku.jp/",
- "fullcomp_home": "https://www.fullcomp.jp/",
- "yellow_home": "https://www.yellowsubmarine.co.jp/",
- "blackfrog_euc": f"https://blackfrog.jp/shop/shopbrand.html?search={E}",
- "blackfrog_utf8": f"https://blackfrog.jp/shop/shopbrand.html?search={U}",
- "cardrush_en": f"https://www.cardrush-mtg.jp/product-list?keyword={EN}",
- "serra_en": f"https://cardshop-serra.com/search?q={EN}",
- "cantrip_en": f"https://cantripmtg.com/search?q={EN}",
- "hamaya_en": f"https://www.cardshophamaya.com/product-list?keyword={EN}",
 }
 def probe(item):
     k, url = item
@@ -66,4 +49,4 @@ def probe(item):
                "kw": snip(t, "keyword", 4) + snip(t, "検索", 2), "result_snip": snip(t, Q, 2)}
 with ThreadPoolExecutor(10) as ex:
     out = dict(ex.map(probe, URLS.items()))
-json.dump(out, open("tools/shops2.json", "w"), ensure_ascii=False, indent=1)
+json.dump(out, open("tools/shops3.json", "w"), ensure_ascii=False, indent=1)
