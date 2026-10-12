@@ -1,0 +1,7 @@
+# Files that stay in the repository but are not published on the website
+.git
+.github
+.assetsignore
+wrangler.jsonc
+build_meta.py
+README.md

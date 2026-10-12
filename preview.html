@@ -6628,9 +6628,14 @@ document.getElementById('metaBody').addEventListener('click', (e) => {
 // ---- price history & price movers ----------------------------------------------
 // Every day build_prices.py (GitHub Actions, in its own repository) stores
 // the TCGplayer price of every printing from Scryfall and publishes the
-// history with GitHub Pages next to this site - luminarc7.github.io/warujie-prices/.
+// history with GitHub Pages at warujie.github.io/warujie-prices/.
+// On GitHub Pages the data sits next to this site, so a relative path works;
+// anywhere else (warujie.jp on Cloudflare, a local preview) it is fetched from
+// GitHub Pages directly, which allows cross-site requests.
 // Change PRICE_DATA_URL if that repository is published somewhere else.
-const PRICE_DATA_URL = '../warujie-prices/';
+const PRICE_DATA_URL = location.hostname.endsWith('github.io')
+  ? '../warujie-prices/'
+  : 'https://warujie.github.io/warujie-prices/';
 const priceStore = { indexPromise: null, shards: new Map() };
 const histState = { range: '90', foil: false };
 const moverState = { data: null, index: null, status: 'idle', promise: null, win: '7', dir: 'up', market: 'us' };

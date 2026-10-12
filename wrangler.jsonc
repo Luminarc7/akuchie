@@ -1,0 +1,10 @@
+// Cloudflare Workers config: serves this repository as a static site on warujie.jp.
+// Cloudflare rebuilds and redeploys automatically on every push to main.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "warujie",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./"
+  }
+}
