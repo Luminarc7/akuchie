@@ -577,6 +577,14 @@
     padding: 12px 16px; font-size: 11.5px; color: var(--muted); line-height: 1.9;
   }
   .attribution a { color: var(--accent); }
+  .attribution-inner p { margin: 0 0 6px; }
+  .attribution-inner p:last-child { margin-bottom: 0; }
+  .foot-ja { display: block; }
+  .combos-only { display: none; }
+  html[data-combos="1"] .combos-only { display: block; }
+  .meta-illus { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .meta-illus:empty, .hb-illus:empty { display: none; }
+  .hb-illus { font-size: 11px; color: var(--muted); margin: 10px 0 0; line-height: 1.6; }
 
   /* ============================== responsive ============================== */
   @media (max-width: 1240px) { .brand-sub { display: none; } }
@@ -1385,10 +1393,15 @@
 
 <footer class="attribution">
   <div class="attribution-inner">
-    This is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. © Wizards of the Coast LLC.<br>
-    <span data-i18n-html="footer.credit">カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）・ショップ別の価格：<a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a></span><br>
-    <span id="dbCount"></span>
-    <span id="siteSwitch"></span>
+    <p class="foot-fcp">悪知恵 (Warujie) is unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank" rel="noopener">Fan Content Policy</a>. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.
+      <span class="foot-ja" data-i18n="footer.fcp">悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。</span></p>
+    <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a></p>
+    <p class="combos-only" data-i18n-html="footer.combos"></p>
+    <p data-i18n="footer.disclaimer">価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。</p>
+    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）はお使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p><span data-i18n="footer.contact">お問い合わせ</span>：<a id="contactLink" href="#">…</a></p>
+    <p><span id="dbCount"></span>
+    <span id="siteSwitch"></span></p>
   </div>
 </footer>
 
@@ -1570,9 +1583,17 @@ const STR = {
   'loading': ['読み込み中…', 'Loading…'],
   'back': ['← 戻る', '← Back'],
   'back.sets': ['← セット一覧に戻る', '← All sets'],
+  'footer.fcp': ['悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。', ''],
+  'footer.combos': ['統率者戦のコンボ：<a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>', 'Commander combos: <a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>'],
+  'footer.disclaimer': ['価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。', 'Prices are for reference only. Yen amounts are converted at the exchange rate shown and may differ from what shops actually charge or pay. We can’t guarantee the information here is accurate, so please check with the shop before buying or selling.'],
+  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）はお使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode) are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
+  'footer.contact': ['お問い合わせ', 'Contact'],
+  'meta.illus': ['イラスト：{a}', 'Art: {a}'],
+  'art.title': ['{name}（イラスト：{a}　© Wizards of the Coast）', '{name} (art by {a} © Wizards of the Coast)'],
+  'home.meta.illus': ['アイコンのイラスト：{list}　© Wizards of the Coast', 'Icon art: {list} © Wizards of the Coast'],
   'footer.credit': [
-    'カード画像・価格：<a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（価格は TCGplayer / Cardmarket の米ドル・ユーロ建て）・ショップ別の価格：<a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>',
-    'Card images and prices: <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (prices are from TCGplayer / Cardmarket, in US dollars / euros) · prices by shop: <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>'],
+    'データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>',
+    'Data: card details, pictures and prices <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a> (TCGplayer / Cardmarket prices) · prices by shop <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a> · cheapest listings <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a> (TCGplayer) and <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a> · exchange rates <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a> (European Central Bank) · metagame <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>'],
   'db.count': ['収録カード：{n}枚（日本語版あり {ja}枚）', '{n} cards in the database ({ja} with a Japanese printing)'],
   'db.updated': ['・データ更新日：{d}', ' · data updated {d}'],
   'tab.prices': ['価格', 'Prices'],
@@ -4762,6 +4783,12 @@ function setLite(on) {
 }
 document.getElementById('liteSwitch').addEventListener('click', () => setLite(!LITE));
 document.getElementById('liteOff').addEventListener('click', () => setLite(false));
+(function () {
+  const a = document.getElementById('contactLink');
+  const addr = ['warujie.mtg', 'gmail.com'].join('@');
+  a.href = 'mailto:' + addr;
+  a.textContent = addr;
+})();
 setTheme(currentTheme(), false);
 
 // ---- search tips (one set per language) ------------------------------------
@@ -5005,12 +5032,73 @@ function deckArtHtml(a, href, cls) {
   const name = deckIconName(a);
   if (!name) return `<span class="${cls} empty" aria-hidden="true"></span>`;
   const row = rowByEnglishName(name);
-  return `<a class="${cls}" href="${esc(href)}" data-deck="1" tabindex="-1" aria-hidden="true" title="${esc(name)}"><img src="${esc(row ? cardArtUrl(row.id) : namedArtUrl(name))}" data-fallback="${esc(row ? namedArtUrl(name) : '')}" alt="" loading="lazy" decoding="async"></a>`;
+  return `<a class="${cls}" href="${esc(href)}" data-deck="1" tabindex="-1" aria-hidden="true" title="${esc(name)}" data-name="${esc(name)}"><img src="${esc(row ? cardArtUrl(row.id) : namedArtUrl(name))}" data-fallback="${esc(row ? namedArtUrl(name) : '')}" data-art-key="${esc(row ? 'id:' + row.id : 'name:' + name)}" alt="" loading="lazy" decoding="async"></a>`;
+}
+// Scryfall asks that an art crop is shown with its artist and the copyright,
+// so each icon's card is looked up (one request for the whole list): the
+// picture comes from that card, and its artist is named next to it. An icon
+// whose artist can't be found is not shown.
+const ART_INFO = new Map();   // 'id:…' / 'name:…' → { artist, art } or null
+async function creditDeckArt(container) {
+  if (!container) return;
+  const imgs = [...container.querySelectorAll('img[data-art-key]')];
+  const need = [...new Set(imgs.map(i => i.dataset.artKey))].filter(k => !ART_INFO.has(k));
+  for (let i = 0; i < need.length; i += 75) {
+    const chunk = need.slice(i, i + 75);
+    try {
+      const res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ identifiers: chunk.map(k => k.startsWith('id:') ? { id: k.slice(3) } : { name: k.slice(5) }) }),
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      const byId = new Map(), byName = new Map();
+      (data.data || []).forEach(c => {
+        byId.set(c.id, c);
+        byName.set(normText(c.name), c);
+        (c.card_faces || []).forEach(f => { if (!byName.has(normText(f.name))) byName.set(normText(f.name), c); });
+      });
+      chunk.forEach(k => {
+        const c = k.startsWith('id:') ? byId.get(k.slice(3)) : byName.get(normText(k.slice(5)));
+        const face = c && (c.image_uris ? c : (c.card_faces || [])[0]);
+        const artist = c && (c.artist || (face && face.artist));
+        const art = face && face.image_uris && face.image_uris.art_crop;
+        ART_INFO.set(k, artist && art ? { artist, art } : null);
+      });
+    } catch (err) {
+      chunk.forEach(k => ART_INFO.set(k, null));
+    }
+  }
+  if (!container.isConnected) return;
+  const credits = [];
+  imgs.forEach(img => {
+    if (!img.isConnected) return;
+    if (!ART_INFO.has(img.dataset.artKey)) return;   // fell back to the name lookup meanwhile: credited by the next pass
+    const info = ART_INFO.get(img.dataset.artKey);
+    const box = img.parentElement;
+    if (!info) { box.classList.add('empty'); img.remove(); return; }
+    if (img.src.split('?')[0] !== info.art.split('?')[0]) { img.dataset.fallback = ''; img.src = info.art; }
+    box.title = t('art.title', { name: box.dataset.name || '', a: info.artist });
+    const slot = box.closest('.meta-row') && box.closest('.meta-row').querySelector('.meta-illus');
+    if (slot) slot.textContent = t('meta.illus', { a: info.artist });
+    const rank = box.closest('.hb-row') && box.closest('.hb-row').querySelector('.hb-rank');
+    if (rank) credits.push(`${rank.textContent} ${info.artist}`);
+  });
+  const cap = container.querySelector('.hb-illus');
+  if (cap) cap.textContent = credits.length ? t('home.meta.illus', { list: credits.join(LANG === 'en' ? ', ' : '、') }) : '';
 }
 function artFallback(e) {
   const img = e.target;
   if (!img || img.tagName !== 'IMG' || !img.closest('.meta-art, .hb-art')) return;
-  if (img.dataset.fallback) { const next = img.dataset.fallback; img.dataset.fallback = ''; img.src = next; return; }
+  if (img.dataset.fallback) {
+    const next = img.dataset.fallback; img.dataset.fallback = '';
+    // the same card by name (another printing): its artist is credited instead
+    if (img.parentElement.dataset.name) img.dataset.artKey = 'name:' + img.parentElement.dataset.name;
+    img.src = next;
+    creditDeckArt(img.closest('#metaBody, #homeMetaBody'));
+    return;
+  }
   img.parentElement.classList.add('empty');
   img.remove();
 }
@@ -5062,6 +5150,7 @@ function metaRowHtml(a, index, maxShare) {
         <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a><a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
+        <div class="meta-illus"></div>
       </div>
       <div class="meta-share" title="${esc(t('meta.share.title', { name, share: a.share.toFixed(1), n: fmtNum(a.decks) }))}">
         <div class="meta-lbl">${t('meta.col.share')}</div>
@@ -5147,6 +5236,7 @@ function renderMeta() {
       <ol class="meta-list">${rows.map((a, i) => metaRowHtml(a, i, maxShare)).join('')}</ol>
       ${rest}
     </div>`;
+  creditDeckArt(body);
 }
 
 function metaSelect(change) {
@@ -6308,7 +6398,8 @@ async function renderHomeMeta() {
     return `<li class="hb-row hb-deck"><span class="hb-rank">${i + 1}</span>${deckArtHtml(a, href, 'hb-art')}
         <a class="hb-name" href="${esc(href)}" data-deck="1">${syms}${esc(a.name)}</a>
         <span class="hb-sub">${esc(t('home.meta.share', { v: a.share.toFixed(1) }))}${wr ? `<br>${esc(wr)}` : ''}</span></li>`;
-  }).join('')}</ol>`;
+  }).join('')}</ol><p class="hb-illus"></p>`;
+  creditDeckArt(body);
 }
 document.getElementById('homeMetaTabs').addEventListener('click', (e) => {
   const b = e.target.closest('.seg-btn');
