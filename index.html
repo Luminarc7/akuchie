@@ -1143,6 +1143,7 @@
   .of-cond { display: inline-block; min-width: 32px; padding: 0 5px; border-radius: 4px; text-align: center; font-size: 11.5px; font-weight: 700; line-height: 1.8;
     border: 1px solid var(--line-strong); color: var(--text); cursor: help; }
   .of-cond.any { border-color: transparent; color: var(--muted); }
+  .of-country { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .02em; cursor: help; }
   .of-price strong { display: block; font-size: 14.5px; color: var(--text); }
   .of-row.best .of-price strong { color: var(--accent); }
   .of-price .jpy { display: block; font-size: 11px; color: var(--text-2); }
@@ -1730,8 +1731,11 @@ const STR = {
   'notes.heading': ['価格について', 'About the prices'],
   'notes.offers.us': ['出品と在庫：{list}が公開している価格リストより。TCGplayer は状態を問わない最安の出品価格のみで、状態・在庫数は公開されていません。', 'Listings and stock: from the price lists published by {list}. TCGplayer: only the cheapest copy in any condition; its condition and stock aren’t published.'],
   'notes.offers.us.none': ['出品と在庫：TCGplayer は状態を問わない最安の出品価格のみで、状態・在庫数は公開されていません。', 'Listings and stock: TCGplayer shows only the cheapest copy in any condition; its condition and stock aren’t published.'],
+  'notes.offers.eu.ct': ['出品と在庫（欧州）：CardTrader の欧州の出品者{date}と、Cardmarket の価格ガイドにある最安の出品価格（状態・在庫数は非公開）より。国名は出品者の国です。', 'Listings in Europe: sellers in Europe on CardTrader{date}, and the cheapest offer from Cardmarket’s price guide (its condition and stock aren’t published). The country is the seller’s.'],
+  'offers.country': ['出品者の国：{c}', 'Seller’s country: {c}'],
   'notes.offers.eu': ['出品と在庫（欧州）：Cardmarket の価格ガイドにある最安の出品価格のみで、状態・在庫数は公開されていません。', 'Listings in Europe: only the cheapest offer from Cardmarket’s price guide; condition and stock aren’t published.'],
   'notes.cond': ['状態の目安：NM＝ほぼ新品、EX・LP＝軽い傷、VG・MP＝中程度の傷、G・HP＝目立つ傷、DMG＝損傷あり。言語の表示がない出品は英語版です。', 'Condition: NM = near mint; EX, LP = light wear; VG, MP = moderate wear; G, HP = heavy wear; DMG = damaged. Listings without a language are English.'],
+  'notes.cond.eu': ['状態の目安：M＝新品、NM＝ほぼ新品、SP＝軽い傷、MP＝中程度の傷、PL＝傷あり、HP＝目立つ傷、PO＝損傷あり。言語の表示がない出品は英語版です。', 'Condition: M = mint; NM = near mint; SP = slightly played; MP = moderately played; PL = played; HP = heavily played; PO = poor. Listings without a language are English.'],
   'notes.asof': ['{shop}（{date}時点）', '{shop} (as of {date})'],
   'price.shop.market': ['相場', 'market'],
   'price.shop.low': ['最安出品', 'lowest listing'],
@@ -3655,12 +3659,14 @@ const OFFER_CONDS = {
   NM: ['ニアミント（ほぼ新品）', 'Near mint'], EX: ['エクセレント（軽い傷）', 'Excellent (light wear)'], LP: ['ライトリープレイド（軽い傷）', 'Lightly played'],
   VG: ['ベリーグッド（中程度の傷）', 'Very good (moderate wear)'], MP: ['モデレートリープレイド（中程度の傷）', 'Moderately played'],
   G: ['グッド（目立つ傷）', 'Good (heavy wear)'], HP: ['ヘビリープレイド（目立つ傷）', 'Heavily played'], DMG: ['ダメージ（損傷あり）', 'Damaged'],
+  M: ['ミント（新品）', 'Mint'], SP: ['スライトリープレイド（軽い傷）', 'Slightly played'], PL: ['プレイド（傷あり）', 'Played'], PO: ['プア（損傷あり）', 'Poor'],
 };
 const OFFER_LANGS = {
   JA: ['日本語', 'Japanese'], FR: ['フランス語', 'French'], DE: ['ドイツ語', 'German'], IT: ['イタリア語', 'Italian'], ES: ['スペイン語', 'Spanish'],
   PT: ['ポルトガル語', 'Portuguese'], RU: ['ロシア語', 'Russian'], KO: ['韓国語', 'Korean'], CS: ['簡体字中国語', 'Simplified Chinese'],
   CT: ['繁体字中国語', 'Traditional Chinese'], PH: ['ファイレクシア語', 'Phyrexian'], HE: ['ヘブライ語', 'Hebrew'], LA: ['ラテン語', 'Latin'],
   EL: ['ギリシャ語', 'Greek'], AR: ['アラビア語', 'Arabic'], SA: ['サンスクリット語', 'Sanskrit'], QYA: ['クウェンヤ語', 'Quenya'],
+  NL: ['オランダ語', 'Dutch'], HU: ['ハンガリー語', 'Hungarian'], PL: ['ポーランド語', 'Polish'], CZ: ['チェコ語', 'Czech'],
 };
 const pick2 = pair => (pair ? pair[LANG === 'en' ? 1 : 0] : '');
 let offerFoil = (() => { try { return localStorage.getItem('akuchie-offer-foil') === '1'; } catch (e) { return false; } })();
@@ -3673,6 +3679,7 @@ function offerLink(card, shop, foil) {
   }
   if (shop === 'mp') return /^https:\/\/manapool\.com\//.test(lk.mp || '') ? lk.mp : '';
   if (shop === 'tcg') return Number.isInteger(lk.tcg) ? `https://www.tcgplayer.com/product/${lk.tcg}` : tcgplayerUrl(card);
+  if (shop === 'ct') return Number.isInteger(lk.ct) ? `https://www.cardtrader.com/cards/${lk.ct}` : '';
   if (shop === 'cm') return Number.isInteger(lk.cm) ? `https://www.cardmarket.com/en/Magic/Products?idProduct=${lk.cm}` : cardmarketUrl(card);
   return '';
 }
@@ -3680,7 +3687,8 @@ function offerRows(card, market, foil) {
   const out = [];
   (card._offers || []).forEach(r => {
     if (Array.isArray(r) && r[1] === foil && OFFER_MARKET[r[0]] === market && r[3] > 0) {
-      out.push({ shop: r[0], cond: String(r[2] || ''), cents: r[3], qty: Number.isInteger(r[4]) ? r[4] : null, lang: String(r[5] || '') });
+      out.push({ shop: r[0], cond: String(r[2] || ''), cents: r[3], qty: Number.isInteger(r[4]) ? r[4] : null, lang: String(r[5] || ''),
+                 country: /^[A-Z]{2}$/.test(r[6] || '') ? r[6] : '' });
     }
   });
   const q = card._quotes || {};
@@ -3692,7 +3700,8 @@ function offerRowHtml(card, r, market, foil, first) {
   const url = offerLink(card, r.shop, foil);
   const name = esc(OFFER_SHOPS[r.shop] || r.shop);
   const shop = url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${name} ↗</a>` : name;
-  const lang = r.lang ? `<span class="of-lang">${esc(pick2(OFFER_LANGS[r.lang]) || r.lang)}</span>` : '';
+  const lang = (r.country ? `<span class="of-lang of-country" title="${esc(t('offers.country', { c: r.country }))}">${esc(r.country)}</span>` : '')
+    + (r.lang ? `<span class="of-lang">${esc(pick2(OFFER_LANGS[r.lang]) || r.lang)}</span>` : '');
   const cond = r.cond
     ? `<span class="of-cond" title="${esc(pick2(OFFER_CONDS[r.cond]) || r.cond)}">${esc(r.cond)}</span>`
     : `<span class="of-cond any" title="${esc(t('offers.cond.any'))}">—</span>`;
@@ -3759,6 +3768,10 @@ function priceNotesHtml(card) {
           .map(([k, label]) => /^\d{4}-\d\d-\d\d/.test(asOf[k]) ? t('notes.asof', { shop: label, date: esc(dateLabel(asOf[k].slice(0, 10), true)) }) : label);
         items.push(list.length ? t('notes.offers.us', { list: list.join(LANG === 'en' ? ' and ' : '・') }) : t('notes.offers.us.none'));
         items.push(t('notes.cond'));
+      } else if ((card._offers || []).some(r => r[0] === 'ct')) {
+        const d = (card._offersAsOf || {}).cardtrader || '';
+        items.push(t('notes.offers.eu.ct', { date: /^\d{4}-\d\d-\d\d/.test(d) ? (LANG === 'en' ? ` (as of ${esc(dateLabel(d.slice(0, 10), true))})` : `（${esc(dateLabel(d.slice(0, 10), true))}時点）`) : '' }));
+        items.push(t('notes.cond.eu'));
       } else {
         items.push(t('notes.offers.eu'));
       }
