@@ -1,0 +1,19 @@
+# One-off helper (probe-shops branch only): how Japanese shops' search URLs work.
+name: Probe shops
+on:
+  push:
+    branches: [probe-shops]
+    paths: [tools/probe_shops.py, .github/workflows/probe-shops.yml]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 tools/probe_shops.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/shops.json && git commit -m "Shop probe" && git push origin HEAD:probe-shops || echo nothing
