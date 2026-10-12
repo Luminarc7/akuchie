@@ -4611,7 +4611,6 @@ function renderCardViewContent(card) {
       <div class="version-menu-heading" id="versionMenuHeading">${t('versions.loading')}</div>
       <div class="version-panel" id="versionMenuPanel"></div>
     </section>
-    <section class="similar" id="similarBox" hidden></section>
     <section class="combos" id="combosBox" style="display:none;"></section>
     <section class="price-notes" id="priceNotes" hidden></section>`;
   document.title = `${names.main} — 悪知恵`;
@@ -4625,8 +4624,6 @@ function renderCardViewContent(card) {
   if (LITE) { if (COMBOS_ON) liteButton('combosBox', 'lite.combos', () => loadCardCombos(card)); }
   else loadCardCombos(card);
   showCardRoles(card);
-  if (LITE) liteButton('similarBox', 'lite.similar', () => { showSimilar(card); showCardRoles(card, true); });
-  else showSimilar(card);
 
   const setLink = document.querySelector('#cardViewCard .cp-set-link');
   if (setLink) setLink.addEventListener('click', (e) => {
@@ -6444,14 +6441,7 @@ async function creditDeckArt(container) {
     const box = img.parentElement;
     if (!info) { box.classList.add('empty'); img.remove(); return; }
     if (img.src.split('?')[0] !== info.art.split('?')[0]) { img.dataset.fallback = ''; img.src = info.art; }
-    box.title = t('art.title', { name: box.dataset.name || '', a: info.artist });
-    const slot = box.closest('.meta-row') && box.closest('.meta-row').querySelector('.meta-illus');
-    if (slot) slot.textContent = t('meta.illus', { a: info.artist });
-    const rank = box.closest('.hb-row') && box.closest('.hb-row').querySelector('.hb-rank');
-    if (rank) credits.push(`${rank.textContent} ${info.artist}`);
   });
-  const cap = container.querySelector('.hb-illus');
-  if (cap) cap.textContent = credits.length ? t('home.meta.illus', { list: credits.join(LANG === 'en' ? ', ' : '、') }) : '';
 }
 function artFallback(e) {
   const img = e.target;
@@ -6515,7 +6505,6 @@ function metaRowHtml(a, index, maxShare) {
         <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a><a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
-        <div class="meta-illus"></div>
       </div>
       <div class="meta-share" title="${esc(t('meta.share.title', { name, share: a.share.toFixed(1), n: fmtNum(a.decks) }))}">
         <div class="meta-lbl">${t('meta.col.share')}</div>
@@ -7776,7 +7765,7 @@ async function renderHomeMeta() {
     return `<li class="hb-row hb-deck"><span class="hb-rank">${i + 1}</span>${deckArtHtml(a, href, 'hb-art')}
         <a class="hb-name" href="${esc(href)}" data-deck="1">${syms}${esc(a.name)}</a>
         <span class="hb-sub">${esc(t('home.meta.share', { v: a.share.toFixed(1) }))}${wr ? `<br>${esc(wr)}` : ''}</span></li>`;
-  }).join('')}</ol><p class="hb-illus"></p>`;
+  }).join('')}</ol>`;
   creditDeckArt(body);
 }
 document.getElementById('homeMetaTabs').addEventListener('click', (e) => {
