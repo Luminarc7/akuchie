@@ -554,6 +554,14 @@
   .meta-controls select { padding: 6px 10px; font-size: 13px; }
   #metaSummary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; margin: 0 0 12px; }
   #metaSummary:empty { display: none; }
+  /* the tab's header and its numbers in one box that stays under the top bar */
+  .meta-bar {
+    position: sticky; top: var(--stick-top, 0px); z-index: 30; margin-bottom: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.55);
+  }
+  .meta-bar .meta-head { background: none; border: 0; border-radius: 0; margin: 0; }
+  .meta-bar .result-count, .meta-bar #metaSummary { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0; margin: 0; padding: 8px 16px; }
+  .meta-bar .result-count:empty, .meta-bar #metaSummary:empty { display: none; }
   .meta-table { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
   /* price movers */
   .mover-list { list-style: none; margin: 0; padding: 0; }
@@ -688,6 +696,12 @@
     .meta-rank { text-align: left; padding-top: 1px; }
     .meta-lbl { display: block; }
     .meta-controls { margin-left: 0; }
+    /* phones: the sticky box stays short - the buttons scroll sideways */
+    .meta-bar .meta-head { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 12px; gap: 10px; }
+    .meta-bar .meta-head::-webkit-scrollbar { display: none; }
+    .meta-bar .meta-head .seg, .meta-bar .meta-controls { flex-wrap: nowrap; flex: none; }
+    .meta-bar .meta-title { font-size: 17px; flex: none; }
+    .meta-bar .result-count, .meta-bar #metaSummary { padding: 6px 12px; font-size: 12px; }
     .mover-row { grid-template-columns: 20px minmax(0, 1fr) auto; gap: 4px 10px; padding: 9px 12px; }
     .mover-card { gap: 10px; }
     .mover-card img, .mover-noimg { width: 38px; }
@@ -1078,6 +1092,7 @@
     padding: 4px 12px 4px 9px; font-size: 13px; font-weight: 700; line-height: 1.4;
   }
   .hx-effect svg { width: 13px; height: 13px; flex: none; color: var(--accent); }
+  .hx-role { font-size: 10px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; margin-left: 2px; line-height: 1.5; }
   .hx-effect:hover { border-color: var(--accent); }
   .hx-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .hx-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -1116,6 +1131,8 @@
   .shop-group { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; min-width: 0; }
   .shop-group .sg-label { width: 2.6em; flex: none; font-size: 10.5px; font-weight: 700; color: var(--muted); }
   .cp-row.shop-links .external-link-btn { padding: 1px 9px; font-size: 11.5px; line-height: 1.7; }
+  .shop-links[data-market="jp"] .shop-group:not([data-region="jp"]) { display: none; }
+  .shop-links:not([data-market="jp"]) .jp-more { display: none; }
   /* home price box: winners and losers */
   .hb-part + .hb-part { margin-top: 8px; }
   .hb-part-head { margin: 4px 0 0; font-size: 12px; font-weight: 700; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
@@ -1471,18 +1488,20 @@
 </div>
 
 <div id="metaView" class="wrap" style="display:none;">
-  <div class="meta-head">
-    <h1 class="meta-title" data-i18n="meta.title">メタゲーム</h1>
-    <div class="seg" id="metaFormats" role="group" aria-label="フォーマット" data-i18n-aria="meta.formats.aria"></div>
-    <div class="meta-controls">
-      <div class="seg" id="metaWindows" role="group" aria-label="集計期間" data-i18n-aria="meta.windows.aria"></div>
-      <select id="metaSort" aria-label="並び替え" data-i18n-aria="sort.aria">
-        <option value="share" data-i18n="meta.sort.share">使用率順</option>
-        <option value="winrate" data-i18n="meta.sort.wr">勝率順</option>
-      </select>
+  <div class="meta-bar">
+    <div class="meta-head">
+      <h1 class="meta-title" data-i18n="meta.title">メタゲーム</h1>
+      <div class="seg" id="metaFormats" role="group" aria-label="フォーマット" data-i18n-aria="meta.formats.aria"></div>
+      <div class="meta-controls">
+        <div class="seg" id="metaWindows" role="group" aria-label="集計期間" data-i18n-aria="meta.windows.aria"></div>
+        <select id="metaSort" aria-label="並び替え" data-i18n-aria="sort.aria">
+          <option value="share" data-i18n="meta.sort.share">使用率順</option>
+          <option value="winrate" data-i18n="meta.sort.wr">勝率順</option>
+        </select>
+      </div>
     </div>
+    <p class="result-count" id="metaSummary"></p>
   </div>
-  <p class="result-count" id="metaSummary"></p>
   <div id="metaBody"></div>
   <p class="meta-note" id="metaNote"></p>
 </div>
@@ -1493,14 +1512,16 @@
 </div>
 
 <div id="pricesView" class="wrap" style="display:none;">
-  <div class="meta-head">
-    <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
-    <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
-    <div class="meta-controls">
-      <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
+  <div class="meta-bar">
+    <div class="meta-head">
+      <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
+      <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
+      <div class="meta-controls">
+        <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
+      </div>
     </div>
+    <p class="result-count" id="moverSummary"></p>
   </div>
-  <p class="result-count" id="moverSummary"></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -1590,6 +1611,7 @@ const STR = {
   'hx.label': ['効果の例', 'Effects to try'],
   'hx.next': ['別の例', 'Shuffle'],
   'hx.search': ['「{q}」で検索', 'Search for “{q}”'],
+  'hx.role': ['役割', 'Role'],
   'hx.none': ['例を表示するには、カードのデータベースが必要です。', 'Examples need the card database.'],
   'home.more': ['すべて見る', 'See all'],
   'home.movers': ['価格の動き（{w}）', 'Price movers ({w})'],
@@ -4310,6 +4332,8 @@ function rerenderPriceSection(card) {
   sec.outerHTML = priceHtml(card);
   const offers = document.getElementById('offersBox');
   if (offers) offers.outerHTML = offersHtml(card);
+  const shops = document.querySelector('#cardViewCard .shop-links');
+  if (shops) shops.dataset.market = priceMarket;   // the JP tab shows only the Japanese shops
   const notes = document.getElementById('priceNotes');
   if (notes) { notes.innerHTML = priceNotesHtml(card); notes.hidden = !notes.innerHTML.trim(); }
   updateYenLabels(document.getElementById('cardViewCard'));
@@ -4556,13 +4580,14 @@ function renderCardViewContent(card) {
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
   const shopGroups = [
-    ['jp', [[t('shop.hareruya'), hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], [t('shop.cardrush'), cardRushUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)]]],
+    ['jp', [[t('shop.hareruya'), hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], [t('shop.cardrush'), cardRushUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)]]
+      .concat(JP_SHOP_SEARCH.map(s => [LANG === 'en' ? s.en : s.ja, jpShopUrl(s, card), 'jp-more']))],
     ['us', [['TCGplayer', tcgplayerUrl(card)], ['Card Kingdom', cardKingdomUrl(card)], ['Star City Games', starCityUrl(card)]]],
     ['eu', [['Cardmarket', cardmarketUrl(card)]]],
   ].map(([k, links]) => [k, links.filter(([, url]) => url)]).filter(([, links]) => links.length);
   const deckLinks = [['MTGDecks', mtgDecksUrl(card)], ['MTGGoldfish', goldfishUrl(card)]].filter(([, url]) => url);
-  const linkRow = links => links.map(([label, url]) =>
-    `<a class="external-link-btn" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('');
+  const linkRow = links => links.map(([label, url, cls]) =>
+    `<a class="external-link-btn${cls ? ' ' + cls : ''}" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('');
   const setLabel = card.set ? (LANG === 'en' ? `${card.set_name || card.set.toUpperCase()} (${card.set.toUpperCase()})`
                                              : `${card.set_name || card.set.toUpperCase()}（${card.set.toUpperCase()}）`) : '';
 
@@ -4590,7 +4615,7 @@ function renderCardViewContent(card) {
         <div class="cp-market"><div class="cp-market-grid">
           <div class="cp-market-main">
             ${priceHtml(card)}
-            ${shopGroups.length ? `<div class="cp-row external-links shop-links">
+            ${shopGroups.length ? `<div class="cp-row external-links shop-links" data-market="${priceMarket}">
               <span class="cp-row-label">${t('links.shops')}</span>${shopGroups.map(([k, links]) =>
                 `<span class="shop-group" data-region="${k}"><span class="sg-label">${t('shops.' + k)}</span>${linkRow(links)}</span>`).join('')}
             </div>` : ''}
@@ -4685,6 +4710,14 @@ function cardRushUrl(card) {
 function tokyoMtgUrl(card) {
   const en = englishName(card);
   return en ? `https://tokyomtg.com/cardpage.html?p=q&query=${encodeURIComponent(en)}` : '';
+}
+
+// More Japanese shops: their own product search, by the card's Japanese name
+// (English name when it has none). [Japanese name, English name, search URL with {q}]
+const JP_SHOP_SEARCH = [{"ja": "シングルスター", "en": "Single Star", "url": "https://www.singlestar.jp/product-list?keyword={q}"}, {"ja": "カードショップ セラ", "en": "Cardshop Serra", "url": "https://cardshop-serra.com/search?q={q}"}, {"ja": "ENNDAL GAMES", "en": "ENNDAL GAMES", "url": "https://www.enndalgames.com/products/list.php?mode=search&name={q}"}, {"ja": "アメニティードリーム", "en": "Amenity Dream", "url": "https://www.amenitydream.com/product-list?keyword={q}"}, {"ja": "エターナルブルー", "en": "Eternal Blue", "url": "https://www.eternal-blue.jp/product-list?keyword={q}"}, {"ja": "BIGRED", "en": "BIGRED", "url": "https://www.bigredmtg.com/product-list?keyword={q}"}, {"ja": "はま屋", "en": "Hamaya", "url": "https://www.cardshophamaya.com/product-list?keyword={q}"}, {"ja": "CANTRIP", "en": "CANTRIP", "url": "https://cantripmtg.com/search?q={q}"}, {"ja": "MTG Guild", "en": "MTG Guild", "url": "https://mtg-guild.com/?mode=srh&keyword={q}", "name": "en"}, {"ja": "蓮屋", "en": "Hasuya", "url": "https://www.hasuya.jp/products/list?name={q}"}, {"ja": "あずまや", "en": "Azumaya", "url": "https://azumayamtg.com/products/list?name={q}"}, {"ja": "アドバンテージ", "en": "Advantage", "url": "https://www.advantagemtg.jp/product-list?keyword={q}"}, {"ja": "サトPin", "en": "SatoPin", "url": "https://www.cardshopsatopin.net/product-list?keyword={q}"}, {"ja": "BLACK FROG", "en": "BLACK FROG", "url": "https://blackfrog.jp/shop/shopbrand.html?search={q}"}, {"ja": "カードラボ", "en": "Card Labo", "url": "https://www.c-labo-online.jp/product-list?keyword={q}"}];
+function jpShopUrl(shop, card) {
+  const name = shop.name === 'en' ? englishName(card) : (japaneseFrontName(card) || englishName(card));   // some shops only take English names
+  return name ? shop.url.replace('{q}', encodeURIComponent(name)) : '';
 }
 
 // MTGDecks card pages: /prices/<name>, lowercase, accents dropped, and every
@@ -7458,6 +7491,8 @@ const HERO_TRY = {
 function renderHeroTry() {
   const box = document.getElementById('heroTry');
   if (!box) return;
+  box.hidden = true;   // these searches are in the 「効果の例」 box now
+  return;
   box.innerHTML = `<span>${esc(t('hero.try'))}</span>` + HERO_TRY[LANG]
     .map(q => `<button type="button" class="try-pill" data-q="${esc(q)}">${esc(q)}</button>`).join('');
 }
@@ -7601,6 +7636,34 @@ const HERO_EFFECTS = [
   ["予示", "", "Manifest", "manifest"],
   ["ダンジョンを探索する", "", "Venture into the dungeon", "venture into the dungeon"],
 ];
+// The searches that were under the search box, and player slang (role searches):
+// [Japanese search, English search, Japanese words to highlight, English words to highlight]
+HERO_EFFECTS.push(["飛行 絆魂", "", "Flying lifelink", "flying lifelink"], ["1枚捨てる", "", "Discard a card", "discard a card"]);
+const HERO_SLANG = [
+  ['除去', 'removal', '破壊 追放', 'destroy exile'],
+  ['黒の除去', 'black removal', '破壊 追放', 'destroy exile'],
+  ['ドロー', 'card draw', '引く', 'draw'],
+  ['ランプ', 'ramp', '加える 土地', 'add land'],
+  ['マナクリ', 'mana dork', '加える', 'add'],
+  ['サクり台', 'sac outlet', '生け贄に捧げる', 'sacrifice'],
+  ['打ち消し', 'counterspell', '打ち消す', 'counter'],
+  ['サーチ', 'tutor', '探し', 'search'],
+  ['全体除去', 'board wipe', 'すべての', 'destroy all'],
+  ['火力', 'burn', 'ダメージ', 'damage'],
+  ['赤の火力', 'red burn', 'ダメージ', 'damage'],
+  ['バウンス', 'bounce', '手札に戻す', 'return hand'],
+  ['リアニメイト', 'reanimate', '墓地 戦場', 'graveyard battlefield'],
+  ['ハンデス', 'hand disruption', '捨てる', 'discard'],
+  ['ブリンク', 'blink', '追放 戦場に戻す', 'exile return'],
+  ['墓地対策', 'graveyard hate', '墓地', 'graveyard'],
+  ['トークン生成', 'token maker', 'トークン', 'token'],
+  ['キャントリップ', 'cantrip', '引く', 'draw'],
+  ['フォグ', 'fog', '軽減 防ぐ', 'prevent'],
+  ['コントロール奪取', 'steal', 'コントロールを得る', 'gain control'],
+  ['ライフ回復', 'life gain', 'ライフを得る', 'gain life'],
+];
+const HERO_STATE = () => Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+  manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name', showLoose: false });
 const SEARCH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
 const heroFx = { entries: [], lang: '', token: 0 };
 function effectOf(fx) {
@@ -7618,8 +7681,11 @@ async function pickHeroEffects(token) {
   const before = new Set(heroFx.entries.map(e => e.fx));
   const picked = [], used = new Set();
   const started = Date.now();
-  for (const fx of shuffled(HERO_EFFECTS.filter(f => !before.has(f)))) {
-    if (picked.length === 3 || Date.now() - started > 800) break;   // a full database finds three in a few tries
+  await loadTags().catch(() => {});
+  if (token !== heroFx.token) return null;
+  const effects = shuffled(HERO_EFFECTS.filter(f => !before.has(f)));
+  const slang = tagsState === 'ready' ? shuffled(HERO_SLANG.filter(f => !before.has(f))) : [];
+  const pickEffect = fx => {
     const plan = buildSearchPlan(effectOf(fx).q);
     const hits = [];
     for (const row of LOCAL_DB) {
@@ -7627,26 +7693,40 @@ async function pickHeroEffects(token) {
       const r = evaluateRow(row, plan);
       if (r && r.tier === 1) hits.push(row);
     }
-    if (hits.length) {
-      const short = hits.filter(row => heroText(row).length <= 110);
-      const pool = short.length ? short : hits;
-      const row = pool[Math.floor(Math.random() * pool.length)];
-      used.add(row.oracle_id);
-      picked.push({ fx, row, plan });
-    }
+    if (!hits.length) return null;
+    const short = hits.filter(row => heroText(row).length <= 110);
+    const pool = short.length ? short : hits;
+    const { label, q } = effectOf(fx);
+    return { fx, row: pool[Math.floor(Math.random() * pool.length)], plan, label, q };
+  };
+  // a slang search: one of the cards it finds (among the more played ones), with the words that do it highlighted
+  const pickSlang = fx => {
+    const q = LANG === 'en' ? fx[1] : fx[0];
+    const plan = buildSearchPlan(LANG === 'en' ? fx[3] : fx[2]);
+    const rows = searchRows(q, HERO_STATE()).rows.slice(0, 150)
+      .filter(row => !used.has(row.oracle_id) && (LANG === 'en' || row.name_ja) && heroText(row).length <= 140);
+    // cards where the highlighted words come early, so they show in the box's four lines
+    const lit = rows.filter(row => { const r = highlightRanges(heroText(row), plan); return r.length && r[0][0] <= 60; });
+    const pool = (lit.length ? lit : rows).slice(0, 60);
+    if (!pool.length) return null;
+    return { fx, row: pool[Math.floor(Math.random() * pool.length)], plan, label: q, q, slang: true };
+  };
+  while (picked.length < 3 && (effects.length || slang.length) && Date.now() - started < 1500) {
+    const fromSlang = slang.length && (!effects.length || Math.random() < 0.35);
+    const entry = fromSlang ? pickSlang(slang.shift()) : pickEffect(effects.shift());
+    if (entry) { used.add(entry.row.oracle_id); picked.push(entry); }
     await sleep(0);   // let the page breathe between scans
     if (token !== heroFx.token) return null;
   }
   return picked;
 }
 function heroEntryHtml(entry, card) {
-  const { fx, row, plan } = entry;
-  const { label, q } = effectOf(fx);
+  const { row, plan, label, q } = entry;
   const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
   const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : '';
   const pic = card ? faceUris(card)[0] : null;
   return `<div class="hx-entry">
-      <button type="button" class="hx-effect" data-q="${esc(q)}" title="${esc(t('hx.search', { q: label }))}">${SEARCH_ICON}<span>${esc(label)}</span></button>
+      <button type="button" class="hx-effect" data-q="${esc(q)}" title="${esc(t('hx.search', { q: label }))}">${SEARCH_ICON}<span>${esc(label)}</span>${entry.slang ? `<span class="hx-role">${esc(t('hx.role'))}</span>` : ''}</button>
       <a class="hx-item" href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">
         <span class="hx-thumb">${pic ? pictureTag(pic, { alt: '', sizes: '46px', use: ['small'], main: 'small' }) : '<span class="hx-noimg"></span>'}</span>
         <span class="hx-body"><span class="hx-name">${esc(main)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="hx-text">${highlightHtml(heroText(row), plan)}</span></span>
@@ -7661,8 +7741,10 @@ async function renderHeroExample(step) {
   if (token !== heroFx.token) return;
   if (!LOCAL_DB || !LOCAL_DB.length) { box.hidden = true; return; }
   if (step || !heroFx.entries.length || heroFx.lang !== LANG) {
+    const lang = LANG;
     const picked = await pickHeroEffects(token);
     if (!picked) return;
+    if (lang !== LANG) return renderHeroExample(step);
     heroFx.entries = picked;
     heroFx.lang = LANG;
   }
@@ -8110,11 +8192,19 @@ function updateHeroOut() {
 const phoneMQ = window.matchMedia('(max-width: 820px)');
 function updateBarTop() {
   const bar = document.querySelector('.topbar');
-  if (!phoneMQ.matches) { bar.style.removeProperty('--bar-top'); return; }
+  if (!phoneMQ.matches) { bar.style.removeProperty('--bar-top'); updateStickTop(); return; }
   const form = document.getElementById('searchForm');
   const formShown = getComputedStyle(form).display !== 'none';
   const first = formShown ? form : document.querySelector('.top-tabs');
   bar.style.setProperty('--bar-top', `${-Math.max(0, first.offsetTop - 8)}px`);
+  updateStickTop();
+}
+// where boxes that stay at the top start: under the top bar (on phones, the part of it that stays)
+function updateStickTop() {
+  const bar = document.querySelector('.topbar');
+  if (!bar) return;
+  const shift = phoneMQ.matches ? (parseFloat(bar.style.getPropertyValue('--bar-top')) || 0) : 0;
+  document.documentElement.style.setProperty('--stick-top', `${Math.max(0, bar.offsetHeight + shift)}px`);
 }
 let heroTick = false;
 window.addEventListener('scroll', () => {
