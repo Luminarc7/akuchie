@@ -1,19 +1,20 @@
-# One-off helper (probe-shops branch only): how Japanese shops' search URLs work.
-name: Probe shops
-on:
-  push:
-    branches: [probe-shops]
-    paths: [tools/probe_shops.py, .github/workflows/probe-shops.yml]
-permissions:
-  contents: write
+name: Probe staging
+on: push
+permissions: { contents: write }
 jobs:
   probe:
+    if: github.ref == 'refs/heads/probe-shops'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
-      - run: python3 tools/probe_shops.py
+      - uses: actions/checkout@v4
       - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools && git commit -m "Shop probe" && git push origin HEAD:probe-shops || echo nothing
+          mkdir -p probe_out
+          for u in https://staging-warujie.warujie-mtg.workers.dev/ https://warujie.jp/; do
+            echo "== $u" >> probe_out/staging.txt
+            curl -sS -D - -o page.html "$u" | grep -iE '^(HTTP|x-robots|content-type|cache-control)' >> probe_out/staging.txt
+            grep -o '<title>[^<]*' page.html >> probe_out/staging.txt
+            grep -c 'cloudflareinsights' page.html >> probe_out/staging.txt || true
+            sha256sum page.html >> probe_out/staging.txt
+          done
+          git config user.name probe; git config user.email probe@users.noreply.github.com
+          git add probe_out && git commit -m "probe result [skip ci]" && git push
