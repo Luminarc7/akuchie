@@ -1,0 +1,135 @@
+== /manifest.webmanifest
+HTTP/2 200 
+content-type: application/manifest+json
+773
+== /sw.js
+HTTP/2 200 
+content-type: text/javascript
+1958
+== /icons/icon-192.png
+HTTP/2 200 
+content-type: image/png
+4738
+== /og.png
+HTTP/2 200 
+content-type: image/png
+227720
+== /meta_lists/30-modern.json
+HTTP/2 200 
+content-type: application/json
+326464
+== /tools/name_readings.py
+HTTP/2 404 
+0
+== Twitterbot/1.0 ?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+<meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+<meta name="twitter:card" content="summary"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Twitterbot/1.0 ?view=deck&format=modern&days=30&deck=Broodscale
+<title>Broodscale — モダン のデッキ | 悪知恵（warujie）
+<meta property="og:title" content="Broodscale — モダン のデッキ | 悪知恵（warujie）"
+<meta property="og:description" content="使用率 16.1%（1088デッキ）・勝率 55.3%（直近30日）。大会で結果を出したサンプルリスト、よく使われるカード、使用率の推移。MTGアリーナ・MTGO形式でも書き出せます。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Twitterbot/1.0 ?view=meta&format=legacy
+<title>メタゲーム — レガシー | 悪知恵（warujie）
+<meta property="og:title" content="メタゲーム — レガシー | 悪知恵（warujie）"
+<meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Twitterbot/1.0 ?set=mh2
+<title>Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）
+<meta property="og:title" content="Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）"
+<meta property="og:description" content="Modern Horizons 2 のカード 492枚を日本語で。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== facebookexternalhit/1.1;line-poker/1.0 ?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+<meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+<meta name="twitter:card" content="summary"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== facebookexternalhit/1.1;line-poker/1.0 ?view=deck&format=modern&days=30&deck=Broodscale
+<title>Broodscale — モダン のデッキ | 悪知恵（warujie）
+<meta property="og:title" content="Broodscale — モダン のデッキ | 悪知恵（warujie）"
+<meta property="og:description" content="使用率 16.1%（1088デッキ）・勝率 55.3%（直近30日）。大会で結果を出したサンプルリスト、よく使われるカード、使用率の推移。MTGアリーナ・MTGO形式でも書き出せます。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== facebookexternalhit/1.1;line-poker/1.0 ?view=meta&format=legacy
+<title>メタゲーム — レガシー | 悪知恵（warujie）
+<meta property="og:title" content="メタゲーム — レガシー | 悪知恵（warujie）"
+<meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== facebookexternalhit/1.1;line-poker/1.0 ?set=mh2
+<title>Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）
+<meta property="og:title" content="Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）"
+<meta property="og:description" content="Modern Horizons 2 のカード 492枚を日本語で。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com) ?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+<meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+<meta name="twitter:card" content="summary"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com) ?view=deck&format=modern&days=30&deck=Broodscale
+<title>Broodscale — モダン のデッキ | 悪知恵（warujie）
+<meta property="og:title" content="Broodscale — モダン のデッキ | 悪知恵（warujie）"
+<meta property="og:description" content="使用率 16.1%（1088デッキ）・勝率 55.3%（直近30日）。大会で結果を出したサンプルリスト、よく使われるカード、使用率の推移。MTGアリーナ・MTGO形式でも書き出せます。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com) ?view=meta&format=legacy
+<title>メタゲーム — レガシー | 悪知恵（warujie）
+<meta property="og:title" content="メタゲーム — レガシー | 悪知恵（warujie）"
+<meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com) ?set=mh2
+<title>Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）
+<meta property="og:title" content="Modern Horizons 2（MH2）のカード一覧 | 悪知恵（warujie）"
+<meta property="og:description" content="Modern Horizons 2 のカード 492枚を日本語で。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1 ?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+<title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+<meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+<meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1 ?view=deck&format=modern&days=30&deck=Broodscale
+<title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+<meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+<meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1 ?view=meta&format=legacy
+<title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+<meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+<meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
+== Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1 ?set=mh2
+<title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+<meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+<meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+<meta property="og:image" content="https://warujie.jp/og.png"
+<meta name="twitter:card" content="summary_large_image"
+<title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}
