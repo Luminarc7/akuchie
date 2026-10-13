@@ -6,13 +6,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "warujie",
   "compatibility_date": "2026-10-01",
-  // only the HTML pages run through worker.js (compressed there, no Cloudflare-added scripts);
+  // only the HTML pages and the card database run through worker.js (see there);
   // every other file is served straight from the static assets
   "main": "worker.js",
+  // before each deploy: the card database brotli-compressed (ja_cards.json.br)
+  "build": { "command": "node tools/brotli_db.mjs" },
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/index.html", "/preview", "/preview.html", "/preview/"]
+    "run_worker_first": ["/", "/index.html", "/preview", "/preview.html", "/preview/", "/ja_cards.json"]
   },
   // settings for the branch test sites; empty = same as production
   "previews": {}

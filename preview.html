@@ -25,6 +25,14 @@
   };
   add('preconnect', 'https://fonts.googleapis.com');
   add('preconnect', 'https://fonts.gstatic.com', true);
+  // card pictures and data come from Scryfall: open those connections now
+  add('preconnect', 'https://api.scryfall.com', true);
+  add('preconnect', 'https://cards.scryfall.io');
+  // the card database: start downloading it while the page itself loads
+  if (document.documentElement.getAttribute('data-site') === 'main') {
+    var pre = document.createElement('link'); pre.rel = 'preload'; pre.as = 'fetch'; pre.href = 'ja_cards.json'; pre.crossOrigin = 'anonymous';
+    document.head.appendChild(pre);
+  }
   add('stylesheet', 'https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
 })();
 </script>
@@ -2361,6 +2369,7 @@ async function fetchMaybeGzipJson(url) {
 }
 
 let DB_META = null;
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 let ORACLE_MAP = null;
 function loadCardDatabase(data) {
   const rows = Array.isArray(data) ? data : data.cards;
@@ -2394,7 +2403,11 @@ async function fetchFirstData(names) {
 // time anything waits for it (a search, a card page) or a search box is used.
 let startDbLoad;
 const dbGate = new Promise(resolve => { startDbLoad = resolve; });
-const dbLoaded = dbGate.then(() => fetchFirstData(['ja_cards.json.gz', 'ja_cards.json']))
+// ja_cards.json: on warujie.jp the server sends it brotli-compressed (about half the
+// size of the .gz) and the browser unpacks it; elsewhere the .gz is used. A failed
+// download (a dropped connection on a phone) is tried once more before giving up.
+const DB_FILES = ['ja_cards.json', 'ja_cards.json.gz'];
+const dbLoaded = dbGate.then(() => fetchFirstData(DB_FILES).catch(() => sleep(1500).then(() => fetchFirstData(DB_FILES))))
   .then(loadCardDatabase)
   .catch(() => {
     dbState = 'absent';
@@ -2410,6 +2423,38 @@ const dbReady = {
   finally(fn) { startDbLoad(); return dbLoaded.finally(fn); },
 };
 if (!LITE) startDbLoad();
+// With the database in, the role data (popularity for the ranking) is fetched, and
+// the per-card search lists are made a slice at a time while the page is idle,
+// so the first search on a slow phone does not have to make them all at once.
+function whenIdle(fn) {
+  if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 1500 }); else setTimeout(() => fn({ timeRemaining: () => 8 }), 30);
+}
+let warmStarted = false;
+function warmSearch() {
+  if (!LOCAL_DB || warmStarted) return;
+  warmStarted = true;
+  let i = 0;
+  const step = (deadline) => {
+    const until = performance.now() + Math.max(4, Math.min(12, deadline && deadline.timeRemaining ? deadline.timeRemaining() : 8));
+    while (i < LOCAL_DB.length && performance.now() < until) {
+      const end = Math.min(LOCAL_DB.length, i + 100);
+      for (; i < end; i++) {
+        const row = LOCAL_DB[i];
+        rowEnLines(row); rowJaLines(row); rowEnAll(row); rowJaAll(row); rowKeywords(row);
+      }
+    }
+    if (i < LOCAL_DB.length) whenIdle(step);
+    else whenIdle(() => { enVocab(); });
+  };
+  whenIdle(step);
+}
+// only where people search (home, results); elsewhere once a search box is used
+if (!LITE) dbLoaded.then(() => {
+  if (!LOCAL_DB) return;
+  loadTags();
+  if (routeFromUrl().view === 'search') warmSearch();
+  ['searchInput', 'heroInput'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('focus', warmSearch, { once: true }); });
+});
 
 // A database row shaped like a Scryfall card object, so tiles and card pages
 // can still show name, type and text when images/prices can't be fetched.
@@ -2426,6 +2471,48 @@ function rowToCard(row) {
   };
 }
 
+// ---- Scryfall's /cards/collection, used for pictures, prices and deck icons ----
+// Requests go out at least 100 ms apart (Scryfall asks for that), a busy answer
+// (429) or a server error is tried again after a short wait, and the cards that
+// came back are remembered for the visit, so going back to a search, switching
+// the view or loading the same cards again does not ask Scryfall twice.
+let scryfallChain = Promise.resolve(), scryfallLast = 0;
+function scryfallTurn() {
+  const turn = scryfallChain.then(async () => {
+    const wait = scryfallLast + 100 - Date.now();
+    if (wait > 0) await sleep(wait);
+    scryfallLast = Date.now();
+  });
+  scryfallChain = turn.catch(() => {});
+  return turn;
+}
+async function scryfallCollection(identifiers) {
+  for (let attempt = 0; ; attempt++) {
+    await scryfallTurn();
+    let res;
+    try {
+      res = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ identifiers }),
+      });
+    } catch (err) {
+      if (attempt < 2) { await sleep(700 * (attempt + 1)); continue; }
+      throw err;
+    }
+    if (res.ok) { const data = await res.json(); return data.data || []; }
+    if ((res.status === 429 || res.status >= 500) && attempt < 2) { await sleep(1000 * (attempt + 1)); continue; }
+    throw new Error('HTTP ' + res.status);
+  }
+}
+const CARD_CACHE = new Map();   // 'id:…' / 'oracle:…' -> the card Scryfall sent
+const CARD_CACHE_MAX = 900;
+function cacheCard(key, card) {
+  CARD_CACHE.delete(key);
+  CARD_CACHE.set(key, card);
+  if (CARD_CACHE.size > CARD_CACHE_MAX) CARD_CACHE.delete(CARD_CACHE.keys().next().value);
+}
+
 // Fetches images/prices/legalities for the given rows from Scryfall
 // (/cards/collection, 75 per request), in search order. Any card it can't
 // get falls back to the database's own data instead of disappearing.
@@ -2435,27 +2522,27 @@ function rowToCard(row) {
 async function hydrateRows(rows) {
   if (!rows.length) return [];
   const english = LANG === 'en';
+  const keyOf = r => ((english && r.oracle_id) ? 'oracle:' + r.oracle_id : 'id:' + r.id);
   const found = new Map();
-  for (let i = 0; i < rows.length; i += 75) {
-    const chunk = rows.slice(i, i + 75);
+  const missing = [];
+  rows.forEach(r => { const c = CARD_CACHE.get(keyOf(r)); if (c) found.set(keyOf(r), c); else if (!missing.includes(r)) missing.push(r); });
+  for (let i = 0; i < missing.length; i += 75) {
+    const chunk = missing.slice(i, i + 75);
     try {
-      const res = await fetch('https://api.scryfall.com/cards/collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ identifiers: chunk.map(r => (english && r.oracle_id) ? { oracle_id: r.oracle_id } : { id: r.id }) }),
+      const data = await scryfallCollection(chunk.map(r => (english && r.oracle_id) ? { oracle_id: r.oracle_id } : { id: r.id }));
+      const byId = new Map(), byOracle = new Map();
+      data.forEach(c => {
+        byId.set(c.id, c);
+        const oid = c.oracle_id || (c.card_faces && c.card_faces[0] && c.card_faces[0].oracle_id);
+        if (oid) byOracle.set(oid, c);
       });
-      if (res.ok) {
-        const data = await res.json();
-        (data.data || []).forEach(c => {
-          found.set(c.id, c);
-          const oid = c.oracle_id || (c.card_faces && c.card_faces[0] && c.card_faces[0].oracle_id);
-          if (oid) found.set('oracle:' + oid, c);
-        });
-      }
+      chunk.forEach(r => {
+        const c = (english && byOracle.get(r.oracle_id)) || byId.get(r.id);
+        if (c) { found.set(keyOf(r), c); cacheCard(keyOf(r), c); }
+      });
     } catch (err) { /* network problem - show database text below */ }
-    if (i + 75 < rows.length) await sleep(100);
   }
-  const cards = rows.map(r => (english && found.get('oracle:' + r.oracle_id)) || found.get(r.id) || rowToCard(r));
+  const cards = rows.map(r => found.get(keyOf(r)) || rowToCard(r));
   await ensureEnglishPrices(cards);
   return cards;
 }
@@ -2511,37 +2598,70 @@ function englishEquivalents(term) {
   };
 }
 
-function textMatches(row, rawTerm, includeNameAndType) {
-  const t = normText(rawTerm).trim();
-  if (!t) return true;
-  const tJa = t.replace(/\s+/g, '');
-  if (includeNameAndType) {
-    if (row._nameJa.includes(tJa) || row._nameEn.includes(t) ||
-        row._altJa.some(n => n.includes(tJa)) ||
-        row._typeJa.includes(tJa) || row._typeEn.includes(t)) return true;
+// What a search word becomes, worked out once per search (not once per card).
+const TERM_MEMO = new Map();
+const HIRAGANA_RE = /[\u3041-\u3096]/;
+function termInfo(rawTerm) {
+  let m = TERM_MEMO.get(rawTerm);
+  if (!m) {
+    const t = normText(rawTerm).trim();
+    const tJa = t.replace(/\s+/g, '');
+    const eq = englishEquivalents(rawTerm);
+    m = { t, tJa, fold: HIRAGANA_RE.test(tJa) ? kanaFold(tJa) : null, kw: eq.kw, text: eq.text ? normText(eq.text) : null };
+    if (TERM_MEMO.size > 400) TERM_MEMO.clear();
+    TERM_MEMO.set(rawTerm, m);
   }
-  if (row._textJa.includes(tJa) || row._textEn.includes(t)) return true;
-  const eq = englishEquivalents(rawTerm);
-  if (eq.kw && row._kw.has(eq.kw)) return true;
-  if (eq.text && row._textEn.includes(normText(eq.text))) return true;
+  return m;
+}
+// Card names with hiragana read as katakana: らがばん finds ラガバン.
+function rowNameFold(row) {
+  if (row._nameFold === undefined) row._nameFold = [row._nameJa, ...row._altJa].filter(Boolean).map(kanaFold).join('|');
+  return row._nameFold;
+}
+function nameHas(row, tJa, fold) {
+  return (!!tJa && (row._nameJa.includes(tJa) || row._altJa.some(n => n.includes(tJa)))) || (!!fold && rowNameFold(row).includes(fold));
+}
+function textMatches(row, rawTerm, includeNameAndType) {
+  const m = termInfo(rawTerm);
+  if (!m.t) return true;
+  if (includeNameAndType) {
+    if (row._nameEn.includes(m.t) || nameHas(row, m.tJa, m.fold) ||
+        row._typeJa.includes(m.tJa) || row._typeEn.includes(m.t)) return true;
+  }
+  if (row._textJa.includes(m.tJa) || row._textEn.includes(m.t)) return true;
+  if (m.kw && row._kw.has(m.kw)) return true;
+  if (m.text && row._textEn.includes(m.text)) return true;
   return false;
 }
 
+const OP_MEMO = new Map();
+function opInfo(val) {
+  let m = OP_MEMO.get(val);
+  if (!m) {
+    const v = normText(val).trim();
+    // a quoted English phrase - o:"sacrifice two permanents" - is matched word by word,
+    // so plurals and numbers written either way still count
+    const seq = (/\s/.test(String(val).trim()) && !JA_CHARS.test(val)) ? enTokens(val) : null;
+    m = { v, vJa: v.replace(/\s+/g, ''), seq: seq && seq.length ? seq : null };
+    m.fold = HIRAGANA_RE.test(m.vJa) ? kanaFold(m.vJa) : null;
+    if (OP_MEMO.size > 400) OP_MEMO.clear();
+    OP_MEMO.set(val, m);
+  }
+  return m;
+}
 function localOperatorMatch(row, op, sep, val) {
-  const v = normText(val).trim();
+  const info = opInfo(val);
+  const v = info.v;
   switch (op) {
     case 'o': {
-      // a quoted English phrase - o:"sacrifice two permanents" - is matched word by word,
-      // so plurals and numbers written either way still count
-      if (/\s/.test(String(val).trim()) && !JA_CHARS.test(val)) {
-        const seq = enTokens(val);
-        if (seq.length && rowEnLines(row).slice(2).some(line => findSeq(line, seq))) return true;
+      if (info.seq) {
+        const lines = rowEnLines(row);
+        for (let i = 2; i < lines.length; i++) if (findSeq(lines[i], info.seq)) return true;
       }
       return textMatches(row, val, false);
     }
     case 'name': case 'n': case '名前': case 'カード名': {
-      const vJa = v.replace(/\s+/g, '');
-      return row._nameJa.includes(vJa) || row._nameEn.includes(v) || row._altJa.some(n => n.includes(vJa));
+      return row._nameEn.includes(v) || nameHas(row, info.vJa, info.fold);
     }
     case 't': {
       if (row._typeJa.includes(v.replace(/\s+/g, '')) || row._typeEn.includes(v)) return true;
@@ -2639,15 +2759,39 @@ function localFilterRow(row, st = state) {
   return true;
 }
 
-// For the default sort: exact name matches first, then names containing the
-// search, then cards that matched on text only.
+// For the default sort: exact name matches first, then names with a word that
+// starts with the search (lightning -> Lightning Bolt, Arc Lightning), then names
+// that merely contain it, then cards that matched on text only. Within each, the
+// cards played most come first (EDHREC rank, from the role data).
+const NAME_WORD_START_EN = /[\s,'"\-(/]/;
+const NAME_WORD_START_JA = /[、・のと\s/(（「]/;
+function wordStartIn(name, q, boundary) {
+  for (let i = name.indexOf(q); i >= 0; i = name.indexOf(q, i + 1)) {
+    if (i === 0 || boundary.test(name[i - 1])) return true;
+  }
+  return false;
+}
+const REL_MEMO = { query: null };
 function relevance(row, query) {
-  const q = normText(query).trim();
+  if (REL_MEMO.query !== query) {
+    const q = normText(query).trim(), qJa = q.replace(/\s+/g, '');
+    Object.assign(REL_MEMO, { query, q, qJa, fold: HIRAGANA_RE.test(qJa) ? kanaFold(qJa) : null });
+  }
+  const { q, qJa, fold } = REL_MEMO;
   if (!q) return 2;
-  const qJa = q.replace(/\s+/g, '');
-  if (row._nameJa === qJa || row._nameEn === q || row._altJa.includes(qJa)) return 0;
-  if ((qJa && (row._nameJa.includes(qJa) || row._altJa.some(n => n.includes(qJa)))) || row._nameEn.includes(q)) return 1;
+  // most cards: the name does not have the search in it at all
+  if (!row._nameEn.includes(q) && !nameHas(row, qJa, fold)) return 2;
+  const jaNames = [row._nameJa, ...row._altJa].filter(Boolean);
+  if (row._nameEn === q || jaNames.includes(qJa) || (fold && jaNames.some(n => kanaFold(n) === fold))) return 0;
+  if (wordStartIn(row._nameEn, q, NAME_WORD_START_EN) || row._nameEn.split(' // ').some(f => f.startsWith(q))
+      || jaNames.some(n => wordStartIn(n, qJa, NAME_WORD_START_JA)) || (fold && jaNames.some(n => wordStartIn(kanaFold(n), fold, NAME_WORD_START_JA)))) return 1;
+  if (row._nameEn.includes(q) || nameHas(row, qJa, fold)) return 1.5;
   return 2;
+}
+// how much a card is played: smaller is more (cards without a rank last)
+function popularity(row) {
+  if (row._pop === undefined) { const e = rowEdhrec(row); row._pop = e === null || e === undefined ? 1e9 : e; }
+  return row._pop;
 }
 
 // ============================================================================
@@ -2800,7 +2944,8 @@ let tagsPromise = null;
 function loadTags() {
   if (!tagsPromise) {
     tagsState = 'loading';
-    tagsPromise = fetchMaybeGzipJson(PRICE_DATA_URL + 't/tags.json.gz')
+    const url = PRICE_DATA_URL + 't/tags.json.gz';
+    tagsPromise = fetchMaybeGzipJson(url).catch(() => sleep(1500).then(() => fetchMaybeGzipJson(url)))
       .then(data => {
         if (!data || !Array.isArray(data.tags) || !Array.isArray(data.cards)) throw new Error('bad tag file');
         TAG_NAMES = data.tags;
@@ -2809,7 +2954,7 @@ function loadTags() {
         tagsState = 'ready';
       })
       .catch(() => { TAG_MAP = new Map(); tagsState = 'absent'; })
-      .then(() => { if (LOCAL_DB) LOCAL_DB.forEach(row => { row._roles = undefined; row._roleSet = undefined; row._tags = undefined; }); });
+      .then(() => { if (LOCAL_DB) LOCAL_DB.forEach(row => { row._roles = undefined; row._roleSet = undefined; row._tags = undefined; row._pop = undefined; }); });
   }
   return tagsPromise;
 }
@@ -3095,8 +3240,21 @@ function enStem(word) {
   if (w.length > 4 && w.endsWith('e')) w = w.slice(0, -1);                  // sacrifice(d) -> sacrific
   return w;
 }
+// The same word on thousands of cards is stemmed once and kept as one string:
+// faster searches and much less memory than a copy per card.
+const STEM_MEMO = new Map(), STEM_STR = new Map();
+function stemOf(word) {
+  let s = STEM_MEMO.get(word);
+  if (s === undefined) {
+    s = enStem(word);
+    const kept = STEM_STR.get(s);   // the same stem already stored: use that one string
+    if (kept !== undefined) s = kept; else STEM_STR.set(s, s);
+    STEM_MEMO.set(word, s);
+  }
+  return s;
+}
 function enTokens(text) {
-  return (normText(text).replace(/[’‘]/g, "'").match(EN_TOKEN_RE) || []).map(enStem);
+  return (normText(text).replace(/[’‘]/g, "'").match(EN_TOKEN_RE) || []).map(stemOf);
 }
 // Is `seq` found word for word, in a row, inside `line`?
 function findSeq(line, seq) {
@@ -3160,7 +3318,7 @@ function rowEnAll(row) {
 }
 
 // ---- spelling: words that appear on no card are corrected to the nearest one that does
-let EN_CORPUS = null, EN_VOCAB = null;
+let EN_CORPUS = null, EN_VOCAB = null, EN_WORDS = null;
 function enCorpus() {
   if (EN_CORPUS === null) EN_CORPUS = LOCAL_DB.map(rowEnAll).join('\n');
   return EN_CORPUS;
@@ -3170,8 +3328,10 @@ function enVocab() {
     const counts = new Map();
     for (const m of enCorpus().matchAll(/[a-z]+(?:'[a-z]+)?/g)) counts.set(m[0], (counts.get(m[0]) || 0) + 1);
     EN_VOCAB = new Map();   // stem -> { word, count, best }
+    EN_WORDS = new Map();   // word as printed -> how often
     counts.forEach((n, w) => {
       if (w.length < 3) return;
+      EN_WORDS.set(w, n);
       const s = enStem(w);
       const v = EN_VOCAB.get(s);
       if (!v) EN_VOCAB.set(s, { word: w, count: n, best: n });
@@ -3200,14 +3360,24 @@ function editDistance(a, b, max) {
   }
   return prev[b.length];
 }
-function correctEnglish(stem) {
+function correctEnglish(stem, raw) {
   const max = stem.length >= 8 ? 2 : 1;
   let best = null;
+  const consider = (d, word, s, count) => {
+    if (d <= max && (!best || d < best.d || (d === best.d && count > best.count))) best = { d, stem: s, word, count };
+  };
   enVocab().forEach((info, s) => {
     if (Math.abs(s.length - stem.length) > max || s === stem) return;
-    const d = editDistance(stem, s, max);
-    if (d <= max && (!best || d < best.d || (d === best.d && info.count > best.count))) best = { d, stem: s, word: info.word, count: info.count };
+    consider(editDistance(stem, s, max), info.word, s, info.count);
   });
+  // the word as typed against the words as printed: flyng is one letter from flying
+  if (raw) {
+    EN_WORDS.forEach((count, w) => {
+      if (Math.abs(w.length - raw.length) > max || w === raw) return;
+      const s = stemOf(w);
+      consider(editDistance(raw, w, max), w, s, EN_VOCAB.has(s) ? EN_VOCAB.get(s).count : count);
+    });
+  }
   return best;
 }
 
@@ -3227,6 +3397,16 @@ function roleFromOperator(op, val, negate, i) {
   if (op !== 'role' && /^[a-z0-9-]+$/.test(String(val).toLowerCase())) return { tag: String(val).toLowerCase(), negate, word: val, explicit: true, idx: [i] };
   return { unknown: true, negate, word: val, explicit: true, idx: [i] };
 }
+// Operators the search knows. One with nothing after it (o:, t:, 色:) is being typed:
+// it is left out instead of being searched as the letter o.
+const KNOWN_OPS = new Set(['o', 't', 'c', 'r', 'e', 's', 'set', 'kw', 'cmc', 'mv', 'pow', 'power', 'tou', 'toughness', 'name', 'n', '名前', 'カード名']
+  .concat(Object.keys(JA_OPERATORS)));
+function emptyOperator(body) {
+  const m = String(body).match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)("?"?)$/);
+  if (!m) return false;
+  const op = JA_OPERATORS[m[1]] || m[1].toLowerCase();
+  return KNOWN_OPS.has(m[1]) || KNOWN_OPS.has(op) || ROLE_OPS.has(op) || SIM_OPS.has(op);
+}
 function parseSearch(raw) {
   const out = { filters: [], words: [], ja: [], phrases: [], roles: [], derived: [], sim: null, quotedRoles: [], tokens: [], rolesOff: false };
   const tokens = tokenizeQuery(String(raw || '').normalize('NFKC').trim());
@@ -3245,6 +3425,7 @@ function parseSearch(raw) {
   out.quotedRoles = found.quotedRoles;
   tokens.forEach((token, i) => {
     if (found.used.has(i)) return;
+    if (/^-+$/.test(token) || emptyOperator(token.replace(/^-/, ''))) return;   // a lone - or an operator still being typed
     let negate = false, body = token;
     if (body.startsWith('-') && body.length > 1) { negate = true; body = body.slice(1); }
     const m = body.match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)(.+)$/);
@@ -3262,6 +3443,8 @@ function parseSearch(raw) {
     if (negate) { out.filters.push({ negate: true, op: null, text: bare }); return; }
     if (quoted && /\s/.test(bare)) { out.phrases.push(bare); return; }   // "exact phrase"
     if (JA_CHARS.test(bare)) out.ja.push(bare);
+    // symbols only (%, *, 🔥, ((): searched as they are, not dropped (which found every card)
+    else if (!/[a-z0-9]/i.test(bare)) out.filters.push({ negate: false, op: null, text: bare });
     else out.words.push(bare);
   });
   return out;
@@ -3282,7 +3465,7 @@ function prepareEnglish(words) {
     if (u.stop || u.raw.length < 4 || /[^a-z']/.test(u.raw)) return;
     const corpus = enCorpus();
     if (corpus.includes(u.raw) || corpus.includes(u.canon)) return;
-    const fix = correctEnglish(u.canon);
+    const fix = correctEnglish(u.canon, u.raw);
     if (fix) { fixes.push({ from: u.raw, to: fix.word }); u.raw = fix.word; u.canon = fix.stem; }
   });
   let content = [...new Set(units.filter(u => !u.stop).map(u => u.canon))];
@@ -3375,6 +3558,7 @@ function rowJaAll(row) {
 function jaMayHave(row, u) {
   const all = rowJaAll(row);
   if (u.n && all.includes(u.n)) return true;
+  if (u.fold && rowNameFold(row).includes(u.fold)) return true;
   if (u.kw && row._kw.has(u.kw)) return true;
   if (u.chunks.length > 1 && u.chunks.every(c => all.includes(c))) return true;
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) return true;
@@ -3389,7 +3573,7 @@ function prepareJapanese(tokens) {
     const n = normJaSearch(raw);
     const eq = englishEquivalents(raw);
     return {
-      raw, n, bare: n.replace(JA_PARTICLE_RE, ''),
+      raw, n, bare: n.replace(JA_PARTICLE_RE, ''), fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null,
       chunks: n.split(JA_SPLIT_RE).filter(Boolean),
       kw: eq.kw, en: eq.text ? enTokens(eq.text) : null,
     };
@@ -3403,6 +3587,7 @@ function locateJa(row, u) {
   lines.forEach((line, i) => {
     if ((u.n && line.includes(u.n)) || (u.bare && bare[i].includes(u.bare))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
   });
+  if (u.fold && !out.lines.has('j0') && rowNameFold(row).includes(u.fold)) { out.lines.add('j0'); out.head = true; }
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
     rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
   }
@@ -3430,7 +3615,15 @@ function unitsTier(locs) {
   return 3;
 }
 
+let PLAN_MEMO = null;
 function buildSearchPlan(query) {
+  const key = [query, LANG, tagsState, LOCAL_DB ? LOCAL_DB.length : 0].join('\u0001');
+  if (PLAN_MEMO && PLAN_MEMO.key === key) return PLAN_MEMO.plan;
+  const plan = buildSearchPlanFresh(query);
+  PLAN_MEMO = { key, plan };
+  return plan;
+}
+function buildSearchPlanFresh(query) {
   const parsed = parseSearch(query);
   const plan = { filters: parsed.filters.concat(parsed.derived), phrases: parsed.phrases.map(p => JA_CHARS.test(p) ? { ja: normJaSearch(p) } : { en: enTokens(p) }),
                  en: null, enWord: false, ja: [], fixes: [], free: false, graded: false, tier2: 'tier.2',
@@ -3521,33 +3714,39 @@ function searchRows(query, st) {
   }
   const tierOf = row => (grades.has(row) ? grades.get(row).tier : 1);
   const scoreOf = row => (grades.has(row) ? grades.get(row).score : 0);
+  // how closely the words matched, in steps (the exact phrase, close together, ...);
+  // small differences inside a step are left to how much the cards are played
+  const stepOf = row => Math.floor(scoreOf(row) * 2) / 2;
+  const popOf = popularity;
   const q = query || '';
-  const rel = new Map();
+  // each card's sort keys are worked out once, then only numbers are compared
   const byName = (a, b) => (a.name_en < b.name_en ? -1 : a.name_en > b.name_en ? 1 : 0);
-  let recommended;
-  if (simScores) {
+  const keys = shown.map(row => ({ row, t: tierOf(row), k1: 0, k2: 0, k3: 0, k4: 0 }));
+  let cmp;
+  if (st.sort === 'cmc_asc') cmp = (a, b) => a.row._cmc - b.row._cmc;
+  else if (st.sort === 'cmc_desc') cmp = (a, b) => b.row._cmc - a.row._cmc;
+  else if (st.sort === 'released_desc') cmp = (a, b) => (b.row.released_at || '').localeCompare(a.row.released_at || '');
+  else if (simScores) {
     // 似:<card>: the closest effects first
-    recommended = (a, b) => simScores.get(b) - simScores.get(a) || byName(a, b);
+    keys.forEach(k => { k.k1 = -simScores.get(k.row); });
+    cmp = (a, b) => a.k1 - b.k1;
   } else if (pos.length || (st.roles && st.roles.size)) {
     // a role search (or the role filter): the card the word names, then the cards that mainly do this, most played first
     const specs = (pos.length ? pos.filter(r => r.id).map(r => r.id) : [...st.roles]).map(id => ROLE_BY_ID.get(id)).filter(Boolean);
-    const dem = new Map(), rank = new Map();
-    shown.forEach(row => {
-      rel.set(row, nameOf ? nameOf(row) : Math.min(relevance(row, q), 2));
-      dem.set(row, specs.some(sp => roleDemoted(row, sp)) ? 1 : 0);
-      rank.set(row, roleRankFor(row, specs));
+    keys.forEach(k => {
+      k.k1 = nameOf ? nameOf(k.row) : Math.min(relevance(k.row, q), 2);
+      k.k2 = specs.some(sp => roleDemoted(k.row, sp)) ? 1 : 0;
+      k.k3 = roleRankFor(k.row, specs);
+      k.k4 = scoreOf(k.row);
     });
-    recommended = (a, b) => rel.get(a) - rel.get(b) || dem.get(a) - dem.get(b) || (rank.get(a) - rank.get(b) || 0) || scoreOf(a) - scoreOf(b) || byName(a, b);
+    cmp = (a, b) => a.k1 - b.k1 || a.k2 - b.k2 || (a.k3 - b.k3 || 0) || a.k4 - b.k4;
   } else {
-    shown.forEach(row => rel.set(row, relevance(row, q)));
-    recommended = (a, b) => rel.get(a) - rel.get(b) || scoreOf(a) - scoreOf(b) || byName(a, b);
+    keys.forEach(k => { k.k1 = relevance(k.row, q); k.k2 = stepOf(k.row); k.k3 = popOf(k.row); k.k4 = scoreOf(k.row); });
+    cmp = (a, b) => a.k1 - b.k1 || a.k2 - b.k2 || a.k3 - b.k3 || a.k4 - b.k4;
   }
-  const bySort = {
-    cmc_asc: (a, b) => a._cmc - b._cmc || byName(a, b),
-    cmc_desc: (a, b) => b._cmc - a._cmc || byName(a, b),
-    released_desc: (a, b) => (b.released_at || '').localeCompare(a.released_at || ''),
-  }[st.sort] || recommended;
-  shown = shown.slice().sort((a, b) => tierOf(a) - tierOf(b) || bySort(a, b));
+  const byNameLast = st.sort !== 'released_desc';
+  keys.sort((a, b) => a.t - b.t || cmp(a, b) || (byNameLast ? byName(a.row, b.row) : 0));
+  shown = keys.map(k => k.row);
   const asText = roles.filter(r => !r.explicit && !r.negate);
   const literal = asText.length ? [{ word: asText.map(r => r.word).join(LANG === 'en' ? ', ' : '・'), query: literalQuery(plan.tokens, asText.map(r => r.idx)) }] : [];
   const asRole = plan.quotedRoles.map(r => ({ id: r.id, query: plan.tokens.map((tok, i) => (i === r.idx ? r.word : tok)).join(' ') }));
@@ -4053,7 +4252,6 @@ function effectivePrices(card) {
   return hasOwn ? { ...own, _fromEnglish: false } : { ...en, eur: own.eur || en.eur, eur_foil: own.eur_foil || en.eur_foil, tix: own.tix || en.tix, _fromEnglish: !!(en.usd || en.usd_foil || en.usd_etched) };
 }
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Fetches the English printing with the same set and collector number for
 // Japanese cards that need it: for its price (Japanese printings rarely have
@@ -4066,38 +4264,23 @@ async function ensureEnglishPrices(cards) {
   for (let i = 0; i < need.length; i += 75) {
     const chunk = need.slice(i, i + 75);
     try {
-      const res = await fetch('https://api.scryfall.com/cards/collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ identifiers: chunk.map(c => ({ set: c.set, collector_number: c.collector_number })) }),
+      const data = await scryfallCollection(chunk.map(c => ({ set: c.set, collector_number: c.collector_number })));
+      const byKey = new Map(data.map(e => [`${e.set}|${e.collector_number}`, e]));
+      chunk.forEach(c => {
+        const en = byKey.get(`${c.set}|${c.collector_number}`);
+        if (en) { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
+        c._enChecked = true;
       });
-      if (res.ok) {
-        const data = await res.json();
-        const byKey = new Map((data.data || []).map(e => [`${e.set}|${e.collector_number}`, e]));
-        chunk.forEach(c => {
-          const en = byKey.get(`${c.set}|${c.collector_number}`);
-          if (en) { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
-          c._enChecked = true;
-        });
-      }
     } catch (err) { /* prices just stay blank */ }
-    if (i + 75 < need.length) await sleep(100);
   }
   const noPicture = cards.filter(c => c && c.lang && c.lang !== 'en' && !c._enCard && !c._enOracleChecked
     && imageQuality(c) <= 1 && oracleIdOf(c));
   for (let i = 0; i < noPicture.length; i += 75) {
     const chunk = noPicture.slice(i, i + 75);
     try {
-      const res = await fetch('https://api.scryfall.com/cards/collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ identifiers: chunk.map(c => ({ oracle_id: oracleIdOf(c) })) }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const byOracle = new Map((data.data || []).map(e => [oracleIdOf(e), e]));
-        chunk.forEach(c => { const en = byOracle.get(oracleIdOf(c)); if (en && en.lang === 'en') c._enCard = en; });
-      }
+      const data = await scryfallCollection(chunk.map(c => ({ oracle_id: oracleIdOf(c) })));
+      const byOracle = new Map(data.map(e => [oracleIdOf(e), e]));
+      chunk.forEach(c => { const en = byOracle.get(oracleIdOf(c)); if (en && en.lang === 'en') c._enCard = en; });
     } catch (err) { /* keep the placeholder */ }
     chunk.forEach(c => { c._enOracleChecked = true; });
     if (i + 75 < noPicture.length) await sleep(100);
@@ -5430,7 +5613,15 @@ async function runSearch() {
       try { await buildSimIndex(); } catch (err) { /* no index: the search finds nothing and says so */ }
       if (myToken !== searchToken) return;
     }
+    // the ranking uses the role data (how much each card is played): wait for it a moment
+    if (!tagsSettled() && !LITE) {
+      await Promise.race([loadTags(), sleep(2500)]);
+      if (myToken !== searchToken) return;
+    }
     showStatus(`<div class="spinner"></div><span class="serif">${t('searching')}</span>`);
+    // let the spinner appear before the search, which can take a moment on a phone
+    await new Promise(r => (document.hidden ? setTimeout(r, 0) : requestAnimationFrame(() => setTimeout(r, 0))));
+    if (myToken !== searchToken) return;
     return runLocalSearch(myToken);
   }
 
@@ -5483,6 +5674,7 @@ async function runSearch() {
 }
 
 loadMoreBtn.addEventListener('click', async () => {
+  const myToken = searchToken;
   if (LOCAL_DB && localMatchQueue) {
     if (localOffset >= localMatchQueue.length) return;
     loadMoreBtn.disabled = true;
@@ -5490,6 +5682,7 @@ loadMoreBtn.addEventListener('click', async () => {
     try {
       const nextRows = localMatchQueue.slice(localOffset, localOffset + PAGE_SIZE);
       const hydrated = await hydrateRows(nextRows);
+      if (myToken !== searchToken) throw new Error('a newer search');   // its cards are not this search's
       const previousRow = currentRows && currentRows.length ? currentRows[currentRows.length - 1] : null;
       currentCards = currentCards.concat(hydrated);
       currentRows = (currentRows || []).concat(nextRows);
@@ -5510,6 +5703,7 @@ loadMoreBtn.addEventListener('click', async () => {
   try {
     const res = await fetch(nextPageUrl, { headers: { 'Accept': 'application/json' } });
     const data = await res.json();
+    if (myToken !== searchToken || !res.ok) throw new Error('a newer search');
     currentCards = currentCards.concat(data.data);
     nextPageUrl = data.has_more ? data.next_page : null;
     grid.insertAdjacentHTML('beforeend', resultTilesHtml(data.data, null, null));
@@ -6503,15 +6697,9 @@ async function creditDeckArt(container) {
   for (let i = 0; i < need.length; i += 75) {
     const chunk = need.slice(i, i + 75);
     try {
-      const res = await fetch('https://api.scryfall.com/cards/collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ identifiers: chunk.map(k => k.startsWith('id:') ? { id: k.slice(3) } : { name: k.slice(5) }) }),
-      });
-      if (!res.ok) throw new Error(res.status);
-      const data = await res.json();
+      const data = await scryfallCollection(chunk.map(k => k.startsWith('id:') ? { id: k.slice(3) } : { name: k.slice(5) }));
       const byId = new Map(), byName = new Map();
-      (data.data || []).forEach(c => {
+      data.forEach(c => {
         byId.set(c.id, c);
         byName.set(normText(c.name), c);
         (c.card_faces || []).forEach(f => { if (!byName.has(normText(f.name))) byName.set(normText(f.name), c); });
@@ -7743,9 +7931,9 @@ const heroText = row => (LANG === 'en' ? row.oracle_en : (row.oracle_ja || row.o
 async function pickHeroEffects(token) {
   const before = new Set(heroFx.entries.map(e => e.fx));
   const picked = [], used = new Set();
-  const started = Date.now();
   await loadTags().catch(() => {});
   if (token !== heroFx.token) return null;
+  const started = Date.now();
   const effects = shuffled(HERO_EFFECTS.filter(f => !before.has(f)));
   const slang = tagsState === 'ready' ? shuffled(HERO_SLANG.filter(f => !before.has(f))) : [];
   const pickEffect = fx => {
@@ -7999,19 +8187,12 @@ async function deckCardInfo(names, fetchCards) {
   for (let i = 0; i < noRow.length; i += 75) {
     const chunk = noRow.slice(i, i + 75);
     try {
-      const res = await fetch('https://api.scryfall.com/cards/collection', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ identifiers: chunk.map(n => ({ name: n })) }),
+      const data = await scryfallCollection(chunk.map(n => ({ name: n })));
+      data.forEach(c => {
+        const full = normText(c.name), front = normText(String(c.name).split(' // ')[0]);
+        const n = chunk.find(x => normText(x) === full || normText(x) === front);
+        if (n && !out.has(n)) out.set(n, { row: null, card: c });
       });
-      if (res.ok) {
-        const data = await res.json();
-        (data.data || []).forEach(c => {
-          const full = normText(c.name), front = normText(String(c.name).split(' // ')[0]);
-          const n = chunk.find(x => normText(x) === full || normText(x) === front);
-          if (n && !out.has(n)) out.set(n, { row: null, card: c });
-        });
-      }
     } catch (err) { /* the names are shown anyway */ }
   }
   noRow.forEach(n => { if (!out.has(n)) out.set(n, { row: null, card: null }); });
