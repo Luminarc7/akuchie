@@ -1,0 +1,28 @@
+# Adds the reading of every Japanese card name (name_kana, used for the あいうえお
+# order of search results) whenever the card database changes. Commits only when
+# a reading was missing or changed.
+name: Name readings
+on:
+  push:
+    branches: [main, staging]
+    paths: [ja_cards.json.gz]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  readings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -q sudachipy sudachidict_full
+      - run: python3 tools/name_readings.py ja_cards.json.gz
+      - name: Commit the readings
+        run: |
+          if git diff --quiet -- ja_cards.json.gz; then echo "no change"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ja_cards.json.gz
+          git commit -m "Add card name readings"
+          git push

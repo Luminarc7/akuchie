@@ -5,6 +5,21 @@
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
+<meta name="description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。">
+<link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#121214">
+<meta name="apple-mobile-web-app-title" content="悪知恵">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="悪知恵（warujie）">
+<meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索">
+<meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。">
+<meta property="og:image" content="https://warujie.jp/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://warujie.jp/">
+<meta name="twitter:card" content="summary_large_image">
 <script>
 /* Apply the saved theme, language and lightweight mode before the page
    paints (no flash). Without a saved theme, follow the device's setting.
@@ -1041,6 +1056,43 @@
   .deck-meta .sep { color: var(--muted); margin: 0 8px; }
   .deck-meta .fact { white-space: nowrap; }
   .deck-src { margin: 0; font-size: 13px; color: var(--muted); }
+  /* round 14: sample lists, export, trends, recent searches, install */
+  .deck-pick { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 12.5px; color: var(--muted); }
+  .deck-pick select { max-width: min(560px, 100%); min-width: 0; flex: 0 1 auto; padding: 6px 30px 6px 10px; font-size: 13px; }
+  .deck-pick-n { font-size: 12px; }
+  .deck-export { position: relative; }
+  .deck-export > summary { list-style: none; cursor: pointer; }
+  .deck-export > summary::-webkit-details-marker { display: none; }
+  .deck-export > summary::after { content: ' ▾'; font-size: 11px; }
+  .deck-export-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: 270px; display: flex; flex-direction: column; padding: 6px;
+    background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: var(--shadow); }
+  .deck-export-menu button { text-align: left; padding: 9px 10px; border: 0; border-radius: 6px; background: none; color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+  .deck-export-menu button:hover, .deck-export-menu button:focus-visible { background: var(--surface-2); color: var(--accent); }
+  .deck-export-note { margin: 6px 4px 2px; font-size: 11px; line-height: 1.6; color: var(--muted); }
+  .meta-trend { display: flex; align-items: center; gap: 6px; margin-top: 4px; min-height: 18px; }
+  .spark { flex: none; overflow: visible; }
+  .spark path { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; opacity: .85; }
+  .spark circle { fill: var(--accent); }
+  .trend-d { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .trend-d.up { color: var(--ok); }
+  .trend-d.down { color: var(--bad); }
+  .deck-trend h2 .trend-d { margin-left: 10px; font-size: 12px; font-family: "Zen Kaku Gothic New", sans-serif; }
+  .trend-chart { width: 100%; max-width: 720px; height: auto; display: block; margin-top: 6px; }
+  .trend-chart .tg { stroke: var(--line); stroke-width: 1; }
+  .trend-chart .tl { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .trend-chart .tline { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+  .trend-chart .td { fill: var(--accent); }
+  .recent-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px 4px; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .recent-clear { border: 0; background: none; color: var(--muted); font: inherit; font-size: 11.5px; font-weight: 500; cursor: pointer; text-decoration: underline; padding: 2px 0; }
+  .recent-clear:hover { color: var(--accent); }
+  .recent-row { display: flex; align-items: stretch; }
+  .recent-row .suggest-item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+  .recent-icon { flex: none; color: var(--muted); }
+  .recent-remove { flex: none; width: 36px; border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; border-radius: 6px; }
+  .recent-remove:hover { color: var(--text); background: var(--surface-2); }
+  .app-install { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .app-install[hidden], .app-ios[hidden] { display: none; }
+  .app-ios { font-size: 12px; color: var(--muted); }
   .deck-src a { color: var(--accent); }
   .deck-note { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .deck-section { margin-top: 22px; }
@@ -1470,7 +1522,8 @@
             <button type="button" class="view-btn" role="tab" data-view="text" data-i18n="view.text">テキスト</button>
           </div>
           <select id="sortSelect" aria-label="並び替え" data-i18n-aria="sort.aria">
-            <option value="name" data-i18n="sort.name">おすすめ順</option>
+            <option value="name" data-i18n="sort.name">一致順・名前順</option>
+            <option value="popular" data-i18n="sort.popular">よく使われている順</option>
             <option value="cmc_asc" data-i18n="sort.cmc_asc">マナ総量が低い順</option>
             <option value="cmc_desc" data-i18n="sort.cmc_desc">マナ総量が高い順</option>
             <option value="released_desc" data-i18n="sort.released">発売日が新しい順</option>
@@ -1540,6 +1593,7 @@
         <select id="metaSort" aria-label="並び替え" data-i18n-aria="sort.aria">
           <option value="share" data-i18n="meta.sort.share">使用率順</option>
           <option value="winrate" data-i18n="meta.sort.wr">勝率順</option>
+          <option value="trend" data-i18n="meta.sort.trend">伸びている順</option>
         </select>
       </div>
     </div>
@@ -1576,7 +1630,8 @@
     <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・役割 <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a>・採用数 <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a>・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a></p>
     <p class="combos-only" data-i18n-html="footer.combos"></p>
     <p data-i18n="footer.disclaimer">価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。</p>
-    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）はお使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）と最近の検索は、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p class="app-install" id="appInstall" hidden><button type="button" class="adv-btn" id="appInstallBtn" data-i18n="app.install">アプリとして使う（ホーム画面に追加）</button><span class="app-ios" id="appIos" hidden data-i18n="app.ios"></span></p>
     <p><span data-i18n="footer.contact">お問い合わせ</span>：<a id="contactLink" href="#">…</a></p>
     <p><span id="dbCount"></span>
     <span id="siteSwitch"></span></p>
@@ -1752,7 +1807,27 @@ const STR = {
   'pill.mv': ['マナ総量 {v}', 'Mana value {v}'],
   'pill.remove': ['この条件を外す', 'Remove this filter'],
   'sort.aria': ['並び替え', 'Sort'],
-  'sort.name': ['おすすめ順', 'Best match'],
+  'sort.name': ['一致順・名前順', 'Best match, A–Z'],
+  'sort.popular': ['よく使われている順', 'Most played'],
+  'recent.head': ['最近の検索', 'Recent searches'],
+  'recent.clear': ['履歴を消す', 'Clear'],
+  'recent.remove': ['「{q}」を履歴から消す', 'Remove “{q}” from recent searches'],
+  'meta.sort.trend': ['伸びている順', 'Rising'],
+  'meta.trend.title': ['{name}：直近{n}週の使用率（週ごと）{from}% → {to}%', '{name}: share of the field over the last {n} weeks, {from}% → {to}%'],
+  'meta.trend.delta': ['4週で{d}', '{d} over 4 weeks'],
+  'deck.trend': ['使用率の推移', 'Share over time'],
+  'deck.trend.sub': ['週ごとの使用率（直近{n}週）。その週の大会のデッキのうち、このデッキの割合です。', 'Share of the field week by week (last {n} weeks): this deck’s part of the decks in that week’s events.'],
+  'deck.trend.week': ['{d}の週：{v}%（{n}デッキ中）', 'Week of {d}: {v}% (of {n} decks)'],
+  'deck.lists': ['サンプルリスト', 'Sample list'],
+  'deck.lists.n': ['{n}件', '{n} lists'],
+  'deck.export': ['書き出す', 'Export'],
+  'deck.export.arena': ['MTGアリーナ用にコピー', 'Copy for MTG Arena'],
+  'deck.export.mtgo': ['MTGO用にコピー', 'Copy for Magic Online'],
+  'deck.export.file': ['MTGO用ファイル（.txt）を保存', 'Save a Magic Online file (.txt)'],
+  'deck.export.done': ['コピーしました', 'Copied'],
+  'deck.export.note': ['カード名は英語です。両面カードや出来事のカードは表の面の名前、分割カードと部屋は「A // B」で書き出します。', 'Card names are in English: double-faced and adventure cards by their front face, split cards and Rooms as “A // B”.'],
+  'app.install': ['アプリとして使う（ホーム画面に追加）', 'Use as an app (add to home screen)'],
+  'app.ios': ['iPhone・iPad：Safariの共有ボタン（□↑）から「ホーム画面に追加」を選んでください。', 'iPhone / iPad: in Safari, tap Share (□↑) and choose “Add to Home Screen”.'],
   'sort.cmc_asc': ['マナ総量が低い順', 'Mana value: low to high'],
   'sort.cmc_desc': ['マナ総量が高い順', 'Mana value: high to low'],
   'sort.released': ['発売日が新しい順', 'Newest first'],
@@ -1765,7 +1840,7 @@ const STR = {
   'footer.fcp': ['悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。', ''],
   'footer.combos': ['統率者戦のコンボ：<a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>', 'Commander combos: <a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>'],
   'footer.disclaimer': ['価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。', 'Prices are for reference only. Yen amounts are converted at the exchange rate shown and may differ from what shops actually charge or pay. We can’t guarantee the information here is accurate, so please check with the shop before buying or selling.'],
-  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）はお使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode) are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
+  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）と最近の検索は、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode) and recent searches are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
   'footer.contact': ['お問い合わせ', 'Contact'],
   'meta.illus': ['イラスト：{a}', 'Art: {a}'],
   'art.title': ['{name}（イラスト：{a}　© Wizards of the Coast）', '{name} (art by {a} © Wizards of the Coast)'],
@@ -2335,7 +2410,7 @@ function indexRow(arr, fields) {
   const o = {};
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja'].forEach(f => { if (o[f] == null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana'].forEach(f => { if (o[f] == null) o[f] = ''; });
   ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
@@ -2787,6 +2862,15 @@ function relevance(row, query) {
       || jaNames.some(n => wordStartIn(n, qJa, NAME_WORD_START_JA)) || (fold && jaNames.some(n => wordStartIn(kanaFold(n), fold, NAME_WORD_START_JA)))) return 1;
   if (row._nameEn.includes(q) || nameHas(row, qJa, fold)) return 1.5;
   return 2;
+}
+// The あいうえお order: the reading of the Japanese name (name_kana, in the
+// database; never shown or searched), cards with only an English name after them.
+const KATA_TO_HIRA = s => String(s || '').replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+function jaSortKey(row) {
+  if (row._jaKey === undefined) {
+    row._jaKey = row.name_ja ? '0' + (row.name_kana || KATA_TO_HIRA(row._nameJa)) + '\u0000' + row._nameEn : '1' + row._nameEn;
+  }
+  return row._jaKey;
 }
 // how much a card is played: smaller is more (cards without a rank last)
 function popularity(row) {
@@ -3720,7 +3804,9 @@ function searchRows(query, st) {
   const popOf = popularity;
   const q = query || '';
   // each card's sort keys are worked out once, then only numbers are compared
-  const byName = (a, b) => (a.name_en < b.name_en ? -1 : a.name_en > b.name_en ? 1 : 0);
+  const byName = LANG === 'en'
+    ? (a, b) => (a._nameEn < b._nameEn ? -1 : a._nameEn > b._nameEn ? 1 : 0)
+    : (a, b) => { const x = jaSortKey(a), y = jaSortKey(b); return x < y ? -1 : x > y ? 1 : 0; };
   const keys = shown.map(row => ({ row, t: tierOf(row), k1: 0, k2: 0, k3: 0, k4: 0 }));
   let cmp;
   if (st.sort === 'cmc_asc') cmp = (a, b) => a.row._cmc - b.row._cmc;
@@ -3731,18 +3817,25 @@ function searchRows(query, st) {
     keys.forEach(k => { k.k1 = -simScores.get(k.row); });
     cmp = (a, b) => a.k1 - b.k1;
   } else if (pos.length || (st.roles && st.roles.size)) {
-    // a role search (or the role filter): the card the word names, then the cards that mainly do this, most played first
+    // a role search (or the role filter): the card the word names, then the cards that mainly do this;
+    // then A→Z, or the most played first when that order is chosen
     const specs = (pos.length ? pos.filter(r => r.id).map(r => r.id) : [...st.roles]).map(id => ROLE_BY_ID.get(id)).filter(Boolean);
+    const popular = st.sort === 'popular';
     keys.forEach(k => {
       k.k1 = nameOf ? nameOf(k.row) : Math.min(relevance(k.row, q), 2);
       k.k2 = specs.some(sp => roleDemoted(k.row, sp)) ? 1 : 0;
-      k.k3 = roleRankFor(k.row, specs);
-      k.k4 = scoreOf(k.row);
+      k.k3 = popular ? roleRankFor(k.row, specs) : 0;
+      k.k4 = popular ? scoreOf(k.row) : 0;
     });
     cmp = (a, b) => a.k1 - b.k1 || a.k2 - b.k2 || (a.k3 - b.k3 || 0) || a.k4 - b.k4;
+  } else if (st.sort === 'popular') {
+    // the most played first (EDHREC rank from the role data), within each match group
+    keys.forEach(k => { k.k1 = popOf(k.row); });
+    cmp = (a, b) => a.k1 - b.k1;
   } else {
-    keys.forEach(k => { k.k1 = relevance(k.row, q); k.k2 = stepOf(k.row); k.k3 = popOf(k.row); k.k4 = scoreOf(k.row); });
-    cmp = (a, b) => a.k1 - b.k1 || a.k2 - b.k2 || a.k3 - b.k3 || a.k4 - b.k4;
+    // the default: exact names, then names with the word, then how closely the words matched; then A→Z
+    keys.forEach(k => { k.k1 = relevance(k.row, q); k.k2 = stepOf(k.row); });
+    cmp = (a, b) => a.k1 - b.k1 || a.k2 - b.k2;
   }
   const byNameLast = st.sort !== 'released_desc';
   keys.sort((a, b) => a.t - b.t || cmp(a, b) || (byNameLast ? byName(a.row, b.row) : 0));
@@ -3754,7 +3847,7 @@ function searchRows(query, st) {
     graded: plan.graded, grades, counts, fellBack, fixes: plan.fixes, tier2: plan.tier2,
     groups: plan.graded ? new Set(shown.map(tierOf)).size > 1 : false,
     roles, single, derived: plan.derived.map(d => d.label), literal, asRole, rolesOff: plan.rolesOff,
-    sorted: !st.sort || st.sort === 'name', sim: plan.sim ? { target: simTarget, val: plan.sim.val } : null, n: shown.length,
+    sorted: !st.sort || st.sort === 'name', popular: st.sort === 'popular', sim: plan.sim ? { target: simTarget, val: plan.sim.val } : null, n: shown.length,
   };
   return { rows: shown, info, plan };
 }
@@ -3801,7 +3894,7 @@ function roleNoteParts(info) {
   }
   roles.filter(r => r.negate && (r.id || r.tag)).forEach(r => parts.push(t('role.note.not', { r: label(r) })));
   if (pos.length && info.derived && info.derived.length) parts.push(t('role.note.with', { d: esc(info.derived.join(LANG === 'en' ? ', ' : '・')) }));
-  if (pos.length && info.sorted && !info.sim && info.n) parts.push(esc(t('role.note.order')));
+  if (pos.length && info.popular && !info.sim && info.n) parts.push(esc(t('role.note.order')));
   (info.literal || []).forEach((l, i) => {
     parts.push(`<button type="button" class="link-btn role-literal" data-q="${esc(l.query)}">${t('role.literal', { w: esc(l.word) })}</button><span class="role-count" data-i="${i}"></span>`);
   });
@@ -5362,7 +5455,7 @@ function routeFromUrl() {
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
   if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '', market: p.get('market') || '' };
-  if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1' };
+  if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1', list: Math.max(0, parseInt(p.get('list') || '0', 10) || 0) };
   return { view: 'search' };
 }
 function homeTitle() { return t(SITE === 'main' ? 'title.home' : 'title.home.' + SITE); }
@@ -5582,6 +5675,7 @@ async function loadRandomCards() {
 }
 async function runSearch() {
   const myToken = ++searchToken;
+  if (state.query.trim()) rememberSearch(state.query);
   setHomeMode(false);
   grid.classList.toggle('text-mode', state.view === 'text');
   searchPlanCache = null;
@@ -6192,6 +6286,18 @@ async function showCardRoles(card, force) {
   box.hidden = false;
 }
 // Search from anywhere (role chips, 「もっと見る」, suggestions)
+// ---- recent searches: kept only in this browser ------------------------------------
+const RECENT_KEY = 'akuchie-recent', RECENT_MAX = 10;
+function recentSearches() {
+  try { const v = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string' && x.trim()).slice(0, RECENT_MAX) : []; } catch (e) { return []; }
+}
+function saveRecent(list) { try { localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, RECENT_MAX))); } catch (e) { /* private mode */ } }
+function rememberSearch(q) {
+  q = String(q || '').trim().replace(/\s+/g, ' ');
+  if (!q || q.length > 120) return;
+  saveRecent([q].concat(recentSearches().filter(x => x !== q)));
+}
+function forgetSearch(q) { saveRecent(recentSearches().filter(x => x !== q)); }
 function startSearch(q) {
   hideSuggest();
   searchInput.value = q;
@@ -6741,6 +6847,33 @@ function artFallback(e) {
   img.remove();
 }
 
+// the deck's weekly share of the field (meta.json trends), as a small line
+function metaTrend(format, a) {
+  const tr = metaState.data && metaState.data.trends && metaState.data.trends[format];
+  const v = tr && tr.share && tr.share[a.name + (a.unclassified ? '|u' : '')];
+  if (!v || !v.some(x => typeof x === 'number')) return null;
+  const avg = xs => { const ok = xs.filter(x => typeof x === 'number'); return ok.length ? ok.reduce((p, x) => p + x, 0) / ok.length : null; };
+  const n = v.length, last4 = avg(v.slice(n - 4)), prev4 = avg(v.slice(n - 8, n - 4));
+  return { weeks: tr.weeks, decks: tr.decks, v, delta: last4 !== null && prev4 !== null ? last4 - prev4 : null };
+}
+function sparkline(v, w, h) {
+  const nums = v.filter(x => typeof x === 'number');
+  const max = Math.max(1, ...nums), step = w / Math.max(1, v.length - 1);
+  let d = '', pen = false;
+  v.forEach((x, i) => {
+    if (typeof x !== 'number') { pen = false; return; }
+    d += `${pen ? 'L' : 'M'}${(i * step).toFixed(1)},${(h - 2 - (x / max) * (h - 4)).toFixed(1)}`;
+    pen = true;
+  });
+  const lastI = v.length - 1 - [...v].reverse().findIndex(x => typeof x === 'number');
+  const lx = (lastI * step).toFixed(1), ly = (h - 2 - (v[lastI] / max) * (h - 4)).toFixed(1);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><path d="${d}"/><circle cx="${lx}" cy="${ly}" r="2"/></svg>`;
+}
+function deltaHtml(delta) {
+  if (delta === null || Math.abs(delta) < 0.05) return '';
+  const up = delta > 0;
+  return `<span class="trend-d ${up ? 'up' : 'down'}">${up ? '▲' : '▼'}${Math.abs(delta).toFixed(1)}pt</span>`;
+}
 function metaRowHtml(a, index, maxShare) {
   const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
   const deckHref = deckUrl(metaState.format, metaState.days, a);
@@ -6794,6 +6927,7 @@ function metaRowHtml(a, index, maxShare) {
         <div class="meta-num">${a.share.toFixed(1)}%</div>
         <div class="bar-track"><div class="bar-fill" style="width:${Math.max(0, Math.min(100, a.share / maxShare * 100)).toFixed(1)}%"></div></div>
         <div class="meta-sub">${tn('meta.decks', a.decks)}</div>
+        ${trendCell(a, name)}
       </div>
       <div class="meta-wr" title="${esc(wrTitle)}">
         <div class="meta-lbl">${t('meta.col.wr')}</div>
@@ -6802,6 +6936,13 @@ function metaRowHtml(a, index, maxShare) {
     </li>`;
 }
 
+function trendCell(a, name) {
+  const tr = metaTrend(metaState.format, a);
+  if (!tr) return '';
+  const nums = tr.v.filter(x => typeof x === 'number');
+  const title = t('meta.trend.title', { name, n: tr.v.length, from: nums[0].toFixed(1), to: nums[nums.length - 1].toFixed(1) });
+  return `<div class="meta-trend" title="${esc(title)}">${sparkline(tr.v, 72, 18)}${deltaHtml(tr.delta)}</div>`;
+}
 function renderMeta() {
   document.title = t('title.meta');
   const body = document.getElementById('metaBody');
@@ -6855,6 +6996,11 @@ function renderMeta() {
   if (!rows.length) {
     body.innerHTML = `<div class="status-line"><span class="serif">${t('meta.own.none.' + SITE)}</span></div>`;
     return;
+  }
+  if (metaState.sort === 'trend') {
+    // the decks growing fastest (last four weeks against the four before) first
+    const d = a => { const tr = metaTrend(metaState.format, a); return tr && tr.delta !== null ? tr.delta : -1e9; };
+    rows.sort((a, b) => d(b) - d(a) || (b.decks - a.decks));
   }
   if (metaState.sort === 'winrate') {
     // decks with enough matches first, best win rate on top; the rest keep their share order
@@ -7685,6 +7831,7 @@ function attachNameSuggest(input, list) {
   };
   const pick = (row) => {
     close();
+    if (row.recent) { startSearch(row.recent); return; }
     if (row.role) { startSearch(row.word); return; }
     const picked = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
     [searchInput, document.getElementById('heroInput')].forEach(el => { el.value = picked; });
@@ -7692,6 +7839,19 @@ function attachNameSuggest(input, list) {
   };
   const update = () => {
     const q = input.value;
+    if (!q.trim()) {
+      // nothing typed yet: the recent searches
+      items = recentSearches().map(r => ({ recent: r }));
+      active = -1;
+      if (!items.length || document.activeElement !== input) { close(); return; }
+      list.innerHTML = `<li role="presentation" class="recent-head"><span>${esc(t('recent.head'))}</span><button type="button" class="recent-clear" data-clear="1" tabindex="-1">${esc(t('recent.clear'))}</button></li>`
+        + items.map((row, i) => `<li role="presentation" class="recent-row"><button type="button" class="suggest-item recent-item" role="option" id="${list.id}-${i}" aria-selected="false" data-i="${i}" tabindex="-1">
+          <svg class="recent-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span class="s-main">${esc(row.recent)}</span></button><button type="button" class="recent-remove" data-remove="${i}" tabindex="-1" aria-label="${esc(t('recent.remove', { q: row.recent }))}">×</button></li>`).join('');
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      return;
+    }
     const roleItems = roleSuggestions(q);
     items = roleItems.concat(nameSuggestions(q).slice(0, 8 - roleItems.length));
     active = -1;
@@ -7714,7 +7874,7 @@ function attachNameSuggest(input, list) {
   input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 60); });
   input.addEventListener('focus', () => startDbLoad());
   dbLoaded.then(() => { if (document.activeElement === input && input.value.trim()) update(); });
-  input.addEventListener('focus', () => { if (input.value.trim()) update(); });
+  input.addEventListener('focus', () => update());
   input.addEventListener('blur', () => setTimeout(close, 150));
   input.addEventListener('keydown', (e) => {
     if (list.hidden || !items.length) return;
@@ -7725,12 +7885,42 @@ function attachNameSuggest(input, list) {
   });
   list.addEventListener('mousedown', (e) => e.preventDefault());
   list.addEventListener('click', (e) => {
+    const rm = e.target.closest('[data-remove]');
+    if (rm) { forgetSearch(items[Number(rm.dataset.remove)].recent); update(); input.focus(); return; }
+    if (e.target.closest('[data-clear]')) { saveRecent([]); close(); input.focus(); return; }
     const b = e.target.closest('.suggest-item');
     if (b) pick(items[Number(b.dataset.i)]);
   });
   suggestBoxes.push({ close });
 }
 attachNameSuggest(searchInput, document.getElementById('searchSuggest'));
+// ---- install as an app ---------------------------------------------------------------------
+// sw.js keeps the page and the card database for use without a connection (it always
+// asks the network first, so it never holds the site back from an update).
+if ('serviceWorker' in navigator && location.protocol === 'https:' && !/github\.io$/.test(location.hostname)) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+(function installButton() {
+  const box = document.getElementById('appInstall'), btn = document.getElementById('appInstallBtn'), ios = document.getElementById('appIos');
+  if (!box || !btn) return;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (standalone) return;
+  let promptEvent = null;
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); promptEvent = e; box.hidden = false; });
+  window.addEventListener('appinstalled', () => { box.hidden = true; promptEvent = null; });
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (iOS) box.hidden = false;
+  btn.addEventListener('click', async () => {
+    if (promptEvent) {
+      promptEvent.prompt();
+      try { await promptEvent.userChoice; } catch (err) { /* closed */ }
+      promptEvent = null;
+      box.hidden = true;
+      return;
+    }
+    if (ios) ios.hidden = !ios.hidden;
+  });
+})();
 attachNameSuggest(document.getElementById('heroInput'), document.getElementById('heroSuggest'));
 document.getElementById('searchForm').addEventListener('submit', hideSuggest);
 
@@ -8156,6 +8346,25 @@ function loadMetaDecks() {
   }
   return deckState.promise;
 }
+// more sample lists: meta_lists/<days>-<format>.json, one small file per window and format
+const metaListsCache = new Map();
+function loadMetaLists(days, format) {
+  const key = `${days}-${format}`;
+  if (!metaListsCache.has(key)) {
+    metaListsCache.set(key, (async () => {
+      for (const dir of DATA_DIRS) {
+        try {
+          const res = await fetch(`${dir}meta_lists/${encodeURIComponent(key)}.json`, { cache: 'no-cache' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && data.decks) return data.decks;
+        } catch (err) { /* try the next place */ }
+      }
+      return null;
+    })());
+  }
+  return metaListsCache.get(key);
+}
 function deckUrl(format, days, a) {
   return `?view=deck&format=${encodeURIComponent(format)}` + (days ? `&days=${encodeURIComponent(days)}` : '')
     + `&deck=${encodeURIComponent(a.name)}` + (a.unclassified ? '&u=1' : '');
@@ -8303,32 +8512,94 @@ async function renderDeck(route) {
     body.innerHTML = `<div class="status-line"><span class="serif">${t('deck.notfound')}</span>${t('deck.notfound.body', { url: esc(back) })}</div>`;
     return;
   }
-  await loadMetaDecks();
+  const [, samples] = await Promise.all([loadMetaDecks(), loadMetaLists(days, route.format)]);
   if (token !== deckState.token) return;
   const key = a.name + (a.unclassified ? '|u' : '');
   const formats = deckState.status === 'ready' ? (deckState.data.windows[days] || {}) : {};
   const entry = (formats[route.format] || {})[key] || null;
-  const lists = entry
-    ? { main: entry.main || [], side: entry.side || [], more: entry.more || [] }
+  // the lists to choose from: the sample lists file, or the one list in meta_decks.json
+  const choices = (samples && samples[key] && samples[key].length) ? samples[key] : (entry ? [entry] : []);
+  const pickI = Math.min(route.list || 0, Math.max(0, choices.length - 1));
+  deckState.current = { route, a, entry, choices, pick: pickI, days, format: route.format, token };
+  await showDeckList(pickI);
+}
+// shows sample list i (cards from the database at once, then their pictures)
+async function showDeckList(i) {
+  const cur = deckState.current;
+  if (!cur) return;
+  const { a, entry, choices, token } = cur;
+  const chosen = choices[i] || null;
+  const more = entry ? (entry.more || []) : [];
+  const lists = chosen
+    ? { main: chosen.main || [], side: chosen.side || [], more: more.filter(x => !(chosen.main || []).some(m => m[1] === x[0])) }
     : { main: (a.cards || []).map(n => [null, n, null]), side: [], more: [] };
   const names = [...new Set(lists.main.concat(lists.side).map(x => x[1]).concat(lists.more.map(x => x[0])))];
   const cacheKey = LANG + '\n' + names.join('\n');
   const cached = deckState.cache.get(cacheKey);
-  deckState.current = { route, a, entry, lists, days, format: route.format, infos: cached || await deckCardInfo(names, false) };
+  Object.assign(cur, { pick: i, chosen, lists, infos: cached || await deckCardInfo(names, false) });
+  if (token !== deckState.token) return;
   drawDeck();
   if (cached) return;
   // then the pictures
   const infos = await deckCardInfo(names, true);
   if (deckState.cache.size > 20) deckState.cache.clear();
   deckState.cache.set(cacheKey, infos);
-  if (token !== deckState.token) return;
-  deckState.current.infos = infos;
+  if (token !== deckState.token || cur.pick !== i) return;
+  cur.infos = infos;
   drawDeck();
+}
+// ---- export: the shown list for MTG Arena or Magic Online --------------------------------
+// English names; double-faced, adventure and similar cards by their front face, split cards
+// (and Rooms) as "A // B", which is how both games read them.
+function exportName(name) {
+  if (!String(name).includes(' // ')) return name;
+  const row = rowByEnglishName(name);
+  const faces = row ? String(row.type_en || '').split(' // ') : [];
+  const split = faces.length > 1 && faces.every(f => /\b(?:Instant|Sorcery)\b/.test(f) || /\bRoom\b/.test(f));
+  return split || !row ? name : String(name).split(' // ')[0];
+}
+function deckExportText(list, kind) {
+  const line = x => `${x[0]} ${exportName(x[1])}`;
+  const main = (list.main || []).filter(x => x[0]).map(line), side = (list.side || []).filter(x => x[0]).map(line);
+  if (kind === 'arena') return ['Deck'].concat(main).concat(side.length ? ['', 'Sideboard'].concat(side) : []).join('\n') + '\n';
+  return main.join('\n') + (side.length ? '\n\n' + side.join('\n') : '') + '\n';
+}
+function saveTextFile(name, text) {
+  const url = URL.createObjectURL(new Blob([text.replace(/\n/g, '\r\n')], { type: 'text/plain;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+// the deck's share of the field week by week
+function deckTrendHtml(format, a) {
+  const tr = metaTrend(format, a);
+  if (!tr) return '';
+  const W = 640, H = 150, L = 48, R = 14, T = 12, B = 26;
+  const nums = tr.v.filter(x => typeof x === 'number');
+  const top = Math.max(2, Math.ceil(Math.max(...nums) / 5) * 5);
+  const x = i => L + i * (W - L - R) / Math.max(1, tr.v.length - 1);
+  const y = v => T + (H - T - B) * (1 - v / top);
+  let d = '', pen = false;
+  tr.v.forEach((v, i) => { if (typeof v !== 'number') { pen = false; return; } d += `${pen ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`; pen = true; });
+  const grid = [0, top / 2, top].map(g => `<line x1="${L}" x2="${W - R}" y1="${y(g).toFixed(1)}" y2="${y(g).toFixed(1)}" class="tg"/><text x="${L - 6}" y="${(y(g) + 4).toFixed(1)}" class="tl" text-anchor="end">${g % 1 ? g.toFixed(1) : g}%</text>`).join('');
+  const md = s => { const p = String(s).split('-'); return `${Number(p[1])}/${Number(p[2])}`; };
+  const labels = [0, Math.floor((tr.v.length - 1) / 2), tr.v.length - 1].map(i => `<text x="${x(i).toFixed(1)}" y="${H - 8}" class="tl" text-anchor="middle">${esc(md(tr.weeks[i]))}</text>`).join('');
+  const dots = tr.v.map((v, i) => typeof v === 'number'
+    ? `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.2" class="td"><title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title></circle>` : '').join('');
+  return `<section class="deck-section deck-trend"><h2>${t('deck.trend')}${deltaHtml(tr.delta)}</h2>
+      <p class="deck-sub">${t('deck.trend.sub', { n: tr.v.length })}</p>
+      <svg class="trend-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('deck.trend'))}">${grid}<path d="${d}" class="tline"/>${dots}${labels}</svg>
+    </section>`;
 }
 function drawDeck() {
   const cur = deckState.current;
   if (!cur) return;
-  const { a, entry, lists, infos, days, format } = cur;
+  const { a, lists, infos, days, format, choices, pick, chosen } = cur;
+  const entry = chosen;
   const view = deckState.view;
   const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
   document.title = t('deck.title', { name, fmt: formatName(format) });
@@ -8346,7 +8617,18 @@ function drawDeck() {
       <button type="button" class="view-btn" role="tab" data-dview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
       <button type="button" class="view-btn" role="tab" data-dview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
     </div>`;
-  const copy = entry ? `<button type="button" class="adv-btn" id="deckCopy" title="${esc(t('deck.copy.title'))}">${t('deck.copy')}</button>` : '';
+  const copy = entry ? `<details class="deck-export" id="deckExport"><summary class="adv-btn">${t('deck.export')}</summary>
+      <div class="deck-export-menu" role="menu">
+        <button type="button" role="menuitem" data-export="arena">${t('deck.export.arena')}</button>
+        <button type="button" role="menuitem" data-export="mtgo">${t('deck.export.mtgo')}</button>
+        <button type="button" role="menuitem" data-export="file">${t('deck.export.file')}</button>
+        <p class="deck-export-note">${t('deck.export.note')}</p>
+      </div></details>` : '';
+  const listPicker = choices && choices.length > 1 ? `<label class="deck-pick"><span>${t('deck.lists')}</span><select id="deckListSel">${choices.map((c, i) => {
+      const l = c.list || {};
+      const label = `${i + 1}. ` + [l.result, l.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (l.date ? `（${l.date}）` : '');
+      return `<option value="${i}"${i === pick ? ' selected' : ''}>${esc(label)}</option>`;
+    }).join('')}</select><span class="deck-pick-n">${t('deck.lists.n', { n: choices.length })}</span></label>` : '';
   const main = lists.main.map(x => deckItem(x[1], x[0], x[2], infos));
   const side = lists.side.map(x => deckItem(x[1], x[0], x[2], infos));
   const more = lists.more.map(x => Object.assign(deckItem(x[0], null, x[1], infos), { avg: x[2] }));
@@ -8357,14 +8639,18 @@ function drawDeck() {
         <div class="deck-tools">${copy}${toggle}</div>
       </div>
       <p class="deck-meta">${factHtml}</p>
+      ${listPicker}
       ${srcHtml}
     </div>`;
   if (!entry) html += `<p class="deck-note">${t('deck.keyonly')}</p>`;
   html += `<section class="deck-section"><h2>${entry ? t('deck.main') : t('deck.keycards')}${entry ? `<span class="dg-n">${tn('deck.cards', total(main))}</span>` : ''}</h2>${deckGroupsHtml(main, view, true)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
   if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(deckRowHtml).join('')}</ul></section>`;
+  html += deckTrendHtml(format, a);
   if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
+  const exportOpen = !!(document.getElementById('deckExport') || {}).open;
   document.getElementById('deckBody').innerHTML = html;
+  if (exportOpen && document.getElementById('deckExport')) document.getElementById('deckExport').open = true;
 }
 document.getElementById('deckBody').addEventListener('click', async (e) => {
   const vb = e.target.closest('[data-dview]');
@@ -8375,13 +8661,22 @@ document.getElementById('deckBody').addEventListener('click', async (e) => {
     drawDeck();
     return;
   }
-  const cp = e.target.closest('#deckCopy');
-  if (cp) {
+  const ex = e.target.closest('[data-export]');
+  if (ex) {
     const cur = deckState.current;
-    if (!cur || !cur.entry) return;
-    const ok = await copyText(deckListText(cur.entry));
-    cp.textContent = ok ? t('deck.copied') : t('deck.copy');
-    setTimeout(() => { if (cp.isConnected) cp.textContent = t('deck.copy'); }, 1800);
+    if (!cur || !cur.chosen) return;
+    const kind = ex.dataset.export;
+    if (kind === 'file') {
+      const name = String(cur.a.name || 'deck').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'deck';
+      saveTextFile(`${name}.txt`, deckExportText(cur.chosen, 'mtgo'));
+      const d = document.getElementById('deckExport');
+      if (d) d.open = false;
+      return;
+    }
+    const label = ex.textContent;
+    const ok = await copyText(deckExportText(cur.chosen, kind));
+    ex.textContent = ok ? t('deck.export.done') : label;
+    setTimeout(() => { if (ex.isConnected) ex.textContent = label; const d = document.getElementById('deckExport'); if (d) d.open = false; }, 1200);
     return;
   }
   const link = e.target.closest('a[data-card]');
@@ -8389,6 +8684,20 @@ document.getElementById('deckBody').addEventListener('click', async (e) => {
   e.preventDefault();
   hideDeckPeek();
   goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
+});
+document.getElementById('deckBody').addEventListener('change', (e) => {
+  if (e.target.id !== 'deckListSel' || !deckState.current) return;
+  const i = Number(e.target.value) || 0;
+  const p = new URLSearchParams(location.search);
+  if (i) p.set('list', String(i)); else p.delete('list');
+  history.replaceState(history.state, '', '?' + p.toString());
+  hideDeckPeek();
+  showDeckList(i);
+});
+// the export menu closes when anything else is clicked
+document.addEventListener('click', (e) => {
+  const d = document.getElementById('deckExport');
+  if (d && d.open && !e.target.closest('#deckExport')) d.open = false;
 });
 document.getElementById('deckBack').addEventListener('click', () => {
   if (history.state && history.state.app) history.back();
