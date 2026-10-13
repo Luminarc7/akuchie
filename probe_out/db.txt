@@ -1,0 +1,40 @@
+== staging /ja_cards.json (br)
+HTTP/2 200 
+content-type: application/json; charset=utf-8
+content-length: 3491293
+cache-control: public, max-age=0, must-revalidate, no-transform
+content-encoding: br
+etag: "deb147ab221e6eb4dced673e2c896869"
+3491293
+== staging /ja_cards.json.gz (br)
+HTTP/2 200 
+content-type: application/gzip
+content-length: 6542428
+cache-control: public, max-age=0, must-revalidate
+etag: "8c9326074ace404a78835abc001de7cf"
+6542428
+== staging /ja_cards.json.br (br)
+HTTP/2 200 
+content-length: 3491293
+cache-control: public, max-age=0, must-revalidate
+etag: "deb147ab221e6eb4dced673e2c896869"
+3491293
+== staging /tools/brotli_db.mjs (br)
+HTTP/2 404 
+content-length: 0
+0
+== staging /.gitignore (br)
+HTTP/2 404 
+content-length: 0
+0
+== staging /ja_cards.json (gzip only)
+HTTP/2 200 
+content-length: 6542428
+content-encoding: gzip
+6542428
+== decoded json ok?
+33821 2026-10-11
+9c6cf48a1661d3f93165ce358d1aa6f286ef416d563bd0a0762b109e765c123d  -
+== production page
+87b41874f27c4e117e1fcf8fd63e001b4fb4c1395e7ac89763fcbec37e6f72dc  -
+HTTP/2 404 
