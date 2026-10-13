@@ -1,0 +1,6 @@
+total 308
+drwxr-xr-x 2 runner runner   4096 Oct 13 14:35 .
+drwxr-xr-x 3 runner runner   4096 Oct 13 14:35 ..
+-rw-r--r-- 1 runner runner   3452 Oct 13 14:35 index.json
+-rw-r--r-- 1 runner runner      0 Oct 13 14:35 ls.txt
+-rw-r--r-- 1 runner runner 302574 Oct 13 14:35 tags.json.gz
