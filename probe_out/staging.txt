@@ -1,0 +1,8 @@
+== https://staging-warujie.warujie-mtg.workers.dev/
+HTTP/2 200 
+content-type: text/html
+cache-control: public, max-age=0, must-revalidate
+x-robots-tag: noindex
+<title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+0
+87b41874f27c4e117e1fcf8fd63e001b4fb4c1395e7ac89763fcbec37e6f72dc  page.html
