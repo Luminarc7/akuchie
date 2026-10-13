@@ -5,3 +5,5 @@
 wrangler.jsonc
 build_meta.py
 README.md
+worker.js
+_headers
