@@ -1,0 +1,20 @@
+== https://warujie.warujie-mtg.workers.dev/
+HTTP/2 200 
+cache-control: public, max-age=0, must-revalidate, no-transform
+content-encoding: gzip
+server: cloudflare
+beacon: 0  jsd: 0  title: <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索
+== https://warujie.jp/
+HTTP/2 403 
+cf-mitigated: challenge
+server: cloudflare
+server-timing: chlray;desc="a49ecc62bb2411d1"
+content-encoding: br
+beacon: 0  jsd: 1  title: <title>Just a moment...
+== https://www.warujie.jp/
+HTTP/2 403 
+cf-mitigated: challenge
+server: cloudflare
+server-timing: chlray;desc="a49ecc654b071f17"
+content-encoding: br
+beacon: 0  jsd: 1  title: <title>Just a moment...
