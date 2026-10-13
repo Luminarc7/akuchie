@@ -1221,7 +1221,41 @@
   .of-stock { font-size: 12.5px; color: var(--text-2); }
   .of-stock.any { font-size: 11.5px; color: var(--muted); cursor: help; }
   .offers-empty { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
-  .offers-more { margin-top: 8px; font-size: 12.5px; }
+  /* every listing, in a box that scrolls on its own (thin scrollbar) */
+  .of-scroll { max-height: 400px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; padding-right: 6px; margin-right: -6px; }
+  .of-scroll::-webkit-scrollbar { width: 6px; }
+  .of-scroll::-webkit-scrollbar-track { background: transparent; }
+  .of-scroll::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+  .of-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  .of-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .of-scroll > .of-row:first-child { border-top-color: var(--line); }
+  /* the Japan tab: one notice, the price column full width, every Japanese shop in one list */
+  .jp-notice { display: flex; align-items: center; gap: 8px 14px; padding: 12px 16px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+  .jp-notice p { margin: 0; font-size: 12.5px; line-height: 1.7; color: var(--text-2); }
+  .cp-market[data-market="jp"] .cp-market-grid { grid-template-columns: minmax(0, 1fr); }
+  .cp-market[data-market="jp"] .cp-offers, .cp-offers[hidden] { display: none; }
+  .cp-market[data-market="jp"] .shop-links { display: none; }
+  .cp-market:not([data-market="jp"]) .jp-dir { display: none; }
+  .jp-dir { margin-top: 18px; }
+  .jp-dir-head { margin: 0 0 6px; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .jp-dir-head span { margin-left: 8px; font-weight: 500; }
+  .jp-dir-list { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 24px; border-top: 1px solid var(--line); }
+  .jp-shop { display: flex; align-items: center; gap: 9px; min-height: 46px; padding: 0 10px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; transition: background .15s; }
+  .jp-shop:hover { background: var(--surface); }
+  .jp-shop:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .jp-name { flex: none; font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .jp-alt { flex: 1; min-width: 0; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .jp-go { flex: none; margin-left: auto; color: var(--muted); }
+  .jp-shop:hover .jp-go, .jp-shop:hover .jp-name { color: var(--accent); }
+  .jp-dir-more { display: none; width: 100%; margin-top: 12px; }
+  .jp-dir-note { margin: 10px 0 0; font-size: 11.5px; color: var(--muted); }
+  @container (min-width: 480px) { .jp-dir-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @container (min-width: 760px) { .jp-dir-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @container (max-width: 479px) {
+    .jp-notice { flex-direction: column; align-items: flex-start; }
+    .jp-dir:not(.all) .jp-shop:nth-child(n+9) { display: none; }
+    .jp-dir:not(.all) .jp-dir-more { display: block; }
+  }
   .cp-offers .price-wip { font-size: 12.5px; }
   /* shop links: under the prices, the label above the countries */
   .cp-market .cp-row.shop-links { grid-template-columns: minmax(0, 1fr); row-gap: 5px; margin-top: 14px; }
@@ -1810,6 +1844,12 @@ const STR = {
   'offers.none': ['この版の出品は見つかりませんでした', 'No listings found for this printing'],
   'offers.none.foil': ['この版のフォイルの出品は見つかりませんでした', 'No foil listings found for this printing'],
   'offers.more': ['すべて表示（{n}件）', 'Show all ({n})'],
+  'market.soon': ['準備中', 'Coming soon'],
+  'price.jp.notice': ['日本のショップの価格と在庫は、掲載の許可をいただいたショップから順にここに表示します。それまでは下のショップでこのカードを直接お探しください。', 'Japanese shop prices and stock will appear here as shops give permission. Until then, search this card at any shop below.'],
+  'jpdir.count': ['{n}店', '{n}'],
+  'jpdir.more': ['さらに表示（残り{n}店）', 'Load more ({n} more)'],
+  'jpdir.note': ['各リンクは、そのショップでこのカードを検索します。', "Each link opens that shop's own search for this card."],
+  'offers.count': ['{n}件', '{n} listings'],
   'offers.jp.wip': ['日本のショップの出品と在庫は、掲載の許可をいただいたショップから順に表示します。それまでは左の「ショップで探す」から各ショップでご確認ください。', 'Listings from Japanese shops will appear as the shops give permission. Until then, check the shops linked on the left.'],
   'offers.foil.aria': ['フォイルの出品を表示', 'Show foil listings'],
   'notes.heading': ['価格について', 'About the prices'],
@@ -4307,7 +4347,7 @@ function priceHtml(card) {
   let body = '';
   const rows = market === 'jp' ? [] : marketRows(card, market);
   if (market === 'jp') {
-    body = `<div class="price-wip"><span class="wip-badge">${t('market.wip')}</span>${t('price.jp.wip')}</div>`;
+    body = `<div class="jp-notice"><span class="wip-badge">${t('market.soon')}</span><p>${t('price.jp.notice')}</p></div>`;
   } else {
     body = rows.length
       ? `<div class="shop-prices">
@@ -4334,7 +4374,9 @@ function rerenderPriceSection(card) {
   const offers = document.getElementById('offersBox');
   if (offers) offers.outerHTML = offersHtml(card);
   const shops = document.querySelector('#cardViewCard .shop-links');
-  if (shops) shops.dataset.market = priceMarket;   // the JP tab shows only the Japanese shops
+  if (shops) shops.dataset.market = priceMarket;
+  const mk = document.querySelector('#cardViewCard .cp-market');
+  if (mk) mk.dataset.market = priceMarket;   // the JP tab: one column, the Japanese shop list in place of the link buttons
   const notes = document.getElementById('priceNotes');
   if (notes) { notes.innerHTML = priceNotesHtml(card); notes.hidden = !notes.innerHTML.trim(); }
   updateYenLabels(document.getElementById('cardViewCard'));
@@ -4347,7 +4389,6 @@ function rerenderPriceSection(card) {
 // is remembered.
 const OFFER_SHOPS = { ck: 'Card Kingdom', mp: 'Mana Pool', tcg: 'TCGplayer', cm: 'Cardmarket', ct: 'CardTrader' };
 const OFFER_MARKET = { ck: 'us', mp: 'us', tcg: 'us', cm: 'eu', ct: 'eu' };
-const OFFERS_SHOWN = 8;
 const OFFER_CONDS = {
   NM: ['ニアミント（ほぼ新品）', 'Near mint'], EX: ['エクセレント（軽い傷）', 'Excellent (light wear)'], LP: ['ライトリープレイド（軽い傷）', 'Lightly played'],
   VG: ['ベリーグッド（中程度の傷）', 'Very good (moderate wear)'], MP: ['モデレートリープレイド（中程度の傷）', 'Moderately played'],
@@ -4412,8 +4453,7 @@ function offersHtml(card) {
   const market = priceMarket;
   const head = sw => `<div class="offers-head"><div class="offers-title">${t('offers.heading')}<small>${t('offers.sub.' + market)}</small></div>${sw || ''}</div>`;
   if (market === 'jp') {
-    return `<aside class="cp-offers" id="offersBox" data-market="jp">${head()}
-      <div class="price-wip"><span class="wip-badge">${t('market.wip')}</span>${t('offers.jp.wip')}</div></aside>`;
+    return `<aside class="cp-offers" id="offersBox" data-market="jp" hidden></aside>`;
   }
   if (card._quotes === undefined) {
     return `<aside class="cp-offers" id="offersBox" data-market="${market}">${head()}<p class="offers-empty">${t('loading')}</p></aside>`;
@@ -4425,16 +4465,14 @@ function offersHtml(card) {
     else if (foil && !foils.length && plain.length) foil = 0;
   }
   const rows = foil ? foils : plain;
-  const shown = card._offersAll ? rows : rows.slice(0, OFFERS_SHOWN);
   const sw = `<button type="button" class="sq-switch" id="offerFoil" role="switch" aria-checked="${foil ? 'true' : 'false'}" aria-label="${esc(t('offers.foil.aria'))}"><span class="sq-track" aria-hidden="true"><span class="sq-knob"></span></span><span class="sq-label">${t('price.foil')}</span></button>`;
   const table = rows.length
     ? `<div class="offer-table" role="table" aria-label="${esc(t('offers.heading'))}">
         <div class="of-row of-h" role="row"><span role="columnheader">${t('price.col.shop')}</span><span role="columnheader">${t('offers.col.cond')}</span><span role="columnheader">${t('offers.col.price')}</span><span role="columnheader">${t('offers.col.stock')}</span></div>
-        ${shown.map((r, i) => offerRowHtml(card, r, market, foil, i === 0)).join('')}
+        <div class="of-scroll" role="rowgroup" tabindex="0" aria-label="${esc(t('offers.count', { n: fmtNum(rows.length) }))}">${rows.map((r, i) => offerRowHtml(card, r, market, foil, i === 0)).join('')}</div>
       </div>`
     : `<p class="offers-empty">${t(foil ? 'offers.none.foil' : 'offers.none')}</p>`;
-  const more = rows.length > shown.length ? `<button type="button" class="link-btn offers-more" id="offersMore">${t('offers.more', { n: rows.length })}</button>` : '';
-  return `<aside class="cp-offers" id="offersBox" data-market="${market}" data-foil="${foil}">${head(sw)}${table}${more}</aside>`;
+  return `<aside class="cp-offers" id="offersBox" data-market="${market}" data-foil="${foil}">${head(sw)}${table}</aside>`;
 }
 
 // ---- the notes under the card page: where the prices come from ----------------
@@ -4508,9 +4546,9 @@ document.getElementById('cardViewCard').addEventListener('click', (e) => {
     if (sw) sw.focus();
     return;
   }
-  if (e.target.closest('#offersMore') && shownCard) {
-    shownCard._offersAll = true;
-    rerenderPriceSection(shownCard);
+  const jpMore = e.target.closest('.jp-dir-more');
+  if (jpMore) {
+    jpMore.closest('.jp-dir').classList.add('all');
     return;
   }
   const b = e.target.closest('[data-pmarket]');
@@ -4613,13 +4651,14 @@ function renderCardViewContent(card) {
           ${card.collector_number ? `<span>#${esc(card.collector_number)}</span>` : ''}
           ${card.scryfall_uri ? `<a href="${esc(card.scryfall_uri)}" target="_blank" rel="noopener">Scryfall ↗</a>` : ''}
         </div>
-        <div class="cp-market"><div class="cp-market-grid">
+        <div class="cp-market" data-market="${priceMarket}"><div class="cp-market-grid">
           <div class="cp-market-main">
             ${priceHtml(card)}
             ${shopGroups.length ? `<div class="cp-row external-links shop-links" data-market="${priceMarket}">
               <span class="cp-row-label">${t('links.shops')}</span>${shopGroups.map(([k, links]) =>
                 `<span class="shop-group" data-region="${k}"><span class="sg-label">${t('shops.' + k)}</span>${linkRow(links)}</span>`).join('')}
             </div>` : ''}
+            ${jpShopDirHtml(card)}
           </div>
           ${offersHtml(card)}
         </div></div>
@@ -4716,6 +4755,29 @@ function tokyoMtgUrl(card) {
 // More Japanese shops: their own product search, by the card's Japanese name
 // (English name when it has none). [Japanese name, English name, search URL with {q}]
 const JP_SHOP_SEARCH = [{"ja": "シングルスター", "en": "Single Star", "url": "https://www.singlestar.jp/product-list?keyword={q}"}, {"ja": "カードショップ セラ", "en": "Cardshop Serra", "url": "https://cardshop-serra.com/search?q={q}"}, {"ja": "ENNDAL GAMES", "en": "ENNDAL GAMES", "url": "https://www.enndalgames.com/products/list.php?mode=search&name={q}"}, {"ja": "アメニティードリーム", "en": "Amenity Dream", "url": "https://www.amenitydream.com/product-list?keyword={q}"}, {"ja": "エターナルブルー", "en": "Eternal Blue", "url": "https://www.eternal-blue.jp/product-list?keyword={q}"}, {"ja": "BIGRED", "en": "BIGRED", "url": "https://www.bigredmtg.com/product-list?keyword={q}"}, {"ja": "はま屋", "en": "Hamaya", "url": "https://www.cardshophamaya.com/product-list?keyword={q}"}, {"ja": "CANTRIP", "en": "CANTRIP", "url": "https://cantripmtg.com/search?q={q}"}, {"ja": "MTG Guild", "en": "MTG Guild", "url": "https://mtg-guild.com/?mode=srh&keyword={q}", "name": "en"}, {"ja": "蓮屋", "en": "Hasuya", "url": "https://www.hasuya.jp/products/list?name={q}"}, {"ja": "あずまや", "en": "Azumaya", "url": "https://azumayamtg.com/products/list?name={q}"}, {"ja": "アドバンテージ", "en": "Advantage", "url": "https://www.advantagemtg.jp/product-list?keyword={q}"}, {"ja": "サトPin", "en": "SatoPin", "url": "https://www.cardshopsatopin.net/product-list?keyword={q}"}, {"ja": "BLACK FROG", "en": "BLACK FROG", "url": "https://blackfrog.jp/shop/shopbrand.html?search={q}"}, {"ja": "カードラボ", "en": "Card Labo", "url": "https://www.c-labo-online.jp/product-list?keyword={q}"}];
+// the Japan tab: every Japanese shop as one list (the site's language first, the other name in grey)
+const JP_MAIN_SHOPS = [
+  { ja: '晴れる屋', en: 'Hareruya', link: hareruyaUrl }, { ja: 'ビッグマジック', en: 'BIG MAGIC', link: bigMagicUrl },
+  { ja: 'カードラッシュ', en: 'Card Rush', link: cardRushUrl }, { ja: 'Tokyo MTG', en: 'Tokyo MTG', link: tokyoMtgUrl },
+];
+const JP_DIR_PHONE = 8;   // a narrow screen shows this many, then "Load more"
+function jpShopDirHtml(card) {
+  const shops = JP_MAIN_SHOPS.map(s => ({ ja: s.ja, en: s.en, url: s.link(card) }))
+    .concat(JP_SHOP_SEARCH.map(s => ({ ja: s.ja, en: s.en, url: jpShopUrl(s, card) }))).filter(s => s.url);
+  if (!shops.length) return '';
+  const arrow = '<svg class="jp-go" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2.5h5.5V8M9.5 2.5L3 9"/></svg>';
+  const rows = shops.map(s => {
+    const main = LANG === 'en' ? s.en : s.ja, alt = LANG === 'en' ? s.ja : s.en;
+    return `<a class="jp-shop" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="jp-name">${esc(main)}</span>${alt !== main ? `<span class="jp-alt" lang="${LANG === 'en' ? 'ja' : 'en'}">${esc(alt)}</span>` : ''}${arrow}</a>`;
+  }).join('');
+  const rest = shops.length - JP_DIR_PHONE;
+  return `<section class="jp-dir" aria-labelledby="jpDirHead">
+    <h3 class="jp-dir-head" id="jpDirHead">${t('links.shops')}<span>${t('jpdir.count', { n: shops.length })}</span></h3>
+    <div class="jp-dir-list">${rows}</div>
+    ${rest > 0 ? `<button type="button" class="load-more-btn jp-dir-more">${t('jpdir.more', { n: rest })}</button>` : ''}
+    <p class="jp-dir-note">${t('jpdir.note')}</p>
+  </section>`;
+}
 function jpShopUrl(shop, card) {
   const name = shop.name === 'en' ? englishName(card) : (japaneseFrontName(card) || englishName(card));   // some shops only take English names
   return name ? shop.url.replace('{q}', encodeURIComponent(name)) : '';
