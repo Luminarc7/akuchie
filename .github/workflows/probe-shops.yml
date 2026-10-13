@@ -7,21 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.12' }
       - run: |
-          pip install -q sudachipy sudachidict_full
           mkdir -p probe_out
-          python3 tools/name_readings.py ja_cards.json.gz probe_out/ja_cards_kana.json.gz > probe_out/readings_log.txt 2>&1
-          python3 - >> probe_out/readings_log.txt <<'PY'
-          import gzip, json
-          d = json.loads(gzip.open('probe_out/ja_cards_kana.json.gz').read())
-          F = d['fields']; i, k = F.index('name_ja'), F.index('name_kana')
-          want = ['稲妻','意志の力','太陽の指輪','剣を鍬に','敏捷なこそ泥、ラガバン','渦まく知識','思考囲い','ウルザの物語','流刑への道','悪魔の教示者','極楽鳥','精神石','真面目な身代わり','とげの稲妻','霊気の薬瓶','死儀礼のシャーマン','冒涜の行動','否認','対抗呪文','闇の領域のリリアナ','虚空の杯','暗黒の儀式','吸血の教示者','頭蓋骨絞め','否定の力','激情','孤独','忍耐','緻密','神秘の教示者','時を解す者、テフェリー','ドミナリアの英雄、テフェリー','騙し討ち','実物提示教育','裂け目の突破','引き裂かれし永劫、エムラクール','オーコの陰謀','王冠泥棒、オーコ','燃え盛る大地','霧深い雨林']
-          by = {r[i]: r[k] for r in d['cards'] if r[i]}
-          for w in want: print(w, by.get(w))
-          import random; random.seed(1)
-          for r in random.sample([r for r in d['cards'] if r[i]], 40): print('RANDOM', r[i], r[k])
-          PY
+          S=https://staging-warujie.warujie-mtg.workers.dev
+          O=probe_out/r14.txt
+          for path in /manifest.webmanifest /sw.js /icons/icon-192.png /og.png /meta_lists/30-modern.json /tools/name_readings.py; do
+            echo "== $path" >> $O
+            curl -sS -D - -o body.bin "$S$path" | grep -iE '^(HTTP|content-type)' >> $O; wc -c < body.bin >> $O
+          done
+          for ua in "Twitterbot/1.0" "facebookexternalhit/1.1;line-poker/1.0" "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)" "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"; do
+            for q in "?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3" "?view=deck&format=modern&days=30&deck=Broodscale" "?view=meta&format=legacy" "?set=mh2"; do
+              echo "== $ua $q" >> $O
+              curl -sS --compressed -A "$ua" "$S/$q" | grep -oE '<title>[^<]*|<meta (property|name)="(og:title|og:image|og:description|twitter:card)" content="[^"]*"' >> $O
+            done
+          done
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
