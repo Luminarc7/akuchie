@@ -1,0 +1,5 @@
+# Response headers for warujie.jp (Cloudflare Workers static assets).
+# no-transform: Cloudflare must not change the pages - no analytics beacon and no
+# bot-detection script added to them (the site promises no analytics).
+/*
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
