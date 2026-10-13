@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           mkdir -p probe_out
-          for u in https://staging-warujie.warujie-mtg.workers.dev/ https://warujie.jp/; do
+          for u in https://staging-warujie.warujie-mtg.workers.dev/; do
             echo "== $u" >> probe_out/staging.txt
             curl -sS -D - -o page.html "$u" | grep -iE '^(HTTP|x-robots|content-type|cache-control)' >> probe_out/staging.txt
             grep -o '<title>[^<]*' page.html >> probe_out/staging.txt
