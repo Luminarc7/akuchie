@@ -10,9 +10,10 @@ jobs:
       - run: |
           mkdir -p probe_out
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36"
-          curl -sS -A "$UA" -H "Accept: text/html" -D probe_out/live_headers.txt -o page.html "https://warujie.jp/?v=$GITHUB_SHA"
+          curl -sS -A "$UA" -H "Accept: text/html" -D probe_out/live_headers.txt -o page.html "https://warujie.warujie-mtg.workers.dev/?v=$GITHUB_SHA"
           grep -o '<title>[^<]*' page.html > probe_out/live.txt || true
           grep -c 'jpShopDirHtml' page.html >> probe_out/live.txt || true
-          grep -c 'of-scroll' page.html >> probe_out/live.txt || true
+          grep -c of-scroll page.html >> probe_out/live.txt || true
+          sha256sum page.html >> probe_out/live.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
