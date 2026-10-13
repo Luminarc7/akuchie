@@ -9,9 +9,21 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           mkdir -p probe_out
-          mkdir -p probe_out/data
-          curl -sS -o probe_out/data/tags.json.gz https://warujie.github.io/warujie-prices/t/tags.json.gz
-          curl -sS -o probe_out/data/index.json https://warujie.github.io/warujie-prices/index.json || true
-          ls -la probe_out/data > probe_out/data/ls.txt
+          S=https://staging-warujie.warujie-mtg.workers.dev
+          P=https://warujie.warujie-mtg.workers.dev
+          for path in "/ja_cards.json" "/ja_cards.json.gz" "/ja_cards.json.br" "/tools/brotli_db.mjs" "/.gitignore"; do
+            echo "== staging $path (br)" >> probe_out/db.txt
+            curl -sS -H "Accept-Encoding: gzip, deflate, br, zstd" -D - -o body.bin "$S$path" | grep -iE '^(HTTP|content-encoding|content-type|cache-control|content-length|etag)' >> probe_out/db.txt
+            wc -c < body.bin >> probe_out/db.txt
+          done
+          echo "== staging /ja_cards.json (gzip only)" >> probe_out/db.txt
+          curl -sS -H "Accept-Encoding: gzip" -D - -o body.bin "$S/ja_cards.json" | grep -iE '^(HTTP|content-encoding|content-length)' >> probe_out/db.txt
+          wc -c < body.bin >> probe_out/db.txt
+          echo "== decoded json ok?" >> probe_out/db.txt
+          curl -sS --compressed -H "Accept-Encoding: br" "$S/ja_cards.json" | python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d['cards']), d['generated'])" >> probe_out/db.txt
+          curl -sS --compressed "$S/" | sha256sum >> probe_out/db.txt
+          echo "== production page" >> probe_out/db.txt
+          curl -sS --compressed "$P/" | sha256sum >> probe_out/db.txt
+          curl -sS -H "Accept-Encoding: br, gzip" -D - -o /dev/null "$P/ja_cards.json" | head -1 >> probe_out/db.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
