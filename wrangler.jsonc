@@ -1,10 +1,14 @@
 // Cloudflare Workers config: serves this repository as a static site on warujie.jp.
-// Cloudflare rebuilds and redeploys automatically on every push to main.
+// Cloudflare rebuilds and redeploys warujie.jp automatically on every push to main.
+// Pushes to any other branch (e.g. "staging") build a separate test site instead:
+//   https://<branch>-warujie.<subdomain>.workers.dev  (not indexed by search engines)
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "warujie",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./"
-  }
+  },
+  // settings for the branch test sites; empty = same as production (static files only)
+  "previews": {}
 }
