@@ -9,10 +9,16 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           mkdir -p probe_out
-          for u in https://staging-warujie.warujie-mtg.workers.dev/ https://warujie.warujie-mtg.workers.dev/; do
-            echo "== $u" >> probe_out/enc.txt
-            curl -sS -H "Accept-Encoding: gzip, br" -D - -o body.bin "$u?x=$GITHUB_SHA" | grep -iE '^(HTTP|content-encoding|cache-control|content-length)' >> probe_out/enc.txt
+          B=https://staging-warujie.warujie-mtg.workers.dev
+          for path in "/" "/?card=abc" "/preview" "/combo_ja.js" "/meta.json" "/ja_cards.json.gz" "/nope"; do
+            echo "== $path" >> probe_out/enc.txt
+            curl -sS -H "Accept-Encoding: gzip, br" -D - -o body.bin "$B$path" | grep -iE '^(HTTP|content-encoding|content-type|cache-control|etag|vary)' >> probe_out/enc.txt
             wc -c < body.bin >> probe_out/enc.txt
           done
+          curl -sS --compressed "$B/" | sha256sum >> probe_out/enc.txt
+          curl -sS "$B/" | sha256sum >> probe_out/enc.txt
+          E=$(curl -sS -H "Accept-Encoding: gzip" -D - -o /dev/null "$B/" | grep -i '^etag' | cut -d' ' -f2 | tr -d '\r')
+          echo "revalidate with $E:" >> probe_out/enc.txt
+          curl -sS -H "Accept-Encoding: gzip" -H "If-None-Match: $E" -D - -o /dev/null "$B/" | head -1 >> probe_out/enc.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
