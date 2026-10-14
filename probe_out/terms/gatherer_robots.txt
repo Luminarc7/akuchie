@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: */random-card
+
+Sitemap: https://gatherer.wizards.com/sitemap_index.xml

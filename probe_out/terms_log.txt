@@ -1,0 +1,11 @@
+mtgwiki_robots.txt 200 http://mtgwiki.com/robots.txt
+mtgwiki_copyright.html 404 http://mtgwiki.com/wiki/MTG_Wiki:%E8%91%97%E4%BD%9C%E6%A8%A9
+mtgwiki_about.html 404 http://mtgwiki.com/wiki/MTG_Wiki:MTG_Wiki%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
+mtgwiki_disclaimer.html 404 http://mtgwiki.com/wiki/MTG_Wiki:%E5%85%8D%E8%B2%AC%E4%BA%8B%E9%A0%85
+mtgwiki_spite.html 404 http://mtgwiki.com/wiki/%E6%82%AA%E6%84%8F%EF%BC%8F%E6%95%B5%E6%84%8F
+mtgwiki_main.html 200 http://mtgwiki.com/wiki/%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%9A%E3%83%BC%E3%82%B8
+gatherer_robots.txt 200 https://gatherer.wizards.com/robots.txt
+gatherer_home.html 200 https://gatherer.wizards.com/
+wizards_terms.html 200 https://company.wizards.com/en/legal/terms
+wizards_terms_ja.html 200 https://company.wizards.com/ja/legal/terms
+gatherer_spite_search.html 200 https://gatherer.wizards.com/search?name=Spite
