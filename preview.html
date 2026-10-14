@@ -4390,7 +4390,7 @@ async function ensureEnglishPrices(cards) {
       const byKey = new Map(data.map(e => [`${e.set}|${e.collector_number}`, e]));
       chunk.forEach(c => {
         const en = byKey.get(`${c.set}|${c.collector_number}`);
-        if (en) { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
+        if (en && en.lang === 'en') { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
         c._enChecked = true;
       });
     } catch (err) { /* prices just stay blank */ }
@@ -4423,14 +4423,30 @@ function tilePriceHtml(card) {
 function dbRowFor(card) {
   return (typeof ORACLE_MAP !== 'undefined' && ORACLE_MAP && card && card.oracle_id) ? ORACLE_MAP.get(card.oracle_id) : null;
 }
+const HAS_JA = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/;
 function displayNameJa(card) { return stripRuby(displayNameJaRaw(card)); }
 function displayNameJaRaw(card) {
+  const row = dbRowFor(card);
+  const rowName = row && row.name_ja;
+  if (card.lang === 'ja') {
+    const faces = card.card_faces || [];
+    const rowFaces = rowName ? rowName.split(' // ') : [];
+    if (faces.length > 1) {
+      const names = faces.map((f, i) => {
+        const own = f.printed_name || '';
+        if (HAS_JA.test(own) || !HAS_JA.test(rowFaces[i] || '')) return own || rowFaces[i] || f.name;
+        return rowFaces[i];
+      });
+      return names.join(' // ');
+    }
+    if (card.printed_name && (HAS_JA.test(card.printed_name) || !HAS_JA.test(rowName || ''))) return card.printed_name;
+    return rowName || card.printed_name || card.name;
+  }
   if (card.lang && card.lang !== 'en' && card.printed_name) return card.printed_name;
   if (card.lang && card.lang !== 'en' && card.card_faces && card.card_faces.some(f => f.printed_name)) {
     return card.card_faces.map(f => f.printed_name || f.name).join(' // ');
   }
-  const row = dbRowFor(card);
-  return (row && row.name_ja) || card.printed_name || card.name;
+  return rowName || card.printed_name || card.name;
 }
 // English type line -> Japanese, for cards that exist in Japanese but whose
 // Japanese type line Scryfall does not have. Words it does not know stay English.
@@ -4489,9 +4505,8 @@ function displayTextJaRaw(card) {
 function japaneseFrontName(card) { return stripRuby(japaneseFrontNameRaw(card)); }
 function japaneseFrontNameRaw(card) {
   if (card.lang === 'ja') {
-    const face = card.card_faces && card.card_faces[0];
-    const n = (face && face.printed_name) || card.printed_name;
-    if (n) return String(n).split(' // ')[0];
+    const n = displayNameJaRaw(card).split(' // ')[0];
+    if (HAS_JA.test(n)) return n;
   }
   const row = dbRowFor(card);
   return row && row.name_ja ? row.name_ja.split(' // ')[0] : '';
@@ -5253,13 +5268,18 @@ const PRINT_NAME = {
   grc: ['古代ギリシャ語', 'Ancient Greek'], ar: ['アラビア語', 'Arabic'], sa: ['サンスクリット語', 'Sanskrit'], qya: ['クウェンヤ語', 'Quenya'],
 };
 const PRINTINGS = new Map();   // '<set>|<number>' -> { <lang>: card }
+// Sets whose other-language printings Scryfall files under a set code of their own,
+// with the same collector numbers: the Japanese 4th Edition (4bb) is the English 4ed's.
+const SET_TWIN = { '4bb': '4ed', '4ed': '4bb', bchr: 'chr', chr: 'bchr', fbb: '3ed', '3ed': 'fbb' };
 async function printingLanguages(card) {
   if (!card.set || !card.collector_number) return { [card.lang || 'en']: card };
   const key = card.set + '|' + card.collector_number;
   if (!PRINTINGS.has(key)) {
     PRINTINGS.set(key, (async () => {
       const out = {};
-      const q = `e:${card.set} cn:"${String(card.collector_number).replace(/"/g, '')}"`;
+      const twin = SET_TWIN[card.set];
+      const q = `${twin ? `(e:${card.set} or e:${twin})` : `e:${card.set}`} cn:"${String(card.collector_number).replace(/"/g, '')}"`;
+      const twins = {};
       let url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, include_multilingual: 'true', unique: 'prints' })}`;
       try {
         for (let page = 0; url && page < 3; page++) {
@@ -5268,11 +5288,14 @@ async function printingLanguages(card) {
           if (!res.ok) break;
           const data = await res.json();
           (data.data || []).forEach(c => {
-            if (c.set === card.set && String(c.collector_number) === String(card.collector_number) && c.lang && !out[c.lang]) out[c.lang] = c;
+            if (String(c.collector_number) !== String(card.collector_number) || !c.lang) return;
+            if (c.set === card.set) { if (!out[c.lang]) out[c.lang] = c; }
+            else if (twin && c.set === twin && c.oracle_id && c.oracle_id === card.oracle_id && !twins[c.lang]) twins[c.lang] = c;
           });
           url = data.has_more ? data.next_page : null;
         }
       } catch (err) { /* only the printing shown */ }
+      Object.keys(twins).forEach(l => { if (!out[l]) out[l] = twins[l]; });
       return out;
     })());
   }
