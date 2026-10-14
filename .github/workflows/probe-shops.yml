@@ -8,22 +8,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
+          set -e
+          pip install ijson >/dev/null
+          UA='Warujie/1.0 (+https://warujie.jp)'
+          URL=$(curl -sS -A "$UA" https://api.scryfall.com/bulk-data/all-cards | python3 -c 'import json,sys; print(json.load(sys.stdin)["download_uri"])')
+          curl -sS -A "$UA" -o all.json "$URL"; ls -l all.json
+          sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
           mkdir -p probe_out
-          P=https://warujie.warujie-mtg.workers.dev
-          O=probe_out/live14.txt
-          echo "== page" >> $O; curl -sS --compressed "$P/" | sha256sum >> $O
-          for path in /ja_cards.json /manifest.webmanifest /sw.js /icons/apple-touch-icon-v2.png /og.png /meta_lists/30-modern.json; do
-            echo "== $path" >> $O
-            curl -sS -H "Accept-Encoding: br, gzip" -D - -o body.bin "$P$path" | grep -iE '^(HTTP|content-encoding|content-type)' >> $O;  wc -c < body.bin >> $O
-          done
-          sha256sum body.bin >> $O
-          curl -sS "$P/icons/apple-touch-icon-v2.png" | sha256sum >> $O
-          for host in "$P" https://warujie.jp; do
-            for ua in "Twitterbot/1.0" "facebookexternalhit/1.1;line-poker/1.0" "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)"; do
-              echo "== $host $ua" >> $O
-              curl -sS --compressed -A "$ua" -D hdr.txt "$host/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3" -o pg.html; head -1 hdr.txt >> $O; grep -i cf-mitigated hdr.txt >> $O || true
-              grep -oE '<title>[^<]*|<meta property="og:image" content="[^"]*"' pg.html | head -2 >> $O || true
-            done
-          done
+          python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
