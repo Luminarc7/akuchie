@@ -1,0 +1,25 @@
++ pip install -q ijson
++ UA='Warujie/1.0 (+https://warujie.jp)'
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -H 'Accept: application/json' -o bulk.json https://api.scryfall.com/bulk-data
++ head -c 1500 bulk.json
+{"object":"list","has_more":false,"data":[{"object":"bulk_data","id":"27bf3214-1271-490b-bdfe-c0be6c23d02e","type":"oracle_cards","updated_at":"2026-10-14T09:01:55.948+00:00","uri":"https://api.scryfall.com/bulk-data/27bf3214-1271-490b-bdfe-c0be6c23d02e","name":"Oracle Cards","description":"A JSON file containing one Scryfall card object for each Oracle ID on Scryfall. The chosen sets for the cards are an attempt to return the most up-to-date recognizable version of the card.","jsonl_download_uri":"https://data.scryfall.io/oracle-cards/oracle-cards-20261014090155.jsonl.gz","compressed_size":24947462},{"object":"bulk_data","id":"6bbcf976-6369-4401-88fc-3a9e4984c305","type":"unique_artwork","updated_at":"2026-10-14T09:02:33.852+00:00","uri":"https://api.scryfall.com/bulk-data/6bbcf976-6369-4401-88fc-3a9e4984c305","name":"Unique Artwork","description":"A JSON file of Scryfall card objects that together contain all unique artworks. The chosen cards promote the best image scans.","jsonl_download_uri":"https://data.scryfall.io/unique-artwork/unique-artwork-20261014090233.jsonl.gz","compressed_size":38294227},{"object":"bulk_data","id":"e2ef41e3-5778-4bc2-af3f-78eca4dd9c23","type":"default_cards","updated_at":"2026-10-14T09:05:48.686+00:00","uri":"https://api.scryfall.com/bulk-data/e2ef41e3-5778-4bc2-af3f-78eca4dd9c23","name":"Default Cards","description":"A JSON file containing every card object on Scryfall in English or the printed language if the card is only available in one lan+ echo
+
+++ python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("jsonl_download_uri") or b.get("download_uri"))'
++ URL=https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
++ echo https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
+https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.jsonl.gz https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
++ ls -l all.jsonl.gz
+-rw-r--r-- 1 runner runner 400664919 Oct 14 12:58 all.jsonl.gz
++ sleep 1
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o sets.json https://api.scryfall.com/sets
++ mkdir -p probe_out/text
++ python3 tools/audit_text.py all.jsonl.gz ja_cards.json.gz probe_out/text
+{
+ "row picture not highres, no ja highres": 25796,
+ "type_ja empty, no ja type anywhere": 7029,
+ "oracle_ja empty, no ja text anywhere": 4002,
+ "type_ja empty, other ja printing has type": 889,
+ "row picture not highres, other ja printing highres": 356,
+ "row has name_ja but no ja printing in scryfall": 1
+}
