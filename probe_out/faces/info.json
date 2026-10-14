@@ -1,0 +1,5038 @@
+[
+ {
+  "n": 0,
+  "key": "Abigale, Poet Laureate // Heroic Stanza",
+  "id": "79c5a473-a2f8-49f8-919f-bf988d99d88b",
+  "set": "sos",
+  "cn": "170",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Abigale, Poet Laureate",
+    "printed_name": "桂冠詩人、アビゲール",
+    "printed_text": "飛行\nあなたがクリーチャー・呪文１つを唱えるたび、これは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Heroic Stanza",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 1,
+  "key": "Adventurous Eater // Have a Bite",
+  "id": "04edce6d-2cd0-41f8-b264-d7e3963bd991",
+  "set": "sos",
+  "cn": "72",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Adventurous Eater",
+    "printed_name": "ゲテモノ喰らい",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Have a Bite",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 2,
+  "key": "Ajani, Nacatl Pariah // Ajani, Nacatl Avenger",
+  "id": "629b600a-e613-4a3c-85e4-12fc9f2de249",
+  "set": "mh3",
+  "cn": "237",
+  "layout": "transform",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ajani, Nacatl Pariah",
+    "printed_name": "Ajani, Nacatl Pariah",
+    "printed_text": "ナカティルの最下層民、アジャニが戦場に出たとき、白の２/１の猫・戦士・クリーチャー・トークン１体を生成する。\nあなたがコントロールしていてこれでない１体以上の猫が死亡するたび、「これを追放し、その後、オーナーのコントロール下で変身させた状態で戦場に戻す。」を選んでもよい。",
+    "printed_type_line": "伝説のクリーチャー — 猫・戦士"
+   },
+   {
+    "name": "Ajani, Nacatl Avenger",
+    "printed_name": "Ajani, Nacatl Avenger",
+    "printed_text": "+2：あなたがコントロールしている各猫の上にそれぞれ＋１/＋１カウンター１個を置く。\n0：白の２/１の猫・戦士・クリーチャー・トークン１体を生成する。そうしたとき、あなたがナカティルの報復者、アジャニでない赤のパーマネントをコントロールしている場合、１つを対象とする。これはそれに、あなたがコントロールしているクリーチャーの数に等しい点数のダメージを与える。\n-4：各対戦相手はそれぞれ、自分がコントロールしていて土地でないパーマネントの中からアーティファクト１つとクリーチャー１体とエンチャント１つとプレインズウォーカー１体を選び、その後、残りを生け贄に捧げる。",
+    "printed_type_line": "伝説のプレインズウォーカー — アジャニ"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 3,
+  "key": "Altar of Bhaal // Bone Offering",
+  "id": "8ea330fc-d60d-4713-a154-48d423aef1b8",
+  "set": "clb",
+  "cn": "109",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Altar of Bhaal",
+    "printed_name": "Altar of Bhaal",
+    "printed_text": "{2}{B},{T},あなたがコントロールしているクリーチャー１体を追放する：あなたの墓地にあるクリーチャー・カード１枚を対象とする。それを戦場に戻す。起動はソーサリーとしてのみ行う。",
+    "printed_type_line": "アーティファクト"
+   },
+   {
+    "name": "Bone Offering",
+    "printed_name": "骨（ほね）の捧（ささ）げ物（もの）",
+    "printed_text": "威迫を持つ黒の４/１のスケルトン・クリーチャー・トークン１体をタップ状態で生成する。（その後、これを追放する。後で追放領域からこのアーティファクトを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 4,
+  "key": "Amethyst Dragon // Explosive Crystal",
+  "id": "08e1badb-75a1-4005-a87c-d5755361dfc5",
+  "set": "clb",
+  "cn": "160",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Amethyst Dragon",
+    "printed_name": "Amethyst Dragon",
+    "printed_text": "飛行、速攻",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Explosive Crystal",
+    "printed_name": "爆（ばく）発（はつ）性（せい）の水（すい）晶（しょう）",
+    "printed_text": "クリーチャーやプレインズウォーカーやプレイヤーのうち望む数を対象とし、４点分をあなたの望むように割り振る。これはそれらにその割り振った点数のダメージを与える。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 5,
+  "key": "An Unexpected Party // At the Door",
+  "id": "35514fdc-6565-43ea-9e02-d32a2f6614e4",
+  "set": "hob",
+  "cn": "289",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "An Unexpected Party",
+    "printed_name": "思いがけない客たち",
+    "printed_text": "このエンチャントが戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。\nあなたがコントロールしていてその選ばれたタイプであるすべてのクリーチャーは＋２/＋２の修整を受ける。",
+    "printed_type_line": null
+   },
+   {
+    "name": "At the Door",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 6,
+  "key": "Aquatic Alchemist // Bubble Up",
+  "id": "636d9c20-914b-4e42-b9a3-73687060803d",
+  "set": "woe",
+  "cn": "40",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Aquatic Alchemist",
+    "printed_name": "Aquatic Alchemist",
+    "printed_text": "あなたが各ターン内のあなたの１つ目のインスタントやソーサリーである呪文を唱えるたび、ターン終了時まで、水生まれの錬金術師は＋２/＋０の修整を受ける。",
+    "printed_type_line": "クリーチャー — エレメンタル"
+   },
+   {
+    "name": "Bubble Up",
+    "printed_name": "泡（あわ）立（だ）て",
+    "printed_text": "あなたの墓地にありインスタントやソーサリーであるカード１枚を対象とする。それをあなたのライブラリーの一番上に置く。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 7,
+  "key": "Assault // Battery",
+  "id": "1275ade1-f0ed-4b41-a599-abaab8a9ef7e",
+  "set": "tsb",
+  "cn": "106",
+  "layout": "split",
+  "image_status": "placeholder",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Assault",
+    "printed_name": "Assault",
+    "printed_text": "クリーチャー１体かプレイヤー１人を対象とする。暴行はそれに２点のダメージを与える。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Battery",
+    "printed_name": "Battery",
+    "printed_text": "緑の３/３の象クリーチャー・トークンを１体場に出す。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 8,
+  "key": "Beanstalk Wurm // Plant Beans",
+  "id": "dad0660d-6089-4e7d-a62a-4e34f2fc8f33",
+  "set": "woe",
+  "cn": "161",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Beanstalk Wurm",
+    "printed_name": "Beanstalk Wurm",
+    "printed_text": "到達",
+    "printed_type_line": "クリーチャー — 植物・ワーム"
+   },
+   {
+    "name": "Plant Beans",
+    "printed_name": "豆（まめ）撒（ま）き",
+    "printed_text": "このターン、あなたは追加で土地１つをプレイしてもよい。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 9,
+  "key": "Bellowing Bruiser // Beat a Path",
+  "id": "02d8eeb7-9f9f-49f9-bc45-d9fc4e6ae8b0",
+  "set": "woe",
+  "cn": "121",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bellowing Bruiser",
+    "printed_name": "Bellowing Bruiser",
+    "printed_text": "速攻",
+    "printed_type_line": "クリーチャー — オーガ"
+   },
+   {
+    "name": "Beat a Path",
+    "printed_name": "道（みち）を切（き）り拓（ひら）く",
+    "printed_text": "クリーチャー最大２体を対象とする。このターン、それらのクリーチャーではブロックできない。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 10,
+  "key": "Beluna Grandsquall // Seek Thrills",
+  "id": "36ebc95b-2bca-4141-9995-76de3dddbe69",
+  "set": "woe",
+  "cn": "220",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Beluna Grandsquall",
+    "printed_name": "Beluna Grandsquall",
+    "printed_text": "トランプル\nあなたが出来事を持つパーマネント・呪文を唱えるためのコストは{1}少なくなる。",
+    "printed_type_line": "伝説のクリーチャー — 巨人・貴族"
+   },
+   {
+    "name": "Seek Thrills",
+    "printed_name": "快（かい）楽（らく）の渇（かつ）望（ぼう）",
+    "printed_text": "カード７枚を切削する。その後、その切削したカードの中から出来事を持つすべてのカードをあなたの手札に加える。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 11,
+  "key": "Beluna's Gatekeeper // Entry Denied",
+  "id": "40263ca1-c149-464a-a4a4-4f396fc9fd5b",
+  "set": "woe",
+  "cn": "43",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Beluna's Gatekeeper",
+    "printed_name": "Beluna's Gatekeeper",
+    "printed_text": null,
+    "printed_type_line": "クリーチャー — 巨人・兵士"
+   },
+   {
+    "name": "Entry Denied",
+    "printed_name": "立（た）ち入（い）り禁（きん）止（し）",
+    "printed_text": "マナ総量が３以下でありあなたがコントロールしていないクリーチャー１体を対象とする。それをオーナーの手札に戻す。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 12,
+  "key": "Beorn, Reluctant Host // Till and Tend",
+  "id": "c42ada79-bba1-4085-8752-b1b3fa842846",
+  "set": "hob",
+  "cn": "118",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Beorn, Reluctant Host",
+    "printed_name": "不本意なもてなし役、ビヨルン",
+    "printed_text": "トランプル",
+    "printed_type_line": null
+   },
+   {
+    "name": "Till and Tend",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 13,
+  "key": "Bilbo Baggins, Burglar // Take a Glance",
+  "id": "68f86733-14ff-47de-838d-43e81cd085ae",
+  "set": "hob",
+  "cn": "34",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bilbo Baggins, Burglar",
+    "printed_name": "忍びの者、ビルボ・バギンズ",
+    "printed_text": "これが戦場に出たとき、カード１枚を引く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Take a Glance",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 14,
+  "key": "Bilbo, Luckwearer // Burglar's Plot",
+  "id": "1d3b0f42-ea16-4de8-8118-6866d76557b4",
+  "set": "hob",
+  "cn": "218",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bilbo, Luckwearer",
+    "printed_name": "幸運児、ビルボ",
+    "printed_text": "これはブロックされない。\nこれがプレイヤー１人に戦闘ダメージを与えるたび、カード１枚を引く。その後、カード１枚を捨てる。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Burglar's Plot",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 15,
+  "key": "Blessed Hippogriff // Tyr's Blessing",
+  "id": "652c74dc-bcb8-42fb-9e3a-82b728c225d2",
+  "set": "clb",
+  "cn": "11",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Blessed Hippogriff",
+    "printed_name": "Blessed Hippogriff",
+    "printed_text": "飛行\n祝福のヒポグリフが攻撃するたび、飛行を持たない攻撃クリーチャー１体を対象とする。ターン終了時まで、それは飛行を得る。",
+    "printed_type_line": "クリーチャー — ヒポグリフ"
+   },
+   {
+    "name": "Tyr's Blessing",
+    "printed_name": "ティアの祝（しゅく）福（ふく）",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは破壊不能を得る。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 16,
+  "key": "Bloodline Recollector // Ancestral Craving",
+  "id": "ba488df8-ea69-479b-98dc-11c28789d75d",
+  "set": "fra",
+  "cn": "49",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bloodline Recollector",
+    "printed_name": "血統想起者",
+    "printed_text": "各終了ステップの開始時に、このターンに３体以上のクリーチャーが死亡していたなら、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Ancestral Craving",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 17,
+  "key": "Blossom-Blessed Angel // Seed Suture",
+  "id": "7fcd4dad-d446-4cf2-8f21-d4f3f7f748ca",
+  "set": "fra",
+  "cn": "3",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Blossom-Blessed Angel",
+    "printed_name": "花開く祝福の天使",
+    "printed_text": "飛行、警戒\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Seed Suture",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 18,
+  "key": "Bofur, Reliable Guardian // Concerted Care",
+  "id": "81b5445a-a9b0-489e-a0e4-ac29a13af8b6",
+  "set": "hob",
+  "cn": "6",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bofur, Reliable Guardian",
+    "printed_name": "頼りになる守護者、ボフール",
+    "printed_text": "絆魂",
+    "printed_type_line": null
+   },
+   {
+    "name": "Concerted Care",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 19,
+  "key": "Boom // Bust",
+  "id": "aff86149-4b79-431f-93db-193afcfd6a7a",
+  "set": "tsr",
+  "cn": "156",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Boom",
+    "printed_name": "Boom",
+    "printed_text": "あなたがコントロールしている土地１つと、あなたがコントロールしていない土地１つを対象とする。それらを破壊する。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Bust",
+    "printed_name": "Bust",
+    "printed_text": "すべての土地を破壊する。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 20,
+  "key": "Bound // Determined",
+  "id": "b5e4fd1f-65cd-4fbb-b623-27096541cac5",
+  "set": "dis",
+  "cn": "149",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bound",
+    "printed_name": "Bound",
+    "printed_text": "クリーチャーを１体生け贄に捧げる。 あなたの墓地にあるカードを、最大Ｘ枚まであなたの手札に戻す。Ｘはそのクリーチャーの色の数に等しい。 その後、このカードをゲームから取り除く。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Determined",
+    "printed_name": "Determined",
+    "printed_text": "このターン、あなたがコントロールする他の呪文は、呪文や能力によって打ち消されない。\nカードを１枚引く。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 21,
+  "key": "Bramble Familiar // Fetch Quest",
+  "id": "180da8f9-21fe-4ce1-8ec6-5b2d9495f77b",
+  "set": "woe",
+  "cn": "164",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Bramble Familiar",
+    "printed_name": "Bramble Familiar",
+    "printed_text": "{T}：{G}を加える。\n{1}{G}, {T}, カード１枚を捨てる：木苺の使い魔をオーナーの手札に戻す。",
+    "printed_type_line": "クリーチャー — エレメンタル・アライグマ"
+   },
+   {
+    "name": "Fetch Quest",
+    "printed_name": "初（はじ）めてのお使（つか）い",
+    "printed_text": "カード７枚を切削する。その後、その切削したカードの中からクリーチャーやエンチャントや土地であるカード１枚を戦場に出す。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 22,
+  "key": "Brightcap Badger // Fungus Frolic",
+  "id": "0198c0d9-19c9-424b-9aa0-8e7ffa5d7829",
+  "set": "blc",
+  "cn": "62",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Brightcap Badger",
+    "printed_name": "Brightcap Badger",
+    "printed_text": "あなたがコントロールしていてファンガスや苗木であるすべては「{T}：{G}を加える。」を持つ。\nあなたの終了ステップの開始時に、緑の１/１の苗木・クリーチャー・トークン１体を生成する。",
+    "printed_type_line": "クリーチャー — アナグマ・ドルイド"
+   },
+   {
+    "name": "Fungus Frolic",
+    "printed_name": "茸（きのこ）の舞（まい）",
+    "printed_text": "緑の１/１の苗木・クリーチャー・トークン２体を生成する。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 23,
+  "key": "Callous Sell-Sword // Burn Together",
+  "id": "48bd368e-3bb0-4186-b15b-3fdc725e499d",
+  "set": "woe",
+  "cn": "221",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Callous Sell-Sword",
+    "printed_name": "Callous Sell-Sword",
+    "printed_text": "無感情の売剣は、このターンにあなたのコントロール下で死亡したクリーチャー１体につき１個の＋１/＋１カウンターが置かれた状態で戦場に出る。",
+    "printed_type_line": "クリーチャー — 人間・兵士"
+   },
+   {
+    "name": "Burn Together",
+    "printed_name": "合（ごう）同（どう）火（か）葬（そう）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とし、それでない１つを対象とする。その前者はその後者に、自身のパワーに等しい点数のダメージを与える。その後、その前者を生け贄に捧げる。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 24,
+  "key": "Campus Composer // Aqueous Aria",
+  "id": "a7981864-741c-4ca0-ac36-f948a3133cc8",
+  "set": "sos",
+  "cn": "40",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Campus Composer",
+    "printed_name": "構内の作曲家",
+    "printed_text": "護法{2}\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Aqueous Aria",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 25,
+  "key": "Carnivorous Cultivator // Enroot",
+  "id": "8dd63d63-0e26-46a7-8b51-0e3f14b297fd",
+  "set": "fra",
+  "cn": "100",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Carnivorous Cultivator",
+    "printed_name": "人喰い植物の耕作者",
+    "printed_text": "接死\nこのクリーチャーは準備済状態で戦場に出る。\nこのクリーチャーがプレイヤー１人に戦闘ダメージを与えるたび、あなたの墓地にある土地・カード１枚を対象とする。それをあなたの手札に戻す。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Enroot",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 26,
+  "key": "Cheeky House-Mouse // Squeak By",
+  "id": "276e9634-9314-413d-958e-cc777352919e",
+  "set": "woe",
+  "cn": "7",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Cheeky House-Mouse",
+    "printed_name": "Cheeky House-Mouse",
+    "printed_text": null,
+    "printed_type_line": "クリーチャー — ハツカネズミ"
+   },
+   {
+    "name": "Squeak By",
+    "printed_name": "危（き）機（き）一（いっ）髪（ぱつ）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。ターン終了時まで、それは＋１/＋１の修整を受ける。このターン、それはパワーが３以上であるクリーチャーにはブロックされない。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 27,
+  "key": "Colossal Badger // Dig Deep",
+  "id": "87c6fd30-1c7f-4883-8c85-d5e133ce88f7",
+  "set": "clb",
+  "cn": "223",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Colossal Badger",
+    "printed_name": "Colossal Badger",
+    "printed_text": "巨大アナグマが戦場に出たとき、あなたは３点のライフを得る。",
+    "printed_type_line": "クリーチャー — アナグマ"
+   },
+   {
+    "name": "Dig Deep",
+    "printed_name": "深（ふか）掘（ぼ）り",
+    "printed_text": "クリーチャー１体を対象とする。カード４枚を切削する。その後、そのクリーチャーの上に、これにより切削されたクリーチャー・カード１枚につき１個の＋１/＋１カウンターを置く。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 28,
+  "key": "Conceited Witch // Price of Beauty",
+  "id": "dc92a588-4659-4bf2-b29c-ed8c70e69f1b",
+  "set": "woe",
+  "cn": "84",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Conceited Witch",
+    "printed_name": "Conceited Witch",
+    "printed_text": "威迫（このクリーチャーは２体以上のクリーチャーにしかブロックされない。）",
+    "printed_type_line": "クリーチャー — 人間・邪術師"
+   },
+   {
+    "name": "Price of Beauty",
+    "printed_name": "美（び）の代（たい）価（か）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。ひねくれ者・役割・トークン１つをそれについた状態で生成する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 29,
+  "key": "Cramped Vents // Access Maze",
+  "id": "58898981-55ed-4c1b-bd23-9545138e601e",
+  "set": "dsc",
+  "cn": "17",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Cramped Vents",
+    "printed_name": "Cramped Vents // Access Maze",
+    "printed_text": "あなたがこのドアを開放したとき、対戦相手がコントロールしているクリーチャー１体を対象とする。この部屋はそれに６点のダメージを与える。あなたはこれにより与えた余剰のダメージに等しい点数のライフを得る。\n（どちらの半分でも唱えることができる。そのドアは戦場で開放される。閉鎖されているドアのマナ・コストを支払って、それを開放してもよい。これはソーサリーとして行う。）",
+    "printed_type_line": "エンチャント — 部屋"
+   },
+   {
+    "name": "Access Maze",
+    "printed_name": "Cramped Vents // Access Maze",
+    "printed_text": "進（しん）入（にゅう）迷（めい）路（ろ）\no5oBoB\nあなたの各ターン中に１回、あなたの手札から呪文１つを、マナ・コストを支払うのではなくそれのマナ総量に等しい点数のライフを支払って唱えてもよい。",
+    "printed_type_line": "エンチャント — 部屋"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 30,
+  "key": "Crime // Punishment",
+  "id": "a26173e2-53f6-44e2-818a-3e38cf6356f1",
+  "set": "dis",
+  "cn": "150",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Crime",
+    "printed_name": "Crime",
+    "printed_text": "いずれかの対戦相手の墓地にあるクリーチャー・カード１枚かエンチャント・カード１枚を対象とし、それをあなたのコントロール下で場に出す。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Punishment",
+    "printed_name": "Punishment",
+    "printed_text": "点数で見たマナ・コストがＸの各アーティファクトと各エンチャントと各クリーチャーを破壊する。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 31,
+  "key": "Cruel Somnophage // Can't Wake Up",
+  "id": "db39d28e-8930-4ec0-bcd5-d02d270a12b4",
+  "set": "woe",
+  "cn": "222",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Cruel Somnophage",
+    "printed_name": "Cruel Somnophage",
+    "printed_text": "非情なソムノファージのパワーとタフネスは、それぞれすべての墓地にあるクリーチャー・カードの総数に等しい。",
+    "printed_type_line": "クリーチャー — ナイトメア"
+   },
+   {
+    "name": "Can't Wake Up",
+    "printed_name": "永（えい）遠（えん）の眠（ねむ）り",
+    "printed_text": "プレイヤー１人を対象とする。そのプレイヤーはカード４枚を切削する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 32,
+  "key": "Crystal Dragon // Rob the Hoard",
+  "id": "e0999e85-4ca0-4ac8-8a9c-656354df7e7f",
+  "set": "clb",
+  "cn": "13",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Crystal Dragon",
+    "printed_name": "Crystal Dragon",
+    "printed_text": "飛行、警戒",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Rob the Hoard",
+    "printed_name": "お宝（たから）奪（うば）い",
+    "printed_text": "あなたの墓地にありアーティファクトやエンチャントや伝説であるカード１枚を対象とする。それをあなたの手札に戻す。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 33,
+  "key": "Dead // Gone",
+  "id": "afbd152d-91ff-4920-9f5c-9cf22eaf15f8",
+  "set": "tsr",
+  "cn": "161",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Dead",
+    "printed_name": "Dead",
+    "printed_text": "クリーチャー１体を対象とする。死亡はそれに２点のダメージを与える。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Gone",
+    "printed_name": "Gone",
+    "printed_text": "あなたがコントロールしていないクリーチャー１体を対象とする。それをオーナーの手札に戻す。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 34,
+  "key": "Decadent Dragon // Expensive Taste",
+  "id": "4bf81f39-e985-44d3-840c-eaefa82afb03",
+  "set": "woe",
+  "cn": "223",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Decadent Dragon",
+    "printed_name": "Decadent Dragon",
+    "printed_text": "飛行、トランプル\n退廃的なドラゴンが攻撃するたび、宝物・トークン１つを生成する。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Expensive Taste",
+    "printed_name": "贅（ぜい）沢（たく）な嗜（し）好（こう）",
+    "printed_text": "対戦相手１人を対象とする。そのプレイヤーのライブラリーの一番上にあるカード２枚を裏向きで追放する。それらのカードが追放され続けているかぎり、あなたはそれらを見てもよく、プレイしてもよい。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 35,
+  "key": "Defacing Duskmage // Vandal's Edit",
+  "id": "061ea6c4-8bf7-41c0-b4de-cc1e78a5378c",
+  "set": "soc",
+  "cn": "45",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Defacing Duskmage",
+    "printed_name": "落書きの薄暮魔道士",
+    "printed_text": "接死\n対戦相手１人が各ターン内の自分の２枚目のカードを引くたび、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Vandal's Edit",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 36,
+  "key": "Devouring Sugarmaw // Have for Dinner",
+  "id": "f6beda9e-bb1d-478d-8676-7fed0db52ba6",
+  "set": "woe",
+  "cn": "224",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Devouring Sugarmaw",
+    "printed_name": "Devouring Sugarmaw",
+    "printed_text": "威迫、トランプル\nあなたのアップキープの開始時に、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。そうしないなら、貪る甘味大口をタップする。",
+    "printed_type_line": "クリーチャー — ホラー"
+   },
+   {
+    "name": "Have for Dinner",
+    "printed_name": "夕（ゆう）食（しょく）の献（こん）立（だて）",
+    "printed_text": "白の１/１の人間・クリーチャー・トークン１体と、食物・トークン１つを生成する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 37,
+  "key": "Dirgur Focusmage // Braingeyser",
+  "id": "0eea142a-b0fd-4607-8a7e-5f31995746ce",
+  "set": "soc",
+  "cn": "68",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Dirgur Focusmage",
+    "printed_name": "ダルガーの専心魔道士",
+    "printed_text": "あなたがインスタントやソーサリーである呪文を唱えるためのコストは{1}少なくなる。\nあなたの手札からマナ総量が５以上であり、インスタントやソーサリーである呪文１つを唱えるたび、このクリーチャーは準備済状態になる。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Braingeyser",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 38,
+  "key": "Diviner of Victory // Unwind History",
+  "id": "497f8818-c749-4ed2-82c3-b7ded9d43e48",
+  "set": "fra",
+  "cn": "425",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Diviner of Victory",
+    "printed_name": "勝利の預言者",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nあなたが占術や諜報を行うたび、ターン終了時まで、このクリーチャーは＋１/＋１の修整を受ける。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Unwind History",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 39,
+  "key": "Dread Linnorm // Scale Deflection",
+  "id": "6cd67e70-332a-4361-917f-f1de2e063854",
+  "set": "clb",
+  "cn": "225",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Dread Linnorm",
+    "printed_name": "Dread Linnorm",
+    "printed_text": "戦慄のリノームは、パワーが３以下であるクリーチャーにはブロックされない。",
+    "printed_type_line": "クリーチャー — 蛇・ドラゴン"
+   },
+   {
+    "name": "Scale Deflection",
+    "printed_name": "跳（は）ね返（かえ）す鱗（うろこ）",
+    "printed_text": "クリーチャー１体を対象とする。それの上に＋１/＋１カウンター２個を置き、それをアンタップする。ターン終了時まで、それは呪禁を得る。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 40,
+  "key": "Eccentric Pestfinder // Turn Stones",
+  "id": "849354ef-74cd-4407-be6f-108410bd4d49",
+  "set": "soc",
+  "cn": "46",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Eccentric Pestfinder",
+    "printed_name": "変わり者の害獣探し",
+    "printed_text": "トランプル\n各終了ステップの開始時に、このターンにあなたがライフを得ていた場合、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Turn Stones",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 41,
+  "key": "Elite Interceptor // Rejoinder",
+  "id": "294da06d-e5f9-4eef-a33b-dcc701b7166d",
+  "set": "sos",
+  "cn": "12",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Elite Interceptor",
+    "printed_name": "精鋭の迎撃手",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Rejoinder",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 42,
+  "key": "Elusive Otter // Grove's Bounty",
+  "id": "348db796-995d-4e3f-98f9-63f09ef86b84",
+  "set": "woe",
+  "cn": "225",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Elusive Otter",
+    "printed_name": "Elusive Otter",
+    "printed_text": "果敢（あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、このクリーチャーは＋１/＋１の修整を受ける。）\n神出鬼没のカワウソよりパワーが小さいクリーチャーでは、これをブロックできない。",
+    "printed_type_line": "クリーチャー — カワウソ"
+   },
+   {
+    "name": "Grove's Bounty",
+    "printed_name": "木（こ）立（だ）ちの報（ほう）奨（しょう）",
+    "printed_text": "あなたがコントロールしている望む数のクリーチャーを対象としてＸ個分を割り振る。それらの上にその割り振った個数の＋１/＋１カウンターを置く。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 43,
+  "key": "Emerald Dragon // Dissonant Wave",
+  "id": "9abe4675-82cb-40c0-8f1f-5398d6b5b112",
+  "set": "clb",
+  "cn": "229",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Emerald Dragon",
+    "printed_name": "Emerald Dragon",
+    "printed_text": "飛行、トランプル",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Dissonant Wave",
+    "printed_name": "耳（みみ）障（ざわ）りな波（は）長（ちょう）",
+    "printed_text": "起動型か誘発型であり発生源がクリーチャーでない能力１つを対象とし、それを打ち消す。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 44,
+  "key": "Emergency Phytomedic // Seed Suture",
+  "id": "e06304b3-bdc6-4696-a013-a2479bcba77f",
+  "set": "fra",
+  "cn": "130",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Emergency Phytomedic",
+    "printed_name": "救急植療士",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Seed Suture",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 45,
+  "key": "Emeritus of Ideation // Ancestral Recall",
+  "id": "1c9f7b5b-ba37-480d-9510-ffb12fd341c5",
+  "set": "sos",
+  "cn": "315",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Emeritus of Ideation",
+    "printed_name": "観念の名誉教授",
+    "printed_text": "飛行、護法{2}\nこのクリーチャーは準備済状態で戦場に出る。\nこのクリーチャーが攻撃するたび、あなたの墓地にあるカード８枚を追放してもよい。そうしたなら、このクリーチャーは準備済状態になる。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Ancestral Recall",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 46,
+  "key": "Ettercap // Web Shot",
+  "id": "653b5676-00f6-43c3-af34-750c32de65cd",
+  "set": "clb",
+  "cn": "231",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ettercap",
+    "printed_name": "Ettercap",
+    "printed_text": "到達",
+    "printed_type_line": "クリーチャー — 蜘蛛・ビースト"
+   },
+   {
+    "name": "Web Shot",
+    "printed_name": "蜘（く）蛛（も）糸（いと）射（しゃ）撃（げき）",
+    "printed_text": "飛行を持つクリーチャー１体を対象とする。それを破壊する。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 47,
+  "key": "Experimental Lab // Staff Room",
+  "id": "44761078-3042-46b3-aeda-45593758fb7b",
+  "set": "dsc",
+  "cn": "33",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Experimental Lab",
+    "printed_name": "Experimental Lab // Staff Room",
+    "printed_text": "あなたがこのドアを開放したとき、戦慄予示し、その後、そのクリーチャーの上に＋１/＋１カウンター２個とトランプル・カウンター１個を置く。\n（どちらの半分でも唱えることができる。そのドアは戦場で開放される。閉鎖されているドアのマナ・コストを支払って、それを開放してもよい。これはソーサリーとして行う。）",
+    "printed_type_line": "エンチャント — 部屋"
+   },
+   {
+    "name": "Staff Room",
+    "printed_name": "Experimental Lab // Staff Room",
+    "printed_text": "詰（つめ）所（しょ）\no2oG\nあなたがコントロールしているクリーチャー１体がプレイヤー１人に戦闘ダメージを与えるたび、そのクリーチャーを表向きにするかそれの上に＋１/＋１カウンター１個を置く。",
+    "printed_type_line": "エンチャント — 部屋"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 48,
+  "key": "Fang Dragon // Forktail Sweep",
+  "id": "2f970c95-d79e-4aef-b952-e6ff606169ff",
+  "set": "clb",
+  "cn": "173",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Fang Dragon",
+    "printed_name": "Fang Dragon",
+    "printed_text": "飛行",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Forktail Sweep",
+    "printed_name": "裂（さ）け尾（お）の一（いっ）掃（そう）",
+    "printed_text": "裂け尾の一掃は、あなたがコントロールしていない各クリーチャーにそれぞれ１点のダメージを与える。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 49,
+  "key": "Fast // Furious",
+  "id": "3d9c1c7e-87ba-481c-8902-491255b2049e",
+  "set": "mh2",
+  "cn": "123",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Fast",
+    "printed_name": "Fast",
+    "printed_text": "カード１枚を捨て、その後カード２枚を引く。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Furious",
+    "printed_name": "Furious",
+    "printed_text": "爆走は飛行を持たない各クリーチャーにそれぞれ３点のダメージを与える。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 50,
+  "key": "Fatehold Chronologist // Peer Review",
+  "id": "ed613c21-9b91-49b7-9a2d-91d81c42ec9f",
+  "set": "fra",
+  "cn": "133",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Fatehold Chronologist",
+    "printed_name": "フェイトホールドの年代学者",
+    "printed_text": "飛行\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Peer Review",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 51,
+  "key": "Fell Horseman // Deathly Ride",
+  "id": "c2ec1383-1ebe-4659-ab1a-034ed370597a",
+  "set": "woe",
+  "cn": "92",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Fell Horseman",
+    "printed_name": "Fell Horseman",
+    "printed_text": "不吉な騎手が死亡したとき、これをオーナーのライブラリーの一番下に置く。",
+    "printed_type_line": "クリーチャー — ゾンビ・騎士"
+   },
+   {
+    "name": "Deathly Ride",
+    "printed_name": "既（き）死（し）の馬（うま）",
+    "printed_text": "あなたの墓地にあるクリーチャー・カード１枚を対象とする。それをあなたの手札に戻す。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 52,
+  "key": "Feral Deathgorger // Dusk Sight",
+  "id": "55cee154-0d7f-4bd8-9f9d-7ab79dfaf7ec",
+  "set": "tdm",
+  "cn": "298",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Feral Deathgorger",
+    "printed_name": "Feral Deathgorger",
+    "printed_text": "飛行、接死\nこのクリーチャーが戦場に出たとき、単一の墓地にあるカード最大２枚を対象とする。それらを追放する。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Dusk Sight",
+    "printed_name": "薄（はく）暮（ぼ）の視（し）覚（かく）",
+    "printed_text": "クリーチャー最大１体を対象とする。それの上に＋１/＋１カウンター１個を置く。カード１枚を引く。",
+    "printed_type_line": "ソーサリー ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 53,
+  "key": "Ferocious Werefox // Guard Change",
+  "id": "8d559add-8f72-4aa1-a32a-6d42598b24b7",
+  "set": "woe",
+  "cn": "170",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ferocious Werefox",
+    "printed_name": "Ferocious Werefox",
+    "printed_text": "トランプル",
+    "printed_type_line": "クリーチャー — エルフ・狐・戦士"
+   },
+   {
+    "name": "Guard Change",
+    "printed_name": "守（も）り手（て）の交（こう）代（たい）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。怪物・役割・トークン１つをそれについた状態で生成する。（エンチャントしているクリーチャーは＋１/＋１の修整を受けトランプルを持つ。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 54,
+  "key": "Frolicking Familiar // Blow Off Steam",
+  "id": "981dac41-3788-4628-98b4-3e7f3c971b15",
+  "set": "woe",
+  "cn": "226",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Frolicking Familiar",
+    "printed_name": "Frolicking Familiar",
+    "printed_text": "飛行\nあなたがインスタントやソーサリーである呪文１つを唱えるたび、ターン終了時まで、遊び戯れの使い魔は＋１/＋１の修整を受ける。",
+    "printed_type_line": "クリーチャー — カワウソ・ウィザード"
+   },
+   {
+    "name": "Blow Off Steam",
+    "printed_name": "鬱（うっ）憤（ぷん）ばらし",
+    "printed_text": "１つを対象とする。鬱憤ばらしはそれに１点のダメージを与える。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 55,
+  "key": "Galvanic Giant // Storm Reading",
+  "id": "902772c5-86ca-4c99-87ee-39d29fc02292",
+  "set": "woe",
+  "cn": "52",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Galvanic Giant",
+    "printed_name": "Galvanic Giant",
+    "printed_text": "あなたがマナ総量が５以上である呪文１つを唱えるたび、対戦相手がコントロールしているクリーチャー１体を対象とする。それをタップし、それの上に麻痺カウンター１個を置く。",
+    "printed_type_line": "クリーチャー — 巨人・ウィザード"
+   },
+   {
+    "name": "Storm Reading",
+    "printed_name": "嵐（あらし）読（よ）み",
+    "printed_text": "カード４枚を引く。その後、カード２枚を捨てる。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 56,
+  "key": "Gandalf, Goblins' Bane // Flameshape",
+  "id": "188ee35d-6881-4140-8681-c4759044da3c",
+  "set": "hob",
+  "cn": "96",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Gandalf, Goblins' Bane",
+    "printed_name": "ゴブリンの災い、ガンダルフ",
+    "printed_text": "あなたがクリーチャーでない呪文１つを唱えるたび、これは、ターン終了時まで＋１/＋１の修整を受け、各対戦相手にそれぞれ１点のダメージを与える。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Flameshape",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 57,
+  "key": "Ghost Lantern // Bind Spirit",
+  "id": "099b8b07-0196-40a9-ab17-f7ca79c120f5",
+  "set": "clb",
+  "cn": "128",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ghost Lantern",
+    "printed_name": "Ghost Lantern",
+    "printed_text": "あなたがコントロールしているクリーチャー１体が死亡するたび、装備しているクリーチャーの上に＋１/＋１カウンター１個を置く。\n装備{1}",
+    "printed_type_line": "アーティファクト — 装備品"
+   },
+   {
+    "name": "Bind Spirit",
+    "printed_name": "霊（れい）魂（こん）拘（こう）束（そく）",
+    "printed_text": "あなたの墓地にあるクリーチャー・カード１枚を対象とする。それをあなたの手札に戻す。（その後、これを追放する。後で追放領域からこのアーティファクトを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 58,
+  "key": "Gingerbread Hunter // Puny Snack",
+  "id": "3b5bf62f-c2b7-4906-b8c0-062b948ce936",
+  "set": "woe",
+  "cn": "227",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Gingerbread Hunter",
+    "printed_name": "Gingerbread Hunter",
+    "printed_text": "お菓子を狩る者が戦場に出たとき、食物・トークン１つを生成する。（それは、「{2}, {T}, このアーティファクトを生け贄に捧げる：あなたは３点のライフを得る。」を持つアーティファクトである。）",
+    "printed_type_line": "クリーチャー — 巨人"
+   },
+   {
+    "name": "Puny Snack",
+    "printed_name": "つまらぬお菓（か）子（し）",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは－２/－２の修整を受ける。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 59,
+  "key": "Glamdring, Foe-hammer // Gleam of Death",
+  "id": "45833d6a-45ba-42c7-891a-5d82daed87d3",
+  "set": "hob",
+  "cn": "204",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Glamdring, Foe-hammer",
+    "printed_name": "敵砕き、グラムドリング",
+    "printed_text": "あなたがインスタントやソーサリーである呪文を唱えるためのコストは{X}少なくなる。Ｘは、装備しているクリーチャーのパワーに等しい。\n装備{2}",
+    "printed_type_line": null
+   },
+   {
+    "name": "Gleam of Death",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 60,
+  "key": "Glóin the Mighty // Easy Pickings",
+  "id": "bb334a8c-c1ec-4da2-9025-99d63d8fc086",
+  "set": "hob",
+  "cn": "99",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Glóin the Mighty",
+    "printed_name": "力強き者、グローイン",
+    "printed_text": "あなたの第１メイン・フェイズの開始時に、{R}{R}を加える。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Easy Pickings",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 61,
+  "key": "Goblin Glasswright // Craft with Pride",
+  "id": "954e2956-8cb4-43e0-9c3f-63f457c717e0",
+  "set": "sos",
+  "cn": "117",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Goblin Glasswright",
+    "printed_name": "ゴブリンのガラス職人",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Craft with Pride",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 62,
+  "key": "Gollum, Silent Slinker // Meager Meal",
+  "id": "b32bb421-7706-4ffb-8db0-d65a03f2aedc",
+  "set": "hob",
+  "cn": "71",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Gollum, Silent Slinker",
+    "printed_name": "だんまり忍び足、ゴラム",
+    "printed_text": "威迫（このクリーチャーは２体以上のクリーチャーにしかブロックされない。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Meager Meal",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 63,
+  "key": "Grabby Giant // That's Mine",
+  "id": "f5d0534c-7ff8-4516-95f8-04d8f454bb6a",
+  "set": "woe",
+  "cn": "133",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Grabby Giant",
+    "printed_name": "Grabby Giant",
+    "printed_text": "到達\n{2}{R}, アーティファクトや土地のうち１つを生け贄に捧げる：カード１枚を引く。",
+    "printed_type_line": "クリーチャー — 巨人"
+   },
+   {
+    "name": "That's Mine",
+    "printed_name": "それは俺（おれ）のだ",
+    "printed_text": "宝物・トークン１つを生成する。（その後、これを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 64,
+  "key": "Gray Slaad // Entropic Decay",
+  "id": "cef8cb71-d937-4f64-b0d5-103069f7c4fb",
+  "set": "clb",
+  "cn": "129",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Gray Slaad",
+    "printed_name": "Gray Slaad",
+    "printed_text": "あなたの墓地に４枚以上のクリーチャー・カードがあるかぎり、グレイ・スラードは威迫と接死を持つ。",
+    "printed_type_line": "クリーチャー — カエル・ホラー"
+   },
+   {
+    "name": "Entropic Decay",
+    "printed_name": "エントロピーの崩（ほう）壊（かい）",
+    "printed_text": "カード４枚を切削する。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 65,
+  "key": "Great Ugly-Looking Goblin // Clap! Snap!",
+  "id": "4186f01f-b819-4123-965c-478bd8d7e5fb",
+  "set": "hob",
+  "cn": "223",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Great Ugly-Looking Goblin",
+    "printed_name": "大きな醜い顔のゴブリン",
+    "printed_text": "あなたがコントロールしていて＋１/＋１カウンターが置かれているすべてのクリーチャーは威迫を持つ。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Clap! Snap!",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 66,
+  "key": "Guardian Naga // Banishing Coils",
+  "id": "f9e50f19-8aab-440f-a4d8-6aea8241d390",
+  "set": "clb",
+  "cn": "23",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Guardian Naga",
+    "printed_name": "Guardian Naga",
+    "printed_text": "警戒\nあなたのターンであるかぎり、ガーディアン・ナーガが受けるすべてのダメージを軽減する。",
+    "printed_type_line": "クリーチャー — ナーガ"
+   },
+   {
+    "name": "Banishing Coils",
+    "printed_name": "払（ふっ）拭（しょく）のとぐろ",
+    "printed_text": "アーティファクトやエンチャントのうち１つを対象とする。それを追放する。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 67,
+  "key": "Gumdrop Poisoner // Tempt with Treats",
+  "id": "e3a11139-992c-48c5-b5b8-c8f3d95579fe",
+  "set": "woe",
+  "cn": "93",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Gumdrop Poisoner",
+    "printed_name": "Gumdrop Poisoner",
+    "printed_text": "絆魂\nガムドロップの毒殺者が戦場に出たとき、クリーチャー最大１体を対象とする。ターン終了時まで、それは－Ｘ/－Ｘの修整を受ける。Ｘはあなたがこのターンに得たライフの合計に等しい。",
+    "printed_type_line": "クリーチャー — 人間・邪術師"
+   },
+   {
+    "name": "Tempt with Treats",
+    "printed_name": "お菓（か）子（し）の誘（ゆう）惑（わく）",
+    "printed_text": "食物・トークン１つを生成する。（その後、このカードを追放する。あなたは後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 68,
+  "key": "Hallway Heckler // Vicious Verse",
+  "id": "0860a6e0-48e2-41c7-b1ba-f9e8e50ecbf2",
+  "set": "fra",
+  "cn": "85",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hallway Heckler",
+    "printed_name": "廊下の野次飛ばし",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\n{T}, カード１枚を捨てる：カード１枚を引く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Vicious Verse",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 69,
+  "key": "Heartflame Duelist // Heartflame Slash",
+  "id": "4e9bb04b-3b38-4186-9409-4e759b3d0a68",
+  "set": "woe",
+  "cn": "228",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Heartflame Duelist",
+    "printed_name": "Heartflame Duelist",
+    "printed_text": "あなたがコントロールしていてインスタントやソーサリーであるすべての呪文は絆魂を持つ。",
+    "printed_type_line": "クリーチャー — 人間・騎士"
+   },
+   {
+    "name": "Heartflame Slash",
+    "printed_name": "炎（えん）心（しん）の切（き）りつけ",
+    "printed_text": "１つを対象とする。炎心の切りつけはそれに３点のダメージを与える。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 70,
+  "key": "Hearth Elemental // Stoke Genius",
+  "id": "b11d79d1-8d5c-4994-81a9-bfe694ae8b52",
+  "set": "woe",
+  "cn": "136",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hearth Elemental",
+    "printed_name": "Hearth Elemental",
+    "printed_text": "この呪文を唱えるためのコストは{X}少なくなる。Ｘは、インスタントやソーサリーであるか出来事を持ち、あなたの墓地にあるカードの枚数に等しい。",
+    "printed_type_line": "クリーチャー — エレメンタル"
+   },
+   {
+    "name": "Stoke Genius",
+    "printed_name": "火（ひ）おこしの天（てん）才（さい）",
+    "printed_text": "あなたの手札を捨てる。その後、カード２枚を引く。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 71,
+  "key": "Heartwood Crafter // Soul Tether",
+  "id": "84881b58-45a3-4da8-b646-3e0a0d3baed1",
+  "set": "fra",
+  "cn": "105",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Heartwood Crafter",
+    "printed_name": "魂木の造り手",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\n{T}：{C}を加える。このマナは、あなたの手札にある呪文を唱えるためには支払えない。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Soul Tether",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 72,
+  "key": "Hezrou // Demonic Stench",
+  "id": "1a7a95d8-6442-47b5-ba5a-e3e67ce3fabb",
+  "set": "clb",
+  "cn": "131",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hezrou",
+    "printed_name": "Hezrou",
+    "printed_text": "あなたがコントロールしている１体以上のクリーチャーがブロックされた状態になるたび、ターン終了時まで、すべてのブロック・クリーチャーは－１/－１の修整を受ける。",
+    "printed_type_line": "クリーチャー — カエル・デーモン"
+   },
+   {
+    "name": "Demonic Stench",
+    "printed_name": "デーモンの悪（あく）臭（しゅう）",
+    "printed_text": "ターン終了時まで、このターンにクリーチャーをブロックしたすべてのクリーチャーは－１/－１の修整を受ける。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 73,
+  "key": "Hide // Seek",
+  "id": "e5d15212-cf6d-49a7-ba24-4761c8f66c39",
+  "set": "dis",
+  "cn": "151",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hide",
+    "printed_name": "Hide",
+    "printed_text": "アーティファクト１つかエンチャント１つを対象とし、それをオーナーのライブラリーの一番下に置く。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Seek",
+    "printed_name": "Seek",
+    "printed_text": "対戦相手１人を対象とし、そのプレイヤーのライブラリーからカードを１枚探し、そのカードをゲームから取り除く。 あなたはそれの点数で見たマナ・コストに等しい点数のライフを得る。 その後、そのプレイヤーは自分のライブラリーを切り直す。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 74,
+  "key": "Hildibrand Manderville // Gentleman's Rise",
+  "id": "8ce5c952-c777-475a-8352-becd342114de",
+  "set": "fic",
+  "cn": "83",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hildibrand Manderville",
+    "printed_name": "Hildibrand Manderville",
+    "printed_text": "あなたがコントロールしているすべてのクリーチャー・トークンは＋１/＋１の修整を受ける。\nヒルディブランド・マンダヴィルが死亡したとき、次のあなたのターンの終了時まで、あなたの墓地にあるこれを出来事として唱えてもよい。\n//ADV//\n紳（しん）士（し）的（てき）な事（じ）件（けん）屋（や）\n{2}{B}\nインスタント ― 出来事\n黒の２/２のゾンビ・クリーチャー・トークン１体を生成する。（その後、このカードを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Gentleman's Rise",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 75,
+  "key": "Hit // Run",
+  "id": "7b455169-332d-405c-a1f7-a0a179195f9b",
+  "set": "dis",
+  "cn": "152",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hit",
+    "printed_name": "Hit",
+    "printed_text": "プレイヤー１人を対象とする。そのプレイヤーはアーティファクト１つかクリーチャー１体を生け贄に捧げる。 打撃はそのプレイヤーに、そのパーマネントの点数で見たマナ・コストに等しい点数のダメージを与える。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Run",
+    "printed_name": "Run",
+    "printed_text": "ターン終了時まで、あなたがコントロールする攻撃クリーチャーは、他の攻撃クリーチャー１体につき＋１/＋０の修整を受ける。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 76,
+  "key": "Hollow Scavenger // Bakery Raid",
+  "id": "18976839-ee80-4b4a-aed0-ce5621a96be6",
+  "set": "woe",
+  "cn": "174",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Hollow Scavenger",
+    "printed_name": "Hollow Scavenger",
+    "printed_text": "{1}, 食物１つを生け贄に捧げる：ターン終了時まで、虚ろの死体あさりは＋２/＋２の修整を受ける。毎ターン１回しか起動できない。",
+    "printed_type_line": "クリーチャー — 狼"
+   },
+   {
+    "name": "Bakery Raid",
+    "printed_name": "パン屋（や）への襲（しゅう）撃（げき）",
+    "printed_text": "食物・トークン１つを生成する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 77,
+  "key": "Honorbound Page // Forum's Favor",
+  "id": "8504d9c5-517d-4a50-b97b-d1b94883810b",
+  "set": "sos",
+  "cn": "19",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Honorbound Page",
+    "printed_name": "名誉にかける小姓",
+    "printed_text": "先制攻撃\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Forum's Favor",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 78,
+  "key": "Horn of Valhalla // Ysgard's Call",
+  "id": "099980e3-fcaf-442a-9ad1-1e841d7594bb",
+  "set": "clb",
+  "cn": "26",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Horn of Valhalla",
+    "printed_name": "Horn of Valhalla",
+    "printed_text": "装備しているクリーチャーは、あなたがコントロールしているクリーチャー１体につき＋１/＋１の修整を受ける。\n装備{3}",
+    "printed_type_line": "アーティファクト — 装備品"
+   },
+   {
+    "name": "Ysgard's Call",
+    "printed_name": "イズガルドの呼（よ）び声（ごえ）",
+    "printed_text": "白の１/１の兵士・クリーチャー・トークンＸ体を生成する。（その後、これを追放する。後で追放領域からこのアーティファクトを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 79,
+  "key": "Horned Loch-Whale // Lagoon Breach",
+  "id": "85b1a2fc-d719-446c-ac17-e1d355c49964",
+  "set": "woe",
+  "cn": "53",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Horned Loch-Whale",
+    "printed_name": "Horned Loch-Whale",
+    "printed_text": "瞬速\n護法{2}\nあなたのターンでないかぎり、有角の湖鯨はタップ状態で戦場に出る。",
+    "printed_type_line": "クリーチャー — 鯨"
+   },
+   {
+    "name": "Lagoon Breach",
+    "printed_name": "礁（しょう）湖（こ）の決（けっ）壊（かい）",
+    "printed_text": "あなたがコントロールしていない攻撃クリーチャー１体を対象とする。それのオーナーはそれを自分のライブラリーの一番上か一番下に置く。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 80,
+  "key": "Illithid Harvester // Plant Tadpoles",
+  "id": "e45ad317-6982-4f8e-9552-fc69160c5e84",
+  "set": "clb",
+  "cn": "76",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Illithid Harvester",
+    "printed_name": "Illithid Harvester",
+    "printed_text": "脳変成 ― イリシッドの収穫者が戦場に出たとき、タップ状態でありトークンでない望む数のクリーチャーを対象とする。それらを裏向きにする。それらは２/２のホラー・クリーチャーである。",
+    "printed_type_line": "クリーチャー — ホラー"
+   },
+   {
+    "name": "Plant Tadpoles",
+    "printed_name": "幼（よう）生（せい）の植（う）え付（つ）け",
+    "printed_text": "クリーチャーＸ体を対象とする。それらをタップする。それらは、次のコントローラーのアンタップ・ステップにアンタップしない。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 81,
+  "key": "Imodane's Recruiter // Train Troops",
+  "id": "d40ee4ac-afb0-49ee-9632-2d27e42d8411",
+  "set": "woe",
+  "cn": "229",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Imodane's Recruiter",
+    "printed_name": "Imodane's Recruiter",
+    "printed_text": "イモデーンの徴募兵が戦場に出たとき、ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋１/＋０の修整を受け速攻を得る。",
+    "printed_type_line": "クリーチャー — 人間・騎士"
+   },
+   {
+    "name": "Train Troops",
+    "printed_name": "兵（へい）団（だん）の訓（くん）練（れん）",
+    "printed_text": "警戒を持つ白の２/２の騎士・クリーチャー・トークン２体を生成する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 82,
+  "key": "Indulge // Excess",
+  "id": "c99946fb-3172-4abf-9618-ad4f61c064cd",
+  "set": "ncc",
+  "cn": "46",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Indulge",
+    "printed_name": "Indulge // Excess",
+    "printed_text": "このターン、あなたがコントロールしているクリーチャー１体が攻撃するたび、緑白の１/１の市民・クリーチャー・トークン１体をタップ状態かつ攻撃している状態で生成する。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Excess",
+    "printed_name": "Indulge // Excess",
+    "printed_text": "余波（この呪文はあなたの墓地からしか唱えられない。その後、これを追放する。）\nあなたがコントロールしていてこのターンにプレイヤーに戦闘ダメージを与えたクリーチャー１体につき１つの宝物・トークンを生成する。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 83,
+  "key": "Inspired Skypainter // Maestro's Gift",
+  "id": "3e730f98-4c8e-4ea8-865f-1c00d4bb0c40",
+  "set": "soc",
+  "cn": "96",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Inspired Skypainter",
+    "printed_name": "見事なる天描師",
+    "printed_text": "飛行\nこのクリーチャーが戦場に出たとき、および、あなたがコントロールしている１体以上のクリーチャー・トークンがプレイヤー１人に戦闘ダメージを与えるたび、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Maestro's Gift",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 84,
+  "key": "Intrepid Trufflesnout // Go Hog Wild",
+  "id": "9d379455-dd37-48cc-9faa-b386f91aab8b",
+  "set": "woe",
+  "cn": "320",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Intrepid Trufflesnout",
+    "printed_name": "Intrepid Trufflesnout",
+    "printed_text": "剛胆なトリュフ嗅ぎが単独で攻撃するたび、食物・トークン１つを生成する。（それは、「{2}, {T}, このアーティファクトを生け贄に捧げる：あなたは３点のライフを得る。」を持つアーティファクトである。）",
+    "printed_type_line": "クリーチャー — 猪"
+   },
+   {
+    "name": "Go Hog Wild",
+    "printed_name": "猪（ちょ）突（とつ）猛（もう）進（しん）",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋２の修整を受ける。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 85,
+  "key": "Ishgard, the Holy See // Faith & Grief",
+  "id": "5208d8dc-369f-4bf8-970d-59d32b5bcfdb",
+  "set": "fin",
+  "cn": "310",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ishgard, the Holy See",
+    "printed_name": "Ishgard, the Holy See",
+    "printed_text": "この土地はタップ状態で戦場に出る。\n{T}：{W}を加える。\n//ADV//\n信（しん）仰（こう）と欺（ぎ）瞞（まん）\n{3}{W}{W}\nソーサリー ― 出来事\nあなたの墓地にありアーティファクトやエンチャントであるカード最大２枚を対象とする。それらをあなたの手札に戻す。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Faith & Grief",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 86,
+  "key": "Jadzi, Steward of Fate // Oracle's Gift",
+  "id": "1d33e0ce-93ab-4201-8eff-78b7591ab595",
+  "set": "sos",
+  "cn": "318",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Jadzi, Steward of Fate",
+    "printed_name": "運命の執事、ジャズィ",
+    "printed_text": "これは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nこれが戦場に出たとき、カード２枚を引く。その後、カード２枚を捨てる。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Oracle's Gift",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 87,
+  "key": "James, Wandering Dad // Follow Him",
+  "id": "f999f039-c9ff-4dbe-a7db-8818dea88182",
+  "set": "pip",
+  "cn": "31",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "James, Wandering Dad",
+    "printed_name": "James, Wandering Dad",
+    "printed_text": "{T}：{C}{C}を加える。このマナは、能力を起動するためにしか支払えない。",
+    "printed_type_line": "伝説のクリーチャー — 人間・科学者"
+   },
+   {
+    "name": "Follow Him",
+    "printed_name": "ついて行（い）く",
+    "printed_text": "Ｘ回調査を行う。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 88,
+  "key": "Jidoor, Aristocratic Capital // Overture",
+  "id": "40df685e-ffa6-480a-808b-45146a189719",
+  "set": "fin",
+  "cn": "311",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Jidoor, Aristocratic Capital",
+    "printed_name": "Jidoor, Aristocratic Capital",
+    "printed_text": "この土地はタップ状態で戦場に出る。\n{T}：{U}を加える。\n//ADV//\nオペラの幕（まく）開（あ）け\n{4}{U}{U}\nソーサリー ― 出来事\n対戦相手１人を対象とする。そのプレイヤーは自分のライブラリーの枚数の端数を切り捨てた半分の枚数のカードを切削する。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Overture",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 89,
+  "key": "Karvanista, Loyal Lupari // Lupari Shield",
+  "id": "62fba170-738c-4f95-85b4-20a394f3193d",
+  "set": "who",
+  "cn": "106",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Karvanista, Loyal Lupari",
+    "printed_name": "Karvanista, Loyal Lupari",
+    "printed_text": "警戒、トランプル、速攻\n義理堅いルパリ族、カルバニスタが攻撃するたび、あなたがコントロールしている各人間の上にそれぞれ＋１/＋１カウンター１個を置く。",
+    "printed_type_line": "伝説のクリーチャー — エイリアン・犬・兵士"
+   },
+   {
+    "name": "Lupari Shield",
+    "printed_name": "ルパリの盾（たて）",
+    "printed_text": "次のあなたのターンまで、あなたがコントロールしているすべての人間は破壊不能を得る。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 90,
+  "key": "Kellan, Daring Traveler // Journey On",
+  "id": "7ee077b0-7989-42ba-b77c-3a98b2fb7162",
+  "set": "lci",
+  "cn": "231",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Kellan, Daring Traveler",
+    "printed_name": "Kellan, Daring Traveler",
+    "printed_text": "勇敢な旅人、ケランが攻撃するたび、あなたのライブラリーの一番上にあるカード１枚を公開する。それがマナ総量が３以下であるクリーチャー・カードなら、それをあなたの手札に加える。そうでないなら、それをあなたの墓地に置いてもよい。",
+    "printed_type_line": "伝説のクリーチャー — 人間・フェアリー・スカウト"
+   },
+   {
+    "name": "Journey On",
+    "printed_name": "旅（たび）路（じ）の続（つづ）き",
+    "printed_text": "地図・トークンＸ個を生成する。Ｘは、アーティファクトをコントロールしている対戦相手の人数に１を足した数に等しい。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 91,
+  "key": "Kellan, Inquisitive Prodigy // Tail the Suspect",
+  "id": "5d3334e5-b94a-4e0d-a782-47e400a1c51b",
+  "set": "mkm",
+  "cn": "212",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Kellan, Inquisitive Prodigy",
+    "printed_name": "Kellan, Inquisitive Prodigy",
+    "printed_text": "飛行、警戒\n好奇心の神童、ケランが攻撃するたび、アーティファクト最大１つを対象とする。それを破壊する。あなたがそのパーマネントをコントロールしていたなら、カード１枚を引く。",
+    "printed_type_line": "伝説のクリーチャー — 人間・フェアリー・探偵"
+   },
+   {
+    "name": "Tail the Suspect",
+    "printed_name": "容（よう）疑（ぎ）者（しゃ）の尾（び）行（こう）",
+    "printed_text": "調査を行う。このターン、追加で土地１つをプレイしてもよい。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 92,
+  "key": "Kellan, the Fae-Blooded // Birthright Boon",
+  "id": "9c3b0a4f-1c5c-45da-88f1-a5a9e25af44b",
+  "set": "woe",
+  "cn": "230",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Kellan, the Fae-Blooded",
+    "printed_name": "Kellan, the Fae-Blooded",
+    "printed_text": "二段攻撃\nあなたがコントロールしていてこれでないすべてのクリーチャーは、オーラや装備品のうちフェイの血筋のケランについている１つにつき＋１/＋０の修整を受ける。",
+    "printed_type_line": "伝説のクリーチャー — 人間・フェアリー"
+   },
+   {
+    "name": "Birthright Boon",
+    "printed_name": "生（う）まれつきの加（か）護（ご）",
+    "printed_text": "あなたのライブラリーからオーラや装備品であるカード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 93,
+  "key": "Kirol, History Buff // Pack a Punch",
+  "id": "aad801d5-0fdf-4118-b03d-97a2040d0e50",
+  "set": "sos",
+  "cn": "198",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Kirol, History Buff",
+    "printed_name": "歴史通、キーロル",
+    "printed_text": "１枚以上のカードがあなたの墓地を離れるたび、これは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Pack a Punch",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 94,
+  "key": "Konstrari Improviser // Soul Tether",
+  "id": "792c15a5-9a58-47da-9cf7-fe001755bc46",
+  "set": "fra",
+  "cn": "139",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Konstrari Improviser",
+    "printed_name": "コンストラリの急造者",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Soul Tether",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 95,
+  "key": "Lake-town Mariners // Gone Fishing",
+  "id": "9403314c-d664-48be-a117-c68cf582968d",
+  "set": "hob",
+  "cn": "44",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Lake-town Mariners",
+    "printed_name": "湖の町の船乗り",
+    "printed_text": "警戒\n護法{2}（このクリーチャーが対戦相手がコントロールしている呪文や能力の対象になるたび、そのプレイヤーが{2}を支払わないかぎり、その呪文や能力を打ち消す。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Gone Fishing",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 96,
+  "key": "Landscape Painter // Vibrant Idea",
+  "id": "2fde32bd-9f12-4008-a364-1977b9b10520",
+  "set": "sos",
+  "cn": "56",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Landscape Painter",
+    "printed_name": "風景画家",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Vibrant Idea",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 97,
+  "key": "Leech Collector // Bloodletting",
+  "id": "c31b6a0e-0b95-44df-a7cb-c5df8932ecd1",
+  "set": "sos",
+  "cn": "88",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Leech Collector",
+    "printed_name": "ヒルの収集家",
+    "printed_text": "あなたが各ターン内で初めてライフを得るたび、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Bloodletting",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 98,
+  "key": "Lindblum, Industrial Regency // Mage Siege",
+  "id": "e4423843-8e97-4f87-9a33-1123c325a283",
+  "set": "fin",
+  "cn": "285",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Lindblum, Industrial Regency",
+    "printed_name": "Lindblum, Industrial Regency",
+    "printed_text": "この土地はタップ状態で戦場に出る。\n{T}：{R}を加える。\n//ADV//\n魔（ま）道（どう）士（し）の包（ほう）囲（い）\n{2}{R}\nインスタント ― 出来事\n「あなたがクリーチャーでない呪文１つを唱えるたび、このトークンは各対戦相手にそれぞれ１点のダメージを与える。」を持つ黒の０/１のウィザード・クリーチャー・トークン１体を生成する。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Mage Siege",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 99,
+  "key": "Lluwen, Exchange Student // Pest Friend",
+  "id": "755a9dcc-4d6c-4f11-8d76-3aa6eb5db199",
+  "set": "sos",
+  "cn": "199",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Lluwen, Exchange Student",
+    "printed_name": "交換留学生、ルーウェン",
+    "printed_text": "これは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nあなたの墓地にあるクリーチャー・カード１枚を追放する：これは準備済状態になる。起動はソーサリーとしてのみ行う。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Pest Friend",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 100,
+  "key": "Lorehold Archivist // Restore Relic",
+  "id": "c22738e2-441b-4de2-8925-c34a22c6e3ff",
+  "set": "soc",
+  "cn": "97",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Lorehold Archivist",
+    "printed_name": "ロアホールドの文書管理人",
+    "printed_text": "先制攻撃\nあなたのアップキープの開始時に、あなたの墓地に３枚以上のアーティファクトやクリーチャーであるカードがある場合、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Restore Relic",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 101,
+  "key": "Maelstrom Artisan // Rocket Volley",
+  "id": "7c19c9dd-0d79-413f-8359-553f121087ae",
+  "set": "sos",
+  "cn": "122",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Maelstrom Artisan",
+    "printed_name": "大渦の職工",
+    "printed_text": "速攻\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Rocket Volley",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 102,
+  "key": "Magmatic Hellkite // Magmatic Hellkite",
+  "id": "1ba577ab-24c4-4580-9645-374c9f0239c2",
+  "set": "tdm",
+  "cn": "111",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "マグマのヘルカイト",
+  "faces": [],
+  "printed_text": "飛行\nこのクリーチャーが戦場に出たとき、対戦相手がコントロールしていて基本でない土地１つを対象とする。それを破壊する。それのコントローラーは自分のライブラリーから基本土地・カード１枚を探し、タップ状態かつ麻痺カウンター１個が置かれた状態で戦場に出す。その後、ライブラリーを切り直す。（麻痺カウンターが置かれているパーマネントがアンタップ状態になるなら、代わりにそれの上から麻痺カウンター１個を取り除く。）"
+ },
+ {
+  "n": 103,
+  "key": "Midgar, City of Mako // Reactor Raid",
+  "id": "c3623f4b-a4f2-4d01-87c5-1c7df64d8d13",
+  "set": "fin",
+  "cn": "313",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Midgar, City of Mako",
+    "printed_name": "Midgar, City of Mako",
+    "printed_text": "この土地はタップ状態で戦場に出る。\n{T}：{B}を加える。\n//ADV//\n魔（ま）晄（こう）炉（ろ）爆（ばく）破（は）作（さく）戦（せん）\n{2}{B}\nソーサリー ― 出来事\nアーティファクトやクリーチャーである１つを生け贄に捧げてもよい。そうしたなら、カード２枚を引く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Reactor Raid",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 104,
+  "key": "Minecart Daredevil // Ride the Rails",
+  "id": "22599904-1360-4929-88e2-45f2613ea4c5",
+  "set": "woe",
+  "cn": "141",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Minecart Daredevil",
+    "printed_name": "Minecart Daredevil",
+    "printed_text": null,
+    "printed_type_line": "クリーチャー — ドワーフ・騎士"
+   },
+   {
+    "name": "Ride the Rails",
+    "printed_name": "軌（き）条（じょう）を乗（の）りこなせ",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋１の修整を受ける。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 105,
+  "key": "Monster Manual // Zoological Study",
+  "id": "c7ecdc88-733e-4562-ae43-7d77d82d5154",
+  "set": "clb",
+  "cn": "242",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Monster Manual",
+    "printed_name": "Monster Manual",
+    "printed_text": "{1}{G},{T}：あなたは、あなたの手札にあるクリーチャー・カード１枚を戦場に出してもよい。",
+    "printed_type_line": "アーティファクト"
+   },
+   {
+    "name": "Zoological Study",
+    "printed_name": "動（どう）物（ぶつ）学（がく）的（てき）研（けん）究（きゅう）",
+    "printed_text": "カード５枚を切削する。その後、これにより切削されたクリーチャー・カード１枚をあなたの手札に戻す。（その後、これを追放する。後で追放領域からこのアーティファクトを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 106,
+  "key": "Moonshae Pixie // Pixie Dust",
+  "id": "94ab88db-3ea8-4286-a5ec-cdc23d8ea810",
+  "set": "clb",
+  "cn": "84",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Moonshae Pixie",
+    "printed_name": "Moonshae Pixie",
+    "printed_text": "飛行\nムーンシェイのピクシーが戦場に出たとき、このターンに戦闘ダメージを受けた対戦相手の数に等しい枚数のカードを引く。",
+    "printed_type_line": "クリーチャー — フェアリー"
+   },
+   {
+    "name": "Pixie Dust",
+    "printed_name": "ピクシーの粉（こな）",
+    "printed_text": "クリーチャー最大３体を対象とする。ターン終了時まで、それらは飛行を得る。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 107,
+  "key": "Most Decrepit Old Bird // Speak Secrets",
+  "id": "35daff22-4b37-4f0b-b446-1bd40faefb82",
+  "set": "hob",
+  "cn": "49",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Most Decrepit Old Bird",
+    "printed_name": "この上なくよぼよぼな年より鳥",
+    "printed_text": "飛行\nスレッショルド ― あなたの墓地に７枚以上のカードがあるかぎり、このクリーチャーは＋１/＋１の修整を受ける。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Speak Secrets",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 108,
+  "key": "My Precious // Allure of Power",
+  "id": "926a125b-aad5-44c0-a8a0-ab1e848becba",
+  "set": "hob",
+  "cn": "176",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "My Precious",
+    "printed_name": "いとしいしと",
+    "printed_text": "装備しているクリーチャーは呪禁を持ち、ブロックされない。\n装備―{2}, ２点のライフを支払う。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Allure of Power",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 109,
+  "key": "Naktamun Lorespinner // Wheel of Fortune",
+  "id": "253c8adb-921a-453a-a05b-f667caba9450",
+  "set": "soc",
+  "cn": "33",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Naktamun Lorespinner",
+    "printed_name": "ナクタムンの伝承紡ぎ",
+    "printed_text": "あなたのアップキープの開始時に、手札にあるカードの枚数が１枚以下のプレイヤーがいる場合、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Wheel of Fortune",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 110,
+  "key": "Obyra's Attendants // Desperate Parry",
+  "id": "cd828758-3cd3-4b61-92b0-37639cceaac7",
+  "set": "woe",
+  "cn": "63",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Obyra's Attendants",
+    "printed_name": "Obyra's Attendants",
+    "printed_text": "飛行",
+    "printed_type_line": "クリーチャー — フェアリー・ウィザード"
+   },
+   {
+    "name": "Desperate Parry",
+    "printed_name": "捨（す）て身（み）の受（う）け流（なが）し",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは－４/－０の修整を受ける。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 111,
+  "key": "Odds // Ends",
+  "id": "fd83480f-cb84-4bad-a01e-e047e7d64327",
+  "set": "dis",
+  "cn": "153",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Odds",
+    "printed_name": "Odds",
+    "printed_text": "インスタント呪文１つかソーサリー呪文１つを対象とする。コイン投げをする。 表が出た場合、それを打ち消す。 裏が出た場合、それをコピーする。あなたはそのコピーの新しい対象を選んでもよい。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Ends",
+    "printed_name": "Ends",
+    "printed_text": "プレイヤー１人を対象とする。そのプレイヤーは攻撃に参加しているクリーチャーを２体生け贄に捧げる。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 112,
+  "key": "Ondu Knotmaster // Throw a Line",
+  "id": "4c27dd46-dfe0-4160-8355-8f3ab92dcf61",
+  "set": "mh3",
+  "cn": "196",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ondu Knotmaster",
+    "printed_name": "Ondu Knotmaster",
+    "printed_text": "絆魂\nあなたがコントロールしていて改善されていてこれでないクリーチャー１体が死亡するたび、オンドゥの縄名人の上に＋１/＋１カウンター２個を置く。",
+    "printed_type_line": "クリーチャー — コー・ならず者"
+   },
+   {
+    "name": "Throw a Line",
+    "printed_name": "命（いのち）綱（づな）投（な）げ",
+    "printed_text": "クリーチャー１体か２体を対象とし、２個分を割り振る。それらの上にその割り振った個数の＋１/＋１カウンターを置く。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 113,
+  "key": "Paradox Shaper // Omit Variables",
+  "id": "b34f90fe-a580-4b0c-8b8d-50803c12aaab",
+  "set": "fra",
+  "cn": "143",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Paradox Shaper",
+    "printed_name": "パラドックスの形成師",
+    "printed_text": "あなたのアップキープの開始時に、このクリーチャーが準備済状態でなかった場合、これは準備済状態になる。\n{2}：あなたの墓地にあるカード１枚を対象とする。それをあなたのライブラリーの一番下に置く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Omit Variables",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 114,
+  "key": "Pegasus Guardian // Rescue the Foal",
+  "id": "3a7dfaca-3ae6-4667-9f41-072861163d7a",
+  "set": "clb",
+  "cn": "36",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pegasus Guardian",
+    "printed_name": "Pegasus Guardian",
+    "printed_text": "飛行\nあなたの終了ステップの開始時に、あなたがコントロールしているパーマネントがこのターンに戦場を離れていた場合、飛行を持つ白の１/１のペガサス・クリーチャー・トークン１体を生成する。",
+    "printed_type_line": "クリーチャー — ペガサス"
+   },
+   {
+    "name": "Rescue the Foal",
+    "printed_name": "仔（こ）馬（うま）の救（きゅう）出（しゅつ）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。それを追放する。その後、そのカードをオーナーのコントロール下で戦場に戻す。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 115,
+  "key": "Picnic Ruiner // Stolen Goodies",
+  "id": "725874e7-ac7b-4b3d-a29f-668491c78ddd",
+  "set": "woe",
+  "cn": "232",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Picnic Ruiner",
+    "printed_name": "Picnic Ruiner",
+    "printed_text": "あなたがパワーが４以上であるクリーチャーをコントロールしていてピクニック荒らしが攻撃するたび、ターン終了時まで、ピクニック荒らしは二段攻撃を得る。",
+    "printed_type_line": "クリーチャー — ゴブリン・ならず者"
+   },
+   {
+    "name": "Stolen Goodies",
+    "printed_name": "盗（ぬす）まれたお菓（か）子（し）",
+    "printed_text": "あなたがコントロールしている望む数のクリーチャーを対象として３個分を割り振る。それらの上にその割り振った個数の＋１/＋１カウンターを置く。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 116,
+  "key": "Pigment Wrangler // Striking Palette",
+  "id": "055b7c79-13b6-4b4d-b0d7-516808cc8586",
+  "set": "sos",
+  "cn": "126",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pigment Wrangler",
+    "printed_name": "絵の具の世話人",
+    "printed_text": "飛行\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Striking Palette",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 117,
+  "key": "Pollen-Shield Hare // Hare Raising",
+  "id": "a5887fd1-f7fa-4edf-82e3-25361911317a",
+  "set": "woe",
+  "cn": "233",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pollen-Shield Hare",
+    "printed_name": "Pollen-Shield Hare",
+    "printed_text": "あなたがコントロールしているすべてのクリーチャー・トークンは＋１/＋１の修整を受ける。",
+    "printed_type_line": "クリーチャー — 兎"
+   },
+   {
+    "name": "Hare Raising",
+    "printed_name": "兎（うさぎ）の子（こ）育（そだ）て",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。ターン終了時まで、それは警戒を得、＋Ｘ/＋Ｘの修整を受ける。Ｘはあなたがコントロールしているクリーチャーの数に等しい。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 118,
+  "key": "Polluted Cistern // Dim Oubliette",
+  "id": "bc878d03-a445-4f22-ae78-e29054201326",
+  "set": "dsc",
+  "cn": "23",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Polluted Cistern",
+    "printed_name": "Polluted Cistern // Dim Oubliette",
+    "printed_text": "あなたのライブラリーから１枚以上のカードがあなたの墓地に置かれるたび、各対戦相手はそれぞれそれらのカードの中のカード・タイプ１種類につき１点のライフを失う。\n（どちらの半分でも唱えることができる。そのドアは戦場で開放される。閉鎖されているドアのマナ・コストを支払って、それを開放してもよい。これはソーサリーとして行う。）",
+    "printed_type_line": "エンチャント — 部屋"
+   },
+   {
+    "name": "Dim Oubliette",
+    "printed_name": "Polluted Cistern // Dim Oubliette",
+    "printed_text": "仄（ほの）暗（ぐら）い地（ち）下（か）牢（ろう）\no4oB\nあなたがこのドアを開放したとき、カード３枚を切削し、その後、あなたの墓地にあるクリーチャー・カード１枚を戦場に戻す。",
+    "printed_type_line": "エンチャント — 部屋"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 119,
+  "key": "Pompous Battlemage // Improvised Act",
+  "id": "174c608e-9086-4de8-ae28-51f537884b07",
+  "set": "fra",
+  "cn": "90",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pompous Battlemage",
+    "printed_name": "驕慢な戦闘魔道士",
+    "printed_text": "果敢\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Improvised Act",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 120,
+  "key": "Prudent Fateseer // Peer Review",
+  "id": "98c48fe0-b4c5-4f5f-8dc2-fbb472c7bd4e",
+  "set": "fra",
+  "cn": "146",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Prudent Fateseer",
+    "printed_name": "用意周到な運命占い",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。\nあなたが占術や諜報を行うたび、ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋１/＋０の修整を受ける。この能力は、毎ターン１回しか誘発しない。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Peer Review",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 121,
+  "key": "Pure // Simple",
+  "id": "40b4d189-32f3-4624-a69b-6c7b988b79d9",
+  "set": "dis",
+  "cn": "154",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pure",
+    "printed_name": "Pure",
+    "printed_text": "多色のパーマネント１つを対象とし、それを破壊する。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Simple",
+    "printed_name": "Simple",
+    "printed_text": "すべてのオーラと装備品を破壊する。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 122,
+  "key": "Purging Stormbrood // Absorb Essence",
+  "id": "19ca03a7-cd47-4c6b-87ae-4b03b919aa2a",
+  "set": "tdm",
+  "cn": "315",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Purging Stormbrood",
+    "printed_name": "Purging Stormbrood",
+    "printed_text": "飛行\n護法―２点のライフを支払う。\nこのクリーチャーが戦場に出たとき、クリーチャー最大１体を対象とする。それの上からすべてのカウンターを取り除く。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Absorb Essence",
+    "printed_name": "本（ほん）質（しつ）の吸（す）い上（あ）げ",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋２の修整を受け絆魂と呪禁を得る。",
+    "printed_type_line": "インスタント ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 123,
+  "key": "Pyre Rhymer // Molten Tide",
+  "id": "72e3334a-64a1-48cf-8672-605acd51bf14",
+  "set": "fra",
+  "cn": "91",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Pyre Rhymer",
+    "printed_name": "焼尽の詩人",
+    "printed_text": "果敢\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Molten Tide",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 124,
+  "key": "Questing Druid // Seek the Beast",
+  "id": "dfcf25b0-a1a0-4e72-873c-136fd5aeb238",
+  "set": "woe",
+  "cn": "234",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Questing Druid",
+    "printed_name": "Questing Druid",
+    "printed_text": "あなたが白や青や黒や赤である呪文１つを唱えるたび、探索するドルイドの上に＋１/＋１カウンター１個を置く。",
+    "printed_type_line": "クリーチャー — 人間・ドルイド"
+   },
+   {
+    "name": "Seek the Beast",
+    "printed_name": "獣（けもの）の探（たん）索（さく）",
+    "printed_text": "あなたのライブラリーの一番上にあるカード２枚を追放する。次のあなたの終了ステップまで、それらのカードをプレイしてもよい。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 125,
+  "key": "Quill-Blade Laureate // Twofold Intent",
+  "id": "0d26ff71-edbd-4093-abb9-fea7b7de9007",
+  "set": "sos",
+  "cn": "27",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Quill-Blade Laureate",
+    "printed_name": "羽ペン剣の桂冠詩人",
+    "printed_text": "二段攻撃\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Twofold Intent",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 126,
+  "key": "Ral, Monsoon Mage // Ral, Leyline Prodigy",
+  "id": "903bc87b-8bf9-4169-8d40-2d54073ed0d6",
+  "set": "mh3",
+  "cn": "445",
+  "layout": "transform",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ral, Monsoon Mage",
+    "printed_name": "Ral, Monsoon Mage",
+    "printed_text": "あなたがインスタントやソーサリーである呪文を唱えるためのコストは{1}少なくなる。\nあなたがあなたのターンにインスタントやソーサリーである呪文１つを唱えるたび、コイン投げを行う。あなたがそのコイン投げに負けたなら、モンスーンの魔道士、ラルはあなたに１点のダメージを与える。あなたがそのコイン投げに勝ったなら、これを追放してもよい。そうしたなら、これをオーナーのコントロール下で変身させた状態で戦場に戻す。",
+    "printed_type_line": "伝説のクリーチャー — 人間・ウィザード"
+   },
+   {
+    "name": "Ral, Leyline Prodigy",
+    "printed_name": "力線の神童、ラル",
+    "printed_text": "力線の神童、ラルは、このターンにあなたが唱えた、インスタントやソーサリーである呪文１つにつき１個の忠誠カウンターが追加で置かれた状態で戦場に出る。\n+1：次のあなたのターンまで、あなたがインスタントやソーサリーである呪文を唱えるためのコストは{1}少なくなる。\n-2：１つか２つを対象とし、２点分を割り振る。これはそれらにその割り振った点数のダメージを与える。あなたがこれでない青のパーマネントをコントロールしているなら、カード１枚を引く。\n-8：あなたのライブラリーの一番上にあるカード８枚を追放する。このターン、その中からインスタントやソーサリーである望む数の呪文をマナ・コストを支払うことなく唱えてもよい。",
+    "printed_type_line": "伝説のプレインズウォーカー — ラル"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 127,
+  "key": "Ratcatcher Trainee // Pest Problem",
+  "id": "94c23cc4-e43c-43b7-8ef1-bd9c8aac56fc",
+  "set": "woe",
+  "cn": "144",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Ratcatcher Trainee",
+    "printed_name": "Ratcatcher Trainee",
+    "printed_text": "あなたのターンの間、ネズミ捕りの見習いは先制攻撃を持つ。",
+    "printed_type_line": "クリーチャー — 人間・農民"
+   },
+   {
+    "name": "Pest Problem",
+    "printed_name": "害（がい）獣（じゅう）被（ひ）害（がい）",
+    "printed_text": "「このクリーチャーではブロックできない。」を持つ黒の１/１のネズミ・クリーチャー・トークン２体を生成する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 128,
+  "key": "Research // Development",
+  "id": "009fbb85-f117-496e-a7b9-77778247c4aa",
+  "set": "dis",
+  "cn": "155",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Research",
+    "printed_name": "Research",
+    "printed_text": "ゲームの外部にある、あなたがオーナーであるカードを最大４枚まで選び、それらをあなたのライブラリーに加えて切り直す。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Development",
+    "printed_name": "Development",
+    "printed_text": "いずれかの対戦相手があなたにカードを１枚引くことを認めないかぎり、赤の３/１のエレメンタル・クリーチャー・トークンを１体場に出す。 この手順をもう２回繰り返す。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 129,
+  "key": "Rise // Fall",
+  "id": "82ab8833-0369-45f4-9850-0f4cb5f19d25",
+  "set": "dis",
+  "cn": "156",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Rise",
+    "printed_name": "Rise",
+    "printed_text": "いずれかの墓地にあるクリーチャー・カード１枚と場のクリーチャー１体を対象とし、それらをオーナーの手札に戻す。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Fall",
+    "printed_name": "Fall",
+    "printed_text": "プレイヤー１人を対象とする。そのプレイヤーは自分の手札のカードを無作為に２枚公開し、これにより公開された土地でない各カードを捨てる。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 130,
+  "key": "Road // Ruin",
+  "id": "cc0d962a-55c4-4000-a900-5991ae3cf115",
+  "set": "mh2",
+  "cn": "376",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Road",
+    "printed_name": "Road",
+    "printed_text": "あなたのライブラリーから基本土地・カード１枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Ruin",
+    "printed_name": "Ruin",
+    "printed_text": "余波（この呪文はあなたの墓地からのみ唱えられる。その後、これを追放する。）\nクリーチャー１体を対象とする。瓦解はそれに、あなたがコントロールしている土地の数に等しい点数のダメージを与える。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 131,
+  "key": "Rough // Tumble",
+  "id": "55dd3f58-ba5c-424a-8717-e6634ba34649",
+  "set": "tsr",
+  "cn": "186",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Rough",
+    "printed_name": "Rough",
+    "printed_text": "乱暴は飛行を持たない各クリーチャーに、それぞれ２点のダメージを与える。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Tumble",
+    "printed_name": "Tumble",
+    "printed_text": "転落は飛行を持つ各クリーチャーに、それぞれ６点のダメージを与える。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 132,
+  "key": "Runescale Stormbrood // Chilling Screech",
+  "id": "4edfebfb-7044-448e-8270-6a80d63471ad",
+  "set": "tdm",
+  "cn": "221",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Runescale Stormbrood",
+    "printed_name": "Runescale Stormbrood",
+    "printed_text": "飛行\nあなたがクリーチャーでない呪文やドラゴン・呪文である１つを唱えるたび、ターン終了時まで、このクリーチャーは＋２/＋０の修整を受ける。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Chilling Screech",
+    "printed_name": "凍（こご）える金（かな）切（き）り声（ごえ）",
+    "printed_text": "マナ総量が２以下である呪文１つを対象とする。それを打ち消す。（その後、このカードをオーナーのライブラリーに加えて切り直す。）",
+    "printed_type_line": "インスタント ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 133,
+  "key": "Sagu Wildling // Roost Seek",
+  "id": "a24a3d3f-73fe-4ffd-b4b9-241c535dfee3",
+  "set": "tdm",
+  "cn": "306",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Sagu Wildling",
+    "printed_name": "Sagu Wildling",
+    "printed_text": "飛行\nこのクリーチャーが戦場に出たとき、３点のライフを得る。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Roost Seek",
+    "printed_name": "止（と）まり木（ぎ）探（さが）し",
+    "printed_text": "あなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。",
+    "printed_type_line": "ソーサリー ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 134,
+  "key": "Said // Done",
+  "id": "a6781c59-ea92-4edf-b186-9dccdb2a0dfe",
+  "set": "mh2",
+  "cn": "60",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Said",
+    "printed_name": "Said",
+    "printed_text": "あなたの墓地からインスタントかソーサリーであるカード１枚を対象とする。それをあなたの手札に戻す。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Done",
+    "printed_name": "Done",
+    "printed_text": "クリーチャー最大２体を対象とする。それらをタップする。それらのクリーチャーは、次のそれらのコントローラーのアンタップ・ステップにアンタップしない。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 135,
+  "key": "Sanar, Unfinished Genius // Wild Idea",
+  "id": "1bdd6b2a-880c-46ba-be04-05dae2d71ac7",
+  "set": "sos",
+  "cn": "223",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Sanar, Unfinished Genius",
+    "printed_name": "荒削りな天才、サナール",
+    "printed_text": "これは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\n{T}：宝物・トークン１つを生成する。このターンにあなたがインスタントやソーサリーである呪文を唱えていなければ起動できない。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Wild Idea",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 136,
+  "key": "Sapphire Dragon // Psionic Pulse",
+  "id": "94005774-9218-4366-807b-4037293d8207",
+  "set": "clb",
+  "cn": "94",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Sapphire Dragon",
+    "printed_name": "Sapphire Dragon",
+    "printed_text": "飛行\nサファイア・ドラゴンが攻撃するかブロックするたび、占術２を行う。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Psionic Pulse",
+    "printed_name": "サイオニック・パルス",
+    "printed_text": "クリーチャーでない呪文１つを対象とする。それを打ち消す。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 137,
+  "key": "Scalding Viper // Steam Clean",
+  "id": "c962ac4b-22fd-463d-92a8-6e6e44cabc01",
+  "set": "woe",
+  "cn": "235",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Scalding Viper",
+    "printed_name": "Scalding Viper",
+    "printed_text": "対戦相手１人がマナ総量が３以下である呪文１つを唱えるたび、煮えたぎるバイパーはそのプレイヤーに１点のダメージを与える。",
+    "printed_type_line": "クリーチャー — エレメンタル・蛇"
+   },
+   {
+    "name": "Steam Clean",
+    "printed_name": "蒸（じょう）気（き）洗（せん）浄（じょう）",
+    "printed_text": "土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 138,
+  "key": "Scathing Shadelock // Venomous Words",
+  "id": "21da37bc-1e23-4478-9b44-15cabd406fbf",
+  "set": "sos",
+  "cn": "98",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Scathing Shadelock",
+    "printed_name": "容赦なき妨術士",
+    "printed_text": "あなたの第１メイン・フェイズの開始時に、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Venomous Words",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 139,
+  "key": "Secret Arcade // Dusty Parlor",
+  "id": "2a7a32b8-36be-4e9b-b14a-ee1ee600e175",
+  "set": "dsc",
+  "cn": "10",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Secret Arcade",
+    "printed_name": "Secret Arcade // Dusty Parlor",
+    "printed_text": "あなたがコントロールしていて土地でないすべてのパーマネントや、あなたがコントロールしているすべてのパーマネント・呪文は、他のタイプに加えてエンチャントである。\n（どちらの半分でも唱えることができる。そのドアは戦場で開放される。閉鎖されているドアのマナ・コストを支払って、それを開放してもよい。これはソーサリーとして行う。）",
+    "printed_type_line": "エンチャント — 部屋"
+   },
+   {
+    "name": "Dusty Parlor",
+    "printed_name": "Secret Arcade // Dusty Parlor",
+    "printed_text": "埃（ほこり）被（かぶ）った応（おう）接（せつ）室（しつ）\no2oW\nあなたがエンチャント・呪文１つを唱えるたび、クリーチャー最大１体を対象とする。それの上にその呪文のマナ総量に等しい個数の＋１/＋１カウンターを置く。",
+    "printed_type_line": "エンチャント — 部屋"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 140,
+  "key": "Semester Foreseer // Peer Review",
+  "id": "7a5cc90c-0e99-4177-b87c-2ba072f84bf6",
+  "set": "fra",
+  "cn": "39",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Semester Foreseer",
+    "printed_name": "学期の先見者",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nこのクリーチャーが戦場に出たとき、諜報１を行う。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Peer Review",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 141,
+  "key": "Shrouded Shepherd // Cleave Shadows",
+  "id": "740799c9-2126-46f1-af35-3ec4477741fc",
+  "set": "woe",
+  "cn": "236",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Shrouded Shepherd",
+    "printed_name": "Shrouded Shepherd",
+    "printed_text": "覆われた羊飼いが戦場に出たとき、あなたがコントロールしているクリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋２の修整を受ける。",
+    "printed_type_line": "クリーチャー — スピリット・戦士"
+   },
+   {
+    "name": "Cleave Shadows",
+    "printed_name": "影（かげ）の切（せつ）断（だん）",
+    "printed_text": "ターン終了時まで、対戦相手がコントロールしているすべてのクリーチャーは－１/－１の修整を受ける。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 142,
+  "key": "Skycoach Conductor // All Aboard",
+  "id": "817d30f0-c48b-49e9-afe5-8cc654dc7c70",
+  "set": "sos",
+  "cn": "67",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Skycoach Conductor",
+    "printed_name": "飛空バスの車掌",
+    "printed_text": "瞬速\n飛行、警戒\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "All Aboard",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 143,
+  "key": "Smaug, the Great Calamity // Spew Flame",
+  "id": "659d64d5-7e9c-4325-9118-87fd12864cc8",
+  "set": "hob",
+  "cn": "109",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Smaug, the Great Calamity",
+    "printed_name": "大いなる厄災、スマウグ",
+    "printed_text": "飛行",
+    "printed_type_line": null
+   },
+   {
+    "name": "Spew Flame",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 144,
+  "key": "Spellscorn Coven // Take It Back",
+  "id": "febb7333-0c9f-4f94-bc41-1db2daea8e8d",
+  "set": "woe",
+  "cn": "237",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Spellscorn Coven",
+    "printed_name": "Spellscorn Coven",
+    "printed_text": "飛行\n呪文嘲りの集会が戦場に出たとき、各対戦相手はそれぞれカード１枚を捨てる。",
+    "printed_type_line": "クリーチャー — フェアリー・邪術師"
+   },
+   {
+    "name": "Take It Back",
+    "printed_name": "お返（かえ）し",
+    "printed_text": "呪文１つを対象とする。それをオーナーの手札に戻す。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 145,
+  "key": "Spiked Corridor // Torture Pit",
+  "id": "aee5deb4-49c2-4a35-b044-df1dc09cfa55",
+  "set": "dsc",
+  "cn": "28",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Spiked Corridor",
+    "printed_name": "Spiked Corridor // Torture Pit",
+    "printed_text": "あなたがこのドアを開放したとき、「このクリーチャーが死亡したとき、１つを対象とする。これはそれに１点のダメージを与える。」を持つ赤の１/１のデビル・クリーチャー・トークン３体を生成する。\n（どちらの半分でも唱えることができる。そのドアは戦場で開放される。閉鎖されているドアのマナ・コストを支払って、それを開放してもよい。これはソーサリーとして行う。）",
+    "printed_type_line": "エンチャント — 部屋"
+   },
+   {
+    "name": "Torture Pit",
+    "printed_name": "Spiked Corridor // Torture Pit",
+    "printed_text": "拷（ごう）問（もん）部（べ）屋（や）\no3oR\nあなたがコントロールしている発生源１つが対戦相手に戦闘ダメージでないダメージを与えるなら、代わりに、それはその点数に２を足した点数のダメージを与える。",
+    "printed_type_line": "エンチャント — 部屋"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 146,
+  "key": "Spiritcall Enthusiast // Scrollboost",
+  "id": "7b4968d3-a16c-4a00-ab28-c285018a400e",
+  "set": "sos",
+  "cn": "33",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Spiritcall Enthusiast",
+    "printed_name": "精霊喚びの愛好者",
+    "printed_text": "あなたがコントロールしている１体以上のトークンが戦場に出るたび、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Scrollboost",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 147,
+  "key": "Stingerquill Voxmancer // Vicious Verse",
+  "id": "67ebba9b-998d-4191-98b5-72042f4a59a1",
+  "set": "fra",
+  "cn": "151",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Stingerquill Voxmancer",
+    "printed_name": "スティンガークイルの音声術士",
+    "printed_text": "あなたのアップキープの開始時に、このクリーチャーが準備済状態でなかった場合、これは準備済状態になる。 （準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Vicious Verse",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 148,
+  "key": "Stormkeld Vanguard // Bear Down",
+  "id": "0d5710c9-b9d8-4cd7-bcb6-a615fe88cd15",
+  "set": "woe",
+  "cn": "187",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Stormkeld Vanguard",
+    "printed_name": "Stormkeld Vanguard",
+    "printed_text": "ストームケルドの先兵は、パワーが２以下であるクリーチャーにはブロックされない。",
+    "printed_type_line": "クリーチャー — 巨人・戦士"
+   },
+   {
+    "name": "Bear Down",
+    "printed_name": "熊（くま）の踏（ふ）みつけ",
+    "printed_text": "アーティファクトやエンチャントのうち１つを対象とする。それを破壊する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 149,
+  "key": "Stormshriek Feral // Flush Out",
+  "id": "5ac68d2d-c29c-410f-a3f0-8887b5876c8f",
+  "set": "tdm",
+  "cn": "304",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Stormshriek Feral",
+    "printed_name": "Stormshriek Feral",
+    "printed_text": "飛行、速攻\n{1}{R}：ターン終了時まで、このクリーチャーは＋１/＋０の修整を受ける。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Flush Out",
+    "printed_name": "流（なが）し出（だ）し",
+    "printed_text": "カード１枚を捨てる。そうしたなら、カード２枚を引く。",
+    "printed_type_line": "ソーサリー ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 150,
+  "key": "Strength of the Harvest // Haven of the Harvest",
+  "id": "60a8f227-479e-43e4-9b6e-03fea5634c09",
+  "set": "mh3",
+  "cn": "258",
+  "layout": "modal_dfc",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Strength of the Harvest",
+    "printed_name": "Strength of the Harvest",
+    "printed_text": "Enchant creature\nEnchanted creature gets +1/+1 for each creature and/or enchantment you control.\nLand\n{T}: Add {G} or {W}.",
+    "printed_type_line": "Enchantment — Aura"
+   },
+   {
+    "name": "Haven of the Harvest",
+    "printed_name": "収穫の安息地",
+    "printed_text": "収穫の安息地はタップ状態で戦場に出る。\n{T}：{G}か{W}を加える。\nオーラ\n{2}{G/W}",
+    "printed_type_line": "土地"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 151,
+  "key": "Striding Shotcaller // Run the Play",
+  "id": "a5002a89-1dc9-44ef-b961-1553568ef41b",
+  "set": "soc",
+  "cn": "50",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Striding Shotcaller",
+    "printed_name": "一足飛びの司令塔",
+    "printed_text": "到達\nあなたがコントロールしている１体以上のクリーチャーがプレイヤー１人に戦闘ダメージを与えるたび、このクリーチャーは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Run the Play",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 152,
+  "key": "Strife Scholar // Awaken the Ages",
+  "id": "5b632d99-bc87-4905-aac8-40d9aa3c2bf1",
+  "set": "sos",
+  "cn": "131",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Strife Scholar",
+    "printed_name": "相争う学生",
+    "printed_text": "護法―２点のライフを支払う。\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Awaken the Ages",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 153,
+  "key": "Supply // Demand",
+  "id": "e1f44f2b-46aa-4b8d-ad27-4cd5bc24a847",
+  "set": "dis",
+  "cn": "157",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Supply",
+    "printed_name": "Supply",
+    "printed_text": "緑の1/1の苗木クリーチャー・トークンをＸ体場に出す。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Demand",
+    "printed_name": "Demand",
+    "printed_text": "あなたのライブラリーから多色のカードを１枚探し、それを公開してあなたの手札に加える。 その後あなたのライブラリーを切り直す。",
+    "printed_type_line": "ソーサリー"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 154,
+  "key": "Tam, Observant Sequencer // Deep Sight",
+  "id": "6db9bc9f-9baf-46c5-90bc-6bcf780f695c",
+  "set": "sos",
+  "cn": "237",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Tam, Observant Sequencer",
+    "printed_name": "観察眼ある配列者、タム",
+    "printed_text": "上陸 ― あなたがコントロールしている土地１つが戦場に出るたび、これは準備済状態になる。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Deep Sight",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 155,
+  "key": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+  "id": "fcbcb7d8-8aea-415d-ac20-6928dc611b5e",
+  "set": "mh3",
+  "cn": "242",
+  "layout": "transform",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Tamiyo, Inquisitive Student",
+    "printed_name": "Tamiyo, Inquisitive Student",
+    "printed_text": "飛行\n知りたがりの学徒、タミヨウが攻撃するたび、調査を行う。（手掛かり・トークン１つを生成する。それは「{2}, このアーティファクトを生け贄に捧げる：カード１枚を引く。」を持つアーティファクトである。）\nあなたが各ターン内のあなたの３枚目のカードを引いたとき、これを追放する。その後、これをオーナーのコントロール下で変身させた状態で戦場に戻す。",
+    "printed_type_line": "伝説のクリーチャー — ムーンフォーク・ウィザード"
+   },
+   {
+    "name": "Tamiyo, Seasoned Scholar",
+    "printed_name": "Tamiyo, Seasoned Scholar",
+    "printed_text": "+2：次のあなたのターンまで、クリーチャー１体があなたやあなたがコントロールしているプレインズウォーカー１体を攻撃するたび、ターン終了時まで、そのクリーチャーは－１/ー０の修整を受ける。\n-3：あなたの墓地にありインスタントやソーサリーであるカード１枚を対象とする。それをあなたの手札に戻す。それが緑のカードなら、好きな色１色のマナ１点を加える。\n-7：あなたのライブラリーにあるカードの枚数の端数を切り上げた半分に等しい枚数のカードを引く。あなたは「あなたの手札の上限はなくなる。」を持つ紋章を得る。",
+    "printed_type_line": "伝説のプレインズウォーカー — タミヨウ"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 156,
+  "key": "Tempest Hart // Scan the Clouds",
+  "id": "a58a82bd-5bbb-482d-bb36-4ef34d8a544e",
+  "set": "woe",
+  "cn": "238",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Tempest Hart",
+    "printed_name": "Tempest Hart",
+    "printed_text": "トランプル\nあなたがマナ総量が５以上である呪文１つを唱えるたび、大嵐の雄鹿の上に＋１/＋１カウンター１個を置く。",
+    "printed_type_line": "クリーチャー — エレメンタル・大鹿"
+   },
+   {
+    "name": "Scan the Clouds",
+    "printed_name": "雲（くも）の走（そう）査（さ）",
+    "printed_text": "カード２枚を引く。その後、カード２枚を捨てる。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 157,
+  "key": "The Arkenstone // Seek the Heart",
+  "id": "3104b67f-acbf-4172-98a0-204a7c306525",
+  "set": "hob",
+  "cn": "234",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "The Arkenstone",
+    "printed_name": "アーケン石",
+    "printed_text": "あなたがコントロールしているすべてのクリーチャーは＋１/＋１の修整を受ける。\nあなたの終了ステップの開始時に、カード１枚を引く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Seek the Heart",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 158,
+  "key": "Theorix Metamage // Omit Variables",
+  "id": "471a5a3b-b418-42d7-be84-a220168b2de5",
+  "set": "fra",
+  "cn": "156",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Theorix Metamage",
+    "printed_name": "セオリクスの変転魔道士",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nスレッショルド ― あなたの墓地に７枚以上のカードがあるかぎり、このクリーチャーは＋１/＋０の修整を受け飛行を持つ。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Omit Variables",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 159,
+  "key": "Thranduil, Sindarin Liege // Silvan Rally",
+  "id": "07fda673-d955-4659-a6a4-c15c396c1cf9",
+  "set": "hob",
+  "cn": "166",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Thranduil, Sindarin Liege",
+    "printed_name": "シンダリンの領主、スランドゥイル",
+    "printed_text": "あなたがコントロールしていてこれでないすべてのエルフは＋１/＋１の修整を受ける。\n上陸 ― あなたがコントロールしている土地１つが戦場に出るたび、緑の１/１のエルフ・クリーチャー・トークン１体を生成する。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Silvan Rally",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 160,
+  "key": "Threadbind Clique // Rip the Seams",
+  "id": "5882480d-8823-4b40-bcac-b23a102afb4a",
+  "set": "woe",
+  "cn": "239",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Threadbind Clique",
+    "printed_name": "Threadbind Clique",
+    "printed_text": "飛行",
+    "printed_type_line": "クリーチャー — フェアリー"
+   },
+   {
+    "name": "Rip the Seams",
+    "printed_name": "継（つ）ぎ目（め）破（やぶ）り",
+    "printed_text": "タップ状態のクリーチャー１体を対象とする。それを破壊する。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 161,
+  "key": "Tlincalli Hunter // Retrieve Prey",
+  "id": "439f0680-7cf2-4baa-b832-34af79823245",
+  "set": "clb",
+  "cn": "638",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Tlincalli Hunter",
+    "printed_name": "Tlincalli Hunter",
+    "printed_text": "トランプル\n各ターン、あなたは追放領域から唱えるクリーチャー・呪文１つのマナ・コストを支払うのではなく{0}を支払ってもよい。",
+    "printed_type_line": "クリーチャー — 蠍・スカウト"
+   },
+   {
+    "name": "Retrieve Prey",
+    "printed_name": "獲（え）物（もの）の回（かい）収（しゅう）",
+    "printed_text": "あなたの墓地にあるクリーチャー・カード１枚を対象とする。それを追放する。次のあなたのターンの終了時まで、あなたはそのカードを唱えてもよい。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 162,
+  "key": "Topaz Dragon // Entropic Cloud",
+  "id": "aacf1325-9cc6-44c2-8d1b-beb295f2960e",
+  "set": "clb",
+  "cn": "153",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Topaz Dragon",
+    "printed_name": "Topaz Dragon",
+    "printed_text": "飛行、接死",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Entropic Cloud",
+    "printed_name": "エントロピーの雲（くも）",
+    "printed_text": "ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは接死を得る。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 163,
+  "key": "Trial // Error",
+  "id": "9f8c3c41-c5ee-4548-91ec-92e77dd66620",
+  "set": "dis",
+  "cn": "158",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Trial",
+    "printed_name": "Trial",
+    "printed_text": "クリーチャー１体を対象とし、そのクリーチャーをブロックしているかそのクリーチャーにブロックされているすべてのクリーチャーをオーナーの手札に戻す。",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Error",
+    "printed_name": "Error",
+    "printed_text": "多色の呪文１つを対象とし、それを打ち消す。",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 164,
+  "key": "Turn // Burn",
+  "id": "2c6f8a74-be3d-4f27-b239-cc2aefd8421b",
+  "set": "gk1",
+  "cn": "45",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Turn",
+    "printed_name": "Turn",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それはすべての能力を失い、基本のパワーとタフネスが０/１の赤の奇魔になる。\n融合（あなたはこのカードの片方の半分または両方の半分をあなたの手札から唱えてもよい。）",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Burn",
+    "printed_name": "Burn",
+    "printed_text": "クリーチャー１体かプレインズウォーカー１体かプレイヤー１人を対象とする。点火はそれに２点のダメージを与える。\n融合（あなたはこのカードの片方の半分または両方の半分をあなたの手札から唱えてもよい。）",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 165,
+  "key": "Twice Upon a Time // Unlikely Meeting",
+  "id": "d658c9a0-3710-424d-9e54-2d4b71f5c802",
+  "set": "who",
+  "cn": "61",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Twice Upon a Time",
+    "printed_name": "Twice Upon a Time",
+    "printed_text": "この呪文は、あなたが２体以上のドクターをコントロールしていなければ唱えられない。\nこのターンに続いて追加の１ターンを行う。これを追放する。",
+    "printed_type_line": "ソーサリー"
+   },
+   {
+    "name": "Unlikely Meeting",
+    "printed_name": "思わぬ邂（かい）逅（こう）",
+    "printed_text": "あなたのライブラリーからドクター・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 166,
+  "key": "Twining Twins // Swift Spiral",
+  "id": "ab1390e6-0b64-4b60-83ee-448c333582e0",
+  "set": "woe",
+  "cn": "240",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Twining Twins",
+    "printed_name": "Twining Twins",
+    "printed_text": "飛行、警戒、護法{1}",
+    "printed_type_line": "クリーチャー — フェアリー・ウィザード"
+   },
+   {
+    "name": "Swift Spiral",
+    "printed_name": "敏（びん）捷（しょう）な螺（ら）旋（せん）",
+    "printed_text": "トークンでないクリーチャー１体を対象とする。それを追放する。次の終了ステップの開始時に、それをオーナーのコントロール下で戦場に戻す。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 167,
+  "key": "Twinmaw Stormbrood // Charring Bite",
+  "id": "729f7a6b-65ea-46b6-83ec-0db06bdbd7e6",
+  "set": "tdm",
+  "cn": "320",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Twinmaw Stormbrood",
+    "printed_name": "Twinmaw Stormbrood",
+    "printed_text": "飛行\nこのクリーチャーが戦場に出たとき、５点のライフを得る。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Charring Bite",
+    "printed_name": "黒（くろ）焦（こ）げの噛（か）みつき",
+    "printed_text": "飛行を持たないクリーチャー１体を対象とする。黒焦げの噛みつきはそれに５点のダメージを与える。",
+    "printed_type_line": "ソーサリー ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 168,
+  "key": "Two-Handed Axe // Sweeping Cleave",
+  "id": "9279cf9d-2809-4386-945e-4fc02ace00d8",
+  "set": "clb",
+  "cn": "203",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Two-Handed Axe",
+    "printed_name": "Two-Handed Axe",
+    "printed_text": "装備しているクリーチャーが攻撃するたび、ターン終了時まで、それのパワーを２倍にする。\n装備{1}{R}",
+    "printed_type_line": "アーティファクト — 装備品"
+   },
+   {
+    "name": "Sweeping Cleave",
+    "printed_name": "ぶん回（まわ）し",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。ターン終了時まで、それは二段攻撃を得る。（その後、これを追放する。後で追放領域からこのアーティファクトを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 169,
+  "key": "Two-Headed Hunter // Twice the Rage",
+  "id": "a62ed017-82c8-496f-b34b-d32ad313c53b",
+  "set": "woe",
+  "cn": "155",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Two-Headed Hunter",
+    "printed_name": "Two-Headed Hunter",
+    "printed_text": "威迫（このクリーチャーは２体以上のクリーチャーにしかブロックされない。）",
+    "printed_type_line": "クリーチャー — 巨人"
+   },
+   {
+    "name": "Twice the Rage",
+    "printed_name": "倍（ばい）増（ぞう）する憤（ふん）怒（ぬ）",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、それは二段攻撃を得る。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 170,
+  "key": "Vantress Transmuter // Croaking Curse",
+  "id": "2493b570-768a-43df-adc7-5492c78ccc6a",
+  "set": "woe",
+  "cn": "75",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Vantress Transmuter",
+    "printed_name": "Vantress Transmuter",
+    "printed_text": null,
+    "printed_type_line": "クリーチャー — 人間・ウィザード"
+   },
+   {
+    "name": "Croaking Curse",
+    "printed_name": "カエル声（ごえ）の呪（のろ）い",
+    "printed_text": "クリーチャー１体を対象とする。それをタップする。呪われし者・役割・トークン１つをそれについた状態で生成する。（エンチャントしているクリーチャーは１/１である。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 171,
+  "key": "Variable Chaser // Arc of Fortune",
+  "id": "50e365bf-058c-444a-8c34-586a8d5c331d",
+  "set": "fra",
+  "cn": "47",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Variable Chaser",
+    "printed_name": "変数の追跡者",
+    "printed_text": "飛行、果敢\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Arc of Fortune",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 172,
+  "key": "Vastlands Scavenger // Bind to Life",
+  "id": "0f376d5d-a7d1-41da-afb5-924f87c50603",
+  "set": "sos",
+  "cn": "342",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Vastlands Scavenger",
+    "printed_name": "大界の回収者",
+    "printed_text": "接死\nこのクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Bind to Life",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 173,
+  "key": "Velvetwing Butterflies // Gaze in Wonder",
+  "id": "c1398b43-1610-4849-8bb9-544dc020a77b",
+  "set": "hob",
+  "cn": "30",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Velvetwing Butterflies",
+    "printed_name": "ビロード羽の蝶",
+    "printed_text": "飛行",
+    "printed_type_line": null
+   },
+   {
+    "name": "Gaze in Wonder",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 174,
+  "key": "Vigorbloom Vanguard // Seed Suture",
+  "id": "b7db62b0-16da-49c6-a2c3-74afc7cafe7a",
+  "set": "fra",
+  "cn": "161",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Vigorbloom Vanguard",
+    "printed_name": "ヴィゴーブルームの先兵",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nあなたがコントロールしていて＋１/＋１カウンターが置かれているすべてのクリーチャーは警戒を持つ。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Seed Suture",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 175,
+  "key": "Virtue of Courage // Embereth Blaze",
+  "id": "ab27b74e-edab-4495-bf1f-cc75df44aa1a",
+  "set": "woe",
+  "cn": "157",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Virtue of Courage",
+    "printed_name": "Virtue of Courage",
+    "printed_text": "あなたがコントロールしている発生源１つが対戦相手１人に戦闘ダメージでないダメージを与えるたび、あなたのライブラリーの一番上にあるその点数に等しい枚数のカードを追放してもよい。このターン、それらのカードをプレイしてもよい。",
+    "printed_type_line": "エンチャント"
+   },
+   {
+    "name": "Embereth Blaze",
+    "printed_name": "エンバレスの猛（もう）火（か）",
+    "printed_text": "１つを対象とする。エンバレスの猛火はそれに２点のダメージを与える。（その後、このカードを追放する。後で追放領域にあるこのエンチャントを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 176,
+  "key": "Virtue of Knowledge // Vantress Visions",
+  "id": "5b77bbe8-6f2d-4682-bdc1-264beed2481e",
+  "set": "woe",
+  "cn": "76",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Virtue of Knowledge",
+    "printed_name": "Virtue of Knowledge",
+    "printed_text": "パーマネント１つが戦場に出たことによりあなたがコントロールしているパーマネントの誘発型能力１つが誘発するなら、その能力は追加でもう１回誘発する。",
+    "printed_type_line": "エンチャント"
+   },
+   {
+    "name": "Vantress Visions",
+    "printed_name": "ヴァントレスの幻（げん）視（し）",
+    "printed_text": "あなたがコントロールしていて起動型や誘発型である能力１つを対象とする。それをコピーする。そのコピーの新しい対象を選んでもよい。",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 177,
+  "key": "Virtue of Loyalty // Ardenvale Fealty",
+  "id": "6df8ebd8-e8b3-461f-ac39-c061bbca359c",
+  "set": "woe",
+  "cn": "38",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Virtue of Loyalty",
+    "printed_name": "Virtue of Loyalty",
+    "printed_text": "あなたの終了ステップの開始時に、あなたがコントロールしている各クリーチャーの上にそれぞれ＋１/＋１カウンター１個を置く。それらのクリーチャーをアンタップする。",
+    "printed_type_line": "エンチャント"
+   },
+   {
+    "name": "Ardenvale Fealty",
+    "printed_name": "アーデンベイルの忠（ちゅう）義（ぎ）",
+    "printed_text": "警戒を持つ白の２/２の騎士・クリーチャー・トークン１体を生成する。（その後、このカードを追放する。後で追放領域にあるこのエンチャントを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 178,
+  "key": "Virtue of Persistence // Locthwain Scorn",
+  "id": "a1053475-5baf-440b-bcfc-6050314e1359",
+  "set": "woe",
+  "cn": "115",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Virtue of Persistence",
+    "printed_name": "Virtue of Persistence",
+    "printed_text": "あなたのアップキープの開始時に、墓地にあるクリーチャー・カード１枚を対象とする。それをあなたのコントロール下で戦場に出す。",
+    "printed_type_line": "エンチャント"
+   },
+   {
+    "name": "Locthwain Scorn",
+    "printed_name": "ロークスワインの嘲（ちょう）笑（しょう）",
+    "printed_text": "クリーチャー１体を対象とする。ターン終了時まで、そのクリーチャーは－３/－３の修整を受ける。あなたは２点のライフを得る。",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 179,
+  "key": "Virtue of Strength // Garenbrig Growth",
+  "id": "ca4bd0e3-20ef-469f-9223-616584fcf676",
+  "set": "woe",
+  "cn": "197",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Virtue of Strength",
+    "printed_name": "Virtue of Strength",
+    "printed_text": "あなたがマナを引き出す目的で基本土地をタップするなら、それは代わりにその３倍の点数のマナを生み出す。",
+    "printed_type_line": "エンチャント"
+   },
+   {
+    "name": "Garenbrig Growth",
+    "printed_name": "ギャレンブリグの成（せい）長（ちょう）",
+    "printed_text": "あなたの墓地にありクリーチャーや土地であるカード１枚を対象とする。それをあなたの手札に戻す。（その後、このカードを追放する。後で追放領域にあるこのエンチャントを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 180,
+  "key": "Void Extrapolator // Omit Variables",
+  "id": "6e23cfa9-b50b-4758-a755-3c502bb6a592",
+  "set": "fra",
+  "cn": "70",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Void Extrapolator",
+    "printed_name": "虚空の外挿者",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\nスレッショルド ― あなたの墓地に７枚以上のカードがあるかぎり、このクリーチャーは＋１/＋１の修整を受ける。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Omit Variables",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 181,
+  "key": "Wear // Tear",
+  "id": "f86ada82-e454-46f1-89a3-39058dd25339",
+  "set": "pip",
+  "cn": "222",
+  "layout": "split",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Wear",
+    "printed_name": "Wear // Tear",
+    "printed_text": "アーティファクト１つを対象とする。それを破壊する。\n融合（あなたはこのカードの半分か両方合わせたものをあなたの手札から唱えてもよい。）",
+    "printed_type_line": "インスタント"
+   },
+   {
+    "name": "Tear",
+    "printed_name": "Wear // Tear",
+    "printed_text": "エンチャント１つを対象とする。それを破壊する。\n融合（あなたはこのカードの半分か両方合わせたものをあなたの手札から唱えてもよい。）",
+    "printed_type_line": "インスタント"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 182,
+  "key": "Whiplash Wordsmith // Vicious Verse",
+  "id": "0ef5af4f-510c-4273-8964-d9eb482e311b",
+  "set": "fra",
+  "cn": "164",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Whiplash Wordsmith",
+    "printed_name": "鞭打つ弁舌家",
+    "printed_text": "このクリーチャーは準備済状態で戦場に出る。（準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）\n対戦相手が戦闘ダメージでないダメージを受けたターンの間、このクリーチャーは飛行と速攻を持つ。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Vicious Verse",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 183,
+  "key": "Whirlwing Stormbrood // Dynamic Soar",
+  "id": "6091a779-513a-476c-946b-d48fde8be4bf",
+  "set": "tdm",
+  "cn": "322",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Whirlwing Stormbrood",
+    "printed_name": "Whirlwing Stormbrood",
+    "printed_text": "瞬速\n飛行\nあなたはソーサリー・呪文やドラゴン・呪文を、瞬速を持っているかのように唱えてもよい。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Dynamic Soar",
+    "printed_name": "力（ちから）強（づよ）き飛（ひ）翔（しょう）",
+    "printed_text": "あなたがコントロールしているクリーチャー１体を対象とする。それの上に＋１/＋１カウンター３個を置く。",
+    "printed_type_line": "ソーサリー ― 前兆"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 184,
+  "key": "Woodland Acolyte // Mend the Wilds",
+  "id": "74f2474e-86e0-4587-9085-8fb14a9ab382",
+  "set": "woe",
+  "cn": "241",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Woodland Acolyte",
+    "printed_name": "Woodland Acolyte",
+    "printed_text": "森林地の侍祭が戦場に出たとき、カード１枚を引く。",
+    "printed_type_line": "クリーチャー — 人間・クレリック"
+   },
+   {
+    "name": "Mend the Wilds",
+    "printed_name": "僻（へき）境（きょう）の修（しゅう）繕（ぜん）",
+    "printed_text": "あなたの墓地にあるパーマネント・カード１枚を対象とする。それをあなたのライブラリーの一番上に置く。（その後、このカードを追放する。後で追放領域にあるこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 185,
+  "key": "Woodwork Prodigy // Soul Tether",
+  "id": "2d3cbc65-8ae5-4bbb-a0f9-a6935a9981a8",
+  "set": "fra",
+  "cn": "165",
+  "layout": "prepare",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Woodwork Prodigy",
+    "printed_name": "木工の神童",
+    "printed_text": "あなたのアップキープの開始時に、このクリーチャーが準備済状態でなかった場合、これは準備済状態になる。 （準備済状態である間、あなたはこれの呪文のコピーを唱えてもよい。そうしたら、これを未準備状態にする。）",
+    "printed_type_line": null
+   },
+   {
+    "name": "Soul Tether",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 186,
+  "key": "Young Blue Dragon // Sand Augury",
+  "id": "9c4e7f2c-cc89-465e-97e7-489ec557ed81",
+  "set": "clb",
+  "cn": "106",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Young Blue Dragon",
+    "printed_name": "Young Blue Dragon",
+    "printed_text": "飛行",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Sand Augury",
+    "printed_name": "砂（すな）占（うらな）い",
+    "printed_text": "占術１を行い、その後、カード１枚を引く。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "ソーサリー ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 187,
+  "key": "Young Red Dragon // Bathe in Gold",
+  "id": "124250ec-c791-4f7e-8cb4-0c9190d3467e",
+  "set": "clb",
+  "cn": "210",
+  "layout": "adventure",
+  "image_status": "lowres",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Young Red Dragon",
+    "printed_name": "Young Red Dragon",
+    "printed_text": "飛行\nヤング・レッド・ドラゴンではブロックできない。",
+    "printed_type_line": "クリーチャー — ドラゴン"
+   },
+   {
+    "name": "Bathe in Gold",
+    "printed_name": "黄（おう）金（ごん）浴（あ）び",
+    "printed_text": "宝物・トークン１つを生成する。（その後、これを追放する。後で追放領域からこのクリーチャーを唱えてもよい。）",
+    "printed_type_line": "インスタント ― 出来事"
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 188,
+  "key": "Zanarkand, Ancient Metropolis // Lasting Fayth",
+  "id": "935bbf81-6ef7-4a1d-8e1a-5a581b5a87f9",
+  "set": "fin",
+  "cn": "314",
+  "layout": "adventure",
+  "image_status": "highres_scan",
+  "printed_name": null,
+  "faces": [
+   {
+    "name": "Zanarkand, Ancient Metropolis",
+    "printed_name": "Zanarkand, Ancient Metropolis",
+    "printed_text": "この土地はタップ状態で戦場に出る。\n{T}：{G}を加える。\n//ADV//\n継（けい）承（しょう）の祈（いの）り子（ご）\n{4}{G}{G}\nソーサリー ― 出来事\n無色の１/１の英雄・クリーチャー・トークン１体を生成する。それの上に、あなたがコントロールしている土地１つにつき１個の＋１/＋１カウンターを置く。",
+    "printed_type_line": null
+   },
+   {
+    "name": "Lasting Fayth",
+    "printed_name": null,
+    "printed_text": null,
+    "printed_type_line": null
+   }
+  ],
+  "printed_text": null
+ },
+ {
+  "n": 189,
+  "key": "Acolyte of Aclazotz",
+  "id": "69de0d09-e0e2-4545-9e8a-345f57879a9d",
+  "set": "lci",
+  "cn": "89",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Acolyte of Aclazotz",
+  "faces": [],
+  "printed_text": "{T}, Sacrifice another creature or artifact: Each opponent loses 1 life and you gain 1 life."
+ },
+ {
+  "n": 190,
+  "key": "Aether Flash",
+  "id": "bee442fc-f869-4ab9-b919-af494eb22786",
+  "set": "6ed",
+  "cn": "163",
+  "layout": "normal",
+  "image_status": "placeholder",
+  "printed_name": "Æther Flash",
+  "faces": [],
+  "printed_text": null
+ },
+ {
+  "n": 191,
+  "key": "Ajani, Sleeper Agent",
+  "id": "093e5c3d-b748-4295-8811-f51ab7717719",
+  "set": "dmu",
+  "cn": "375",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Ajani, Sleeper Agent",
+  "faces": [],
+  "printed_text": "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library.\n−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.\n−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\""
+ },
+ {
+  "n": 192,
+  "key": "Benalish Faithbonder",
+  "id": "1c78e782-bf56-48d1-b677-83f6014a3cb8",
+  "set": "dmu",
+  "cn": "7",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Benalish Faithbonder",
+  "faces": [],
+  "printed_text": "Vigilance\nEnlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)"
+ },
+ {
+  "n": 193,
+  "key": "C.A.M.P.",
+  "id": "afafb06e-aa28-4b88-bb14-5d19d5a7914c",
+  "set": "pip",
+  "cn": "129",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "C.A.M.P.",
+  "faces": [],
+  "printed_text": "城砦化している土地がマナを引き出す目的でタップされるたび、あなたがコントロールしているクリーチャー１体を対象とする。それの上に＋１/＋１カウンター１個を置く。そのクリーチャーがその土地が出したマナと共通の色１色を持つなら、ジャンク・トークン１つを生成する。（それは「{T}, このアーティファクトを生け贄に捧げる：あなたのライブラリーの一番上にあるカード１枚を追放する。このターン、そのカードをプレイしてもよい。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）\n城砦化{3}（{3}：あなたがコントロールしている土地１つを対象とする。これをそれにつける。城砦化はソーサリーとしてのみ行う。）"
+ },
+ {
+  "n": 194,
+  "key": "Cosmium Confluence",
+  "id": "da876450-9c10-4f32-8df6-976ba1417a5e",
+  "set": "lci",
+  "cn": "181",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Cosmium Confluence",
+  "faces": [],
+  "printed_text": "Choose three. You may choose the same mode more than once.\n• Search your library for a Cave card, put it onto the battlefield tapped, then shuffle.\n• Put three +1/+1 counters on a Cave you control. It becomes a 0/0 Elemental creature with haste. It's still a land.\n• Destroy target enchantment."
+ },
+ {
+  "n": 195,
+  "key": "Deathbloom Gardener",
+  "id": "5566efa9-9fb7-4c4d-901c-7077e8fbc3b5",
+  "set": "dmu",
+  "cn": "159",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Deathbloom Gardener",
+  "faces": [],
+  "printed_text": "Deathtouch\n{T}: Add one mana of any color."
+ },
+ {
+  "n": 196,
+  "key": "Defossilize",
+  "id": "87177bd4-e864-4319-80b3-337bcbb31608",
+  "set": "lci",
+  "cn": "103",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Defossilize",
+  "faces": [],
+  "printed_text": "Return target creature card from your graveyard to the battlefield. That creature explores, then it explores again. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard. Then repeat this process.)"
+ },
+ {
+  "n": 197,
+  "key": "Fang, Fearless l'Cie",
+  "id": "6958986a-e33e-445d-904f-4d662054324c",
+  "set": "fin",
+  "cn": "99",
+  "layout": "meld",
+  "image_status": "highres_scan",
+  "printed_name": "Fang, Fearless l'Cie",
+  "faces": [],
+  "printed_text": "１枚以上のカードがあなたの墓地を離れるたび、カード１枚を引き、１点のライフを失う。この能力は、毎ターン１回しか誘発しない。\n（「陽気なルシ、ヴァニラ」と合体する。）"
+ },
+ {
+  "n": 198,
+  "key": "Fungal Fortitude",
+  "id": "2f6183da-b5f8-4646-ae35-b5152a01b3ea",
+  "set": "lci",
+  "cn": "106",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Fungal Fortitude",
+  "faces": [],
+  "printed_text": "Flash\nEnchant creature\nEnchanted creature gets +2/+0.\nWhen enchanted creature dies, return it to the battlefield tapped under its owner's control."
+ },
+ {
+  "n": 199,
+  "key": "Gloomshrieker",
+  "id": "05a5ff4e-0838-438f-99e7-227af3d5d9ce",
+  "set": "neo",
+  "cn": "219",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Gloomshrieker",
+  "faces": [],
+  "printed_text": "Menace (This creature can't be blocked except by two or more creatures.)\nWhen Gloomshrieker enters the battlefield, return target permanent card from your graveyard to your hand.\nIf Gloomshrieker would die, exile it instead."
+ },
+ {
+  "n": 200,
+  "key": "Karn, Living Legacy",
+  "id": "08a8afa7-9a97-429b-a1a8-99c0b5bf3137",
+  "set": "dmu",
+  "cn": "372",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Karn, Living Legacy",
+  "faces": [],
+  "printed_text": "+1: Create a tapped Powerstone token. (It's an artifact with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\n−1: Pay any amount of mana. Look at that many cards from the top of your library, then put one of those cards into your hand and the rest on the bottom of your library in a random order.\n−7: You get an emblem with \"Tap an untapped artifact you control: This emblem deals 1 damage to any target.\""
+ },
+ {
+  "n": 201,
+  "key": "Molten Monstrosity",
+  "id": "530a5442-1dee-4ea1-b01d-899b49d83e39",
+  "set": "dmu",
+  "cn": "139",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Molten Monstrosity",
+  "faces": [],
+  "printed_text": "This spell costs {X} less to cast, where X is the greatest power among creatures you control.\nTrample"
+ },
+ {
+  "n": 202,
+  "key": "Owlbear Cub",
+  "id": "3f1fdaf8-7b4a-448b-b241-9f1af562c7f4",
+  "set": "clb",
+  "cn": "246",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Owlbear Cub",
+  "faces": [],
+  "printed_text": "Mama's Coming — Whenever Owlbear Cub attacks a player who controls eight or more lands, look at the top eight cards of your library. You may put a creature card from among them onto the battlefield tapped and attacking that player. Put the rest on the bottom of your library in a random order."
+ },
+ {
+  "n": 203,
+  "key": "Ragnarok, Divine Deliverance",
+  "id": "5ee76a41-0ae1-49e6-b83a-febd6b0014ab",
+  "set": "fin",
+  "cn": "526b",
+  "layout": "meld",
+  "image_status": "highres_scan",
+  "printed_name": "Ragnarok, Divine Deliverance",
+  "faces": [],
+  "printed_text": "警戒、威迫、トランプル、到達、速攻\nこれが死亡したとき、パーマネント１つを対象とし、あなたの墓地にあり伝説でないパーマネント・カード１枚を対象とする。その前者を破壊し、その後者を戦場に戻す。"
+ },
+ {
+  "n": 204,
+  "key": "Rise of the Witch-king",
+  "id": "b05c3c33-7247-4da8-b61a-c9998b0833b2",
+  "set": "ltr",
+  "cn": "221",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Rise of the Witch-king",
+  "faces": [],
+  "printed_text": "Each player sacrifices a creature. If you sacrificed a creature this way, you may return another permanent card from your graveyard to the battlefield."
+ },
+ {
+  "n": 205,
+  "key": "Rowan Kenrith",
+  "id": "d7b52cf1-c9d9-4958-88d8-f47ce049c3b4",
+  "set": "clb",
+  "cn": "805",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Rowan Kenrith",
+  "faces": [],
+  "printed_text": "+2：プレイヤー１人を対象とする。次のそのプレイヤーのターンの間、そのプレイヤーがコントロールしている各クリーチャーはそれぞれ可能なら攻撃する。\n-2：プレイヤー１人を対象とする。ローアン・ケンリスは、そのプレイヤーがコントロールしていてタップ状態の各クリーチャーに、それぞれ３点のダメージを与える。\n-8：プレイヤー１人を対象とする。そのプレイヤーは「あなたがマナ能力でない能力を起動するたび、それをコピーする。あなたはそのコピーの新しい対象を選んでもよい。」を持つ紋章を得る。\nウィル・ケンリスとの共闘\nローアン・ケンリスは統率者として使用できる。"
+ },
+ {
+  "n": 206,
+  "key": "Runaway Boulder",
+  "id": "ce196ce5-cf70-4363-84c3-6833a759cdec",
+  "set": "lci",
+  "cn": "259",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Runaway Boulder",
+  "faces": [],
+  "printed_text": "Flash\nWhen Runaway Boulder enters the battlefield, it deals 6 damage to target creature an opponent controls.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ {
+  "n": 207,
+  "key": "Scout the Wilderness",
+  "id": "5ccf6715-4e8e-437b-bbc6-cc522757cba4",
+  "set": "dmu",
+  "cn": "176",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Scout the Wilderness",
+  "faces": [],
+  "printed_text": "Kicker {1}{W} (You may pay an additional {1}{W} as you cast this spell.)\nSearch your library for a basic land card, put it onto the battlefield tapped, then shuffle. If this spell was kicked, create two 1/1 white Soldier creature tokens."
+ },
+ {
+  "n": 208,
+  "key": "Souls of the Lost",
+  "id": "5f77c6a3-1ffa-4c57-a1fb-1bccc8d19d8e",
+  "set": "lci",
+  "cn": "121",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Souls of the Lost",
+  "faces": [],
+  "printed_text": "As an additional cost to cast this spell, discard a card or sacrifice a permanent.\nFathomless descent — Souls of the Lost's power is equal to the number of permanent cards in your graveyard and its toughness is equal to that number plus 1."
+ },
+ {
+  "n": 209,
+  "key": "Subterranean Schooner",
+  "id": "74aad5d1-d21a-4814-ae19-7d9fb9fff7ae",
+  "set": "lci",
+  "cn": "80",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Subterranean Schooner",
+  "faces": [],
+  "printed_text": "Whenever Subterranean Schooner attacks, target creature that crewed it this turn explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard.)\nCrew 1"
+ },
+ {
+  "n": 210,
+  "key": "Tainted Aether",
+  "id": "fb45be55-700a-4bd5-8896-3623dcc244b6",
+  "set": "usg",
+  "cn": "161",
+  "layout": "normal",
+  "image_status": "placeholder",
+  "printed_name": "Tainted Æther",
+  "faces": [],
+  "printed_text": null
+ },
+ {
+  "n": 211,
+  "key": "Trelasarra, Moon Dancer",
+  "id": "5d486bea-2800-4430-a59d-377f9ccd5782",
+  "set": "afr",
+  "cn": "346",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Trelasarra, Moon Dancer",
+  "faces": [],
+  "printed_text": "Whenever you gain life, put a +1/+1 counter on Trelasarra, Moon Dancer and scry 1."
+ },
+ {
+  "n": 212,
+  "key": "V.A.T.S.",
+  "id": "30a2cc9e-3d30-446b-850e-cb6706fa8765",
+  "set": "pip",
+  "cn": "333",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "V.A.T.S.",
+  "faces": [],
+  "printed_text": "刹那\n望む数の、タフネスが同じであるクリーチャーを対象とする。それらを破壊する。"
+ },
+ {
+  "n": 213,
+  "key": "Vodalian Hexcatcher",
+  "id": "62f4f175-5adb-4764-a601-3add9e88bcbe",
+  "set": "dmu",
+  "cn": "75",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Vodalian Hexcatcher",
+  "faces": [],
+  "printed_text": "Flash\nOther Merfolk you control get +1/+1.\nSacrifice a Merfolk: Counter target noncreature spell unless its controller pays {1}."
+ },
+ {
+  "n": 214,
+  "key": "Volshe Tideturner",
+  "id": "b5bfe1fd-f24d-4490-92dd-8d4e34636ec0",
+  "set": "dmu",
+  "cn": "77",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Volshe Tideturner",
+  "faces": [],
+  "printed_text": "{T}: Add {U}. Spend this mana only to cast an instant or sorcery spell or a kicked spell."
+ },
+ {
+  "n": 215,
+  "key": "Will Kenrith",
+  "id": "7cc86037-c13d-4602-8fe6-2bf892378317",
+  "set": "clb",
+  "cn": "738",
+  "layout": "normal",
+  "image_status": "lowres",
+  "printed_name": "Will Kenrith",
+  "faces": [],
+  "printed_text": "+2：クリーチャー最大２体を対象とする。次のあなたのターンまで、それらはそれぞれ基本のパワーとタフネスが０/３になりすべての能力を失う。\n-2：プレイヤー１人を対象とする。そのプレイヤーはカード２枚を引く。次のあなたのターンまで、そのプレイヤーがインスタントやソーサリーやプレインズウォーカーである呪文を唱えるコストは{2}少なくなる。\n-8：プレイヤー１人を対象とする。そのプレイヤーは「あなたがインスタントやソーサリーである呪文を唱えるたび、それをコピーする。あなたはそのコピーの新しい対象を選んでもよい。」を持つ紋章を得る。\nローアン・ケンリスとの共闘\nウィル・ケンリスは統率者として使用できる。"
+ }
+]
