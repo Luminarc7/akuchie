@@ -1,0 +1,1955 @@
+{
+"other_number": [
+{
+"set": "fin",
+"cn": "551c",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "pmei",
+"cn": "2026-20",
+"name": "Frantic Search",
+"ja_cn": [
+"2022-4"
+]
+},
+{
+"set": "dd2",
+"cn": "34",
+"name": "Chandra Nalaar",
+"ja_cn": [
+"34★"
+]
+},
+{
+"set": "pmei",
+"cn": "2025-15",
+"name": "Counterspell",
+"ja_cn": [
+"2021-1"
+]
+},
+{
+"set": "pmei",
+"cn": "2025-9",
+"name": "Crop Rotation",
+"ja_cn": [
+"2020-7"
+]
+},
+{
+"set": "pmei",
+"cn": "2024-5",
+"name": "Diabolic Edict",
+"ja_cn": [
+"2019-2"
+]
+},
+{
+"set": "pmei",
+"cn": "2024-10",
+"name": "Duress",
+"ja_cn": [
+"2019-6"
+]
+},
+{
+"set": "pmei",
+"cn": "2024-9",
+"name": "Shock",
+"ja_cn": [
+"2019-3"
+]
+},
+{
+"set": "fin",
+"cn": "551f",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "pmei",
+"cn": "2024-11",
+"name": "Voltaic Key",
+"ja_cn": [
+"2020-1"
+]
+},
+{
+"set": "pmei",
+"cn": "2026-2",
+"name": "Wild Growth",
+"ja_cn": [
+"2022-2"
+]
+},
+{
+"set": "fin",
+"cn": "551a",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "pmei",
+"cn": "2026-21",
+"name": "Worn Powerstone",
+"ja_cn": [
+"2023-2"
+]
+},
+{
+"set": "iko",
+"cn": "361",
+"name": "Crystalline Giant",
+"ja_cn": [
+"387"
+]
+},
+{
+"set": "snc",
+"cn": "450",
+"name": "Gala Greeters",
+"ja_cn": [
+"456"
+]
+},
+{
+"set": "fin",
+"cn": "551b",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "dd2",
+"cn": "1",
+"name": "Jace Beleren",
+"ja_cn": [
+"1★"
+]
+},
+{
+"set": "iko",
+"cn": "289",
+"name": "Dirge Bat",
+"ja_cn": [
+"386"
+]
+},
+{
+"set": "pmei",
+"cn": "2025-17",
+"name": "Disenchant",
+"ja_cn": [
+"2022-1"
+]
+},
+{
+"set": "fin",
+"cn": "551d",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "pmei",
+"cn": "2025-16",
+"name": "Bone Shredder",
+"ja_cn": [
+"2021-2"
+]
+},
+{
+"set": "fin",
+"cn": "568",
+"name": "Traveling Chocobo",
+"ja_cn": [
+"551"
+]
+},
+{
+"set": "pmei",
+"cn": "2025-8",
+"name": "Dark Ritual",
+"ja_cn": [
+"2020-4"
+]
+}
+],
+"not_in_scryfall": [
+[
+"who",
+588
+],
+[
+"ltr",
+413
+],
+[
+"8ed",
+351
+],
+[
+"7ed",
+350
+],
+[
+"ltc",
+244
+],
+[
+"fdn",
+244
+],
+[
+"soc",
+147
+],
+[
+"10e",
+135
+],
+[
+"eld",
+117
+],
+[
+"tla",
+102
+],
+[
+"iko",
+96
+],
+[
+"mid",
+92
+],
+[
+"clb",
+92
+],
+[
+"one",
+80
+],
+[
+"thb",
+75
+],
+[
+"rvr",
+66
+],
+[
+"brr",
+63
+],
+[
+"snc",
+59
+],
+[
+"tmt",
+58
+],
+[
+"tle",
+53
+],
+[
+"pmei",
+52
+],
+[
+"bfz",
+49
+],
+[
+"2xm",
+47
+],
+[
+"hob",
+45
+],
+[
+"acr",
+42
+],
+[
+"fic",
+42
+],
+[
+"msh",
+41
+],
+[
+"zen",
+40
+],
+[
+"hoc",
+40
+],
+[
+"mh3",
+37
+],
+[
+"fra",
+37
+],
+[
+"neo",
+36
+],
+[
+"tmc",
+36
+],
+[
+"mkm",
+34
+],
+[
+"spg",
+33
+],
+[
+"vow",
+32
+],
+[
+"eoe",
+28
+],
+[
+"lci",
+27
+],
+[
+"blb",
+25
+],
+[
+"khm",
+25
+],
+[
+"ktk",
+24
+],
+[
+"znr",
+24
+],
+[
+"ecl",
+24
+],
+[
+"dmc",
+22
+],
+[
+"woe",
+22
+],
+[
+"msc",
+21
+],
+[
+"wot",
+20
+],
+[
+"rex",
+19
+],
+[
+"tdm",
+18
+],
+[
+"stx",
+18
+],
+[
+"mrd",
+18
+],
+[
+"lcc",
+17
+],
+[
+"m3c",
+16
+],
+[
+"otp",
+15
+],
+[
+"dgm",
+15
+],
+[
+"dft",
+15
+],
+[
+"spm",
+14
+],
+[
+"m21",
+14
+],
+[
+"mom",
+14
+],
+[
+"2x2",
+12
+],
+[
+"woc",
+12
+],
+[
+"brc",
+12
+],
+[
+"chk",
+11
+],
+[
+"fin",
+11
+],
+[
+"grn",
+11
+],
+[
+"gk2",
+10
+],
+[
+"dmr",
+10
+],
+[
+"afr",
+8
+],
+[
+"bro",
+7
+],
+[
+"mkc",
+7
+],
+[
+"mat",
+7
+],
+[
+"ecc",
+6
+],
+[
+"dsc",
+6
+],
+[
+"plg21",
+6
+],
+[
+"dsk",
+6
+],
+[
+"por",
+6
+],
+[
+"frf",
+6
+],
+[
+"sok",
+5
+],
+[
+"big",
+5
+],
+[
+"5ed",
+5
+],
+[
+"bok",
+5
+],
+[
+"soi",
+5
+],
+[
+"ddp",
+5
+],
+[
+"ogw",
+5
+],
+[
+"kld",
+4
+],
+[
+"ddr",
+4
+],
+[
+"pwwk",
+4
+],
+[
+"moc",
+4
+],
+[
+"mh2",
+3
+],
+[
+"otc",
+3
+],
+[
+"ddq",
+3
+],
+[
+"dmu",
+3
+],
+[
+"cmr",
+3
+],
+[
+"znc",
+3
+],
+[
+"tdc",
+3
+],
+[
+"pzen",
+3
+],
+[
+"aer",
+3
+],
+[
+"inv",
+2
+],
+[
+"nec",
+2
+],
+[
+"gpt",
+2
+],
+[
+"bbd",
+2
+],
+[
+"ddo",
+2
+],
+[
+"onc",
+2
+],
+[
+"sos",
+2
+],
+[
+"j25",
+2
+],
+[
+"pl21",
+2
+],
+[
+"mir",
+1
+],
+[
+"c21",
+1
+],
+[
+"blc",
+1
+],
+[
+"ons",
+1
+],
+[
+"j22",
+1
+],
+[
+"ala",
+1
+],
+[
+"rna",
+1
+],
+[
+"pcy",
+1
+],
+[
+"otj",
+1
+],
+[
+"c18",
+1
+],
+[
+"c20",
+1
+],
+[
+"ody",
+1
+],
+[
+"hou",
+1
+],
+[
+"ddu",
+1
+],
+[
+"c13",
+1
+],
+[
+"ddn",
+1
+],
+[
+"plg24",
+1
+],
+[
+"m20",
+1
+],
+[
+"fca",
+1
+],
+[
+"gtc",
+1
+],
+[
+"cmd",
+1
+]
+],
+"examples": {
+"blb": [
+"280 Forest",
+"272 Swamp",
+"275 Mountain",
+"338 Three Tree City",
+"276 Mountain",
+"266 Island",
+"265 Plains",
+"340 Three Tree City",
+"281 Forest",
+"269 Island",
+"262 Plains",
+"279 Forest"
+],
+"mid": [
+"226 Grizzly Ghoul",
+"212 Bladestitched Skaab",
+"202 Timberland Guide",
+"218 Devoted Grafkeeper // Departed Soulkeeper",
+"208 Wrenn and Seven",
+"194 Primal Adversary",
+"206 Unnatural Growth",
+"225 Ghoulcaller's Harvest",
+"230 Katilda, Dawnhart Prime",
+"186 Harvesttide Sentry",
+"188 Howl of the Hunt",
+"190 Outland Liberator // Frenzied Trapbreaker"
+],
+"tmt": [
+"264 Armaggon, Future Shark",
+"318 Mountain",
+"286 Casey Jones, Vigilante",
+"263 Turtles in Time",
+"278 Turtle Van",
+"314 Forest",
+"294 Turtles in Time",
+"315 Plains",
+"273 Mutagen Man, Living Ooze",
+"284 Turtles in Time",
+"319 Forest",
+"289 Dark Leo & Shredder"
+],
+"mkm": [
+"378 Delney, Streetwise Lookout",
+"386 Etrata, Deadly Fugitive",
+"79† Case of the Gorgon's Kiss",
+"388 Trostani, Three Whispers",
+"239† Undercover Crocodelf",
+"73† Surveillance Monitor",
+"213† Kraul Whipcracker",
+"7† Case File Auditor",
+"377 Aurelia's Vindicator",
+"381 Incinerator of the Guilty",
+"334 Kellan, Inquisitive Prodigy // Tail the Suspect",
+"318z Lazav, Wearer of Faces"
+],
+"who": [
+"819 Beast Within",
+"701 Sontaran General",
+"704 City of Death",
+"1146 The Fourth Doctor",
+"904 Temple of Abandon",
+"1004 The Fifth Doctor",
+"699 Ryan Sinclair",
+"774 Wreck and Rebuild",
+"780 Cybermat",
+"1106 Shipwreck Marsh",
+"648 Flatline",
+"675 This Is How It Ends"
+],
+"ltc": [
+"386z Thorn of Amethyst",
+"499 Rally the Galadhrim",
+"515 Kenrith, the Returned King",
+"557 Fell Beast of Mordor",
+"348 The Great Henge",
+"496 Rohirrim Chargers",
+"81 Éowyn, Shieldmaiden",
+"396 Horizon Canopy",
+"523 Pact of Negation",
+"387z Ancient Tomb",
+"446 Travel Through Caradhras",
+"403 Reflecting Pool"
+],
+"fdn": [
+"569 Crusader of Odric",
+"661 Maelstrom Pulse",
+"382 Blasphemous Edict",
+"698 Temple of Enlightenment",
+"673 Feldon's Cane",
+"613 Sanguine Indulgence",
+"630 Ravenous Giant",
+"394 Searslicer Goblin",
+"380 Sphinx of Forgotten Lore",
+"565 Angelic Destiny",
+"652 Ayli, Eternal Pilgrim",
+"580 Release the Dogs"
+],
+"7ed": [
+"188★ Goblin Gardener",
+"297★ Flying Carpet",
+"275★ Trained Armodon",
+"296★ Fire Diamond",
+"213★ Reflexes",
+"157★ Raise Dead",
+"43★ Serra's Embrace",
+"294★ Ensnaring Bridge",
+"196★ Hill Giant",
+"131★ Duress",
+"301★ Iron Star",
+"207★ Pillage"
+],
+"10e": [
+"317★ Colossus of Sardia",
+"48★ Steadfast Guard",
+"364 Plains",
+"374 Swamp",
+"217★ Lightning Elemental",
+"45★ Spirit Link",
+"101★ Robe of Mirrors",
+"30★ Nomad Mythmaker",
+"57★ Wall of Swords",
+"130★ Bog Wraith",
+"111★ Spiketail Hatchling",
+"361★ Treetop Village"
+],
+"2x2": [
+"577 Ulamog, the Infinite Gyre",
+"334 Wrenn and Six",
+"574 Wrenn and Six",
+"578 Weathered Wayfarer",
+"579 Bring to Light",
+"336 Kozilek, Butcher of Truth",
+"576 Kozilek, Butcher of Truth",
+"335 Emrakul, the Aeons Torn",
+"575 Emrakul, the Aeons Torn",
+"333 Liliana, the Last Hope",
+"337 Ulamog, the Infinite Gyre",
+"573 Liliana, the Last Hope"
+],
+"gk2": [
+"106 Forest",
+"133 Forest",
+"132 Island",
+"26 Plains",
+"105 Mountain",
+"78 Swamp",
+"50 Plains",
+"27 Island",
+"79 Mountain",
+"51 Swamp"
+],
+"mh3": [
+"498 Plains",
+"443 Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+"513 Amped Raptor",
+"521 Twisted Landscape",
+"495 Powerbalance",
+"506 Forest",
+"505 Forest",
+"502 Swamp",
+"520 Tranquil Landscape",
+"442 Ajani, Nacatl Pariah // Ajani, Nacatl Avenger",
+"515 Izzet Generatorium",
+"470 Sorin of House Markov // Sorin, Ravenous Neonate"
+],
+"acr": [
+"284 Tranquilize",
+"306 Royal Assassin",
+"270 Eivor, Wolf-Kissed",
+"287 Merciless Harlequin",
+"282 Brotherhood Spy",
+"297 Raven Clan War-Axe",
+"304 Swamp",
+"292 Spartan Veteran",
+"281 Assassin Den",
+"274 Eivor, Battle-Ready",
+"302 Plains",
+"286 Brotherhood Patriarch"
+],
+"rex": [
+"36 Grim Giganotosaurus",
+"40 Indoraptor, the Perfect Hybrid",
+"38 Ian Malcolm, Chaotician",
+"44 Swooping Pteranodon",
+"30 Hunting Velociraptor",
+"28 Cresting Mosasaurus",
+"31 Life Finds a Way",
+"43 Ravenous Tyrannosaurus",
+"42 Permission Denied",
+"34 Compy Swarm",
+"39 Indominus Rex, Alpha",
+"35 Ellie and Alan, Paleontologists"
+],
+"8ed": [
+"188★ Goblin Chariot",
+"285★ Verduran Enchantress",
+"173★ Western Paladin",
+"169★ Unholy Strength",
+"258★ Hunted Wumpus",
+"118★ Ambition's Cost",
+"288★ Wing Snare",
+"133★ Fallen Angel",
+"21★ Glory Seeker",
+"14★ Circle of Protection: White",
+"279★ Spined Wurm",
+"25★ Honor Guard"
+],
+"fic": [
+"457 Amarant Coral",
+"482 Forest",
+"452 Duelist's Flame",
+"455 Judgment of Alexander",
+"463 Flash Photography",
+"474 Estinien Varlineau",
+"445 Chaos Shrine's Black Crystal",
+"469 Snapcaster Mage",
+"462 Chocobo Camp",
+"466 Tataru Taru",
+"453 Squall, Gunblade Duelist",
+"480 Swamp"
+],
+"ltr": [
+"334 Nazgûl",
+"797 Gandalf the White",
+"731 Dawn of a New Age",
+"598 Rush the Room",
+"539 Gríma Wormtongue",
+"635 Radagast the Brown",
+"616 Fall of Gil-galad",
+"650 Doors of Durin",
+"576 Fear, Fire, Foes!",
+"337 Nazgûl",
+"711 The Shire",
+"556 Sam's Desperate Rescue"
+],
+"msc": [
+"883 Thor, Asgard's Avenger",
+"233 Command Tower",
+"193 Arcane Signet",
+"192 Arcane Signet",
+"191 Arcane Signet",
+"877 Human Torch",
+"878 The Thing",
+"882 Rescue, Pepper Potts",
+"212 Sol Ring",
+"875 Invisible Woman",
+"876 Mister Fantastic",
+"879 Captain America, Team Leader"
+],
+"spm": [
+"241 Spectacular Spider-Man",
+"240 Spectacular Spider-Man",
+"242 The Soul Stone",
+"285 Radioactive Spider",
+"238 Spectacular Spider-Man",
+"233 Eddie Brock // Venom, Lethal Protector",
+"237 Spectacular Spider-Man",
+"235 Spectacular Spider-Man",
+"232 Peter Parker // Amazing Spider-Man",
+"286 Gwenom, Remorseless",
+"239 Spectacular Spider-Man",
+"234 Miles Morales // Ultimate Spider-Man"
+],
+"otp": [
+"77 Oko, Thief of Crowns",
+"74 Anguished Unmaking",
+"79 Grindstone",
+"70 Thoughtseize",
+"75 Crime // Punishment",
+"67 Mana Drain",
+"66 Leyline Binding",
+"80 Mindslaver",
+"68 Mindbreak Trap",
+"69 Overwhelming Forces",
+"76 Fractured Identity",
+"73 Force of Vigor"
+],
+"ktk": [
+"73y Grim Haruspex",
+"16y Mardu Hateblade",
+"86y Rite of the Serpent",
+"95y Act of Treason",
+"203y Sultai Ascendancy",
+"198y Secret Plans",
+"84y Rakshasa's Secret",
+"72y Empty the Pits",
+"211y Villainous Wealth",
+"115y Mardu Blazebringer",
+"218y Cranial Archive",
+"97y Arc Lightning"
+],
+"wot": [
+"99 Sneak Attack",
+"92 Bitterblossom",
+"96 Aggravated Assault",
+"85 Karmic Justice",
+"94 Necropotence",
+"84 Greater Auramancy",
+"101 Doubling Season",
+"89 Kindred Discovery",
+"91 Rhystic Study",
+"93 Grave Pact",
+"87 Smothering Tithe",
+"95 Polluted Bonds"
+],
+"iko": [
+"283 Archipelagore",
+"282 Vulpikeet",
+"316 Luminous Broodmoth",
+"317 Mythos of Snapdax",
+"351 Gyruda, Doom of Depths",
+"358 Umori, the Collector",
+"354 Keruga, the Macrosage",
+"356 Lutri, the Spellchaser",
+"279 Cubwarden",
+"275y Zilortha, Strength Incarnate",
+"373 Void Beckoner",
+"297 Migratory Greathorn"
+],
+"one": [
+"434 Archfiend of the Dross",
+"439 Karumonix, the Rat King",
+"347 Phyrexian Vindicator",
+"430 Quicksilver Fisher",
+"420 Elesh Norn, Mother of Machines",
+"349 Tekuthal, Inquiry Dominus",
+"475 Ria Ivor, Bane of Bladehold",
+"345 Elesh Norn, Mother of Machines",
+"436 Bonepicker Skirge",
+"448 Slobad, Iron Goblin",
+"360 Jace, the Perfected Mind",
+"479 Myr Convert"
+],
+"bro": [
+"163b Mishra, Lost to Phyrexia",
+"238 The Mightstone and Weakstone",
+"238b Urza, Planeswalker",
+"256b Titania, Gaea Incarnate",
+"379 Queen Kayla bin-Kroog",
+"256 Argoth, Sanctum of Nature",
+"163 Phyrexian Dragon Engine"
+],
+"clb": [
+"564 Illithid Harvester // Plant Tadpoles",
+"515 Erinis, Gloom Stalker",
+"933 Firkraag, Cunning Instigator",
+"491 Volo, Itinerant Scholar",
+"529 Commander Liara Portyr",
+"527 Bhaal, Lord of Murder",
+"531 Duke Ulder Ravengard",
+"530 The Council of Four",
+"497 Sarevok, Deathbringer",
+"506 Gut, True Soul Zealot",
+"542 Miirym, Sentinel Wyrm",
+"569 Altar of Bhaal // Bone Offering"
+],
+"mir": [
+"280† Savage Twister"
+],
+"thb": [
+"299 Eidolon of Obstruction",
+"325 Arasta of the Endless Web",
+"340 Kroxa, Titan of Death's Hunger",
+"317 Woe Strider",
+"353 Alseid of Life's Bounty",
+"337 Enigmatic Incarnation",
+"257 Calix, Destiny's Hand",
+"345 Shadowspear",
+"308 Thassa's Oracle",
+"327 Mantle of the Wolf",
+"265 Purphoros, Bronze-Blooded",
+"324 Underworld Breach"
+],
+"brr": [
+"91z Liquimetal Coating",
+"90z Key to the City",
+"76z Defense Grid",
+"64z Adaptive Automaton",
+"120z Sundering Titan",
+"105z Precursor Golem",
+"117z Soul-Guide Lantern",
+"73z Chromatic Lantern",
+"72z Caged Sun",
+"84z Ichor Wellspring",
+"113z Sculpting Steel",
+"69z Blackblade Reforged"
+],
+"dgm": [
+"128 Flesh // Blood",
+"130 Profit // Loss",
+"133 Toil // Trouble",
+"132 Ready // Willing",
+"125 Catch // Release",
+"124 Breaking // Entering",
+"134 Turn // Burn",
+"129 Give // Take",
+"131 Protect // Serve",
+"123 Beck // Call",
+"126 Down // Dirty",
+"127 Far // Away"
+],
+"msh": [
+"438 Swamp",
+"394 Doctor Doom",
+"437 Swamp",
+"445 Mister Fantastic, Reed Richards",
+"395 Elektra, Daughter of the Hand",
+"386 The Mind Stone",
+"446 Baron Strucker, HYDRA Overlord",
+"397 The Astonishing Ant-Man",
+"431 The Scarlet Witch",
+"398 Daredevil, Man Without Fear",
+"452 Avengers Tower",
+"436 Island"
+],
+"neo": [
+"506 Invoke Despair",
+"442 The Restoration of Eiganjo // Architect of Restoration",
+"357 Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+"420 Blade of the Oni",
+"418 The Wandering Emperor",
+"359 Jugan Defends the Temple // Remnant of the Rising Star",
+"426 Satoru Umezawa",
+"443 Inventive Iteration // Living Breakthrough",
+"358 The Dragon-Kami Reborn // Dragon-Kami's Egg",
+"421 Nashi, Moon Sage's Scion",
+"417 Farewell",
+"356 Tribute to Horobi // Echo of Death's Wail"
+],
+"fra": [
+"453 Darklight Phoenix",
+"451 Return to the Light Realms",
+"459 Omnipresence",
+"414 Loyal Tutor",
+"458 Hexhaven Invigorator",
+"444 Darklight Phoenix",
+"460 Simulacrum Shaper",
+"439 Enlightened Confidant",
+"443 The Theorist, Jace Beleren",
+"457 Stingcaster Mage",
+"455 Craterclaw Colossus",
+"437 Carnivorous Cultivator // Enroot"
+],
+"eld": [
+"293 Merchant of the Vale // Haggle",
+"332 Tome of Legends",
+"340 Linden, the Steadfast Queen",
+"381 Lochmere Serpent",
+"353 Clackbridge Troll",
+"334 Acclaimed Contender",
+"389 Castle Locthwain",
+"292 Embereth Shieldbreaker // Battle Display",
+"316 Faerie Formation",
+"342 Emry, Lurker of the Loch",
+"321 Embereth Skyblazer",
+"379 Escape to the Wilds"
+],
+"zen": [
+"244 Mountain",
+"233a Plains",
+"248a Forest",
+"230 Plains",
+"235 Island",
+"242 Mountain",
+"240a Swamp",
+"249 Forest",
+"232 Plains",
+"247a Forest",
+"243a Mountain",
+"239a Swamp"
+],
+"ecc": [
+"57 Sol Ring",
+"58 Sol Ring",
+"60 Command Tower",
+"56 Arcane Signet",
+"55 Arcane Signet",
+"59 Command Tower"
+],
+"mkc": [
+"50 Mirko, Obsessive Theorist",
+"173 Jolrael, Mwonvuli Recluse",
+"254 Choked Estuary",
+"155 Imperial Hellkite",
+"49 Kaust, Eyes of the Glade",
+"52 Nelly Borca, Impulsive Accuser",
+"51 Morska, Undersea Sleuth"
+],
+"soc": [
+"419 Vernal Fen",
+"422 War Room",
+"350 Lightning Greaves",
+"366 Clifftop Retreat",
+"358 Talisman of Hierarchy",
+"339 Witherbloom Command",
+"376 Glittering Massif",
+"318 Magma Opus",
+"357 Talisman of Creativity",
+"416 Temple of the False God",
+"296 Beledros Witherbloom",
+"342 Astral Cornucopia"
+],
+"tla": [
+"367 South Pole Voyager",
+"312 Firebender Ascension",
+"347 Aang, Swift Savior // Aang and La, Ocean's Fury",
+"329 The Walls of Ba Sing Se",
+"360 Fire Lord Zuko",
+"383 Sokka, Bold Boomeranger",
+"341 Fated Firepower",
+"362 Toph, the First Metalbender",
+"361 Katara, the Fearless",
+"330 White Lotus Tile",
+"375 Wartime Protestors",
+"301 Combustion Technique"
+],
+"lcc": [
+"13 Tetzin, Gnome Champion // The Golden-Gear Colossus",
+"124 Pantlaza, Sun-Favored",
+"15 Eye of Ojer Taq // Apex Observatory",
+"123 Hakbal of the Surging Soul",
+"36 Paleontologist's Pick-Axe // Dinosaur Headdress",
+"31 Tetzin, Gnome Champion // The Golden-Gear Colossus",
+"22 Altar of the Wretched // Wretched Bonemass",
+"122 Clavileño, First of the Blessed",
+"147 Commit // Memory",
+"121 Admiral Brass, Unsinkable",
+"23 Ore-Rich Stalactite // Cosmium Catalyst",
+"52 Promise of Aclazotz // Foul Rebirth"
+],
+"znr": [
+"287 Cragcrown Pathway // Timbercrown Pathway",
+"305 Kazandu Mammoth // Kazandu Valley",
+"385 Orah, Skyclave Hierophant",
+"354 Shatterskull Smashing // Shatterskull, the Hammer Pass",
+"336 Agadeem's Awakening // Agadeem, the Undercrypt",
+"389 Roil Eruption",
+"390 Roiling Regrowth",
+"386 Charix, the Raging Isle",
+"284 Branchloft Pathway // Boulderloft Pathway",
+"289 Riverglide Pathway // Lavaglide Pathway",
+"321 Ondu Inversion // Ondu Skyruins",
+"364 Turntimber Symbiosis // Turntimber, Serpentine Wood"
+],
+"spg": [
+"52 Fury",
+"168 Root Maze",
+"166 Mind Twist",
+"17d Mana Crypt",
+"163 Sublime Epiphany",
+"49 Solitude",
+"17c Mana Crypt",
+"123 Paradox Haze",
+"165 Necrodominance",
+"122 Nexus of Fate",
+"160 Austere Command",
+"17e Mana Crypt"
+],
+"pmei": [
+"2026-12 Turtle Lair",
+"2025-11 Ultimecia, Temporal Threat",
+"2023-6 Pyromancer's Gauntlet",
+"2026-3 Zack Fair",
+"2026-22 Picard, Steadfast Captain",
+"1995-2 Blue Elemental Blast",
+"2025-21 Cloud, Midgar Mercenary",
+"1999-2 Warmonger",
+"2026-25 Hulk, Gamma Goliath",
+"2024-7 Patchwork Banner",
+"2025-14 Sephiroth, Planet's Heir",
+"2009-1 Jace Beleren"
+],
+"rvr": [
+"409z Sacred Foundry",
+"397z Blood Crypt",
+"387z Tolsimir Wolfblood",
+"379z Rakdos, Lord of Riots",
+"407z Overgrown Tomb",
+"335z Krenko, Mob Boss",
+"328z Massacre Girl",
+"391z Cloudstone Curio",
+"322z Crypt Ghast",
+"350z Life from the Loam",
+"384z Stitch in Time",
+"444 Domri Rade"
+],
+"m21": [
+"265 Island",
+"396 Heartfire Immolator",
+"274 Forest",
+"292 Teferi, Master of Time",
+"275 Teferi, Master of Time",
+"394 Frantic Inventory",
+"393 Selfless Savior",
+"395 Eliminate",
+"392 Pack Leader",
+"397 Llanowar Visionary",
+"276 Teferi, Master of Time",
+"293 Teferi, Master of Time"
+],
+"dsc": [
+"368 Crypt Ghast",
+"371 Archon of Cruelty",
+"370 Exhume",
+"369 Damn",
+"372 Goryo's Vengeance",
+"373 Living Death"
+],
+"vow": [
+"404 Sigarda's Summons",
+"338 Voldaren Bloodcaster // Bloodbat Summoner",
+"341 Edgar, Charmed Groom // Edgar Markov's Coffin",
+"411 Mountain",
+"316 Runo Stromkirk // Krothuss, Lord of the Deep",
+"327 Runo Stromkirk // Krothuss, Lord of the Deep",
+"409 Island",
+"367 Concealing Curtains // Revealing Eye",
+"348 Faithbound Judge // Sinner's Judgment",
+"320 Jacob Hauken, Inspector // Hauken's Insight",
+"293 Henrika Domnathi // Henrika, Infernal Seer",
+"294 Innocent Traveler // Malicious Invader"
+],
+"eoe": [
+"374 Evendo, Waking Haven",
+"382 Sothera, the Supervoid",
+"371 Forest",
+"391 The Endstone",
+"177† Diplomatic Relations",
+"377 Sacred Foundry",
+"399 Emissary Escort",
+"387 Devastating Onslaught",
+"378 Stomping Ground",
+"392 Secluded Starforge",
+"376 Kavaron, Memorial World",
+"380 Uthros, Titanic Godcore"
+],
+"snc": [
+"391 Queza, Augur of Agonies",
+"265 Island",
+"446 Urabrask, Heretic Praetor",
+"370 Endless Detour",
+"462 Mysterious Limousine",
+"367 Corpse Appraiser",
+"441 Elspeth Resplendent",
+"364 Cabaretti Ascendancy",
+"281 Forest",
+"395 Riveteers Ascendancy",
+"386 Nimble Larcenist",
+"380 Lord Xander, the Collector"
+],
+"tle": [
+"295 Mountain",
+"305 Enlightened Tutor",
+"284 Run Amok",
+"313 Obscuring Haze",
+"266 Aang's Defense",
+"292 Mountain",
+"306 Flawless Maneuver",
+"296 Mountain",
+"303 Plains",
+"309 Deadly Rollick",
+"290 Mountain",
+"280 Fire Nation Soldier"
+],
+"dft": [
+"422 Lumbering Worldwagon",
+"407 Salvation Engine",
+"412 March of the World Ooze",
+"425 Avishkar Raceway",
+"408 Spectacular Pileup",
+"410 Cursecloth Wrappings",
+"416 Radiant Lotus",
+"415 Mimeoplasm, Revered One",
+"409 Mu Yanling, Wind Rider",
+"414 Loot, the Pathfinder",
+"376 The Aetherspark",
+"426 Muraganda Raceway"
+],
+"hoc": [
+"60 Witch-king of Angmar",
+"83 Mithril Coat",
+"62 Call Forth the Tempest",
+"82 Glamdring",
+"69 Aragorn, the Uniter",
+"71 Flame of Anor",
+"76 Sauron, the Dark Lord",
+"81 Bilbo's Ring",
+"74 Lotho, Corrupt Shirriff",
+"90 Mount Doom",
+"85 Palantír of Orthanc",
+"72 Galadriel, Light of Valinor"
+],
+"kld": [
+"272† Terrain Elemental",
+"107† Brazen Scourge",
+"70† Wind Drake",
+"142† Arborback Stomper"
+],
+"mat": [
+"83 Jolrael, Voice of Zhalfir",
+"71 Leyline Immersion",
+"73 Open the Way",
+"72 Nissa, Resurgent Animist",
+"70 Animist's Might",
+"99 Karn, Legacy Reforged",
+"229 Spark Rupture"
+],
+"tdm": [
+"381 Bloomvine Regent // Claim Territory // Bloomvine Regent",
+"90 Scavenger Regent // Exude Toxin",
+"136 Bloomvine Regent // Claim Territory",
+"425 Temur Battlecrier",
+"409 Ugin, Eye of the Storms",
+"415 All-Out Assault",
+"412 Dracogenesis",
+"378 Marang River Regent // Coil and Catch // Marang River Regent",
+"416 Death Begets Life",
+"418 Skirmish Rhino",
+"51 Marang River Regent // Coil and Catch",
+"411 Elspeth, Storm Slayer"
+],
+"stx": [
+"33★ Strict Proctor",
+"326 Kianne, Dean of Substance // Imbraham, Dean of Theory",
+"333 Valentin, Dean of the Vein // Lisette, Dean of the Root",
+"332 Uvilda, Dean of Perfection // Nassari, Dean of Expression",
+"278 Rowan, Scholar of Sparks // Will, Scholar of Frost",
+"277 Mila, Crafty Companion // Lukka, Wayward Bonder",
+"329 Selfless Glyphweaver // Deadly Vanity",
+"286 Wandering Archaic // Explore the Vastlands",
+"331 Torrent Sculptor // Flamethrower Sonata",
+"377 Archmage Emeritus",
+"323 Extus, Oriq Overlord // Awaken the Blood Avatar",
+"324 Flamescroll Celebrant // Revel in Silence"
+],
+"mom": [
+"296 Ayara, Widow of the Realm // Ayara, Furnace Queen",
+"125 Sheoldred // The True Scriptures",
+"65 Jin-Gitaxias // The Great Synthesis",
+"17 Heliod, the Radiant Dawn // Heliod, the Warped Eclipse",
+"200 Polukranos Reborn // Polukranos, Engine of Ruin",
+"213 Vorinclex // The Grand Evolution",
+"293 Heliod, the Radiant Dawn // Heliod, the Warped Eclipse",
+"338 Elesh Norn // The Argent Etchings",
+"295 Rona, Herald of Invasion // Rona, Tolarian Obliterator",
+"386 Ghalta and Mavren",
+"341 Urabrask // The Great Work",
+"342 Vorinclex // The Grand Evolution"
+],
+"ddr": [
+"73 Zombie Giant",
+"76 Ob Nixilis Reignited Emblem",
+"71 Eldrazi Scion",
+"75 Plant"
+],
+"c21": [
+"219 Incubation // Incongruity"
+],
+"lci": [
+"410c Cavern of Souls",
+"410e Cavern of Souls",
+"391 Treasure Map // Treasure Cove",
+"404 Hit the Mother Lode",
+"371 Tarrian's Journal // The Tomb of Aclazotz",
+"380 Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+"339 Huatli, Poet of Unity // Roar of the Fifth People",
+"317 Ojer Axonil, Deepest Might // Temple of Power",
+"189 Huatli, Poet of Unity // Roar of the Fifth People",
+"363 The Everflowing Well // The Myriad Pools",
+"387 Matzalantli, the Great Door // The Core",
+"357 Thousand Moons Smithy // Barracks of the Thousand"
+],
+"bfz": [
+"252 Plains",
+"265 Mountain",
+"268 Mountain",
+"260 Swamp",
+"264 Swamp",
+"257 Island",
+"272 Forest",
+"254 Plains",
+"267 Mountain",
+"266 Mountain",
+"250 Plains",
+"269 Mountain"
+],
+"2xm": [
+"364 Sword of Feast and Famine",
+"357 Blightsteel Colossus",
+"358 Chrome Mox",
+"381 Forest",
+"349 Crop Rotation",
+"351 Exploration",
+"350 Doubling Season",
+"365 Sword of Fire and Ice",
+"356 Batterskull",
+"366 Sword of Light and Shadow",
+"355 Meddling Mage",
+"370 Urza's Mine"
+],
+"woc": [
+"30 Court of Vantress",
+"35 Brenard, Ginger Sculptor",
+"31 Court of Locthwain",
+"38 Korvold, Gleeful Glutton",
+"40 Throne of Eldraine",
+"34 Alela, Cunning Conqueror",
+"33 Court of Garenbrig",
+"39 Tegwyll, Duke of Splendor",
+"37 Gylwain, Casting Director",
+"32 Court of Embereth",
+"29 Court of Ardenvale",
+"36 Ellivere of the Wild Court"
+],
+"sok": [
+"35 Erayo, Soratami Ascendant // Erayo's Essence",
+"78 Kuon, Ogre Ascendant // Kuon's Essence",
+"27 Rune-Tail, Kitsune Ascendant // Rune-Tail's Essence",
+"103 Homura, Human Ascendant // Homura's Essence",
+"145 Sasaya, Orochi Ascendant // Sasaya's Essence"
+],
+"big": [
+"61 Vaultborn Tyrant",
+"62 Loot, the Key to Everything",
+"64 Sword of Wealth and Power",
+"63 Lotus Ring",
+"65 Tarnation Vista"
+],
+"hob": [
+"278 Gandalf, Goblins' Bane // Flameshape",
+"279 Thorin, Mountain-king",
+"268 The Notary Hobbits",
+"320 Plains",
+"277 Gollum, Riddle Master",
+"316 Plains",
+"321 The Misty Mountains Cold",
+"257 Most Decrepit Old Bird // Speak Secrets",
+"270 The Arkenstone // Seek the Heart",
+"258 Azog, Moria's Ruin",
+"317 Plains",
+"275 Gleaming Splendor"
+],
+"mh2": [
+"290 Fire // Ice",
+"212 Road // Ruin",
+"492 Yusri, Fortune's Flame"
+],
+"chk": [
+"131 Nezumi Shortfang // Stabwhisker the Odious",
+"93 Student of Elements // Tobita, Master of Winds",
+"70 Jushi Apprentice // Tomoya the Revealer",
+"202 Budoka Gardener // Dokai, Weaver of Life",
+"153 Akki Lavarunner // Tok-Tok, Volcano Born",
+"129 Nezumi Graverobber // Nighteyes the Desecrator",
+"160b Brothers Yamazaki",
+"2 Bushi Tenderfoot // Kenzo the Hardhearted",
+"233 Orochi Eggwatcher // Shidako, Broodmistress",
+"173 Initiate of Blood // Goka the Unjust",
+"28 Kitsune Mystic // Autumn-Tail, Kitsune Sage"
+],
+"5ed": [
+"232† Game of Chaos",
+"244† Ironclaw Curse",
+"267† Shivan Dragon",
+"243† Inferno",
+"250† Manabarbs"
+],
+"blc": [
+"28 Brightcap Badger // Fungus Frolic"
+],
+"ons": [
+"200★ Embermage Goblin"
+],
+"m3c": [
+"144 Disa the Restless",
+"148 Disa the Restless",
+"147 Ulalek, Fused Atrocity",
+"139 Disa the Restless",
+"150 Satya, Aetherflux Genius",
+"149 Omo, Queen of Vesuva",
+"142 Satya, Aetherflux Genius",
+"143 Ulalek, Fused Atrocity",
+"151 Ulalek, Fused Atrocity",
+"146 Satya, Aetherflux Genius",
+"145 Omo, Queen of Vesuva",
+"141 Omo, Queen of Vesuva"
+],
+"ecl": [
+"289 Grub, Storied Matriarch // Grub, Notorious Auntie",
+"399 Spinerock Tyrant",
+"392 Winnowing",
+"347 Hallowed Fountain // Hallowed Fountain",
+"349 Blood Crypt // Blood Crypt",
+"397 Collective Inferno",
+"350 Overgrown Tomb // Overgrown Tomb",
+"407 Kinbinding",
+"291 Trystan, Callous Cultivator // Trystan, Penitent Culler",
+"287 Oko, Lorwyn Liege // Oko, Shadowmoor Scion",
+"400 Bloom Tender",
+"288 Sygg, Wanderwine Wisdom // Sygg, Wanderbrine Shield"
+],
+"plg21": [
+"C3 Path of Ancestry",
+"3 Bolas's Citadel",
+"1 Aven Mindcensor",
+"5 Scavenging Ooze",
+"4 Goblin Guide",
+"2 Dig Through Time"
+],
+"otc": [
+"230 Heaven // Earth",
+"188 Cazur, Ruthless Stalker",
+"247 Ukkima, Stalking Shadow"
+],
+"mrd": [
+"292 Island",
+"300 Mountain",
+"304 Forest",
+"294 Island",
+"302 Mountain",
+"303 Forest",
+"301 Mountain",
+"305 Forest",
+"291 Island",
+"298 Swamp",
+"296 Swamp",
+"290 Plains"
+],
+"brc": [
+"184 Evolving Wilds",
+"34 Swamp",
+"30 Plains",
+"33 Swamp",
+"35 Mountain",
+"112 Audacious Reshapers",
+"32 Island",
+"36 Mountain",
+"27 Staff of Titania",
+"29 Plains",
+"50 Staff of Titania",
+"31 Island"
+],
+"fin": [
+"566 A Realm Reborn",
+"569 Choco, Seeker of Paradise",
+"570 Vivi Ornitier",
+"567 Tifa Lockhart",
+"544† Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+"232† Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+"399† Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+"564 Cloud, Midgar Mercenary",
+"565 Stiltzkin, Moogle Merchant",
+"497† Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+"571 Yuna, Hope of Spira"
+],
+"dsk": [
+"409 Kaito, Bane of Nightmares",
+"407 Valgavoth, Terror Eater",
+"416 Grievous Wound",
+"410 Niko, Light of Hope",
+"406 The Wandering Rescuer",
+"408 Tyvar, the Pummeler"
+],
+"pwwk": [
+"76★ Comet Storm",
+"A6 Terastodon",
+"106★ Joraga Warcaller",
+"133 Celestial Colonnade"
+],
+"ddq": [
+"78 Human",
+"80 Zombie",
+"77 Angel"
+],
+"dmr": [
+"215 Fire // Ice",
+"208 Spite // Malice",
+"209 Pain // Suffering",
+"207 Stand // Deliver",
+"212 Order // Chaos",
+"210 Assault // Battery",
+"213 Illusion // Reality",
+"216 Life // Death",
+"214 Night // Day",
+"211 Wax // Wane"
+],
+"tmc": [
+"120 Storm of Steel",
+"100 Hamato Ninpō",
+"109 Donatello, Rad Scientist",
+"134 Supreme Verdict",
+"126 Mona Lisa, Ever Adaptable",
+"135 Commander's Plate",
+"106 Wooden Cane",
+"133 Food Chain",
+"108 Containment Protocol",
+"130 Manhole Cover",
+"124 Michelangelo, On the Scene",
+"105 Triceraton Regenta"
+],
+"afr": [
+"399 You Find the Villains' Lair",
+"397 Treasure Chest",
+"277 Mountain",
+"398 Portable Hole",
+"401 Magic Missile",
+"1 +2 Mace",
+"402 Prosperous Innkeeper",
+"400 Power Word Kill"
+],
+"dmc": [
+"60 Ramirez DePietro, Pillager",
+"61 Ramses, Assassin Lord",
+"69 Torsten, Founder of Benalia",
+"56 Jedit Ojanen, Mercenary",
+"55 Jasmine Boreal of the Seven",
+"53 General Marhault Elsdragon",
+"65 Sivitri, Dragon Master",
+"59 Orca, Siege Demon",
+"64 Stangg, Echo Warrior",
+"66 Tetsuo, Imperial Champion",
+"52 The Ever-Changing 'Dane",
+"70 Xira, the Golden Sting"
+],
+"woe": [
+"283 Bramble Familiar // Fetch Quest",
+"292 Mosswood Dreadknight // Dread Whispers",
+"295 Scalding Viper // Steam Clean",
+"281 Virtue of Persistence // Locthwain Scorn",
+"296 Twining Twins // Swift Spiral",
+"380 Lich-Knights' Conquest",
+"285 Beluna Grandsquall // Seek Thrills",
+"284 Virtue of Strength // Garenbrig Growth",
+"279 Virtue of Knowledge // Vantress Visions",
+"286 Cruel Somnophage // Can't Wake Up",
+"287 Decadent Dragon // Expensive Taste",
+"277 Virtue of Loyalty // Ardenvale Fealty"
+],
+"j22": [
+"831 Urza's Tower"
+],
+"por": [
+"160d Bull Hippo",
+"93d Feral Shadow",
+"6d Armored Pegasus",
+"46d Cloud Pirates",
+"67d Snapping Drake",
+"69d Storm Crow"
+],
+"bok": [
+"99 Cunning Bandit // Azamuki, Treachery Incarnate",
+"69 Hired Muscle // Scarmaker",
+"3 Faithful Squire // Kaiso, Memory of Loyalty",
+"122 Budoka Pupil // Ichiga, Who Topples Oaks",
+"31 Callow Jushi // Jaraku the Interloper"
+],
+"grn": [
+"251 Izzet Guildgate",
+"246 Dimir Guildgate",
+"255 Selesnya Guildgate",
+"248 Golgari Guildgate",
+"244 Boros Guildgate",
+"245 Dimir Guildgate",
+"260 Plains",
+"243 Boros Guildgate",
+"256 Selesnya Guildgate",
+"249 Golgari Guildgate",
+"252 Izzet Guildgate"
+],
+"dmu": [
+"429 Herd Migration",
+"436 Sheoldred, the Apocalypse",
+"435 Sheoldred, the Apocalypse"
+],
+"soi": [
+"265†d Tamiyo's Journal",
+"265†a Tamiyo's Journal",
+"265†c Tamiyo's Journal",
+"265†b Tamiyo's Journal",
+"265†e Tamiyo's Journal"
+],
+"cmr": [
+"722 Sengir, the Dark Baron",
+"721 Mana Confluence",
+"449 Response // Resurgence"
+],
+"znc": [
+"102 Struggle // Survive",
+"8 Obuun, Mul Daya Ancestor",
+"7 Anowon, the Ruin Thief"
+],
+"khm": [
+"405 Masked Vandal",
+"291 Blightstep Pathway // Searstep Pathway",
+"400 Reflections of Littjara",
+"292 Darkbore Pathway // Slitherbore Pathway",
+"311 Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+"313 Toralf, God of Fury // Toralf's Hammer",
+"286 Valki, God of Lies // Tibalt, Cosmic Impostor",
+"290 Barkchannel Pathway // Tidechannel Pathway",
+"317 Jorn, God of Winter // Kaldring, the Rimestaff",
+"402 Strategic Planning",
+"303 Cosima, God of the Voyage // The Omenkeel",
+"307 Tergrid, God of Fright // Tergrid's Lantern"
+],
+"ala": [
+"250 Rafiq of the Many"
+],
+"frf": [
+"43★ Monastery Siege",
+"79★ Palace Siege",
+"110★ Outpost Siege",
+"131★ Frontier Siege",
+"8★ Citadel Siege",
+"65★ Crux of Fate"
+],
+"inv": [
+"124★ Soul Burn",
+"134★ Urborg Skeleton"
+],
+"rna": [
+"262 Swamp"
+],
+"nec": [
+"77 Chishiro, the Shattered Blade",
+"78 Kotori, Pilot Prodigy"
+],
+"ddp": [
+"76 Eldrazi Spawn",
+"77 Eldrazi Spawn",
+"80 Plant",
+"79 Hellion",
+"78 Eldrazi Spawn"
+],
+"gpt": [
+"37★ Thunderheads",
+"14★ Shadow Lance"
+],
+"ogw": [
+"162† Captain's Claws",
+"184a Wastes",
+"184 Wastes",
+"183 Wastes",
+"183a Wastes"
+],
+"pcy": [
+"60 Coffin Puppets"
+],
+"bbd": [
+"256 Rowan Kenrith",
+"255 Will Kenrith"
+],
+"ddo": [
+"66 Soldier",
+"67 Kraken"
+],
+"moc": [
+"293 Champion of Lambholt",
+"328 Heaven // Earth",
+"339 Struggle // Survive",
+"343 Wear // Tear"
+],
+"otj": [
+"373 The Key to the Vault"
+],
+"c18": [
+"134 Budoka Gardener // Dokai, Weaver of Life"
+],
+"tdc": [
+"107 Command Tower",
+"106 Sol Ring",
+"105 Arcane Signet"
+],
+"pzen": [
+"228★ Valakut, the Molten Pinnacle",
+"9★ Day of Judgment",
+"A5 Terra Stomper"
+],
+"onc": [
+"29 Ixhel, Scion of Atraxa",
+"30 Neyali, Suns' Vanguard"
+],
+"sos": [
+"368 Wisdom of Ages",
+"306 Emeritus of Ideation // Ancestral Recall"
+],
+"c20": [
+"212 Find // Finality"
+],
+"ody": [
+"325† Seafloor Debris"
+],
+"hou": [
+"157 Driven // Despair"
+],
+"ddu": [
+"52 Darksteel Plate"
+],
+"aer": [
+"14† Dawnfeather Eagle",
+"101† Wrangle",
+"52† Alley Strangler"
+],
+"c13": [
+"118 Rough // Tumble"
+],
+"j25": [
+"73 Brothers Yamazaki",
+"72 Brothers Yamazaki"
+],
+"pl21": [
+"1★ Sethron, Hurloon General",
+"2★ Minotaur"
+],
+"ddn": [
+"82 Goblin"
+],
+"plg24": [
+"1 Sakura-Tribe Elder"
+],
+"m20": [
+"206† Corpse Knight"
+],
+"fca": [
+"63† Strixhaven Stadium"
+],
+"gtc": [
+"70 Killing Glare"
+],
+"cmd": [
+"92 Nezumi Graverobber // Nighteyes the Desecrator"
+]
+},
+"pairs_by_set": [
+[
+"pmei",
+12
+],
+[
+"fin",
+6
+],
+[
+"dd2",
+2
+],
+[
+"iko",
+2
+],
+[
+"snc",
+1
+]
+]
+}
