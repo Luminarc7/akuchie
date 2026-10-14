@@ -9,3 +9,5 @@ worker.js
 _headers
 tools
 .gitignore
+dev
+CLAUDE.md
