@@ -1,5 +1,0 @@
-magic_new.html 403 https://magic-support.wizards.com/hc/en-us/requests/new
-magic_forms.json 200 https://magic-support.wizards.com/api/v2/ticket_forms.json
-support_new.html 403 https://support.wizards.com/hc/en-us/requests/new
-support_forms.json 200 https://support.wizards.com/api/v2/ticket_forms.json
-support_home.html 403 https://support.wizards.com/hc/en-us
