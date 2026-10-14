@@ -21,14 +21,15 @@ eventually will add prices for local stores
 
 ## Backups and rolling back
 
-Before every publish the live version is tagged in git: `backup/<date>-before-<what>` (the site as it
-was) and `release/<date>` (what was published). To go back:
+Before every publish the live version is saved as a branch, `backup-<date>-before-<what>` (the site
+exactly as it was). Cloudflare builds that branch too, so the old site can be opened at
+`https://backup-<date>-before-<what>-warujie.<subdomain>.workers.dev`. To go back:
 
 1. **Fastest (a minute, no code change):** Cloudflare dashboard → Workers & Pages → **warujie** →
    **Deployments** → pick the earlier deployment → **Rollback**. The next push to `main` deploys the
    code in `main` again, so also do step 2 if the problem is in the code.
-2. **In the code:** put `main` back to a backup tag (ask Claude, or on GitHub restore the files from
-   the tag) and push: Cloudflare redeploys it.
+2. **In the code:** put `main` back to the backup branch (ask Claude, or on GitHub restore the files
+   from that branch) and push: Cloudflare redeploys it.
 
 The app's offline copy (`sw.js`) always asks the network first, so a rollback reaches visitors on
 their next visit.
