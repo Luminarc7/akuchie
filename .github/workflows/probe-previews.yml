@@ -1,0 +1,15 @@
+name: Probe link previews
+on: push
+permissions: { contents: write }
+jobs:
+  probe:
+    if: github.ref == 'refs/heads/claude/project-thread-gjzu1m'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p probe_out
+          ( set -x; bash tools/probe_previews.sh ) > probe_out/previews_log.txt 2>&1 || true
+          cat probe_out/previews_log.txt
+          git config user.name probe; git config user.email probe@users.noreply.github.com
+          git add probe_out && git commit -m "probe result [skip ci]" && git push
