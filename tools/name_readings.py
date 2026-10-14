@@ -21,6 +21,7 @@ import sys
 KANJI = '㐀-鿿豈-﫿々〆ヶ'
 RUBY = re.compile(r'([' + KANJI + r']+)[（(]([ぁ-ゖー]+)[）)]')
 HAS_KANJI = re.compile('[' + KANJI + ']')
+HAS_WORD = re.compile('[ぁ-ゖァ-ヺ' + KANJI + ']')
 DROP = re.compile(r'[\s、。・，,.!！?？:：;；\'"’“”「」『』（）()\[\]【】〈〉《》/／\-–—~〜&＆+＋]')
 VOWEL = {}
 for vowel, row in (('あ', 'あかさたなはまやらわがざだばぱぁゃゎ'), ('い', 'いきしちにひみりぎじぢびぴぃゐ'),
@@ -69,7 +70,8 @@ def main():
         for m in tok.tokenize(name, SplitMode.C):
             surface = m.surface()
             r = m.reading_form()
-            parts.append(surface if (m.is_oov() or not r or r == '*') else r)
+            # symbols (/ ・ ！) keep their surface: the dictionary reads them as キゴウ
+            parts.append(surface if (m.is_oov() or not r or r == '*' or not HAS_WORD.search(surface)) else r)
         return ''.join(parts)
 
     done = printed = read = 0

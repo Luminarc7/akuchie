@@ -9,8 +9,10 @@ eventually will add prices for local stores
 
 ## Data files and the jobs that keep them up to date
 
-- `ja_cards.json.gz` – the card database. When it changes, the **Name readings** workflow adds the
-  reading of every Japanese card name (`name_kana`, for the あいうえお order; never shown) using
+- `ja_cards.json.gz` – the card database. When it changes, the **Name readings** workflow first puts
+  in the Japanese names Scryfall's data has wrong or missing (two-part cards such as adventures,
+  split cards and rooms; `tools/fix_names.py` with the list in `tools/name_fixes_ja.json`, read off
+  the Japanese cards), then adds the reading of every Japanese card name (`name_kana`, for the あいうえお order; never shown) using
   `tools/name_readings.py`. At each deploy `tools/brotli_db.mjs` makes `ja_cards.json.br`, which
   `worker.js` sends as `/ja_cards.json` (half the download of the .gz).
 - `meta.json`, `meta_decks.json`, `meta_lists/` – the metagame tab, deck pages, weekly trends and the

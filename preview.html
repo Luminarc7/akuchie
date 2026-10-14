@@ -354,6 +354,13 @@
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .cp-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+  .print-slot { min-height: 34px; margin-top: 10px; }
+  .print-langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+  .print-lang { width: 38px; height: 28px; padding: 0; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface);
+    color: var(--text); font: 700 11.5px/1 "Zen Kaku Gothic New", sans-serif; letter-spacing: .04em; cursor: pointer; }
+  .print-lang:hover { border-color: var(--accent); color: var(--accent); }
+  .print-lang[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); cursor: default; }
+  .print-lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 3px; }
   .pip {
@@ -994,6 +1001,9 @@
     .cp-art { grid-row: 1 / span 3; }
     .cp-meta { margin-top: 0; }
     .cp-art { position: static; max-width: none; margin: 0; }
+    .print-slot { margin-top: 8px; }
+    .print-langs { gap: 4px; }
+    .print-lang { flex: 0 0 calc((100% - 12px) / 4); width: auto; height: 26px; font-size: 11px; }
     .cp-info { display: contents; }
     .cp-title-row { grid-column: 2; }
     .cp-typeline, .cp-meta { grid-column: 2; }
@@ -1982,7 +1992,7 @@ const STR = {
   'yen.approx': ['約{y}', '≈ {y}'],
   'img.fail': ['画像を読み込めませんでした', 'Image failed to load'],
   'img.none': ['画像なし', 'No image'],
-  'img.english.none': ['日本語版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the Japanese printing, so the English printing’s picture is shown.'],
+  'img.english.none': ['{lang}版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the {lang} printing, so the English printing’s picture is shown.'],
   'img.english.lowres': ['日本語版の画像は低解像度のため、同じ版の英語版の高解像度画像を表示しています。', 'The Japanese printing only has a low-resolution picture, so the English printing’s sharp picture is shown.'],
   'match.fixed': ['「{from}」は「{to}」として検索しました。', 'Searched for “{to}” instead of “{from}”.'],
   'match.strict': ['語句がまとまって出てくるカードを表示しています。', 'Showing cards where the words appear together.'],
@@ -2057,6 +2067,8 @@ const STR = {
   'set.fail.body': ['セットコードを確認するか、時間をおいて再度お試しください。', 'Check the set code, or try again in a little while.'],
   'set.released': ['発売日 {d}', 'Released {d}'],
   'card.notfound': ['カードが見つかりませんでした', 'Card not found'],
+  'print.aria': ['この版の言語', 'Languages of this printing'],
+  'print.title': ['{lang}版を表示', 'Show the {lang} printing'],
   'card.notfound.body': ['URLを確認するか、検索からやり直してください。', 'Check the address, or start again from the search.'],
   'res.none': ['該当するカードが見つかりませんでした', 'No cards found'],
   'res.none.body': ['条件を変えて再度検索してください。', 'Try different search terms or filters.'],
@@ -2682,7 +2694,7 @@ function termInfo(rawTerm) {
     const t = normText(rawTerm).trim();
     const tJa = t.replace(/\s+/g, '');
     const eq = englishEquivalents(rawTerm);
-    m = { t, tJa, fold: HIRAGANA_RE.test(tJa) ? kanaFold(tJa) : null, kw: eq.kw, text: eq.text ? normText(eq.text) : null };
+    m = { t, tJa, fold: HIRAGANA_RE.test(tJa) ? kanaFold(tJa) : null, key: nameKey(t), kw: eq.kw, text: eq.text ? normText(eq.text) : null };
     if (TERM_MEMO.size > 400) TERM_MEMO.clear();
     TERM_MEMO.set(rawTerm, m);
   }
@@ -2693,14 +2705,26 @@ function rowNameFold(row) {
   if (row._nameFold === undefined) row._nameFold = [row._nameJa, ...row._altJa].filter(Boolean).map(kanaFold).join('|');
   return row._nameFold;
 }
-function nameHas(row, tJa, fold) {
-  return (!!tJa && (row._nameJa.includes(tJa) || row._altJa.some(n => n.includes(tJa)))) || (!!fold && rowNameFold(row).includes(fold));
+// A card name with its punctuation and spaces left out (and kana as katakana), so
+// "yawgmoth thran" finds "Yawgmoth, Thran Physician", 敏捷なこそ泥ラガバン finds
+// 敏捷なこそ泥、ラガバン and "urzas saga" finds "Urza's Saga".
+const NAME_PUNCT_RE = /[\s,.'"’‘`´!?:;、。・･，．！？：；「」『』（）()\[\]【】〈〉《》\-‐‑–—―~〜／/&＆+＋_]/g;
+function nameKey(s) { return kanaFold(normText(s)).replace(NAME_PUNCT_RE, ''); }
+function rowNameKey(row) {
+  if (row._nameKey === undefined) {
+    row._nameKey = [row.name_en, ...String(row.name_en || '').split(' // '), row._nameJa, ...row._altJa].filter(Boolean).map(nameKey).join('|');
+  }
+  return row._nameKey;
+}
+function nameHas(row, tJa, fold, key) {
+  return (!!tJa && (row._nameJa.includes(tJa) || row._altJa.some(n => n.includes(tJa)))) || (!!fold && rowNameFold(row).includes(fold))
+    || (!!key && key.length >= 3 && rowNameKey(row).includes(key));
 }
 function textMatches(row, rawTerm, includeNameAndType) {
   const m = termInfo(rawTerm);
   if (!m.t) return true;
   if (includeNameAndType) {
-    if (row._nameEn.includes(m.t) || nameHas(row, m.tJa, m.fold) ||
+    if (row._nameEn.includes(m.t) || nameHas(row, m.tJa, m.fold, m.key) ||
         row._typeJa.includes(m.tJa) || row._typeEn.includes(m.t)) return true;
   }
   if (row._textJa.includes(m.tJa) || row._textEn.includes(m.t)) return true;
@@ -2719,6 +2743,7 @@ function opInfo(val) {
     const seq = (/\s/.test(String(val).trim()) && !JA_CHARS.test(val)) ? enTokens(val) : null;
     m = { v, vJa: v.replace(/\s+/g, ''), seq: seq && seq.length ? seq : null };
     m.fold = HIRAGANA_RE.test(m.vJa) ? kanaFold(m.vJa) : null;
+    m.key = nameKey(v);
     if (OP_MEMO.size > 400) OP_MEMO.clear();
     OP_MEMO.set(val, m);
   }
@@ -2736,7 +2761,7 @@ function localOperatorMatch(row, op, sep, val) {
       return textMatches(row, val, false);
     }
     case 'name': case 'n': case '名前': case 'カード名': {
-      return row._nameEn.includes(v) || nameHas(row, info.vJa, info.fold);
+      return row._nameEn.includes(v) || nameHas(row, info.vJa, info.fold, info.key);
     }
     case 't': {
       if (row._typeJa.includes(v.replace(/\s+/g, '')) || row._typeEn.includes(v)) return true;
@@ -2850,17 +2875,19 @@ const REL_MEMO = { query: null };
 function relevance(row, query) {
   if (REL_MEMO.query !== query) {
     const q = normText(query).trim(), qJa = q.replace(/\s+/g, '');
-    Object.assign(REL_MEMO, { query, q, qJa, fold: HIRAGANA_RE.test(qJa) ? kanaFold(qJa) : null });
+    Object.assign(REL_MEMO, { query, q, qJa, fold: HIRAGANA_RE.test(qJa) ? kanaFold(qJa) : null, key: nameKey(q) });
   }
-  const { q, qJa, fold } = REL_MEMO;
+  const { q, qJa, fold, key } = REL_MEMO;
   if (!q) return 2;
   // most cards: the name does not have the search in it at all
-  if (!row._nameEn.includes(q) && !nameHas(row, qJa, fold)) return 2;
+  if (!row._nameEn.includes(q) && !nameHas(row, qJa, fold, key)) return 2;
+  if (key.length >= 3 && rowNameKey(row).split('|').includes(key)) return 0;
   const jaNames = [row._nameJa, ...row._altJa].filter(Boolean);
   if (row._nameEn === q || jaNames.includes(qJa) || (fold && jaNames.some(n => kanaFold(n) === fold))) return 0;
   if (wordStartIn(row._nameEn, q, NAME_WORD_START_EN) || row._nameEn.split(' // ').some(f => f.startsWith(q))
       || jaNames.some(n => wordStartIn(n, qJa, NAME_WORD_START_JA)) || (fold && jaNames.some(n => wordStartIn(kanaFold(n), fold, NAME_WORD_START_JA)))) return 1;
-  if (row._nameEn.includes(q) || nameHas(row, qJa, fold)) return 1.5;
+  if (key.length >= 3 && rowNameKey(row).split('|').some(n => n.startsWith(key))) return 1;
+  if (row._nameEn.includes(q) || nameHas(row, qJa, fold, key)) return 1.5;
   return 2;
 }
 // The あいうえお order: the reading of the Japanese name (name_kana, in the
@@ -3643,6 +3670,7 @@ function jaMayHave(row, u) {
   const all = rowJaAll(row);
   if (u.n && all.includes(u.n)) return true;
   if (u.fold && rowNameFold(row).includes(u.fold)) return true;
+  if (u.key && u.key.length >= 3 && rowNameKey(row).includes(u.key)) return true;
   if (u.kw && row._kw.has(u.kw)) return true;
   if (u.chunks.length > 1 && u.chunks.every(c => all.includes(c))) return true;
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) return true;
@@ -3657,7 +3685,7 @@ function prepareJapanese(tokens) {
     const n = normJaSearch(raw);
     const eq = englishEquivalents(raw);
     return {
-      raw, n, bare: n.replace(JA_PARTICLE_RE, ''), fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null,
+      raw, n, bare: n.replace(JA_PARTICLE_RE, ''), fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null, key: nameKey(raw),
       chunks: n.split(JA_SPLIT_RE).filter(Boolean),
       kw: eq.kw, en: eq.text ? enTokens(eq.text) : null,
     };
@@ -3672,6 +3700,7 @@ function locateJa(row, u) {
     if ((u.n && line.includes(u.n)) || (u.bare && bare[i].includes(u.bare))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
   });
   if (u.fold && !out.lines.has('j0') && rowNameFold(row).includes(u.fold)) { out.lines.add('j0'); out.head = true; }
+  if (u.key && u.key.length >= 3 && !out.lines.has('j0') && rowNameKey(row).includes(u.key)) { out.lines.add('j0'); out.head = true; }
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
     rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
   }
@@ -4361,7 +4390,7 @@ async function ensureEnglishPrices(cards) {
       const byKey = new Map(data.map(e => [`${e.set}|${e.collector_number}`, e]));
       chunk.forEach(c => {
         const en = byKey.get(`${c.set}|${c.collector_number}`);
-        if (en) { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
+        if (en && en.lang === 'en') { c._enPrices = en.prices || {}; c._enId = en.id; c._enCard = en; }
         c._enChecked = true;
       });
     } catch (err) { /* prices just stay blank */ }
@@ -4394,14 +4423,30 @@ function tilePriceHtml(card) {
 function dbRowFor(card) {
   return (typeof ORACLE_MAP !== 'undefined' && ORACLE_MAP && card && card.oracle_id) ? ORACLE_MAP.get(card.oracle_id) : null;
 }
+const HAS_JA = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/;
 function displayNameJa(card) { return stripRuby(displayNameJaRaw(card)); }
 function displayNameJaRaw(card) {
+  const row = dbRowFor(card);
+  const rowName = row && row.name_ja;
+  if (card.lang === 'ja') {
+    const faces = card.card_faces || [];
+    const rowFaces = rowName ? rowName.split(' // ') : [];
+    if (faces.length > 1) {
+      const names = faces.map((f, i) => {
+        const own = f.printed_name || '';
+        if (HAS_JA.test(own) || !HAS_JA.test(rowFaces[i] || '')) return own || rowFaces[i] || f.name;
+        return rowFaces[i];
+      });
+      return names.join(' // ');
+    }
+    if (card.printed_name && (HAS_JA.test(card.printed_name) || !HAS_JA.test(rowName || ''))) return card.printed_name;
+    return rowName || card.printed_name || card.name;
+  }
   if (card.lang && card.lang !== 'en' && card.printed_name) return card.printed_name;
   if (card.lang && card.lang !== 'en' && card.card_faces && card.card_faces.some(f => f.printed_name)) {
     return card.card_faces.map(f => f.printed_name || f.name).join(' // ');
   }
-  const row = dbRowFor(card);
-  return (row && row.name_ja) || card.printed_name || card.name;
+  return rowName || card.printed_name || card.name;
 }
 // English type line -> Japanese, for cards that exist in Japanese but whose
 // Japanese type line Scryfall does not have. Words it does not know stay English.
@@ -4460,9 +4505,8 @@ function displayTextJaRaw(card) {
 function japaneseFrontName(card) { return stripRuby(japaneseFrontNameRaw(card)); }
 function japaneseFrontNameRaw(card) {
   if (card.lang === 'ja') {
-    const face = card.card_faces && card.card_faces[0];
-    const n = (face && face.printed_name) || card.printed_name;
-    if (n) return String(n).split(' // ')[0];
+    const n = displayNameJaRaw(card).split(' // ')[0];
+    if (HAS_JA.test(n)) return n;
   }
   const row = dbRowFor(card);
   return row && row.name_ja ? row.name_ja.split(' // ')[0] : '';
@@ -4866,7 +4910,8 @@ function cardArtHtml(card, alt) {
   const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false, keep: true }))
     .join('<div style="height:10px"></div>');
   const english = pictureSource(card) !== card;
-  const note = english ? `<p class="cp-img-note">${t('img.english.none')}</p>` : '';
+  const langName = (PRINT_NAME[card.lang] || PRINT_NAME.ja)[LANG === 'en' ? 1 : 0];
+  const note = english ? `<p class="cp-img-note">${t('img.english.none', { lang: langName })}</p>` : '';
   return pics + note;
 }
 
@@ -4891,7 +4936,8 @@ function renderCardViewContent(card) {
     document.title = homeTitle();
     return;
   }
-  const names = cardNames(card);
+  const pl = printChoice(card);
+  const names = cardPageNames(card, pl);
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
   const shopGroups = [
@@ -4908,7 +4954,7 @@ function renderCardViewContent(card) {
 
   box.innerHTML = `
     <div class="card-page">
-      <div class="cp-art">${cardArtHtml(card, names.main)}</div>
+      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="print-slot" id="printSlot"></div></div>
       <div class="cp-info">
         <div class="cp-title-row">
           <div>
@@ -4917,8 +4963,8 @@ function renderCardViewContent(card) {
           </div>
           <div class="cp-cost"><span class="pips">${renderPips(card.mana_cost)}</span></div>
         </div>
-        <div class="cp-typeline"><span>${esc(displayType(card))}</span>${pt}</div>
-        <div class="cp-text">${symbolize(esc(displayText(card))) || t('notext')}</div>
+        <div class="cp-typeline"><span>${esc(cardPageType(card, pl))}</span>${pt}</div>
+        <div class="cp-text">${symbolize(esc(cardPageText(card, pl))) || t('notext')}</div>
         ${card.flavor_text ? `<p class="cp-flavor">${esc(card.flavor_text)}</p>` : ''}
         <div class="cp-row cp-roles" id="cpRoles" hidden></div>
         <div class="cp-meta">
@@ -4954,6 +5000,7 @@ function renderCardViewContent(card) {
     <section class="combos" id="combosBox" style="display:none;"></section>
     <section class="price-notes" id="priceNotes" hidden></section>`;
   document.title = `${names.main} — 悪知恵`;
+  fillPrintToggle(card);
   const notesBox = document.getElementById('priceNotes');
   notesBox.innerHTML = priceNotesHtml(card);
   notesBox.hidden = !notesBox.innerHTML.trim();
@@ -4980,7 +5027,11 @@ function renderCardViewContent(card) {
       if (shownCard !== card || getCardIdFromUrl() !== card.id) return;
       if (card._enPrices) rerenderPriceSection(card);
       const art = document.querySelector('#cardViewCard .cp-art');
-      if (art && pictureSource(card) !== card) art.innerHTML = cardArtHtml(card, cardNames(card).main);
+      if (art && pictureSource(card) !== card) {
+        const slot = document.getElementById('printSlot');
+        art.innerHTML = cardArtHtml(card, cardPageNames(card, printChoice(card)).main);
+        if (slot) art.appendChild(slot);   // the language buttons stay
+      }
     });
   }
 }
@@ -5184,6 +5235,104 @@ async function loadPrintings(card) {
 function getCardIdFromUrl() {
   return new URLSearchParams(location.search).get('card');
 }
+// ---- the printing's language: 日本語版 / 英語版 ------------------------------------------
+// ?card=<id>&print=en|ja: the card page shows that printing in its own language (name,
+// type, rules text); without it, the page follows the site's language as before.
+function printChoice(card) {
+  const p = new URLSearchParams(location.search).get('print');
+  return p && card.lang && p === card.lang ? p : null;
+}
+const facesJoin = (card, key) => card[key] || (card.card_faces || []).map(f => f[key]).filter(Boolean).join(' // ');
+function cardPageNames(card, pl) {
+  const ja = displayNameJa(card), row = dbRowFor(card), en = card.name || (row && row.name_en) || '';
+  if (pl === 'en') return { main: en, sub: ja && ja !== en ? ja : '' };
+  if (pl === 'ja') return { main: ja, sub: en && en !== ja ? en : '' };
+  if (pl) { const own = stripRuby(facesJoin(card, 'printed_name')) || en; return { main: own, sub: own !== en ? en : '' }; }
+  return cardNames(card);
+}
+function cardPageType(card, pl) {
+  if (pl === 'en') return facesJoin(card, 'type_line');
+  if (pl === 'ja') return displayTypeJa(card);
+  if (pl) return facesJoin(card, 'printed_type_line') || facesJoin(card, 'type_line');
+  return displayType(card);
+}
+function cardPageText(card, pl) {
+  if (pl === 'en') return getText(card, 'oracle_text', 'oracle_text');
+  if (pl === 'ja') return displayTextJa(card);
+  if (pl) return getText(card, 'printed_text', 'printed_text') || getText(card, 'oracle_text', 'oracle_text');
+  return displayText(card);
+}
+// Every language this exact printing exists in (the same set and collector number):
+// one Scryfall search with include_multilingual, remembered for the visit.
+const PRINT_LANGS = ['ja', 'en', 'zhs', 'zht', 'ko', 'fr', 'de', 'it', 'es', 'pt', 'ru', 'ph', 'he', 'la', 'grc', 'ar', 'sa', 'qya'];
+const PRINT_LABEL = { ja: 'JP', en: 'EN', zhs: 'CS', zht: 'CT', ko: 'KO', fr: 'FR', de: 'DE', it: 'IT', es: 'ES', pt: 'PT', ru: 'RU', ph: 'PH', he: 'HE', la: 'LA', grc: 'GR', ar: 'AR', sa: 'SA', qya: 'QY' };
+const PRINT_NAME = {
+  ja: ['日本語', 'Japanese'], en: ['英語', 'English'], zhs: ['簡体字中国語', 'Simplified Chinese'], zht: ['繁体字中国語', 'Traditional Chinese'],
+  ko: ['韓国語', 'Korean'], fr: ['フランス語', 'French'], de: ['ドイツ語', 'German'], it: ['イタリア語', 'Italian'], es: ['スペイン語', 'Spanish'],
+  pt: ['ポルトガル語', 'Portuguese'], ru: ['ロシア語', 'Russian'], ph: ['ファイレクシア語', 'Phyrexian'], he: ['ヘブライ語', 'Hebrew'], la: ['ラテン語', 'Latin'],
+  grc: ['古代ギリシャ語', 'Ancient Greek'], ar: ['アラビア語', 'Arabic'], sa: ['サンスクリット語', 'Sanskrit'], qya: ['クウェンヤ語', 'Quenya'],
+};
+const PRINTINGS = new Map();   // '<set>|<number>' -> { <lang>: card }
+// Sets whose other-language printings Scryfall files under a set code of their own,
+// with the same collector numbers: the Japanese 4th Edition (4bb) is the English 4ed's.
+const SET_TWIN = { '4bb': '4ed', '4ed': '4bb', bchr: 'chr', chr: 'bchr', fbb: '3ed', '3ed': 'fbb' };
+async function printingLanguages(card) {
+  if (!card.set || !card.collector_number) return { [card.lang || 'en']: card };
+  const key = card.set + '|' + card.collector_number;
+  if (!PRINTINGS.has(key)) {
+    PRINTINGS.set(key, (async () => {
+      const out = {};
+      const twin = SET_TWIN[card.set];
+      const q = `${twin ? `(e:${card.set} or e:${twin})` : `e:${card.set}`} cn:"${String(card.collector_number).replace(/"/g, '')}"`;
+      const twins = {};
+      let url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, include_multilingual: 'true', unique: 'prints' })}`;
+      try {
+        for (let page = 0; url && page < 3; page++) {
+          await scryfallTurn();
+          const res = await fetch(url, { headers: { Accept: 'application/json' } });
+          if (!res.ok) break;
+          const data = await res.json();
+          (data.data || []).forEach(c => {
+            if (String(c.collector_number) !== String(card.collector_number) || !c.lang) return;
+            if (c.set === card.set) { if (!out[c.lang]) out[c.lang] = c; }
+            else if (twin && c.set === twin && c.oracle_id && c.oracle_id === card.oracle_id && !twins[c.lang]) twins[c.lang] = c;
+          });
+          url = data.has_more ? data.next_page : null;
+        }
+      } catch (err) { /* only the printing shown */ }
+      Object.keys(twins).forEach(l => { if (!out[l]) out[l] = twins[l]; });
+      return out;
+    })());
+  }
+  const found = await PRINTINGS.get(key);
+  return Object.assign({}, found, { [card.lang || 'en']: card });
+}
+function printButtonsHtml(langs, card) {
+  const cur = card.lang || 'en';
+  const order = PRINT_LANGS.filter(l => langs[l]).concat(Object.keys(langs).filter(l => !PRINT_LANGS.includes(l)));
+  return `<div class="print-langs" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${order.map(l => {
+    const name = (PRINT_NAME[l] || [l, l])[LANG === 'en' ? 1 : 0];
+    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id)}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
+  }).join('')}</div>`;
+}
+let shownLangs = null;   // the languages of the printing on the card page
+async function fillPrintToggle(card) {
+  shownLangs = null;
+  const slot = document.getElementById('printSlot');
+  if (!slot) return;
+  const langs = await printingLanguages(card);
+  if (shownCard !== card || !slot.isConnected) return;
+  shownLangs = langs;
+  slot.innerHTML = printButtonsHtml(langs, card);
+}
+document.getElementById('cardViewCard').addEventListener('click', (e) => {
+  const b = e.target.closest('#printToggle [data-print]');
+  if (!b || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id || !shownCard) return;
+  const c = shownLangs && shownLangs[b.dataset.print];
+  if (c && c.id === b.dataset.id) currentCardsExtra.set(c.id, c);
+  goTo(`?card=${encodeURIComponent(b.dataset.id)}&print=${b.dataset.print}`);
+});
+const currentCardsExtra = new Map();   // printings opened with the switch: shown at once
 function showView(name) {
   document.documentElement.dataset.view = name;
   document.getElementById('searchView').style.display = name === 'search' ? '' : 'none';
@@ -5462,7 +5611,7 @@ function homeTitle() { return t(SITE === 'main' ? 'title.home' : 'title.home.' +
 
 function applyRoute(route) {
   if (route.view === 'card') {
-    const cached = [...currentCards, ...setView.cards].find(c => c.id === route.id);
+    const cached = [...currentCards, ...setView.cards].find(c => c.id === route.id) || currentCardsExtra.get(route.id);
     showCardView();
     if (cached) { renderCardViewContent(cached); return; }
     shownCard = null;
@@ -7798,7 +7947,7 @@ function nameSuggestions(raw) {
   const q = String(raw || '').trim();
   if (!q || q.length > 40 || /[:<>=]/.test(q) || /^-/.test(q) || !LOCAL_DB) return [];
   if (!NAME_SUGGEST) NAME_SUGGEST = LOCAL_DB.filter(inScope).map(row => ({ row, ja: kanaFold(row._nameJa), alt: row._altJa.map(kanaFold) }));
-  const qJa = kanaFold(normJa(q)), qEn = normText(q);
+  const qJa = kanaFold(normJa(q)), qEn = normText(q), qKey = nameKey(q);
   const hits = [];
   for (const { row, ja, alt } of NAME_SUGGEST) {
     let rank = 9;
@@ -7808,6 +7957,12 @@ function nameSuggestions(raw) {
     if (e === 0) rank = Math.min(rank, 0);
     else if (e > 0) rank = Math.min(rank, /[\s,'-]/.test(row._nameEn[e - 1]) ? 1 : 3);
     if (rank === 9 && alt.some(a => a.includes(qJa))) rank = 4;
+    if (rank === 9 && qKey.length >= 2) {
+      // the same name with the punctuation left out: "yawgmoth thran" -> Yawgmoth, Thran Physician
+      const keys = rowNameKey(row).split('|');
+      if (keys.some(k => k.startsWith(qKey))) rank = 1;
+      else if (keys.some(k => k.includes(qKey))) rank = 3;
+    }
     if (rank < 9) hits.push({ row, rank });
   }
   hits.sort((a, b) => a.rank - b.rank || (a.row.name_ja || a.row.name_en).length - (b.row.name_ja || b.row.name_en).length);
@@ -7817,6 +7972,19 @@ function boldMatch(name, q) {
   name = String(name ?? '');
   q = String(q ?? '');
   const i = kanaFold(name.toLowerCase()).indexOf(kanaFold(q.trim().toLowerCase()));
+  if (q.trim() && i < 0) {
+    // typed without the punctuation: bold the stretch of the name it covers
+    const want = nameKey(q);
+    if (want) {
+      const chars = [...name];
+      for (let a = 0; a < chars.length; a++) {
+        if (nameKey(chars[a]) === '') continue;
+        let got = '', b = a;
+        while (b < chars.length && got.length < want.length) { got += nameKey(chars[b]); b++; }
+        if (got === want) return esc(chars.slice(0, a).join('')) + '<b>' + esc(chars.slice(a, b).join('')) + '</b>' + esc(chars.slice(b).join(''));
+      }
+    }
+  }
   if (!q.trim() || i < 0) return esc(name);
   return esc(name.slice(0, i)) + '<b>' + esc(name.slice(i, i + q.trim().length)) + '</b>' + esc(name.slice(i + q.trim().length));
 }
