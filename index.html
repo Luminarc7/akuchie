@@ -1991,7 +1991,7 @@ const STR = {
   'yen.approx': ['約{y}', '≈ {y}'],
   'img.fail': ['画像を読み込めませんでした', 'Image failed to load'],
   'img.none': ['画像なし', 'No image'],
-  'img.english.none': ['日本語版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the Japanese printing, so the English printing’s picture is shown.'],
+  'img.english.none': ['{lang}版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the {lang} printing, so the English printing’s picture is shown.'],
   'img.english.lowres': ['日本語版の画像は低解像度のため、同じ版の英語版の高解像度画像を表示しています。', 'The Japanese printing only has a low-resolution picture, so the English printing’s sharp picture is shown.'],
   'match.fixed': ['「{from}」は「{to}」として検索しました。', 'Searched for “{to}” instead of “{from}”.'],
   'match.strict': ['語句がまとまって出てくるカードを表示しています。', 'Showing cards where the words appear together.'],
@@ -4909,7 +4909,8 @@ function cardArtHtml(card, alt) {
   const pics = faces.map(u => pictureTag(u, { alt, sizes: '(max-width: 820px) min(300px, 92vw), 340px', use: ['normal', 'large'], main: 'large', lazy: false, keep: true }))
     .join('<div style="height:10px"></div>');
   const english = pictureSource(card) !== card;
-  const note = english ? `<p class="cp-img-note">${t('img.english.none')}</p>` : '';
+  const langName = (PRINT_NAME[card.lang] || PRINT_NAME.ja)[LANG === 'en' ? 1 : 0];
+  const note = english ? `<p class="cp-img-note">${t('img.english.none', { lang: langName })}</p>` : '';
   return pics + note;
 }
 
@@ -5025,7 +5026,11 @@ function renderCardViewContent(card) {
       if (shownCard !== card || getCardIdFromUrl() !== card.id) return;
       if (card._enPrices) rerenderPriceSection(card);
       const art = document.querySelector('#cardViewCard .cp-art');
-      if (art && pictureSource(card) !== card) art.innerHTML = cardArtHtml(card, cardNames(card).main);
+      if (art && pictureSource(card) !== card) {
+        const slot = document.getElementById('printSlot');
+        art.innerHTML = cardArtHtml(card, cardPageNames(card, printChoice(card)).main);
+        if (slot) art.appendChild(slot);   // the language buttons stay
+      }
     });
   }
 }
