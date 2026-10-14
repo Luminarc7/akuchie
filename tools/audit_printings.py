@@ -1,90 +1,125 @@
-"""Audit: for every Japanese printing, is its English counterpart the same set + number?
-Reads Scryfall's all_cards bulk file (every printing in every language) and sets.json."""
-import gzip, json, sys, collections, ijson
+"""Audit, over Scryfall's all_cards bulk file (every printing in every language):
+1. printings whose languages are split over different set codes (Japanese 4th Edition
+   is set 4bb, English 4th Edition is 4ed): which set pairs, matched how.
+2. two-part cards (adventure, split, MDFC...) whose Japanese printing lacks a face's
+   printed_name, and whether another Japanese printing or the text supplies it.
+3. the site's database rows: how many names still contain an English face."""
+import gzip, json, sys, collections, re, ijson
 
 bulk, sets_path, db_path, out_path = sys.argv[1:5]
 sets = {s['code']: s for s in json.load(open(sets_path))['data']}
 
+
 def oid(c):
     return c.get('oracle_id') or ((c.get('card_faces') or [{}])[0].get('oracle_id'))
 
-keys = collections.defaultdict(dict)          # (set, cn) -> {lang: (id, oracle)}
-by_id = {}
-by_oracle = collections.defaultdict(list)     # oracle -> [(set, cn, lang)]
+
+keys = collections.defaultdict(dict)            # (set, cn) -> {lang: oracle}
+by_oracle_en = collections.defaultdict(list)    # oracle -> [(set, cn)] English printings
+ja_faces = collections.defaultdict(lambda: collections.defaultdict(collections.Counter))  # oracle -> face index -> Counter(names)
+ja_top = collections.defaultdict(collections.Counter)
+missing = []                                    # Japanese multi-face printings lacking a face name
 n = 0
 with (gzip.open(bulk) if bulk.endswith('.gz') else open(bulk, 'rb')) as f:
     for c in ijson.items(f, 'item'):
         n += 1
         o = oid(c)
         k = (c['set'], c['collector_number'])
-        keys[k].setdefault(c['lang'], (c['id'], o))
-        by_id[c['id']] = (c['set'], c['collector_number'], c['lang'], o)
-        if c['lang'] in ('en', 'ja'):
-            by_oracle[o].append((c['set'], c['collector_number'], c['lang']))
+        keys[k].setdefault(c['lang'], o)
+        if c['lang'] == 'en':
+            by_oracle_en[o].append(k)
+        if c['lang'] == 'ja':
+            faces = c.get('card_faces') or []
+            if c.get('printed_name'):
+                ja_top[o][c['printed_name']] += 1
+            if len(faces) > 1:
+                for i, fc in enumerate(faces):
+                    if fc.get('printed_name'):
+                        ja_faces[o][i][fc['printed_name']] += 1
+                if any(not fc.get('printed_name') for fc in faces):
+                    missing.append({'id': c['id'], 'set': c['set'], 'cn': c['collector_number'], 'oracle': o, 'layout': c.get('layout'),
+                                    'name': c.get('name'), 'printed_name': c.get('printed_name'),
+                                    'faces': [{'name': fc.get('name'), 'printed_name': fc.get('printed_name'),
+                                               'printed_text': (fc.get('printed_text') or '')[:200]} for fc in faces]})
 print('cards', n, file=sys.stderr)
 
-out = {}
-# 1. Japanese printings with no English printing at the same set + number
-ja_no_en = collections.Counter()
-ja_total = collections.Counter()
-pair_same_cn = collections.Counter()   # (ja set, en set) where the same oracle has the same number
-pair_any = collections.Counter()       # (ja set, en set) same oracle, any number
-for (s, cn), langs in keys.items():
-    if 'ja' not in langs: continue
-    ja_total[s] += 1
-    if 'en' in langs: continue
-    ja_no_en[s] += 1
-    o = langs['ja'][1]
-    others = [(s2, cn2) for s2, cn2, l in by_oracle.get(o, []) if l == 'en' and s2 != s]
-    for s2 in {s2 for s2, cn2 in others if cn2 == cn}: pair_same_cn[(s, s2)] += 1
-    for s2 in {s2 for s2, cn2 in others}: pair_any[(s, s2)] += 1
 
 def set_info(code):
     x = sets.get(code, {})
     return {'name': x.get('name'), 'type': x.get('set_type'), 'parent': x.get('parent_set_code'), 'released': x.get('released_at'), 'count': x.get('card_count')}
 
-out['ja_sets_without_en'] = sorted(
-    [{'set': s, 'ja_printings': ja_total[s], 'without_en': ja_no_en[s], **set_info(s)} for s in ja_no_en],
-    key=lambda r: -r['without_en'])
-out['ja_to_en_pairs_same_number'] = [{'ja_set': a, 'en_set': b, 'n': k, 'of': ja_no_en[a], 'ja': set_info(a)['name'], 'en': set_info(b)['name'], 'ja_parent': set_info(a)['parent'], 'en_parent': set_info(b)['parent']}
-                                     for (a, b), k in pair_same_cn.most_common(150)]
-# 2. English printings whose card has Japanese printings, but none at this set + number
-en_no_ja = collections.Counter(); en_total = collections.Counter()
-pair_rev = collections.Counter()
+
+out = {'cards': n}
+# 1. non-English printings with no English printing at the same set + number
+no_en = collections.Counter()                  # set -> printings without English
+langs_of = collections.defaultdict(collections.Counter)
+pair_same = collections.Counter()              # (set, en set) same oracle, same number
+pair_unique = collections.Counter()            # (set, en set) same oracle, the only English printing of it in that set
+pair_any = collections.Counter()
 for (s, cn), langs in keys.items():
-    if 'en' not in langs: continue
-    en_total[s] += 1
-    if 'ja' in langs: continue
-    o = langs['en'][1]
-    js = [(s2, cn2) for s2, cn2, l in by_oracle.get(o, []) if l == 'ja']
-    if not js: continue
-    en_no_ja[s] += 1
-    for s2 in {s2 for s2, cn2 in js if cn2 == cn}: pair_rev[(s, s2)] += 1
-out['en_to_ja_pairs_same_number'] = [{'en_set': a, 'ja_set': b, 'n': k, 'en_total': en_total[a], 'en': set_info(a)['name'], 'ja': set_info(b)['name']}
-                                     for (a, b), k in pair_rev.most_common(150)]
-# 3. The site's database: each row is a Japanese printing
+    if 'en' in langs:
+        continue
+    o = next(iter(langs.values()))
+    no_en[s] += 1
+    for l in langs:
+        langs_of[s][l] += 1
+    en = by_oracle_en.get(o, [])
+    per_set = collections.Counter(s2 for s2, _ in en)
+    for s2 in {s2 for s2, cn2 in en if cn2 == cn}:
+        pair_same[(s, s2)] += 1
+    for s2 in {s2 for s2, _ in en}:
+        pair_any[(s, s2)] += 1
+        if per_set[s2] == 1:
+            pair_unique[(s, s2)] += 1
+out['sets_without_en'] = sorted([{'set': s, 'without_en': k, 'langs': dict(langs_of[s]), **set_info(s)} for s, k in no_en.items()],
+                                key=lambda r: -r['without_en'])
+out['pairs'] = [{'set': a, 'en_set': b, 'same_number': k, 'unique_in_en_set': pair_unique[(a, b)], 'any': pair_any[(a, b)], 'of': no_en[a],
+                 'name': set_info(a)['name'], 'en_name': set_info(b)['name'], 'type': set_info(a)['type'], 'en_type': set_info(b)['type'],
+                 'released': set_info(a)['released'], 'en_released': set_info(b)['released']}
+                for (a, b), k in sorted(pair_same.items(), key=lambda x: -x[1]) if k >= 3]
+out['pairs_unique_not_same_number'] = [{'set': a, 'en_set': b, 'unique': k, 'same_number': pair_same[(a, b)], 'of': no_en[a],
+                                        'name': set_info(a)['name'], 'en_name': set_info(b)['name']}
+                                       for (a, b), k in sorted(pair_unique.items(), key=lambda x: -x[1])
+                                       if k >= 10 and pair_same[(a, b)] < k / 2][:80]
+
+# 2. Japanese face names
+fixable_other = 0
+fixable_text = 0
+unfixed = []
+for m in missing:
+    o = m['oracle']
+    names = []
+    for i, fc in enumerate(m['faces']):
+        nm = fc['printed_name'] or (ja_faces[o][i].most_common(1)[0][0] if ja_faces[o][i] else None)
+        names.append(nm)
+    if all(names):
+        fixable_other += 1
+        m['fix'] = names
+        continue
+    unfixed.append(m)
+out['ja_multiface_missing_face_name'] = len(missing)
+out['fixable_from_other_ja_printing'] = fixable_other
+out['unfixed_count'] = len(unfixed)
+out['unfixed'] = unfixed
+out['fixed_examples'] = [m for m in missing if 'fix' in m][:40]
+out['missing_by_set'] = collections.Counter(m['set'] for m in missing).most_common()
+out['missing_by_layout'] = collections.Counter(m['layout'] for m in missing).most_common()
+
+# 3. the site's database
 db = json.load(gzip.open(db_path))
-f = db['fields']; i_id = f.index('id')
-rows = [r[i_id] for r in db['cards']]
-stat = collections.Counter(); no_en_sets = collections.Counter(); langs_count = collections.Counter()
-examples = collections.defaultdict(list)
-for rid in rows:
-    if rid not in by_id: stat['id not in Scryfall'] += 1; continue
-    s, cn, lang, o = by_id[rid]
-    stat['lang ' + lang] += 1
-    ls = keys[(s, cn)]
-    langs_count[len(ls)] += 1
-    if 'en' in ls: stat['English at same set+number'] += 1
-    else:
-        stat['no English at same set+number'] += 1
-        no_en_sets[s] += 1
-        if len(examples[s]) < 3: examples[s].append(rid)
-out['db'] = {'rows': len(rows), 'stat': stat, 'languages_per_printing': dict(sorted(langs_count.items())),
-             'no_en_by_set': [{'set': s, 'n': k, **set_info(s), 'examples': examples[s]} for s, k in no_en_sets.most_common()]}
-# 4. collector numbers that are not plain (for the search query)
-odd = collections.Counter()
-for (s, cn) in keys:
-    if not cn.replace('-', '').isalnum(): odd[cn[-1]] += 1
-out['odd_number_chars'] = odd.most_common(30)
+f = db['fields']
+i_name, i_en, i_oid, i_id = f.index('name_ja'), f.index('name_en'), f.index('oracle_id'), f.index('id')
+latin_face = []
+for r in db['cards']:
+    ja, en = r[i_name] or '', r[i_en] or ''
+    if ' // ' in en and ja:
+        jf, ef = ja.split(' // '), en.split(' // ')
+        if any(j.strip() == e.strip() for j, e in zip(jf, ef)) or len(jf) != len(ef):
+            latin_face.append({'id': r[i_id], 'oracle': r[i_oid], 'en': en, 'ja': ja,
+                               'other_ja_faces': {i: dict(c) for i, c in ja_faces.get(r[i_oid], {}).items()},
+                               'top': dict(ja_top.get(r[i_oid], {}))})
+out['db_rows'] = len(db['cards'])
+out['db_multiface_with_english_face'] = len(latin_face)
+out['db_multiface_examples'] = latin_face
 json.dump(out, open(out_path, 'w'), ensure_ascii=False, indent=1, default=str)
 print('done', file=sys.stderr)

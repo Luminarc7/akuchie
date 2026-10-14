@@ -7,14 +7,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
       - run: |
-          set -e
-          pip install ijson >/dev/null
-          UA='Warujie/1.0 (+https://warujie.jp)'
-          URL=$(curl -sS -A "$UA" https://api.scryfall.com/bulk-data/all-cards | python3 -c 'import json,sys; print(json.load(sys.stdin)["download_uri"])')
-          curl -sS -A "$UA" -o all.json "$URL"; ls -l all.json
-          sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
           mkdir -p probe_out
-          python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
+          (
+            set -x
+            pip install -q ijson
+            UA='Warujie/1.0 (+https://warujie.jp)'
+            URL=$(curl -sS -A "$UA" https://api.scryfall.com/bulk-data | python3 -c 'import json,sys; print([b["download_uri"] for b in json.load(sys.stdin)["data"] if b["type"]=="all_cards"][0])')
+            echo "$URL"
+            curl -sS -A "$UA" -o all.json "$URL"; ls -l all.json
+            sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
+            python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
+          ) > probe_out/audit_log.txt 2>&1 || true
+          tail -20 probe_out/audit_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
