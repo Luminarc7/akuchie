@@ -1,22 +1,18 @@
 + pip install -q ijson
 + UA='Warujie/1.0 (+https://warujie.jp)'
-++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' https://api.scryfall.com/bulk-data
-++ python3 -c 'import json,sys; print([b["download_uri"] for b in json.load(sys.stdin)["data"] if b["type"]=="all_cards"][0])'
-Traceback (most recent call last):
-  File "<string>", line 1, in <module>
-KeyError: 'download_uri'
-+ URL=
-+ echo ''
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -H 'Accept: application/json' -o bulk.json https://api.scryfall.com/bulk-data
++ head -c 1500 bulk.json
+{"object":"list","has_more":false,"data":[{"object":"bulk_data","id":"27bf3214-1271-490b-bdfe-c0be6c23d02e","type":"oracle_cards","updated_at":"2026-10-14T09:01:55.948+00:00","uri":"https://api.scryfall.com/bulk-data/27bf3214-1271-490b-bdfe-c0be6c23d02e","name":"Oracle Cards","description":"A JSON file containing one Scryfall card object for each Oracle ID on Scryfall. The chosen sets for the cards are an attempt to return the most up-to-date recognizable version of the card.","jsonl_download_uri":"https://data.scryfall.io/oracle-cards/oracle-cards-20261014090155.jsonl.gz","compressed_size":24947462},{"object":"bulk_data","id":"6bbcf976-6369-4401-88fc-3a9e4984c305","type":"unique_artwork","updated_at":"2026-10-14T09:02:33.852+00:00","uri":"https://api.scryfall.com/bulk-data/6bbcf976-6369-4401-88fc-3a9e4984c305","name":"Unique Artwork","description":"A JSON file of Scryfall card objects that together contain all unique artworks. The chosen cards promote the best image scans.","jsonl_download_uri":"https://data.scryfall.io/unique-artwork/unique-artwork-20261014090233.jsonl.gz","compressed_size":38294227},{"object":"bulk_data","id":"e2ef41e3-5778-4bc2-af3f-78eca4dd9c23","type":"default_cards","updated_at":"2026-10-14T09:05:48.686+00:00","uri":"https://api.scryfall.com/bulk-data/e2ef41e3-5778-4bc2-af3f-78eca4dd9c23","name":"Default Cards","description":"A JSON file containing every card object on Scryfall in English or the printed language if the card is only available in one lan+ echo
 
-+ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.json ''
-curl: (3) URL rejected: Malformed input to a URL function
+++ python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("download_uri") or b.get("uri"))'
++ URL=https://api.scryfall.com/bulk-data/922288cb-4bef-45e1-bb30-0c2bd3d3534f
++ echo https://api.scryfall.com/bulk-data/922288cb-4bef-45e1-bb30-0c2bd3d3534f
+https://api.scryfall.com/bulk-data/922288cb-4bef-45e1-bb30-0c2bd3d3534f
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.json https://api.scryfall.com/bulk-data/922288cb-4bef-45e1-bb30-0c2bd3d3534f
 + ls -l all.json
-ls: cannot access 'all.json': No such file or directory
+-rw-r--r-- 1 runner runner 437 Oct 14 12:24 all.json
 + sleep 1
 + curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o sets.json https://api.scryfall.com/sets
 + python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
-Traceback (most recent call last):
-  File "/home/runner/work/Warujie/Warujie/tools/audit_printings.py", line 23, in <module>
-    with (gzip.open(bulk) if bulk.endswith('.gz') else open(bulk, 'rb')) as f:
-                                                       ^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: 'all.json'
+cards 0
+done

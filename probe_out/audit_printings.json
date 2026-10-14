@@ -1,0 +1,2073 @@
+{
+ "cards": 0,
+ "sets_without_en": [],
+ "pairs": [],
+ "pairs_unique_not_same_number": [],
+ "ja_multiface_missing_face_name": 0,
+ "fixable_from_other_ja_printing": 0,
+ "unfixed_count": 0,
+ "unfixed": [],
+ "fixed_examples": [],
+ "missing_by_set": [],
+ "missing_by_layout": [],
+ "db_rows": 33821,
+ "db_multiface_with_english_face": 257,
+ "db_multiface_examples": [
+  {
+   "id": "79c5a473-a2f8-49f8-919f-bf988d99d88b",
+   "oracle": "2f5f46ed-b8aa-4864-bd20-17281d4632bf",
+   "en": "Abigale, Poet Laureate // Heroic Stanza",
+   "ja": "桂冠詩人、アビゲール",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "04edce6d-2cd0-41f8-b264-d7e3963bd991",
+   "oracle": "02125db4-4507-467a-ac0c-406de2c7d533",
+   "en": "Adventurous Eater // Have a Bite",
+   "ja": "ゲテモノ喰らい",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "629b600a-e613-4a3c-85e4-12fc9f2de249",
+   "oracle": "2588f348-d7a3-46c8-9ace-dca53ed5ef99",
+   "en": "Ajani, Nacatl Pariah // Ajani, Nacatl Avenger",
+   "ja": "Ajani, Nacatl Pariah // Ajani, Nacatl Avenger",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8ea330fc-d60d-4713-a154-48d423aef1b8",
+   "oracle": "0a364b66-95df-480b-a733-e90f6d5c4d2b",
+   "en": "Altar of Bhaal // Bone Offering",
+   "ja": "Altar of Bhaal // 骨（ほね）の捧（ささ）げ物（もの）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "08e1badb-75a1-4005-a87c-d5755361dfc5",
+   "oracle": "0961b68d-bb0c-4bfb-ad78-01f90b3b97c8",
+   "en": "Amethyst Dragon // Explosive Crystal",
+   "ja": "Amethyst Dragon // 爆（ばく）発（はつ）性（せい）の水（すい）晶（しょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "35514fdc-6565-43ea-9e02-d32a2f6614e4",
+   "oracle": "38503d34-f4f9-4eeb-9b1e-4fec1df921b3",
+   "en": "An Unexpected Party // At the Door",
+   "ja": "思いがけない客たち",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "636d9c20-914b-4e42-b9a3-73687060803d",
+   "oracle": "a78b063a-7f74-465a-9670-34f927f4bfe9",
+   "en": "Aquatic Alchemist // Bubble Up",
+   "ja": "Aquatic Alchemist // 泡（あわ）立（だ）て",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1275ade1-f0ed-4b41-a599-abaab8a9ef7e",
+   "oracle": "fcdeb83f-531c-4087-9254-7f19eb065f00",
+   "en": "Assault // Battery",
+   "ja": "Assault // Battery",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8f542155-ac56-4b9d-931f-52dd79fc880a",
+   "oracle": "087018b6-6355-4534-9a35-9336b4b7fccc",
+   "en": "Assure // Assemble",
+   "ja": "確証 // 確立 // 確証 // 確立",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "24b5995e-3660-4701-aa5a-1d317eda5626",
+   "oracle": "22c75ad5-237c-4dbd-bbc4-3058a3db408f",
+   "en": "Beanstalk Giant // Fertile Footsteps",
+   "ja": "Beanstalk Giant // 肥（ひ）沃（よく）な足（あし）跡（あと）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "dad0660d-6089-4e7d-a62a-4e34f2fc8f33",
+   "oracle": "a2192c80-c48f-44e2-807c-2f9ee1aa1152",
+   "en": "Beanstalk Wurm // Plant Beans",
+   "ja": "Beanstalk Wurm // 豆（まめ）撒（ま）き",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8583083b-3b06-4eab-8768-87ddfa268905",
+   "oracle": "b8bb97a8-5f5d-48e9-a4c1-b4c20efe7739",
+   "en": "Bedeck // Bedazzle",
+   "ja": "豪奢 // 誤認 // 豪奢 // 誤認",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "02d8eeb7-9f9f-49f9-bc45-d9fc4e6ae8b0",
+   "oracle": "cdb84830-faf2-4beb-8d57-ad696d75876b",
+   "en": "Bellowing Bruiser // Beat a Path",
+   "ja": "Bellowing Bruiser // 道（みち）を切（き）り拓（ひら）く",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "36ebc95b-2bca-4141-9995-76de3dddbe69",
+   "oracle": "06374e6d-62fa-4833-81cd-b4d0a35e7365",
+   "en": "Beluna Grandsquall // Seek Thrills",
+   "ja": "Beluna Grandsquall // 快（かい）楽（らく）の渇（かつ）望（ぼう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "40263ca1-c149-464a-a4a4-4f396fc9fd5b",
+   "oracle": "52fd9309-b849-419a-8d19-5882c00a72b4",
+   "en": "Beluna's Gatekeeper // Entry Denied",
+   "ja": "Beluna's Gatekeeper // 立（た）ち入（い）り禁（きん）止（し）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c42ada79-bba1-4085-8752-b1b3fa842846",
+   "oracle": "288da486-393c-4995-ad02-c5093a71970d",
+   "en": "Beorn, Reluctant Host // Till and Tend",
+   "ja": "不本意なもてなし役、ビヨルン",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "68f86733-14ff-47de-838d-43e81cd085ae",
+   "oracle": "fa85f9e6-69ff-4669-b70a-440aa7b16c97",
+   "en": "Bilbo Baggins, Burglar // Take a Glance",
+   "ja": "忍びの者、ビルボ・バギンズ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1d3b0f42-ea16-4de8-8118-6866d76557b4",
+   "oracle": "a73d9109-36e0-40ea-ab06-5c5f7eb4ac54",
+   "en": "Bilbo, Luckwearer // Burglar's Plot",
+   "ja": "幸運児、ビルボ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5a3c61c6-1c54-4a67-a473-91c7bfc07a27",
+   "oracle": "1bf505a7-292e-4642-83b6-8ff41ebe5d51",
+   "en": "Blazing Firesinger // Seething Song",
+   "ja": "燃え立つ火歌い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "652c74dc-bcb8-42fb-9e3a-82b728c225d2",
+   "oracle": "3372b994-47de-4e89-9bfc-76e1cb3f1cfa",
+   "en": "Blessed Hippogriff // Tyr's Blessing",
+   "ja": "Blessed Hippogriff // ティアの祝（しゅく）福（ふく）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ba488df8-ea69-479b-98dc-11c28789d75d",
+   "oracle": "c8e9a7e1-28ae-40e3-8715-1bb0aa2057c7",
+   "en": "Bloodline Recollector // Ancestral Craving",
+   "ja": "血統想起者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7fcd4dad-d446-4cf2-8f21-d4f3f7f748ca",
+   "oracle": "cd61c26b-8d3c-4730-92f2-0d94d961bafd",
+   "en": "Blossom-Blessed Angel // Seed Suture",
+   "ja": "花開く祝福の天使",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "81b5445a-a9b0-489e-a0e4-ac29a13af8b6",
+   "oracle": "8a0e35ac-6c03-4922-b3b4-e419419fe3d7",
+   "en": "Bofur, Reliable Guardian // Concerted Care",
+   "ja": "頼りになる守護者、ボフール",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "baaa1f43-cf43-455d-bfdd-7541dac1193b",
+   "oracle": "d6d72f5f-8f5d-4180-b514-f22ff5482902",
+   "en": "Bonecrusher Giant // Stomp",
+   "ja": "Bonecrusher Giant // 踏（ふ）みつけ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "aff86149-4b79-431f-93db-193afcfd6a7a",
+   "oracle": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+   "en": "Boom // Bust",
+   "ja": "Boom // Bust",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b5e4fd1f-65cd-4fbb-b623-27096541cac5",
+   "oracle": "df39fbee-6ddc-4733-a32e-cdaf369ecccf",
+   "en": "Bound // Determined",
+   "ja": "Bound // Determined",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "180da8f9-21fe-4ce1-8ec6-5b2d9495f77b",
+   "oracle": "68f36dfa-bbd2-4860-b09b-37e35136be72",
+   "en": "Bramble Familiar // Fetch Quest",
+   "ja": "Bramble Familiar // 初（はじ）めてのお使（つか）い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "01ed960a-491b-48cb-a73d-d7ac83c593f0",
+   "oracle": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+   "en": "Brazen Borrower // Petty Theft",
+   "ja": "厚かましい借り手",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0198c0d9-19c9-424b-9aa0-8e7ffa5d7829",
+   "oracle": "f61c0fc0-7241-455e-bbf5-f1f3862d46e3",
+   "en": "Brightcap Badger // Fungus Frolic",
+   "ja": "Brightcap Badger // 茸（きのこ）の舞（まい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "48bd368e-3bb0-4186-b15b-3fdc725e499d",
+   "oracle": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+   "en": "Callous Sell-Sword // Burn Together",
+   "ja": "Callous Sell-Sword // 合（ごう）同（どう）火（か）葬（そう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a7981864-741c-4ca0-ac36-f948a3133cc8",
+   "oracle": "9b3155c1-c662-4ff1-80e2-4064e6233dc5",
+   "en": "Campus Composer // Aqueous Aria",
+   "ja": "構内の作曲家",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8dd63d63-0e26-46a7-8b51-0e3f14b297fd",
+   "oracle": "db655c5a-06f6-42bc-8180-d9ca1c1d939a",
+   "en": "Carnivorous Cultivator // Enroot",
+   "ja": "人喰い植物の耕作者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3d03caa1-7c63-4ad5-8e61-080585a23b6d",
+   "oracle": "ba4d644f-1931-4fc4-aed5-681a476a5a58",
+   "en": "Cease // Desist",
+   "ja": "中止 // 停止 // 中止 // 停止",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "71f24999-1d4e-4fbd-b272-a13bb0d1f26c",
+   "oracle": "e4719557-d94e-490f-8a56-c1867a01d2ef",
+   "en": "Cecil, Dark Knight // Cecil, Redeemed Paladin",
+   "ja": "Cecil, Dark Knight // Cecil, Redeemed Paladin",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "276e9634-9314-413d-958e-cc777352919e",
+   "oracle": "db70ddae-0ac1-47f2-9158-8448e337a08f",
+   "en": "Cheeky House-Mouse // Squeak By",
+   "ja": "Cheeky House-Mouse // 危（き）機（き）一（いっ）髪（ぱつ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "cb04ecab-b905-4b2a-bfef-2946738b9420",
+   "oracle": "fd01229f-1c4c-4ad1-bc6f-4023f24d8c71",
+   "en": "Cheerful Osteomancer // Raise Dead",
+   "ja": "陽気な骨術師",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6022b370-1499-4b6c-9a57-fd920944f663",
+   "oracle": "ceba3d03-be5a-4dd7-b829-7db216a0f44e",
+   "en": "Clive, Ifrit's Dominant // Ifrit, Warden of Inferno",
+   "ja": "Clive, Ifrit's Dominant // Ifrit, Warden of Inferno",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "87c6fd30-1c7f-4883-8c85-d5e133ce88f7",
+   "oracle": "96aab05a-49bc-418a-9980-f3322955de1e",
+   "en": "Colossal Badger // Dig Deep",
+   "ja": "Colossal Badger // 深（ふか）掘（ぼ）り",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8adf6f12-97b4-42cb-9d8c-a36777946536",
+   "oracle": "56fd8895-3be2-4591-86fa-87567d9cdc14",
+   "en": "Commit // Memory",
+   "ja": "Commit // Memory // Commit // Memory",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "dc92a588-4659-4bf2-b29c-ed8c70e69f1b",
+   "oracle": "1c751201-24ba-4e5c-bf44-71c3e4693a92",
+   "en": "Conceited Witch // Price of Beauty",
+   "ja": "Conceited Witch // 美（び）の代（たい）価（か）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "234754d1-7f3f-4e79-9a19-41db2378f92f",
+   "oracle": "6e07e7ae-1bb7-4831-adb9-a5e71b7d79e3",
+   "en": "Connive // Concoct",
+   "ja": "Connive // Concoct // Connive // Concoct",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "58898981-55ed-4c1b-bd23-9545138e601e",
+   "oracle": "1e847d69-e527-4bb9-a624-17c25ac4fed4",
+   "en": "Cramped Vents // Access Maze",
+   "ja": "Cramped Vents // Access Maze // Cramped Vents // Access Maze",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a26173e2-53f6-44e2-818a-3e38cf6356f1",
+   "oracle": "c3df3574-c4da-415f-a56b-807ed8e41d73",
+   "en": "Crime // Punishment",
+   "ja": "Crime // Punishment",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "db39d28e-8930-4ec0-bcd5-d02d270a12b4",
+   "oracle": "997bdec5-f67b-4822-a3ba-c636e2685e8a",
+   "en": "Cruel Somnophage // Can't Wake Up",
+   "ja": "Cruel Somnophage // 永（えい）遠（えん）の眠（ねむ）り",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e0999e85-4ca0-4ac8-8a9c-656354df7e7f",
+   "oracle": "56b0cb64-b886-413e-bb20-392bf12d3926",
+   "en": "Crystal Dragon // Rob the Hoard",
+   "ja": "Crystal Dragon // お宝（たから）奪（うば）い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1867f282-8bb4-4821-8791-1826b942791b",
+   "oracle": "b291d046-7649-4a05-98c4-224ecaece912",
+   "en": "Crystal Fragments // Summon: Alexander",
+   "ja": "Crystal Fragments // Summon: Alexander",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "afbd152d-91ff-4920-9f5c-9cf22eaf15f8",
+   "oracle": "86790a10-c564-44b7-a177-1e66ab9afe77",
+   "en": "Dead // Gone",
+   "ja": "Dead // Gone",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4bf81f39-e985-44d3-840c-eaefa82afb03",
+   "oracle": "5df44b8d-b337-49d8-8427-34253f52cb47",
+   "en": "Decadent Dragon // Expensive Taste",
+   "ja": "Decadent Dragon // 贅（ぜい）沢（たく）な嗜（し）好（こう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "061ea6c4-8bf7-41c0-b4de-cc1e78a5378c",
+   "oracle": "27c366cf-00d7-47d4-9577-736bfc4a3b81",
+   "en": "Defacing Duskmage // Vandal's Edit",
+   "ja": "落書きの薄暮魔道士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "762a4b35-0a1a-419c-9f62-fb2e6f24891e",
+   "oracle": "edd531b9-f615-4399-8c8c-1c5e18c4acbf",
+   "en": "Delver of Secrets // Insectile Aberration",
+   "ja": "Delver of Secrets // Insectile Aberration",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f6beda9e-bb1d-478d-8676-7fed0db52ba6",
+   "oracle": "c8bc28ea-5630-49d5-963a-5789fa83f3c7",
+   "en": "Devouring Sugarmaw // Have for Dinner",
+   "ja": "Devouring Sugarmaw // 夕（ゆう）食（しょく）の献（こん）立（だて）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1dfa2877-568b-46d3-b8ae-89f277d6db21",
+   "oracle": "4a0cc2a2-3711-473a-b2c5-b1e52b34e4fb",
+   "en": "Dion, Bahamut's Dominant // Bahamut, Warden of Light",
+   "ja": "Dion, Bahamut's Dominant // Bahamut, Warden of Light",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0eea142a-b0fd-4607-8a7e-5f31995746ce",
+   "oracle": "655ee0db-1913-464f-bd06-072c6bf446bd",
+   "en": "Dirgur Focusmage // Braingeyser",
+   "ja": "ダルガーの専心魔道士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "db0676b2-2954-4385-b1b5-757f17b11557",
+   "oracle": "8f1c1bd6-8420-4de2-81f4-5faa419da301",
+   "en": "Discovery // Dispersal",
+   "ja": "Discovery // Dispersal // Discovery // Dispersal",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0db28696-2655-44b5-8ed9-021485a4bc29",
+   "oracle": "ec74ae5d-1284-443c-9842-18954f8cf5a8",
+   "en": "Disruptive Stormbrood // Petty Revenge",
+   "ja": "Disruptive Stormbrood // ささやかな復（ふく）讐（しゅう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "497f8818-c749-4ed2-82c3-b7ded9d43e48",
+   "oracle": "e7b78acd-5288-4528-97a8-a5b43de90bf5",
+   "en": "Diviner of Victory // Unwind History",
+   "ja": "勝利の預言者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6cd67e70-332a-4361-917f-f1de2e063854",
+   "oracle": "1bf04a2a-7f96-412c-9d91-034bef26e1b6",
+   "en": "Dread Linnorm // Scale Deflection",
+   "ja": "Dread Linnorm // 跳（は）ね返（かえ）す鱗（うろこ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "076775b0-07fb-4c1e-b51c-0f66148a97ff",
+   "oracle": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+   "en": "Dusk // Dawn",
+   "ja": "Dusk // Dawn // Dusk // Dawn",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "849354ef-74cd-4407-be6f-108410bd4d49",
+   "oracle": "dfaa02d4-4f3c-4e5d-b9e5-283a45395a53",
+   "en": "Eccentric Pestfinder // Turn Stones",
+   "ja": "変わり者の害獣探し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0b8fc0af-7ceb-4542-8fe8-8d2e5e8eed79",
+   "oracle": "09b7ea91-2620-4c45-af3c-60bbeab89966",
+   "en": "Eiganjo Dynastorian // Replenish",
+   "ja": "永岩城の皇国史家",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "294da06d-e5f9-4eef-a33b-dcc701b7166d",
+   "oracle": "d97de156-5a6d-4dc6-953e-d4bad63cbad2",
+   "en": "Elite Interceptor // Rejoinder",
+   "ja": "精鋭の迎撃手",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "348db796-995d-4e3f-98f9-63f09ef86b84",
+   "oracle": "54175132-2c44-4749-8dfd-d08dcc63e4b3",
+   "en": "Elusive Otter // Grove's Bounty",
+   "ja": "Elusive Otter // 木（こ）立（だ）ちの報（ほう）奨（しょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9f247172-8add-43e7-b7be-eadb83d48ec9",
+   "oracle": "52e439d0-a263-4d53-9ae3-fa1f8aa8293e",
+   "en": "Embereth Shieldbreaker // Battle Display",
+   "ja": "Embereth Shieldbreaker // 戦（たたか）いの誇（こ）示（じ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9abe4675-82cb-40c0-8f1f-5398d6b5b112",
+   "oracle": "c5632f18-7904-4a29-82be-6a6ef8e85e18",
+   "en": "Emerald Dragon // Dissonant Wave",
+   "ja": "Emerald Dragon // 耳（みみ）障（ざわ）りな波（は）長（ちょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e06304b3-bdc6-4696-a013-a2479bcba77f",
+   "oracle": "7737ccdc-49f2-463e-8ffd-43ab98d11f45",
+   "en": "Emergency Phytomedic // Seed Suture",
+   "ja": "救急植療士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "d80e9ff3-563f-48ef-96c8-481db32ea6f1",
+   "oracle": "e5152e8d-9f55-493d-a0fc-753cc72ee299",
+   "en": "Emeritus of Abundance // Regrowth",
+   "ja": "豊穣の名誉教授",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2a1527bb-9f75-41e1-b166-660ba1afaee9",
+   "oracle": "5963eef1-1022-42b1-8a0c-fc9850bfc2a3",
+   "en": "Emeritus of Conflict // Lightning Bolt",
+   "ja": "対立の名誉教授",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1c9f7b5b-ba37-480d-9510-ffb12fd341c5",
+   "oracle": "24a29be4-5bc2-469b-b2ce-2fb305c3facb",
+   "en": "Emeritus of Ideation // Ancestral Recall",
+   "ja": "観念の名誉教授",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0a8f3555-5048-4230-aace-29d318bcb4b3",
+   "oracle": "e6c41473-2398-4888-9f0c-467dce7c39a4",
+   "en": "Emeritus of Truce // Swords to Plowshares",
+   "ja": "休戦の名誉教授",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6530b66b-6801-4bb1-b3c5-b13ffd360bfa",
+   "oracle": "93056597-b964-421f-be2f-e92abef1c2a4",
+   "en": "Emeritus of Woe // Demonic Tutor",
+   "ja": "悲哀の名誉教授",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5320994c-2f53-4fef-a59f-10b55144c592",
+   "oracle": "3b102ccc-7629-457c-aba6-e9b00fd50c85",
+   "en": "Emet-Selch, Unsundered // Hades, Sorcerer of Eld",
+   "ja": "Emet-Selch, Unsundered // Hades, Sorcerer of Eld",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "d71f7da6-7bb8-4435-82c5-08cc918de509",
+   "oracle": "d6accaed-ff35-4324-b31b-35e6837bc079",
+   "en": "Encouraging Aviator // Jump",
+   "ja": "激励する飛行士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "653b5676-00f6-43c3-af34-750c32de65cd",
+   "oracle": "e0b5b3af-af89-4b91-8b55-947ec095d6f2",
+   "en": "Ettercap // Web Shot",
+   "ja": "Ettercap // 蜘（く）蛛（も）糸（いと）射（しゃ）撃（げき）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ae24b02f-1150-47d0-befa-924ebdc662d6",
+   "oracle": "af6f771f-5154-4fb3-8ed4-768d71eea568",
+   "en": "Expansion // Explosion",
+   "ja": "Expansion // Explosion // Expansion // Explosion",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "44761078-3042-46b3-aeda-45593758fb7b",
+   "oracle": "8869df0c-fe84-4964-8d38-a8ecefa9c252",
+   "en": "Experimental Lab // Staff Room",
+   "ja": "Experimental Lab // Staff Room // Experimental Lab // Staff Room",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2f970c95-d79e-4aef-b952-e6ff606169ff",
+   "oracle": "c075637a-e94c-4b8d-8a9e-20ee3dfa8fe7",
+   "en": "Fang Dragon // Forktail Sweep",
+   "ja": "Fang Dragon // 裂（さ）け尾（お）の一（いっ）掃（そう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4f334a3f-653c-4c60-b986-30317c5a9f0a",
+   "oracle": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+   "en": "Farm // Market",
+   "ja": "Farm // Market",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3d9c1c7e-87ba-481c-8902-491255b2049e",
+   "oracle": "62411ced-843e-4b63-bdf6-dafb2ac27047",
+   "en": "Fast // Furious",
+   "ja": "Fast // Furious",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ed613c21-9b91-49b7-9a2d-91d81c42ec9f",
+   "oracle": "1063822f-47d3-42e9-8a21-f62b12609fe1",
+   "en": "Fatehold Chronologist // Peer Review",
+   "ja": "フェイトホールドの年代学者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c2ec1383-1ebe-4659-ab1a-034ed370597a",
+   "oracle": "fab8d954-807b-426f-8057-99a5d2fec618",
+   "en": "Fell Horseman // Deathly Ride",
+   "ja": "Fell Horseman // 既（き）死（し）の馬（うま）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "55cee154-0d7f-4bd8-9f9d-7ab79dfaf7ec",
+   "oracle": "1722f814-2d4e-4d59-9b74-10ef8e89def9",
+   "en": "Feral Deathgorger // Dusk Sight",
+   "ja": "Feral Deathgorger // 薄（はく）暮（ぼ）の視（し）覚（かく）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8d559add-8f72-4aa1-a32a-6d42598b24b7",
+   "oracle": "fef67393-9b7b-495d-8b03-865537386d42",
+   "en": "Ferocious Werefox // Guard Change",
+   "ja": "Ferocious Werefox // 守（も）り手（て）の交（こう）代（たい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "385f6981-a8d0-45c7-abaf-a0a1b6f3037b",
+   "oracle": "212af747-2ac1-4d33-9456-8b3cc8988f5d",
+   "en": "Find // Finality",
+   "ja": "採取 // 最終 // 採取 // 最終",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "15ee6792-a4ed-4496-8031-06e67754e846",
+   "oracle": "b0c28b2b-a2dd-4b76-bb1c-cec55a0a6784",
+   "en": "Flotsam // Jetsam",
+   "ja": "浮き荷 // 捨て荷 // 浮き荷 // 捨て荷",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8ac9dd05-00f4-4c18-b66a-da850e092ecf",
+   "oracle": "10c0f814-e302-49ff-aded-1b8d8424fd60",
+   "en": "Foulmire Knight // Profane Insight",
+   "ja": "Foulmire Knight // 不（ふ）敬（けい）な洞（どう）察（さつ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "981dac41-3788-4628-98b4-3e7f3c971b15",
+   "oracle": "bbb6867f-7186-41de-9828-21be469178c1",
+   "en": "Frolicking Familiar // Blow Off Steam",
+   "ja": "Frolicking Familiar // 鬱（うっ）憤（ぷん）ばらし",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f8318465-320c-49ac-9378-227a8239945a",
+   "oracle": "88e9006a-cfdf-40f3-80d5-23465f3dceca",
+   "en": "Fuss // Bother",
+   "ja": "空騒ぎ // 大騒ぎ // 空騒ぎ // 大騒ぎ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "902772c5-86ca-4c99-87ee-39d29fc02292",
+   "oracle": "48ab8ba0-0e85-4656-a798-ceb961fb02ce",
+   "en": "Galvanic Giant // Storm Reading",
+   "ja": "Galvanic Giant // 嵐（あらし）読（よ）み",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "188ee35d-6881-4140-8681-c4759044da3c",
+   "oracle": "f48f2a9b-4ba5-4984-8180-3950889bba65",
+   "en": "Gandalf, Goblins' Bane // Flameshape",
+   "ja": "ゴブリンの災い、ガンダルフ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "d27ff9dd-2ec0-4b1c-b640-e14183097805",
+   "oracle": "75e930dd-32e9-4c39-81a7-d833a3976b8d",
+   "en": "Garland, Knight of Cornelia // Chaos, the Endless",
+   "ja": "Garland, Knight of Cornelia // Chaos, the Endless",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "099b8b07-0196-40a9-ab17-f7ca79c120f5",
+   "oracle": "4af03564-1d1c-4582-9248-cfe9551bad30",
+   "en": "Ghost Lantern // Bind Spirit",
+   "ja": "Ghost Lantern // 霊（れい）魂（こん）拘（こう）束（そく）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3b5bf62f-c2b7-4906-b8c0-062b948ce936",
+   "oracle": "f762c225-1c8c-4f12-aa88-c8c89e0a7185",
+   "en": "Gingerbread Hunter // Puny Snack",
+   "ja": "Gingerbread Hunter // つまらぬお菓（か）子（し）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "45833d6a-45ba-42c7-891a-5d82daed87d3",
+   "oracle": "2802069f-201e-43a7-b5d3-43a95951a2ec",
+   "en": "Glamdring, Foe-hammer // Gleam of Death",
+   "ja": "敵砕き、グラムドリング",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "bb334a8c-c1ec-4da2-9025-99d63d8fc086",
+   "oracle": "6505a53b-00db-44c4-8eaa-09a1a01451a4",
+   "en": "Glóin the Mighty // Easy Pickings",
+   "ja": "力強き者、グローイン",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "954e2956-8cb4-43e0-9c3f-63f457c717e0",
+   "oracle": "23c3de07-8aa2-48e9-848c-50b5a40bd133",
+   "en": "Goblin Glasswright // Craft with Pride",
+   "ja": "ゴブリンのガラス職人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b32bb421-7706-4ffb-8db0-d65a03f2aedc",
+   "oracle": "0296d57e-e5b9-456f-bb21-eb584adefb4c",
+   "en": "Gollum, Silent Slinker // Meager Meal",
+   "ja": "だんまり忍び足、ゴラム",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f5d0534c-7ff8-4516-95f8-04d8f454bb6a",
+   "oracle": "e6f59807-eaf6-4889-8c89-2ac915afefff",
+   "en": "Grabby Giant // That's Mine",
+   "ja": "Grabby Giant // それは俺（おれ）のだ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1f89829b-118d-4c28-9a7d-48a2c8ad9bad",
+   "oracle": "6cb8b8c4-0674-4f14-9d89-010969fbb80e",
+   "en": "Grave Researcher // Reanimate",
+   "ja": "墓場の研究者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "cef8cb71-d937-4f64-b0d5-103069f7c4fb",
+   "oracle": "788897f5-d49d-4294-8006-0009a3124ad0",
+   "en": "Gray Slaad // Entropic Decay",
+   "ja": "Gray Slaad // エントロピーの崩（ほう）壊（かい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4186f01f-b819-4123-965c-478bd8d7e5fb",
+   "oracle": "27e17542-549b-4c05-8091-c10a245c916b",
+   "en": "Great Ugly-Looking Goblin // Clap! Snap!",
+   "ja": "大きな醜い顔のゴブリン",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2764b4d6-8253-4cac-8d8d-6d054fcb39ee",
+   "oracle": "ea9c459a-6047-43aa-968f-a582be4000e8",
+   "en": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+   "ja": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f9e50f19-8aab-440f-a4d8-6aea8241d390",
+   "oracle": "67dec976-bcf5-4995-8da1-cd570862d3cf",
+   "en": "Guardian Naga // Banishing Coils",
+   "ja": "Guardian Naga // 払（ふっ）拭（しょく）のとぐろ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e3a11139-992c-48c5-b5b8-c8f3d95579fe",
+   "oracle": "4f5ebbb8-f49b-488f-bb85-888aaa918bdd",
+   "en": "Gumdrop Poisoner // Tempt with Treats",
+   "ja": "Gumdrop Poisoner // お菓（か）子（し）の誘（ゆう）惑（わく）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0860a6e0-48e2-41c7-b1ba-f9e8e50ecbf2",
+   "oracle": "d1af8018-35b5-4b6f-93c8-1ed6bd8c92b1",
+   "en": "Hallway Heckler // Vicious Verse",
+   "ja": "廊下の野次飛ばし",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0ae95896-1895-45b4-9573-1b1ed64e7b36",
+   "oracle": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+   "en": "Harmonized Trio // Brainstorm",
+   "ja": "調和したトリオ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4e9bb04b-3b38-4186-9409-4e759b3d0a68",
+   "oracle": "3ca07da2-29a1-40ce-a7f3-4838e95ca1d9",
+   "en": "Heartflame Duelist // Heartflame Slash",
+   "ja": "Heartflame Duelist // 炎（えん）心（しん）の切（き）りつけ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b11d79d1-8d5c-4994-81a9-bfe694ae8b52",
+   "oracle": "f01cf0c5-0ac6-4ad3-8642-dd21c8e8563e",
+   "en": "Hearth Elemental // Stoke Genius",
+   "ja": "Hearth Elemental // 火（ひ）おこしの天（てん）才（さい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "84881b58-45a3-4da8-b646-3e0a0d3baed1",
+   "oracle": "c8b3a070-408e-4a8f-8597-6476eeec0a5f",
+   "en": "Heartwood Crafter // Soul Tether",
+   "ja": "魂木の造り手",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1a7a95d8-6442-47b5-ba5a-e3e67ce3fabb",
+   "oracle": "65d257c2-b3be-4244-a74c-bc4b5d7cedc3",
+   "en": "Hezrou // Demonic Stench",
+   "ja": "Hezrou // デーモンの悪（あく）臭（しゅう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e5d15212-cf6d-49a7-ba24-4761c8f66c39",
+   "oracle": "60e59923-ecd9-457e-b772-693138e05ab2",
+   "en": "Hide // Seek",
+   "ja": "Hide // Seek",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8ce5c952-c777-475a-8352-becd342114de",
+   "oracle": "6df03db9-e4b3-4931-94e3-c582d2b04110",
+   "en": "Hildibrand Manderville // Gentleman's Rise",
+   "ja": "Hildibrand Manderville",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7b455169-332d-405c-a1f7-a0a179195f9b",
+   "oracle": "2554a591-8592-4a9f-a4dc-eb9a7e6dc3eb",
+   "en": "Hit // Run",
+   "ja": "Hit // Run",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "18976839-ee80-4b4a-aed0-ce5621a96be6",
+   "oracle": "4fad3816-41af-4fa4-85b4-ba37614ec848",
+   "en": "Hollow Scavenger // Bakery Raid",
+   "ja": "Hollow Scavenger // パン屋（や）への襲（しゅう）撃（げき）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "8504d9c5-517d-4a50-b97b-d1b94883810b",
+   "oracle": "66ee56b9-aca8-4efa-b9b5-50717e0784a7",
+   "en": "Honorbound Page // Forum's Favor",
+   "ja": "名誉にかける小姓",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "099980e3-fcaf-442a-9ad1-1e841d7594bb",
+   "oracle": "d02179a0-a6b7-49ef-a73e-cf11cabb896f",
+   "en": "Horn of Valhalla // Ysgard's Call",
+   "ja": "Horn of Valhalla // イズガルドの呼（よ）び声（ごえ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "85b1a2fc-d719-446c-ac17-e1d355c49964",
+   "oracle": "adca3929-4ecc-45bc-932e-604bcc32550a",
+   "en": "Horned Loch-Whale // Lagoon Breach",
+   "ja": "Horned Loch-Whale // 礁（しょう）湖（こ）の決（けっ）壊（かい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5108e687-23e5-4448-a5a1-f4e10d2e7e42",
+   "oracle": "e294d85f-caf2-4939-99d3-7ca5bba2b8d1",
+   "en": "Hustle // Bustle",
+   "ja": "押し合い // 圧し合い // 押し合い // 圧し合い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ffec36ff-37b4-479c-9b7c-57eaa475662a",
+   "oracle": "1f9efad1-9f51-47aa-a5a7-9c8103435a01",
+   "en": "Hypnotic Sprite // Mesmeric Glare",
+   "ja": "Hypnotic Sprite",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e45ad317-6982-4f8e-9552-fc69160c5e84",
+   "oracle": "299ffd3a-29cf-4667-b191-dd30d09f799c",
+   "en": "Illithid Harvester // Plant Tadpoles",
+   "ja": "Illithid Harvester // 幼（よう）生（せい）の植（う）え付（つ）け",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "d40ee4ac-afb0-49ee-9632-2d27e42d8411",
+   "oracle": "50bee80e-89df-48c2-b608-ba66ff3e794a",
+   "en": "Imodane's Recruiter // Train Troops",
+   "ja": "Imodane's Recruiter // 兵（へい）団（だん）の訓（くん）練（れん）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c99946fb-3172-4abf-9618-ad4f61c064cd",
+   "oracle": "abcb5b99-bf5e-402f-97a2-abb1ab39dd72",
+   "en": "Indulge // Excess",
+   "ja": "Indulge // Excess // Indulge // Excess",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "92b37c46-2644-4a60-b6ef-03ad2f7f127a",
+   "oracle": "4cbbdebc-b807-4d7b-92dd-312637d2a5de",
+   "en": "Infirmary Healer // Stream of Life",
+   "ja": "保健室の癒し手",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3e730f98-4c8e-4ea8-865f-1c00d4bb0c40",
+   "oracle": "d751580b-bb72-4d1d-be27-d0410f883b2a",
+   "en": "Inspired Skypainter // Maestro's Gift",
+   "ja": "見事なる天描師",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9d379455-dd37-48cc-9faa-b386f91aab8b",
+   "oracle": "147d1e5c-fcfd-4115-a2f9-bea9b7ad7bb6",
+   "en": "Intrepid Trufflesnout // Go Hog Wild",
+   "ja": "Intrepid Trufflesnout // 猪（ちょ）突（とつ）猛（もう）進（しん）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5208d8dc-369f-4bf8-970d-59d32b5bcfdb",
+   "oracle": "4f4358cb-59df-46d9-be27-69929f5a615c",
+   "en": "Ishgard, the Holy See // Faith & Grief",
+   "ja": "Ishgard, the Holy See",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1d33e0ce-93ab-4201-8eff-78b7591ab595",
+   "oracle": "c63b3511-d597-4c6e-9094-eabdeaa8a394",
+   "en": "Jadzi, Steward of Fate // Oracle's Gift",
+   "ja": "運命の執事、ジャズィ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f999f039-c9ff-4dbe-a7db-8818dea88182",
+   "oracle": "8c90b558-de07-4689-9427-da68d823c2e8",
+   "en": "James, Wandering Dad // Follow Him",
+   "ja": "James, Wandering Dad // ついて行（い）く",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1d04c930-317c-45d2-8623-d0ea7c7a9d51",
+   "oracle": "b6cebf8d-37e1-42de-b3f1-1c174ab17ac8",
+   "en": "Jecht, Reluctant Guardian // Braska's Final Aeon",
+   "ja": "Jecht, Reluctant Guardian // Braska's Final Aeon",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "40df685e-ffa6-480a-808b-45146a189719",
+   "oracle": "bd513d9d-5aa2-4860-bd86-8b5d9430f133",
+   "en": "Jidoor, Aristocratic Capital // Overture",
+   "ja": "Jidoor, Aristocratic Capital",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "962e8b63-c7ec-48f2-b6b1-034c96eff128",
+   "oracle": "c6655e05-9e31-4a74-a97d-1eeb473fe900",
+   "en": "Jill, Shiva's Dominant // Shiva, Warden of Ice",
+   "ja": "Jill, Shiva's Dominant // Shiva, Warden of Ice",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "70f44119-81dc-493f-8e98-936cc8240d4b",
+   "oracle": "ec744a2d-4a33-4807-bce0-d95cd5277b1f",
+   "en": "Joined Researchers // Secret Rendezvous",
+   "ja": "一心同体な研究者たち",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3c6ff503-c7f3-4b39-acf9-9cb1623d8cf2",
+   "oracle": "f4629329-a79b-4460-a1bc-9ae0f59adf5a",
+   "en": "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire",
+   "ja": "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "62fba170-738c-4f95-85b4-20a394f3193d",
+   "oracle": "6c370299-9803-4cb5-97ba-c17831797b54",
+   "en": "Karvanista, Loyal Lupari // Lupari Shield",
+   "ja": "Karvanista, Loyal Lupari // ルパリの盾（たて）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "03705642-0525-4a52-b08e-f806ab5bf33d",
+   "oracle": "6d3ca5cb-781d-4608-b7f1-38c020536376",
+   "en": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+   "ja": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7ee077b0-7989-42ba-b77c-3a98b2fb7162",
+   "oracle": "7af69a44-e958-42e5-9d65-75e53a601e96",
+   "en": "Kellan, Daring Traveler // Journey On",
+   "ja": "Kellan, Daring Traveler // 旅（たび）路（じ）の続（つづ）き",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5d3334e5-b94a-4e0d-a782-47e400a1c51b",
+   "oracle": "2f2d75a0-d751-4c74-b357-8f92a992447f",
+   "en": "Kellan, Inquisitive Prodigy // Tail the Suspect",
+   "ja": "Kellan, Inquisitive Prodigy // 容（よう）疑（ぎ）者（しゃ）の尾（び）行（こう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9c3b0a4f-1c5c-45da-88f1-a5a9e25af44b",
+   "oracle": "10c48d19-d91f-4674-b186-477acaf08e5a",
+   "en": "Kellan, the Fae-Blooded // Birthright Boon",
+   "ja": "Kellan, the Fae-Blooded // 生（う）まれつきの加（か）護（ご）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "aad801d5-0fdf-4118-b03d-97a2040d0e50",
+   "oracle": "df1c0d06-2109-4297-9271-8a003fc892bc",
+   "en": "Kirol, History Buff // Pack a Punch",
+   "ja": "歴史通、キーロル",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "792c15a5-9a58-47da-9cf7-fe001755bc46",
+   "oracle": "bad2e3b2-ad47-4e17-b35e-0fcc13e82937",
+   "en": "Konstrari Improviser // Soul Tether",
+   "ja": "コンストラリの急造者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "02b92dd4-5f62-444a-9c09-a4f763aa986b",
+   "oracle": "3998a60d-9521-4100-8d41-3e612972a3de",
+   "en": "Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+   "ja": "Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9403314c-d664-48be-a117-c68cf582968d",
+   "oracle": "dba1d231-6b03-44ad-ab8c-be0c8fe1b6db",
+   "en": "Lake-town Mariners // Gone Fishing",
+   "ja": "湖の町の船乗り",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2fde32bd-9f12-4008-a364-1977b9b10520",
+   "oracle": "5ba7abbc-f6e8-40c2-800b-11efd10cca5b",
+   "en": "Landscape Painter // Vibrant Idea",
+   "ja": "風景画家",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c31b6a0e-0b95-44df-a7cb-c5df8932ecd1",
+   "oracle": "84bb960c-c34e-4979-8c0f-893c85cee27d",
+   "en": "Leech Collector // Bloodletting",
+   "ja": "ヒルの収集家",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e4423843-8e97-4f87-9a33-1123c325a283",
+   "oracle": "4cc014f3-05e0-442e-9dee-03eab1aa65a3",
+   "en": "Lindblum, Industrial Regency // Mage Siege",
+   "ja": "Lindblum, Industrial Regency",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "755a9dcc-4d6c-4f11-8d76-3aa6eb5db199",
+   "oracle": "cb125cd4-c7c2-415d-b802-bdcfc2454403",
+   "en": "Lluwen, Exchange Student // Pest Friend",
+   "ja": "交換留学生、ルーウェン",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c22738e2-441b-4de2-8925-c34a22c6e3ff",
+   "oracle": "a371d035-488e-4b3d-81de-ee7859452c0e",
+   "en": "Lorehold Archivist // Restore Relic",
+   "ja": "ロアホールドの文書管理人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7c19c9dd-0d79-413f-8359-553f121087ae",
+   "oracle": "03931270-504a-4b0b-af3f-918bf124ea07",
+   "en": "Maelstrom Artisan // Rocket Volley",
+   "ja": "大渦の職工",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1ba577ab-24c4-4580-9645-374c9f0239c2",
+   "oracle": "2a3b29c3-f69d-4671-8907-600d21528153",
+   "en": "Magmatic Hellkite // Magmatic Hellkite",
+   "ja": "マグマのヘルカイト",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c3623f4b-a4f2-4d01-87c5-1c7df64d8d13",
+   "oracle": "4e34a49d-f031-48ac-a458-97b79124b76c",
+   "en": "Midgar, City of Mako // Reactor Raid",
+   "ja": "Midgar, City of Mako",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "22599904-1360-4929-88e2-45f2613ea4c5",
+   "oracle": "df555f60-2164-49dc-be67-00aca9eb0d45",
+   "en": "Minecart Daredevil // Ride the Rails",
+   "ja": "Minecart Daredevil // 軌（き）条（じょう）を乗（の）りこなせ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c7ecdc88-733e-4562-ae43-7d77d82d5154",
+   "oracle": "6d4e7943-1fdf-4085-8af0-658badbd0cb8",
+   "en": "Monster Manual // Zoological Study",
+   "ja": "Monster Manual // 動（どう）物（ぶつ）学（がく）的（てき）研（けん）究（きゅう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "94ab88db-3ea8-4286-a5ec-cdc23d8ea810",
+   "oracle": "89f1aefd-feb6-45ce-a992-707d027714e7",
+   "en": "Moonshae Pixie // Pixie Dust",
+   "ja": "Moonshae Pixie // ピクシーの粉（こな）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "35daff22-4b37-4f0b-b446-1bd40faefb82",
+   "oracle": "34d34f2c-06ff-4acf-8f2f-ff867774b777",
+   "en": "Most Decrepit Old Bird // Speak Secrets",
+   "ja": "この上なくよぼよぼな年より鳥",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e94edc1c-405e-41d8-a410-7fcbd63db17a",
+   "oracle": "1080c5b5-6651-4c6a-93e6-099fbe389e26",
+   "en": "Murderous Rider // Swift End",
+   "ja": "Murderous Rider",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "926a125b-aad5-44c0-a8a0-ab1e848becba",
+   "oracle": "2e728381-6db0-4c66-883d-82d718fef833",
+   "en": "My Precious // Allure of Power",
+   "ja": "いとしいしと",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "253c8adb-921a-453a-a05b-f667caba9450",
+   "oracle": "c78783e5-868d-4a8b-a4f8-95a92853cf0a",
+   "en": "Naktamun Lorespinner // Wheel of Fortune",
+   "ja": "ナクタムンの伝承紡ぎ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c387100e-4dff-42fa-96a3-903848e88c8d",
+   "oracle": "bf276236-18a6-4a48-b47d-5227832d26e6",
+   "en": "Never // Return",
+   "ja": "Never // Return // Never // Return",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "cd828758-3cd3-4b61-92b0-37639cceaac7",
+   "oracle": "396b088d-f9af-4ee1-843f-dbe1633f9cc8",
+   "en": "Obyra's Attendants // Desperate Parry",
+   "ja": "Obyra's Attendants // 捨（す）て身（み）の受（う）け流（なが）し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "fd83480f-cb84-4bad-a01e-e047e7d64327",
+   "oracle": "82922f3a-a444-49cf-b136-f30a3c85f791",
+   "en": "Odds // Ends",
+   "ja": "Odds // Ends",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4c27dd46-dfe0-4160-8355-8f3ab92dcf61",
+   "oracle": "dc69a130-967a-4d9f-992f-db7fad2fcd6d",
+   "en": "Ondu Knotmaster // Throw a Line",
+   "ja": "Ondu Knotmaster // 命（いのち）綱（づな）投（な）げ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "074e3a98-afef-41d7-9701-b46a7388a06e",
+   "oracle": "bc540259-459d-4561-9268-c4f323ea62d2",
+   "en": "Order // Chaos",
+   "ja": "Order // Chaos",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b34f90fe-a580-4b0c-8b8d-50803c12aaab",
+   "oracle": "511951ed-fbff-4e44-9429-27f237496672",
+   "en": "Paradox Shaper // Omit Variables",
+   "ja": "パラドックスの形成師",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3a7dfaca-3ae6-4667-9f41-072861163d7a",
+   "oracle": "e71863a7-0de1-4ab5-95e8-c39e6810d899",
+   "en": "Pegasus Guardian // Rescue the Foal",
+   "ja": "Pegasus Guardian // 仔（こ）馬（うま）の救（きゅう）出（しゅつ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "725874e7-ac7b-4b3d-a29f-668491c78ddd",
+   "oracle": "334fba11-e500-40fd-a142-41ff553642b5",
+   "en": "Picnic Ruiner // Stolen Goodies",
+   "ja": "Picnic Ruiner // 盗（ぬす）まれたお菓（か）子（し）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "055b7c79-13b6-4b4d-b0d7-516808cc8586",
+   "oracle": "c008d60a-ee06-4411-b8e7-c2df13616105",
+   "en": "Pigment Wrangler // Striking Palette",
+   "ja": "絵の具の世話人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a5887fd1-f7fa-4edf-82e3-25361911317a",
+   "oracle": "3ef02f2b-b611-40c3-a1d5-8b34989643cf",
+   "en": "Pollen-Shield Hare // Hare Raising",
+   "ja": "Pollen-Shield Hare // 兎（うさぎ）の子（こ）育（そだ）て",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "bc878d03-a445-4f22-ae78-e29054201326",
+   "oracle": "cfcf34ba-b412-447f-b200-d841371c0a1c",
+   "en": "Polluted Cistern // Dim Oubliette",
+   "ja": "Polluted Cistern // Dim Oubliette // Polluted Cistern // Dim Oubliette",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "174c608e-9086-4de8-ae28-51f537884b07",
+   "oracle": "33e3793c-098f-4897-88f3-9f9ce9081e0f",
+   "en": "Pompous Battlemage // Improvised Act",
+   "ja": "驕慢な戦闘魔道士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "98c48fe0-b4c5-4f5f-8dc2-fbb472c7bd4e",
+   "oracle": "63f67baa-3f37-41b8-9ee6-3c37f828917d",
+   "en": "Prudent Fateseer // Peer Review",
+   "ja": "用意周到な運命占い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "40b4d189-32f3-4624-a69b-6c7b988b79d9",
+   "oracle": "e119ba58-85e4-49ec-a2f8-3d094187c99d",
+   "en": "Pure // Simple",
+   "ja": "Pure // Simple",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "19ca03a7-cd47-4c6b-87ae-4b03b919aa2a",
+   "oracle": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+   "en": "Purging Stormbrood // Absorb Essence",
+   "ja": "Purging Stormbrood // 本（ほん）質（しつ）の吸（す）い上（あ）げ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "55d3b482-be7b-4b81-a0dd-44b32ffb67ce",
+   "oracle": "7e050495-bed7-43b9-abce-866c61beb1da",
+   "en": "Push // Pull",
+   "ja": "押し出し // 引き抜き // 押し出し // 引き抜き",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "72e3334a-64a1-48cf-8672-605acd51bf14",
+   "oracle": "8940f503-fc6d-4fae-be74-22c660cae1a7",
+   "en": "Pyre Rhymer // Molten Tide",
+   "ja": "焼尽の詩人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "dfcf25b0-a1a0-4e72-873c-136fd5aeb238",
+   "oracle": "555df32f-f8e9-49af-bc4a-1194ea325a97",
+   "en": "Questing Druid // Seek the Beast",
+   "ja": "Questing Druid // 獣（けもの）の探（たん）索（さく）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0d26ff71-edbd-4093-abb9-fea7b7de9007",
+   "oracle": "bd9d3a70-faed-4bc6-97d8-1601b36cdb21",
+   "en": "Quill-Blade Laureate // Twofold Intent",
+   "ja": "羽ペン剣の桂冠詩人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "903bc87b-8bf9-4169-8d40-2d54073ed0d6",
+   "oracle": "16d40f56-691b-42a7-a5ab-157568921e03",
+   "en": "Ral, Monsoon Mage // Ral, Leyline Prodigy",
+   "ja": "Ral, Monsoon Mage // 力線の神童、ラル",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "94c23cc4-e43c-43b7-8ef1-bd9c8aac56fc",
+   "oracle": "ecc91e38-90fa-4d89-b262-d5f36dce5be4",
+   "en": "Ratcatcher Trainee // Pest Problem",
+   "ja": "Ratcatcher Trainee // 害（がい）獣（じゅう）被（ひ）害（がい）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c815a493-2208-478e-a6a9-680aaae051df",
+   "oracle": "7db22241-fe43-4071-9af9-de1cf394f7f5",
+   "en": "Refuse // Cooperate",
+   "ja": "Refuse // Cooperate",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "35343cd7-17a8-4955-bc4d-1514bb79f079",
+   "oracle": "a43ecf8b-5dc9-4ac4-ae1f-b663aa8c9d7b",
+   "en": "Repudiate // Replicate",
+   "ja": "覆滅 // 複製 // 覆滅 // 複製",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "009fbb85-f117-496e-a7b9-77778247c4aa",
+   "oracle": "fa38394b-6ac4-460c-ae3a-54d50037715b",
+   "en": "Research // Development",
+   "ja": "Research // Development",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b7314104-6120-45b1-a49e-6a344e3a6dc0",
+   "oracle": "ae93854b-c808-44cb-b0be-7d1035c597d7",
+   "en": "Response // Resurgence",
+   "ja": "反応 // 反正 // 反応 // 反正",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "865271a8-b67a-4fa2-a995-40a7130e4b9c",
+   "oracle": "836ecd67-6487-4f3d-9e08-013746be829a",
+   "en": "Revival // Revenge",
+   "ja": "回生 // 会稽 // 回生 // 会稽",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "82ab8833-0369-45f4-9850-0f4cb5f19d25",
+   "oracle": "814f06aa-b48e-4c7f-b4cd-595d89176d0e",
+   "en": "Rise // Fall",
+   "ja": "Rise // Fall",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "cc0d962a-55c4-4000-a900-5991ae3cf115",
+   "oracle": "f18d8939-7ee8-4a44-a1c8-6ae3a08f52fd",
+   "en": "Road // Ruin",
+   "ja": "Road // Ruin",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "55dd3f58-ba5c-424a-8717-e6634ba34649",
+   "oracle": "5e2bf834-7f92-4da5-beac-0dad817dc233",
+   "en": "Rough // Tumble",
+   "ja": "Rough // Tumble",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "4edfebfb-7044-448e-8270-6a80d63471ad",
+   "oracle": "af7db15c-93af-4c7e-a028-42181d91a923",
+   "en": "Runescale Stormbrood // Chilling Screech",
+   "ja": "Runescale Stormbrood // 凍（こご）える金（かな）切（き）り声（ごえ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a24a3d3f-73fe-4ffd-b4b9-241c535dfee3",
+   "oracle": "7cee6d43-5dec-4989-85ec-c635ec783ec7",
+   "en": "Sagu Wildling // Roost Seek",
+   "ja": "Sagu Wildling // 止（と）まり木（ぎ）探（さが）し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a6781c59-ea92-4edf-b186-9dccdb2a0dfe",
+   "oracle": "5d1d76e0-049c-4a33-96ec-8e60deed16d5",
+   "en": "Said // Done",
+   "ja": "Said // Done",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "1bdd6b2a-880c-46ba-be04-05dae2d71ac7",
+   "oracle": "a8c44bd9-6470-47d7-934f-77c76a44a984",
+   "en": "Sanar, Unfinished Genius // Wild Idea",
+   "ja": "荒削りな天才、サナール",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "94005774-9218-4366-807b-4037293d8207",
+   "oracle": "53015c41-af2d-43e2-a690-d8877537b8dd",
+   "en": "Sapphire Dragon // Psionic Pulse",
+   "ja": "Sapphire Dragon // サイオニック・パルス",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c962ac4b-22fd-463d-92a8-6e6e44cabc01",
+   "oracle": "12c71296-1243-49e6-a196-8b016a7b635c",
+   "en": "Scalding Viper // Steam Clean",
+   "ja": "Scalding Viper // 蒸（じょう）気（き）洗（せん）浄（じょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "21da37bc-1e23-4478-9b44-15cabd406fbf",
+   "oracle": "2796c3d9-9e56-40f2-8398-7a131c4657ff",
+   "en": "Scathing Shadelock // Venomous Words",
+   "ja": "容赦なき妨術士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7429d939-1442-421e-ba7d-a751c59f5bc5",
+   "oracle": "44443716-8356-40cd-a879-35264b29108c",
+   "en": "Scheming Silvertongue // Sign in Blood",
+   "ja": "策謀の能弁術師",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2a7a32b8-36be-4e9b-b14a-ee1ee600e175",
+   "oracle": "c8abde48-a07a-42a0-a43b-c357e6d9cad4",
+   "en": "Secret Arcade // Dusty Parlor",
+   "ja": "Secret Arcade // Dusty Parlor // Secret Arcade // Dusty Parlor",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7a5cc90c-0e99-4177-b87c-2ba072f84bf6",
+   "oracle": "21b8d59f-a90d-44ff-a2e3-9f439ac3e14a",
+   "en": "Semester Foreseer // Peer Review",
+   "ja": "学期の先見者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0f870ce7-40a7-4382-9743-2e82e587205b",
+   "oracle": "70113003-be5e-406a-9aec-cb480468c36d",
+   "en": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+   "ja": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "740799c9-2126-46f1-af35-3ec4477741fc",
+   "oracle": "de52b262-418e-418c-b2aa-8d5a776e3a75",
+   "en": "Shrouded Shepherd // Cleave Shadows",
+   "ja": "Shrouded Shepherd // 影（かげ）の切（せつ）断（だん）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "246b2bb1-6a30-4613-b857-5f20ec11a9df",
+   "oracle": "d74f9a18-8dab-4549-be3f-9697ff68d73c",
+   "en": "Sidequest: Hunt the Mark // Yiazmat, Ultimate Mark",
+   "ja": "Sidequest: Hunt the Mark // Yiazmat, Ultimate Mark",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "817d30f0-c48b-49e9-afe5-8cc654dc7c70",
+   "oracle": "788d3cfa-7706-4728-9c48-cf7bc963d002",
+   "en": "Skycoach Conductor // All Aboard",
+   "ja": "飛空バスの車掌",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "659d64d5-7e9c-4325-9118-87fd12864cc8",
+   "oracle": "fc75cfec-e1f6-4cb5-8a3c-2f7b2c39c03f",
+   "en": "Smaug, the Great Calamity // Spew Flame",
+   "ja": "大いなる厄災、スマウグ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "676f5ba4-660e-41e6-bf5d-45bbb500c395",
+   "oracle": "11ad6e75-9bbd-40ea-b04a-e6a61db3bcda",
+   "en": "Smitten Swordmaster // Curry Favor",
+   "ja": "Smitten Swordmaster // ご機（き）嫌（げん）取（と）り",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ed24d3fe-6e1f-43f2-a7d4-941159bfa9e6",
+   "oracle": "df5e4100-8c83-42d6-af96-1a1ec84a9210",
+   "en": "Spellbook Seeker // Careful Study",
+   "ja": "呪文書の探究者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "febb7333-0c9f-4f94-bc41-1db2daea8e8d",
+   "oracle": "9357fc7f-c9d0-4ce2-a6dd-0ff1f24bfc56",
+   "en": "Spellscorn Coven // Take It Back",
+   "ja": "Spellscorn Coven // お返（かえ）し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "aee5deb4-49c2-4a35-b044-df1dc09cfa55",
+   "oracle": "e49b902f-a556-4dab-8928-93caf0a3f609",
+   "en": "Spiked Corridor // Torture Pit",
+   "ja": "Spiked Corridor // Torture Pit // Spiked Corridor // Torture Pit",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7b4968d3-a16c-4a00-ab28-c285018a400e",
+   "oracle": "c77ddcac-ce54-4348-bde2-5d9caf3d5b04",
+   "en": "Spiritcall Enthusiast // Scrollboost",
+   "ja": "精霊喚びの愛好者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "21c462b8-3828-41ad-ac7f-e3a421c8d6f4",
+   "oracle": "25877c41-39a4-4cc3-ac4b-8f3dd06d579b",
+   "en": "Stensian Sanguinist // Exsanguinate",
+   "ja": "ステンシアの鮮血術師",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "67ebba9b-998d-4191-98b5-72042f4a59a1",
+   "oracle": "e8f755f7-ec93-4d2e-bffc-c719984fa13d",
+   "en": "Stingerquill Voxmancer // Vicious Verse",
+   "ja": "スティンガークイルの音声術士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0d5710c9-b9d8-4cd7-bcb6-a615fe88cd15",
+   "oracle": "8a31c49f-5b3f-4f84-a08e-58b30a6bff7c",
+   "en": "Stormkeld Vanguard // Bear Down",
+   "ja": "Stormkeld Vanguard // 熊（くま）の踏（ふ）みつけ",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5ac68d2d-c29c-410f-a3f0-8887b5876c8f",
+   "oracle": "e24916ff-7566-4f27-8e31-732311a4a88c",
+   "en": "Stormshriek Feral // Flush Out",
+   "ja": "Stormshriek Feral // 流（なが）し出（だ）し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "60a8f227-479e-43e4-9b6e-03fea5634c09",
+   "oracle": "1a8c996d-ca93-4c17-ace5-66ecd6b99317",
+   "en": "Strength of the Harvest // Haven of the Harvest",
+   "ja": "Strength of the Harvest // 収穫の安息地",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a5002a89-1dc9-44ef-b961-1553568ef41b",
+   "oracle": "10389ff7-2ea4-4413-90cc-0e3ca268c64d",
+   "en": "Striding Shotcaller // Run the Play",
+   "ja": "一足飛びの司令塔",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5b632d99-bc87-4905-aac8-40d9aa3c2bf1",
+   "oracle": "e85c6bd2-db15-4052-88c0-3ae25414f0ca",
+   "en": "Strife Scholar // Awaken the Ages",
+   "ja": "相争う学生",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3f377d92-000d-4641-808c-00114af2eccc",
+   "oracle": "58b0c737-0a84-4f9a-b3b7-300c5de43874",
+   "en": "Studious First-Year // Rampant Growth",
+   "ja": "篤学な一年生",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "e1f44f2b-46aa-4b8d-ad27-4cd5bc24a847",
+   "oracle": "d7158101-f6ac-4d61-9570-a3adc3c8b583",
+   "en": "Supply // Demand",
+   "ja": "Supply // Demand",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6db9bc9f-9baf-46c5-90bc-6bcf780f695c",
+   "oracle": "702e871d-90d8-4468-8f69-5ae42af2c9d3",
+   "en": "Tam, Observant Sequencer // Deep Sight",
+   "ja": "観察眼ある配列者、タム",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "fcbcb7d8-8aea-415d-ac20-6928dc611b5e",
+   "oracle": "1ed9e351-0000-4b75-8ecb-d15bd88df68a",
+   "en": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+   "ja": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a58a82bd-5bbb-482d-bb36-4ef34d8a544e",
+   "oracle": "5005df36-a100-492d-89b9-e221793cfb56",
+   "en": "Tempest Hart // Scan the Clouds",
+   "ja": "Tempest Hart // 雲（くも）の走（そう）査（さ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "3104b67f-acbf-4172-98a0-204a7c306525",
+   "oracle": "09f09d0a-6054-4545-b81e-0295773cc5f0",
+   "en": "The Arkenstone // Seek the Heart",
+   "ja": "アーケン石",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2cd56604-b508-4ce3-ae47-83d208a081c9",
+   "oracle": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+   "en": "The Emperor of Palamecia // The Lord Master of Hell",
+   "ja": "The Emperor of Palamecia // The Lord Master of Hell",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "471a5a3b-b418-42d7-be84-a220168b2de5",
+   "oracle": "92a0aa44-0ef7-4e6f-8288-7c33067c5fd1",
+   "en": "Theorix Metamage // Omit Variables",
+   "ja": "セオリクスの変転魔道士",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "07fda673-d955-4659-a6a4-c15c396c1cf9",
+   "oracle": "f6771d32-395e-4832-b33d-cbc12dff1516",
+   "en": "Thranduil, Sindarin Liege // Silvan Rally",
+   "ja": "シンダリンの領主、スランドゥイル",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "57a85886-8d48-4621-a79d-d339fd1c7602",
+   "oracle": "342d20ca-178d-433e-9630-6fed33a8d0bc",
+   "en": "Thrash // Threat",
+   "ja": "強撃 // 脅威 // 強撃 // 脅威",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5882480d-8823-4b40-bcac-b23a102afb4a",
+   "oracle": "bd575e82-99e7-44c7-ab93-d33f5678e1ad",
+   "en": "Threadbind Clique // Rip the Seams",
+   "ja": "Threadbind Clique // 継（つ）ぎ目（め）破（やぶ）り",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "439f0680-7cf2-4baa-b832-34af79823245",
+   "oracle": "79b69b38-c01d-499a-a865-8c1cecf9fae0",
+   "en": "Tlincalli Hunter // Retrieve Prey",
+   "ja": "Tlincalli Hunter // 獲（え）物（もの）の回（かい）収（しゅう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "aacf1325-9cc6-44c2-8d1b-beb295f2960e",
+   "oracle": "ca8535f2-1f96-4836-bd32-5e952f9bee72",
+   "en": "Topaz Dragon // Entropic Cloud",
+   "ja": "Topaz Dragon // エントロピーの雲（くも）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7d6ab8d8-e467-46e6-8980-334b63bbdd55",
+   "oracle": "0b55eac6-a745-4bf4-8926-5ce83bc38d7d",
+   "en": "Treasure Map // Treasure Cove",
+   "ja": "Treasure Map // Treasure Cove",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9f8c3c41-c5ee-4548-91ec-92e77dd66620",
+   "oracle": "a40bebe3-6f00-4754-9f70-351055e3b524",
+   "en": "Trial // Error",
+   "ja": "Trial // Error",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2c6f8a74-be3d-4f27-b239-cc2aefd8421b",
+   "oracle": "41841bbf-1c51-494b-b299-c997cce88e44",
+   "en": "Turn // Burn",
+   "ja": "Turn // Burn",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "d658c9a0-3710-424d-9e54-2d4b71f5c802",
+   "oracle": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+   "en": "Twice Upon a Time // Unlikely Meeting",
+   "ja": "Twice Upon a Time // 思わぬ邂（かい）逅（こう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ab1390e6-0b64-4b60-83ee-448c333582e0",
+   "oracle": "105aea98-8eb9-4fb2-a0cb-7c7513317c5b",
+   "en": "Twining Twins // Swift Spiral",
+   "ja": "Twining Twins // 敏（びん）捷（しょう）な螺（ら）旋（せん）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "729f7a6b-65ea-46b6-83ec-0db06bdbd7e6",
+   "oracle": "ff812a78-3fe7-47bc-9984-1c2380cff5b1",
+   "en": "Twinmaw Stormbrood // Charring Bite",
+   "ja": "Twinmaw Stormbrood // 黒（くろ）焦（こ）げの噛（か）みつき",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9279cf9d-2809-4386-945e-4fc02ace00d8",
+   "oracle": "b012cec9-2aff-4dfb-8db1-61e830c33926",
+   "en": "Two-Handed Axe // Sweeping Cleave",
+   "ja": "Two-Handed Axe // ぶん回（まわ）し",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a62ed017-82c8-496f-b34b-d32ad313c53b",
+   "oracle": "0f222f3d-f02b-42b9-aedf-fb7ed92d4889",
+   "en": "Two-Headed Hunter // Twice the Rage",
+   "ja": "Two-Headed Hunter // 倍（ばい）増（ぞう）する憤（ふん）怒（ぬ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2493b570-768a-43df-adc7-5492c78ccc6a",
+   "oracle": "89ae3475-9063-4700-a7bd-47d5dcd43a3b",
+   "en": "Vantress Transmuter // Croaking Curse",
+   "ja": "Vantress Transmuter // カエル声（ごえ）の呪（のろ）い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "50e365bf-058c-444a-8c34-586a8d5c331d",
+   "oracle": "67c603cc-ad66-4a1c-8386-5901c9c01bfb",
+   "en": "Variable Chaser // Arc of Fortune",
+   "ja": "変数の追跡者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0f376d5d-a7d1-41da-afb5-924f87c50603",
+   "oracle": "3a97bc8d-bd81-468e-9277-eba4fac11ee0",
+   "en": "Vastlands Scavenger // Bind to Life",
+   "ja": "大界の回収者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "c1398b43-1610-4849-8bb9-544dc020a77b",
+   "oracle": "70a702fe-1dd6-4d7b-a85a-45744ecad741",
+   "en": "Velvetwing Butterflies // Gaze in Wonder",
+   "ja": "ビロード羽の蝶",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "29abb50e-accd-4205-9f1c-5dc1f34cc9d7",
+   "oracle": "2e5adbcf-6b5c-4ded-a339-8757040ef878",
+   "en": "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+   "ja": "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "b7db62b0-16da-49c6-a2c3-74afc7cafe7a",
+   "oracle": "bd416426-d037-45e3-9647-816bf982cbea",
+   "en": "Vigorbloom Vanguard // Seed Suture",
+   "ja": "ヴィゴーブルームの先兵",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "09a1224d-805a-4b70-bafb-3ae0ed655e32",
+   "oracle": "f40e6bbf-1fed-4ec5-869d-18c2dd396d14",
+   "en": "Vincent Valentine // Galian Beast",
+   "ja": "Vincent Valentine // Galian Beast",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ab27b74e-edab-4495-bf1f-cc75df44aa1a",
+   "oracle": "af6438b9-3fde-45c9-af69-dff686c1e0de",
+   "en": "Virtue of Courage // Embereth Blaze",
+   "ja": "Virtue of Courage // エンバレスの猛（もう）火（か）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5b77bbe8-6f2d-4682-bdc1-264beed2481e",
+   "oracle": "f0bbcabf-29e7-4c7e-893f-86b64d3620a9",
+   "en": "Virtue of Knowledge // Vantress Visions",
+   "ja": "Virtue of Knowledge // ヴァントレスの幻（げん）視（し）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6df8ebd8-e8b3-461f-ac39-c061bbca359c",
+   "oracle": "f61f4307-4eec-476a-97e5-d4d3da2b54c3",
+   "en": "Virtue of Loyalty // Ardenvale Fealty",
+   "ja": "Virtue of Loyalty // アーデンベイルの忠（ちゅう）義（ぎ）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "a1053475-5baf-440b-bcfc-6050314e1359",
+   "oracle": "fae36da0-bf9c-484f-b2fe-dd8ab2effc5c",
+   "en": "Virtue of Persistence // Locthwain Scorn",
+   "ja": "Virtue of Persistence // ロークスワインの嘲（ちょう）笑（しょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "ca4bd0e3-20ef-469f-9223-616584fcf676",
+   "oracle": "31af78dd-e962-4d9a-b696-f3048be03486",
+   "en": "Virtue of Strength // Garenbrig Growth",
+   "ja": "Virtue of Strength // ギャレンブリグの成（せい）長（ちょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6e23cfa9-b50b-4758-a755-3c502bb6a592",
+   "oracle": "517f84b5-cf99-410d-96ea-910740231dac",
+   "en": "Void Extrapolator // Omit Variables",
+   "ja": "虚空の外挿者",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "7bc8e824-a487-4457-a37a-0a577cb86621",
+   "oracle": "19053c47-97ce-4a25-a92c-1f4061e85bf3",
+   "en": "Warrant // Warden",
+   "ja": "万全 // 番人 // 万全 // 番人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "f86ada82-e454-46f1-89a3-39058dd25339",
+   "oracle": "9842734c-1eac-4509-a731-4c22017ae586",
+   "en": "Wear // Tear",
+   "ja": "Wear // Tear // Wear // Tear",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "0ef5af4f-510c-4273-8964-d9eb482e311b",
+   "oracle": "e1ffb884-a89e-4e2a-9beb-8bd5838b6a94",
+   "en": "Whiplash Wordsmith // Vicious Verse",
+   "ja": "鞭打つ弁舌家",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "6091a779-513a-476c-946b-d48fde8be4bf",
+   "oracle": "4fbfc814-df10-4d61-ada9-c96cc8ee8d8c",
+   "en": "Whirlwing Stormbrood // Dynamic Soar",
+   "ja": "Whirlwing Stormbrood // 力（ちから）強（づよ）き飛（ひ）翔（しょう）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "74f2474e-86e0-4587-9085-8fb14a9ab382",
+   "oracle": "ba610f08-61a7-47fe-9a80-32b5ce51b118",
+   "en": "Woodland Acolyte // Mend the Wilds",
+   "ja": "Woodland Acolyte // 僻（へき）境（きょう）の修（しゅう）繕（ぜん）",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "2d3cbc65-8ae5-4bbb-a0f9-a6935a9981a8",
+   "oracle": "f3ed157f-a09b-405f-aec4-0e7a81d80fc8",
+   "en": "Woodwork Prodigy // Soul Tether",
+   "ja": "木工の神童",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "5b753e81-2c03-4f84-8e46-fcc0f9381c68",
+   "oracle": "d9068051-b51c-4700-b492-30b148e3a72c",
+   "en": "Yavimaya Bloomsage // Channel",
+   "ja": "ヤヴィマヤの花賢人",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "9c4e7f2c-cc89-465e-97e7-489ec557ed81",
+   "oracle": "fff28b30-9903-4a0a-a723-31216abd457d",
+   "en": "Young Blue Dragon // Sand Augury",
+   "ja": "Young Blue Dragon // 砂（すな）占（うらな）い",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "124250ec-c791-4f7e-8cb4-0c9190d3467e",
+   "oracle": "2f865ae9-9328-4f6f-924f-d5e0a65aaa96",
+   "en": "Young Red Dragon // Bathe in Gold",
+   "ja": "Young Red Dragon // 黄（おう）金（ごん）浴（あ）び",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "935bbf81-6ef7-4a1d-8e1a-5a581b5a87f9",
+   "oracle": "5f2b3ea8-99ee-47a4-8a1c-4b27478d524c",
+   "en": "Zanarkand, Ancient Metropolis // Lasting Fayth",
+   "ja": "Zanarkand, Ancient Metropolis",
+   "other_ja_faces": {},
+   "top": {}
+  },
+  {
+   "id": "14074234-355e-48a3-a866-d10858a25b24",
+   "oracle": "8f52fc65-a914-421a-9426-21eb520d55d5",
+   "en": "Zenos yae Galvus // Shinryu, Transcendent Rival",
+   "ja": "Zenos yae Galvus // Shinryu, Transcendent Rival",
+   "other_ja_faces": {},
+   "top": {}
+  }
+ ]
+}
