@@ -21,7 +21,7 @@ jobs:
             echo "$URL"
             curl -sS -A "$UA" -o all.jsonl.gz "$URL"; ls -l all.jsonl.gz
             sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
-            pip install -q pillow
+            pip install -q pillow; rm -rf probe_out/faces
             python3 tools/face_sheets.py all.jsonl.gz tools/face_targets.json probe_out/faces
           ) > probe_out/faces_log.txt 2>&1 || true
           tail -20 probe_out/faces_log.txt
