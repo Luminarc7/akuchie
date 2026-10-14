@@ -1,0 +1,6 @@
+/ 200
+/CLAUDE.md 404
+/dev/README.md 404
+/dev/tests/e2e.py 404
+/tools/make_preview.py 404
+/index.html 307
