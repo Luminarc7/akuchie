@@ -64,15 +64,26 @@ for n, t in enumerate(targets):
                  'printed_name': c.get('printed_name'), 'faces': [{'name': f.get('name'), 'printed_name': f.get('printed_name'),
                                                                    'printed_text': f.get('printed_text'), 'printed_type_line': f.get('printed_type_line')} for f in faces],
                  'printed_text': c.get('printed_text')})
-    if layout in ('split',) or (W > H):
+    need = t.get('need') or [0]
+    def scaled(p, w=1100):
+        return p.resize((w, max(1, int(p.size[1] * w / p.size[0]))))
+    parts = []
+    if layout == 'split' or W > H:
         body = im.rotate(-90, expand=True) if W < H else im
-        body = body.resize((1100, int(body.size[1] * 1100 / body.size[0])))
-        parts = [body]
+        parts = [scaled(body)]
     else:
-        top = im.crop((0, 0, W, int(H * 0.13))).resize((1100, int(H * 0.13 * 1100 / W)))
-        low = im.crop((0, int(H * 0.52), int(W * 0.62), int(H * 0.96)))
-        low = low.resize((1100, int(low.size[1] * 1100 / low.size[0])))
-        parts = [top] + ([low] if len(faces) > 1 else [])
+        for k in need:
+            fu = (faces[k].get('image_uris') if k < len(faces) else None) if faces else None
+            if k == 0 or fu:
+                src = im
+                if k > 0 and fu:
+                    try:
+                        src = Image.open(io.BytesIO(get(fu.get('png') or fu.get('large')))).convert('RGB'); time.sleep(0.12)
+                    except Exception:
+                        src = im
+                parts.append(scaled(src.crop((0, 0, src.size[0], int(src.size[1] * 0.115)))))
+            else:   # the adventure / prepare spell's name, on the lower half
+                parts.append(scaled(im.crop((0, int(H * 0.50), W, int(H * 0.68)))))
     label_h = 40
     h = label_h + sum(p.size[1] for p in parts) + 10
     strip = Image.new('RGB', (1100, h), 'white')
