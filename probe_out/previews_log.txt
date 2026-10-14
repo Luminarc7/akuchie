@@ -1,0 +1,643 @@
++ bash tools/probe_previews.sh
+runner ip: 52.159.226.247
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Twitterbot/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cef13c2951bf-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cef468f0a264-CPH
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cef7ff92e034-CPH
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cef9c81cb2bc-MIA
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cefc9d56028a-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7ceffb9f30359-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: Twitterbot/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf02aa59218c-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf047c5c3376-MIA
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf073ba90037-LHR
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf0e88c8b79d-CPH
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf1199d703c7-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/?view=meta&format=modern
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf148f52713d-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://warujie.jp/robots.txt
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/plain; charset=utf-8
+  server: cloudflare
+  cf-ray: a4a7cf17bfb5ddef-MAD
+# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a content-signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  If a content-signal = no, you may not collect content for the
+#      corresponding use.
+# (c)  If the website operator does not include a content signal for a
+#      corresponding use, the website operator neither grants nor restricts
+#      permission via content signal with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts from your website's contents). Search does not
+#           include providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models (e.g., retrieval
+#           augmented generation, grounding, or other real-time taking of content for
+#           generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
+# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
+# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Twitterbot/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf1bb84651bf-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf1ec89c2af8-CPH
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf2209dc5ac6-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf255a44e034-CPH
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf28dc160539-OTP
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf2acb89b2bc-MIA
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: Twitterbot/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf2d8d48a180-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf2f4c7c3376-MIA
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf321e4c028a-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf350d9c218c-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf380dc0c371-MAD
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/?view=meta&format=modern
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 403 
+  content-type: text/html; charset=UTF-8
+  cf-mitigated: challenge
+  server: cloudflare
+  cf-ray: a4a7cf3b7c0bf68e-OTP
+  <title>Just a moment...</title>
+  ** Cloudflare challenge page **
+=== https://www.warujie.jp/robots.txt
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/plain; charset=utf-8
+  server: cloudflare
+  cf-ray: a4a7cf3ecd9c03c7-MAD
+# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a content-signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  If a content-signal = no, you may not collect content for the
+#      corresponding use.
+# (c)  If the website operator does not include a content signal for a
+#      corresponding use, the website operator neither grants nor restricts
+#      permission via content signal with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts from your website's contents). Search does not
+#           include providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models (e.g., retrieval
+#           augmented generation, grounding, or other real-time taking of content for
+#           generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
+# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
+# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf42095d80ee-MAD
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf4aa81cc3d0-OTP
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf53baabca21-OTP
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf593e94014a-MAD
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf5e996af815-DUS
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf63de0d38bc-MAD
+  <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
+  <meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+  <meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf687e1332e1-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf6d3f4245eb-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf724a434c06-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf770e4fc801-DUS
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf7bf836ec8d-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 200 
+  content-type: text/html
+  server: cloudflare
+  cf-ray: a4a7cf811f7dc3d0-OTP
+  <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
+  <meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+  <meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://warujie.warujie-mtg.workers.dev/robots.txt
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/plain; charset=utf-8
+  server: cloudflare
+  cf-ray: a4a7cf8638d33eaf-MAD
+# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a content-signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  If a content-signal = no, you may not collect content for the
+#      corresponding use.
+# (c)  If the website operator does not include a content signal for a
+#      corresponding use, the website operator neither grants nor restricts
+#      permission via content signal with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts from your website's contents). Search does not
+#           include providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models (e.g., retrieval
+#           augmented generation, grounding, or other real-time taking of content for
+#           generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
+# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
+# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cf899f060270-MAD
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cf91de8ff815-DUS
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cf97ba7eca21-OTP
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cf9e98b845eb-MAD
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfa4ad884c06-MAD
+  <title>稲妻（Lightning Bolt） | 悪知恵（warujie）</title>
+  <meta property="og:title" content="稲妻（Lightning Bolt） | 悪知恵（warujie）"
+  <meta property="og:description" content="Instant。１つを対象とする。稲妻はそれに３点のダメージを与える。"
+  <meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+  <meta name="twitter:card" content="summary"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfa98824c801-DUS
+  <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
+  <meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+  <meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfae39f7ec9b-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: facebookexternalhit/1.1;line-poker/1.0
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfb2ca8480ee-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfb66f1a5c03-MIA
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfbb2b2e0270-MAD
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfc038b8f68e-OTP
+  <title>メタゲーム — モダン | 悪知恵（warujie）</title>
+  <meta property="og:title" content="メタゲーム — モダン | 悪知恵（warujie）"
+  <meta property="og:description" content="大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/?view=meta&format=modern
+UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+status: HTTP/2 200 
+  content-type: text/html
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfc5b9de7391-MAD
+  <title>悪知恵（warujie）— 効果テキストで探せるMTGカード検索</title>
+  <meta property="og:title" content="悪知恵（warujie）— 効果テキストで探せるMTGカード検索"
+  <meta property="og:description" content="カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。"
+  <meta property="og:image" content="https://warujie.jp/og.png"
+  <meta name="twitter:card" content="summary_large_image"
+  <title>${esc(t('deck.trend.week', { d: md(tr.weeks[i]), v: v.toFixed(1), n: fmtNum(tr.decks[i]) }))}</title>
+=== https://staging-warujie.warujie-mtg.workers.dev/robots.txt
+UA: Twitterbot/1.0
+status: HTTP/2 200 
+  content-type: text/plain; charset=utf-8
+  x-robots-tag: noindex
+  server: cloudflare
+  cf-ray: a4a7cfcaba4eca21-OTP
+# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a content-signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  If a content-signal = no, you may not collect content for the
+#      corresponding use.
+# (c)  If the website operator does not include a content signal for a
+#      corresponding use, the website operator neither grants nor restricts
+#      permission via content signal with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts from your website's contents). Search does not
+#           include providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models (e.g., retrieval
+#           augmented generation, grounding, or other real-time taking of content for
+#           generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
+# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
+# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+
