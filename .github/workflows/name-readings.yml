@@ -6,7 +6,7 @@ name: Name readings
 on:
   push:
     branches: [main, staging]
-    paths: [ja_cards.json.gz, tools/name_fixes_ja.json, tools/fix_names.py]
+    paths: [ja_cards.json.gz, tools/name_fixes_ja.json, tools/fix_names.py, tools/name_readings.py]
   workflow_dispatch:
 permissions:
   contents: write
