@@ -353,6 +353,8 @@
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .cp-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+  .print-toggle { flex: none; }
+  .print-toggle .seg-btn:disabled:not([aria-pressed="true"]) { opacity: .45; cursor: default; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 3px; }
   .pip {
@@ -2056,6 +2058,11 @@ const STR = {
   'set.fail.body': ['セットコードを確認するか、時間をおいて再度お試しください。', 'Check the set code, or try again in a little while.'],
   'set.released': ['発売日 {d}', 'Released {d}'],
   'card.notfound': ['カードが見つかりませんでした', 'Card not found'],
+  'print.aria': ['表示する版の言語', 'Language of the printing shown'],
+  'print.ja': ['日本語版', 'Japanese'],
+  'print.en': ['英語版', 'English'],
+  'print.none.ja': ['日本語版はありません', 'No Japanese printing'],
+  'print.other': ['（{set}）', ' ({set})'],
   'card.notfound.body': ['URLを確認するか、検索からやり直してください。', 'Check the address, or start again from the search.'],
   'res.none': ['該当するカードが見つかりませんでした', 'No cards found'],
   'res.none.body': ['条件を変えて再度検索してください。', 'Try different search terms or filters.'],
@@ -2681,7 +2688,7 @@ function termInfo(rawTerm) {
     const t = normText(rawTerm).trim();
     const tJa = t.replace(/\s+/g, '');
     const eq = englishEquivalents(rawTerm);
-    m = { t, tJa, fold: HIRAGANA_RE.test(tJa) ? kanaFold(tJa) : null, kw: eq.kw, text: eq.text ? normText(eq.text) : null };
+    m = { t, tJa, fold: HIRAGANA_RE.test(tJa) ? kanaFold(tJa) : null, key: nameKey(t), kw: eq.kw, text: eq.text ? normText(eq.text) : null };
     if (TERM_MEMO.size > 400) TERM_MEMO.clear();
     TERM_MEMO.set(rawTerm, m);
   }
@@ -2692,14 +2699,26 @@ function rowNameFold(row) {
   if (row._nameFold === undefined) row._nameFold = [row._nameJa, ...row._altJa].filter(Boolean).map(kanaFold).join('|');
   return row._nameFold;
 }
-function nameHas(row, tJa, fold) {
-  return (!!tJa && (row._nameJa.includes(tJa) || row._altJa.some(n => n.includes(tJa)))) || (!!fold && rowNameFold(row).includes(fold));
+// A card name with its punctuation and spaces left out (and kana as katakana), so
+// "yawgmoth thran" finds "Yawgmoth, Thran Physician", 敏捷なこそ泥ラガバン finds
+// 敏捷なこそ泥、ラガバン and "urzas saga" finds "Urza's Saga".
+const NAME_PUNCT_RE = /[\s,.'"’‘`´!?:;、。・･，．！？：；「」『』（）()\[\]【】〈〉《》\-‐‑–—―~〜／/&＆+＋_]/g;
+function nameKey(s) { return kanaFold(normText(s)).replace(NAME_PUNCT_RE, ''); }
+function rowNameKey(row) {
+  if (row._nameKey === undefined) {
+    row._nameKey = [row.name_en, ...String(row.name_en || '').split(' // '), row._nameJa, ...row._altJa].filter(Boolean).map(nameKey).join('|');
+  }
+  return row._nameKey;
+}
+function nameHas(row, tJa, fold, key) {
+  return (!!tJa && (row._nameJa.includes(tJa) || row._altJa.some(n => n.includes(tJa)))) || (!!fold && rowNameFold(row).includes(fold))
+    || (!!key && key.length >= 3 && rowNameKey(row).includes(key));
 }
 function textMatches(row, rawTerm, includeNameAndType) {
   const m = termInfo(rawTerm);
   if (!m.t) return true;
   if (includeNameAndType) {
-    if (row._nameEn.includes(m.t) || nameHas(row, m.tJa, m.fold) ||
+    if (row._nameEn.includes(m.t) || nameHas(row, m.tJa, m.fold, m.key) ||
         row._typeJa.includes(m.tJa) || row._typeEn.includes(m.t)) return true;
   }
   if (row._textJa.includes(m.tJa) || row._textEn.includes(m.t)) return true;
@@ -2718,6 +2737,7 @@ function opInfo(val) {
     const seq = (/\s/.test(String(val).trim()) && !JA_CHARS.test(val)) ? enTokens(val) : null;
     m = { v, vJa: v.replace(/\s+/g, ''), seq: seq && seq.length ? seq : null };
     m.fold = HIRAGANA_RE.test(m.vJa) ? kanaFold(m.vJa) : null;
+    m.key = nameKey(v);
     if (OP_MEMO.size > 400) OP_MEMO.clear();
     OP_MEMO.set(val, m);
   }
@@ -2735,7 +2755,7 @@ function localOperatorMatch(row, op, sep, val) {
       return textMatches(row, val, false);
     }
     case 'name': case 'n': case '名前': case 'カード名': {
-      return row._nameEn.includes(v) || nameHas(row, info.vJa, info.fold);
+      return row._nameEn.includes(v) || nameHas(row, info.vJa, info.fold, info.key);
     }
     case 't': {
       if (row._typeJa.includes(v.replace(/\s+/g, '')) || row._typeEn.includes(v)) return true;
@@ -2849,17 +2869,19 @@ const REL_MEMO = { query: null };
 function relevance(row, query) {
   if (REL_MEMO.query !== query) {
     const q = normText(query).trim(), qJa = q.replace(/\s+/g, '');
-    Object.assign(REL_MEMO, { query, q, qJa, fold: HIRAGANA_RE.test(qJa) ? kanaFold(qJa) : null });
+    Object.assign(REL_MEMO, { query, q, qJa, fold: HIRAGANA_RE.test(qJa) ? kanaFold(qJa) : null, key: nameKey(q) });
   }
-  const { q, qJa, fold } = REL_MEMO;
+  const { q, qJa, fold, key } = REL_MEMO;
   if (!q) return 2;
   // most cards: the name does not have the search in it at all
-  if (!row._nameEn.includes(q) && !nameHas(row, qJa, fold)) return 2;
+  if (!row._nameEn.includes(q) && !nameHas(row, qJa, fold, key)) return 2;
+  if (key.length >= 3 && rowNameKey(row).split('|').includes(key)) return 0;
   const jaNames = [row._nameJa, ...row._altJa].filter(Boolean);
   if (row._nameEn === q || jaNames.includes(qJa) || (fold && jaNames.some(n => kanaFold(n) === fold))) return 0;
   if (wordStartIn(row._nameEn, q, NAME_WORD_START_EN) || row._nameEn.split(' // ').some(f => f.startsWith(q))
       || jaNames.some(n => wordStartIn(n, qJa, NAME_WORD_START_JA)) || (fold && jaNames.some(n => wordStartIn(kanaFold(n), fold, NAME_WORD_START_JA)))) return 1;
-  if (row._nameEn.includes(q) || nameHas(row, qJa, fold)) return 1.5;
+  if (key.length >= 3 && rowNameKey(row).split('|').some(n => n.startsWith(key))) return 1;
+  if (row._nameEn.includes(q) || nameHas(row, qJa, fold, key)) return 1.5;
   return 2;
 }
 // The あいうえお order: the reading of the Japanese name (name_kana, in the
@@ -3642,6 +3664,7 @@ function jaMayHave(row, u) {
   const all = rowJaAll(row);
   if (u.n && all.includes(u.n)) return true;
   if (u.fold && rowNameFold(row).includes(u.fold)) return true;
+  if (u.key && u.key.length >= 3 && rowNameKey(row).includes(u.key)) return true;
   if (u.kw && row._kw.has(u.kw)) return true;
   if (u.chunks.length > 1 && u.chunks.every(c => all.includes(c))) return true;
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) return true;
@@ -3656,7 +3679,7 @@ function prepareJapanese(tokens) {
     const n = normJaSearch(raw);
     const eq = englishEquivalents(raw);
     return {
-      raw, n, bare: n.replace(JA_PARTICLE_RE, ''), fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null,
+      raw, n, bare: n.replace(JA_PARTICLE_RE, ''), fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null, key: nameKey(raw),
       chunks: n.split(JA_SPLIT_RE).filter(Boolean),
       kw: eq.kw, en: eq.text ? enTokens(eq.text) : null,
     };
@@ -3671,6 +3694,7 @@ function locateJa(row, u) {
     if ((u.n && line.includes(u.n)) || (u.bare && bare[i].includes(u.bare))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
   });
   if (u.fold && !out.lines.has('j0') && rowNameFold(row).includes(u.fold)) { out.lines.add('j0'); out.head = true; }
+  if (u.key && u.key.length >= 3 && !out.lines.has('j0') && rowNameKey(row).includes(u.key)) { out.lines.add('j0'); out.head = true; }
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
     rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
   }
@@ -4890,7 +4914,8 @@ function renderCardViewContent(card) {
     document.title = homeTitle();
     return;
   }
-  const names = cardNames(card);
+  const pl = printChoice(card);
+  const names = cardPageNames(card, pl);
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
   const shopGroups = [
@@ -4916,11 +4941,12 @@ function renderCardViewContent(card) {
           </div>
           <div class="cp-cost"><span class="pips">${renderPips(card.mana_cost)}</span></div>
         </div>
-        <div class="cp-typeline"><span>${esc(displayType(card))}</span>${pt}</div>
-        <div class="cp-text">${symbolize(esc(displayText(card))) || t('notext')}</div>
+        <div class="cp-typeline"><span>${esc(cardPageType(card, pl))}</span>${pt}</div>
+        <div class="cp-text">${symbolize(esc(cardPageText(card, pl))) || t('notext')}</div>
         ${card.flavor_text ? `<p class="cp-flavor">${esc(card.flavor_text)}</p>` : ''}
         <div class="cp-row cp-roles" id="cpRoles" hidden></div>
         <div class="cp-meta">
+          ${printToggleHtml(card)}
           <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
           ${card.set ? `<a href="?set=${encodeURIComponent(card.set)}" class="cp-set-link" data-set="${esc(card.set)}">${esc(setLabel)}</a>` : ''}
           ${card.collector_number ? `<span>#${esc(card.collector_number)}</span>` : ''}
@@ -4953,6 +4979,7 @@ function renderCardViewContent(card) {
     <section class="combos" id="combosBox" style="display:none;"></section>
     <section class="price-notes" id="priceNotes" hidden></section>`;
   document.title = `${names.main} — 悪知恵`;
+  fillPrintToggle(card);
   const notesBox = document.getElementById('priceNotes');
   notesBox.innerHTML = priceNotesHtml(card);
   notesBox.hidden = !notesBox.innerHTML.trim();
@@ -5183,6 +5210,89 @@ async function loadPrintings(card) {
 function getCardIdFromUrl() {
   return new URLSearchParams(location.search).get('card');
 }
+// ---- the printing's language: 日本語版 / 英語版 ------------------------------------------
+// ?card=<id>&print=en|ja: the card page shows that printing in its own language (name,
+// type, rules text); without it, the page follows the site's language as before.
+function printChoice(card) {
+  const p = new URLSearchParams(location.search).get('print');
+  if (p === 'en' && card.lang === 'en') return 'en';
+  if (p === 'ja' && card.lang === 'ja') return 'ja';
+  return null;
+}
+function cardPageNames(card, pl) {
+  const ja = displayNameJa(card), row = dbRowFor(card), en = card.name || (row && row.name_en) || '';
+  if (pl === 'en') return { main: en, sub: ja && ja !== en ? ja : '' };
+  if (pl === 'ja') return { main: ja, sub: en && en !== ja ? en : '' };
+  return cardNames(card);
+}
+function cardPageType(card, pl) {
+  if (pl === 'en') return card.type_line || (card.card_faces || []).map(f => f.type_line).filter(Boolean).join(' // ');
+  if (pl === 'ja') return displayTypeJa(card);
+  return displayType(card);
+}
+function cardPageText(card, pl) {
+  if (pl === 'en') return getText(card, 'oracle_text', 'oracle_text');
+  if (pl === 'ja') return displayTextJa(card);
+  return displayText(card);
+}
+// The other language's printing of the same card: the same set and number when it
+// exists, otherwise (Japanese) the Japanese printing the card database knows.
+const PRINT_PAIR = new Map();   // '<id>|ja' / '<id>|en' -> the card, or null
+async function otherPrinting(card, want) {
+  const key = card.id + '|' + want;
+  if (PRINT_PAIR.has(key)) return PRINT_PAIR.get(key);
+  let found = null;
+  const get = async (url) => { try { const r = await fetch(url, { headers: { Accept: 'application/json' } }); return r.ok ? r.json() : null; } catch (e) { return null; } };
+  if (card.set && card.collector_number) {
+    found = await get(`https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collector_number)}/${want}`);
+    if (found && found.lang !== want) found = null;
+  }
+  if (!found && want === 'ja') {
+    const row = dbRowFor(card);
+    if (row && row.name_ja && row.id && row.id !== card.id) {
+      const c = await get(`https://api.scryfall.com/cards/${encodeURIComponent(row.id)}`);
+      if (c && c.lang === 'ja') found = c;
+    }
+  }
+  if (!found && want === 'en' && card.oracle_id) {
+    // a Japanese-only printing: the card's English printing from Scryfall (by oracle ID)
+    const data = await scryfallCollection([{ oracle_id: card.oracle_id }]).catch(() => []);
+    if (data[0] && data[0].lang === 'en') found = data[0];
+  }
+  PRINT_PAIR.set(key, found);
+  if (found) PRINT_PAIR.set(found.id + '|' + card.lang, card);
+  return found;
+}
+function printToggleHtml(card) {
+  const row = dbRowFor(card);
+  if (!(card.lang === 'ja' || (row && row.name_ja))) return '';   // no Japanese printing anywhere
+  const cur = card.lang === 'ja' ? 'ja' : 'en';
+  return `<span class="seg seg-sm print-toggle" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${['ja', 'en'].map(l =>
+    `<button type="button" class="seg-btn" data-print="${l}" aria-pressed="${l === cur}"${l === cur ? '' : ' disabled'}>${t('print.' + l)}</button>`).join('')}</span>`;
+}
+async function fillPrintToggle(card) {
+  const box = document.getElementById('printToggle');
+  if (!box) return;
+  const want = card.lang === 'ja' ? 'en' : 'ja';
+  const other = await otherPrinting(card, want);
+  if (shownCard !== card || !box.isConnected) return;
+  const btn = box.querySelector(`[data-print="${want}"]`);
+  if (!other) {
+    if (want === 'ja') { btn.title = t('print.none.ja'); } else { box.remove(); }
+    return;
+  }
+  btn.disabled = false;
+  btn.dataset.id = other.id;
+  if (other.set !== card.set) btn.title = `${other.set_name || other.set.toUpperCase()}（${other.set.toUpperCase()}）`;
+}
+document.getElementById('cardViewCard').addEventListener('click', (e) => {
+  const b = e.target.closest('#printToggle [data-print]');
+  if (!b || b.disabled || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id) return;
+  const other = PRINT_PAIR.get(shownCard.id + '|' + b.dataset.print);
+  if (other) { currentCardsExtra.set(other.id, other); }
+  goTo(`?card=${encodeURIComponent(b.dataset.id)}&print=${b.dataset.print}`);
+});
+const currentCardsExtra = new Map();   // printings opened with the switch: shown at once
 function showView(name) {
   document.documentElement.dataset.view = name;
   document.getElementById('searchView').style.display = name === 'search' ? '' : 'none';
@@ -5461,7 +5571,7 @@ function homeTitle() { return t(SITE === 'main' ? 'title.home' : 'title.home.' +
 
 function applyRoute(route) {
   if (route.view === 'card') {
-    const cached = [...currentCards, ...setView.cards].find(c => c.id === route.id);
+    const cached = [...currentCards, ...setView.cards].find(c => c.id === route.id) || currentCardsExtra.get(route.id);
     showCardView();
     if (cached) { renderCardViewContent(cached); return; }
     shownCard = null;
@@ -7797,7 +7907,7 @@ function nameSuggestions(raw) {
   const q = String(raw || '').trim();
   if (!q || q.length > 40 || /[:<>=]/.test(q) || /^-/.test(q) || !LOCAL_DB) return [];
   if (!NAME_SUGGEST) NAME_SUGGEST = LOCAL_DB.filter(inScope).map(row => ({ row, ja: kanaFold(row._nameJa), alt: row._altJa.map(kanaFold) }));
-  const qJa = kanaFold(normJa(q)), qEn = normText(q);
+  const qJa = kanaFold(normJa(q)), qEn = normText(q), qKey = nameKey(q);
   const hits = [];
   for (const { row, ja, alt } of NAME_SUGGEST) {
     let rank = 9;
@@ -7807,6 +7917,12 @@ function nameSuggestions(raw) {
     if (e === 0) rank = Math.min(rank, 0);
     else if (e > 0) rank = Math.min(rank, /[\s,'-]/.test(row._nameEn[e - 1]) ? 1 : 3);
     if (rank === 9 && alt.some(a => a.includes(qJa))) rank = 4;
+    if (rank === 9 && qKey.length >= 2) {
+      // the same name with the punctuation left out: "yawgmoth thran" -> Yawgmoth, Thran Physician
+      const keys = rowNameKey(row).split('|');
+      if (keys.some(k => k.startsWith(qKey))) rank = 1;
+      else if (keys.some(k => k.includes(qKey))) rank = 3;
+    }
     if (rank < 9) hits.push({ row, rank });
   }
   hits.sort((a, b) => a.rank - b.rank || (a.row.name_ja || a.row.name_en).length - (b.row.name_ja || b.row.name_en).length);
@@ -7816,6 +7932,19 @@ function boldMatch(name, q) {
   name = String(name ?? '');
   q = String(q ?? '');
   const i = kanaFold(name.toLowerCase()).indexOf(kanaFold(q.trim().toLowerCase()));
+  if (q.trim() && i < 0) {
+    // typed without the punctuation: bold the stretch of the name it covers
+    const want = nameKey(q);
+    if (want) {
+      const chars = [...name];
+      for (let a = 0; a < chars.length; a++) {
+        if (nameKey(chars[a]) === '') continue;
+        let got = '', b = a;
+        while (b < chars.length && got.length < want.length) { got += nameKey(chars[b]); b++; }
+        if (got === want) return esc(chars.slice(0, a).join('')) + '<b>' + esc(chars.slice(a, b).join('')) + '</b>' + esc(chars.slice(b).join(''));
+      }
+    }
+  }
   if (!q.trim() || i < 0) return esc(name);
   return esc(name.slice(0, i)) + '<b>' + esc(name.slice(i, i + q.trim().length)) + '</b>' + esc(name.slice(i + q.trim().length));
 }
