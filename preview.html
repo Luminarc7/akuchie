@@ -354,8 +354,13 @@
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .cp-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
-  .print-toggle { flex: none; }
-  .print-toggle .seg-btn:disabled:not([aria-pressed="true"]) { opacity: .45; cursor: default; }
+  .print-slot { min-height: 34px; margin-top: 10px; }
+  .print-langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+  .print-lang { width: 38px; height: 28px; padding: 0; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface);
+    color: var(--text); font: 700 11.5px/1 "Zen Kaku Gothic New", sans-serif; letter-spacing: .04em; cursor: pointer; }
+  .print-lang:hover { border-color: var(--accent); color: var(--accent); }
+  .print-lang[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); cursor: default; }
+  .print-lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 3px; }
   .pip {
@@ -996,6 +1001,9 @@
     .cp-art { grid-row: 1 / span 3; }
     .cp-meta { margin-top: 0; }
     .cp-art { position: static; max-width: none; margin: 0; }
+    .print-slot { margin-top: 8px; }
+    .print-langs { gap: 4px; }
+    .print-lang { flex: 0 0 calc((100% - 12px) / 4); width: auto; height: 26px; font-size: 11px; }
     .cp-info { display: contents; }
     .cp-title-row { grid-column: 2; }
     .cp-typeline, .cp-meta { grid-column: 2; }
@@ -2059,11 +2067,8 @@ const STR = {
   'set.fail.body': ['セットコードを確認するか、時間をおいて再度お試しください。', 'Check the set code, or try again in a little while.'],
   'set.released': ['発売日 {d}', 'Released {d}'],
   'card.notfound': ['カードが見つかりませんでした', 'Card not found'],
-  'print.aria': ['表示する版の言語', 'Language of the printing shown'],
-  'print.ja': ['日本語版', 'Japanese'],
-  'print.en': ['英語版', 'English'],
-  'print.none.ja': ['日本語版はありません', 'No Japanese printing'],
-  'print.other': ['（{set}）', ' ({set})'],
+  'print.aria': ['この版の言語', 'Languages of this printing'],
+  'print.title': ['{lang}版を表示', 'Show the {lang} printing'],
   'card.notfound.body': ['URLを確認するか、検索からやり直してください。', 'Check the address, or start again from the search.'],
   'res.none': ['該当するカードが見つかりませんでした', 'No cards found'],
   'res.none.body': ['条件を変えて再度検索してください。', 'Try different search terms or filters.'],
@@ -4933,7 +4938,7 @@ function renderCardViewContent(card) {
 
   box.innerHTML = `
     <div class="card-page">
-      <div class="cp-art">${cardArtHtml(card, names.main)}</div>
+      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="print-slot" id="printSlot"></div></div>
       <div class="cp-info">
         <div class="cp-title-row">
           <div>
@@ -4947,7 +4952,6 @@ function renderCardViewContent(card) {
         ${card.flavor_text ? `<p class="cp-flavor">${esc(card.flavor_text)}</p>` : ''}
         <div class="cp-row cp-roles" id="cpRoles" hidden></div>
         <div class="cp-meta">
-          ${printToggleHtml(card)}
           <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
           ${card.set ? `<a href="?set=${encodeURIComponent(card.set)}" class="cp-set-link" data-set="${esc(card.set)}">${esc(setLabel)}</a>` : ''}
           ${card.collector_number ? `<span>#${esc(card.collector_number)}</span>` : ''}
@@ -5216,81 +5220,88 @@ function getCardIdFromUrl() {
 // type, rules text); without it, the page follows the site's language as before.
 function printChoice(card) {
   const p = new URLSearchParams(location.search).get('print');
-  if (p === 'en' && card.lang === 'en') return 'en';
-  if (p === 'ja' && card.lang === 'ja') return 'ja';
-  return null;
+  return p && card.lang && p === card.lang ? p : null;
 }
+const facesJoin = (card, key) => card[key] || (card.card_faces || []).map(f => f[key]).filter(Boolean).join(' // ');
 function cardPageNames(card, pl) {
   const ja = displayNameJa(card), row = dbRowFor(card), en = card.name || (row && row.name_en) || '';
   if (pl === 'en') return { main: en, sub: ja && ja !== en ? ja : '' };
   if (pl === 'ja') return { main: ja, sub: en && en !== ja ? en : '' };
+  if (pl) { const own = stripRuby(facesJoin(card, 'printed_name')) || en; return { main: own, sub: own !== en ? en : '' }; }
   return cardNames(card);
 }
 function cardPageType(card, pl) {
-  if (pl === 'en') return card.type_line || (card.card_faces || []).map(f => f.type_line).filter(Boolean).join(' // ');
+  if (pl === 'en') return facesJoin(card, 'type_line');
   if (pl === 'ja') return displayTypeJa(card);
+  if (pl) return facesJoin(card, 'printed_type_line') || facesJoin(card, 'type_line');
   return displayType(card);
 }
 function cardPageText(card, pl) {
   if (pl === 'en') return getText(card, 'oracle_text', 'oracle_text');
   if (pl === 'ja') return displayTextJa(card);
+  if (pl) return getText(card, 'printed_text', 'printed_text') || getText(card, 'oracle_text', 'oracle_text');
   return displayText(card);
 }
-// The other language's printing of the same card: the same set and number when it
-// exists, otherwise (Japanese) the Japanese printing the card database knows.
-const PRINT_PAIR = new Map();   // '<id>|ja' / '<id>|en' -> the card, or null
-async function otherPrinting(card, want) {
-  const key = card.id + '|' + want;
-  if (PRINT_PAIR.has(key)) return PRINT_PAIR.get(key);
-  let found = null;
-  const get = async (url) => { try { const r = await fetch(url, { headers: { Accept: 'application/json' } }); return r.ok ? r.json() : null; } catch (e) { return null; } };
-  if (card.set && card.collector_number) {
-    found = await get(`https://api.scryfall.com/cards/${encodeURIComponent(card.set)}/${encodeURIComponent(card.collector_number)}/${want}`);
-    if (found && found.lang !== want) found = null;
+// Every language this exact printing exists in (the same set and collector number):
+// one Scryfall search with include_multilingual, remembered for the visit.
+const PRINT_LANGS = ['ja', 'en', 'zhs', 'zht', 'ko', 'fr', 'de', 'it', 'es', 'pt', 'ru', 'ph', 'he', 'la', 'grc', 'ar', 'sa', 'qya'];
+const PRINT_LABEL = { ja: 'JP', en: 'EN', zhs: 'CS', zht: 'CT', ko: 'KO', fr: 'FR', de: 'DE', it: 'IT', es: 'ES', pt: 'PT', ru: 'RU', ph: 'PH', he: 'HE', la: 'LA', grc: 'GR', ar: 'AR', sa: 'SA', qya: 'QY' };
+const PRINT_NAME = {
+  ja: ['日本語', 'Japanese'], en: ['英語', 'English'], zhs: ['簡体字中国語', 'Simplified Chinese'], zht: ['繁体字中国語', 'Traditional Chinese'],
+  ko: ['韓国語', 'Korean'], fr: ['フランス語', 'French'], de: ['ドイツ語', 'German'], it: ['イタリア語', 'Italian'], es: ['スペイン語', 'Spanish'],
+  pt: ['ポルトガル語', 'Portuguese'], ru: ['ロシア語', 'Russian'], ph: ['ファイレクシア語', 'Phyrexian'], he: ['ヘブライ語', 'Hebrew'], la: ['ラテン語', 'Latin'],
+  grc: ['古代ギリシャ語', 'Ancient Greek'], ar: ['アラビア語', 'Arabic'], sa: ['サンスクリット語', 'Sanskrit'], qya: ['クウェンヤ語', 'Quenya'],
+};
+const PRINTINGS = new Map();   // '<set>|<number>' -> { <lang>: card }
+async function printingLanguages(card) {
+  if (!card.set || !card.collector_number) return { [card.lang || 'en']: card };
+  const key = card.set + '|' + card.collector_number;
+  if (!PRINTINGS.has(key)) {
+    PRINTINGS.set(key, (async () => {
+      const out = {};
+      const q = `e:${card.set} cn:"${String(card.collector_number).replace(/"/g, '')}"`;
+      let url = `https://api.scryfall.com/cards/search?${new URLSearchParams({ q, include_multilingual: 'true', unique: 'prints' })}`;
+      try {
+        for (let page = 0; url && page < 3; page++) {
+          await scryfallTurn();
+          const res = await fetch(url, { headers: { Accept: 'application/json' } });
+          if (!res.ok) break;
+          const data = await res.json();
+          (data.data || []).forEach(c => {
+            if (c.set === card.set && String(c.collector_number) === String(card.collector_number) && c.lang && !out[c.lang]) out[c.lang] = c;
+          });
+          url = data.has_more ? data.next_page : null;
+        }
+      } catch (err) { /* only the printing shown */ }
+      return out;
+    })());
   }
-  if (!found && want === 'ja') {
-    const row = dbRowFor(card);
-    if (row && row.name_ja && row.id && row.id !== card.id) {
-      const c = await get(`https://api.scryfall.com/cards/${encodeURIComponent(row.id)}`);
-      if (c && c.lang === 'ja') found = c;
-    }
-  }
-  if (!found && want === 'en' && card.oracle_id) {
-    // a Japanese-only printing: the card's English printing from Scryfall (by oracle ID)
-    const data = await scryfallCollection([{ oracle_id: card.oracle_id }]).catch(() => []);
-    if (data[0] && data[0].lang === 'en') found = data[0];
-  }
-  PRINT_PAIR.set(key, found);
-  if (found) PRINT_PAIR.set(found.id + '|' + card.lang, card);
-  return found;
+  const found = await PRINTINGS.get(key);
+  return Object.assign({}, found, { [card.lang || 'en']: card });
 }
-function printToggleHtml(card) {
-  const row = dbRowFor(card);
-  if (!(card.lang === 'ja' || (row && row.name_ja))) return '';   // no Japanese printing anywhere
-  const cur = card.lang === 'ja' ? 'ja' : 'en';
-  return `<span class="seg seg-sm print-toggle" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${['ja', 'en'].map(l =>
-    `<button type="button" class="seg-btn" data-print="${l}" aria-pressed="${l === cur}"${l === cur ? '' : ' disabled'}>${t('print.' + l)}</button>`).join('')}</span>`;
+function printButtonsHtml(langs, card) {
+  const cur = card.lang || 'en';
+  const order = PRINT_LANGS.filter(l => langs[l]).concat(Object.keys(langs).filter(l => !PRINT_LANGS.includes(l)));
+  return `<div class="print-langs" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${order.map(l => {
+    const name = (PRINT_NAME[l] || [l, l])[LANG === 'en' ? 1 : 0];
+    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id)}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
+  }).join('')}</div>`;
 }
+let shownLangs = null;   // the languages of the printing on the card page
 async function fillPrintToggle(card) {
-  const box = document.getElementById('printToggle');
-  if (!box) return;
-  const want = card.lang === 'ja' ? 'en' : 'ja';
-  const other = await otherPrinting(card, want);
-  if (shownCard !== card || !box.isConnected) return;
-  const btn = box.querySelector(`[data-print="${want}"]`);
-  if (!other) {
-    if (want === 'ja') { btn.title = t('print.none.ja'); } else { box.remove(); }
-    return;
-  }
-  btn.disabled = false;
-  btn.dataset.id = other.id;
-  if (other.set !== card.set) btn.title = `${other.set_name || other.set.toUpperCase()}（${other.set.toUpperCase()}）`;
+  shownLangs = null;
+  const slot = document.getElementById('printSlot');
+  if (!slot) return;
+  const langs = await printingLanguages(card);
+  if (shownCard !== card || !slot.isConnected) return;
+  shownLangs = langs;
+  slot.innerHTML = printButtonsHtml(langs, card);
 }
 document.getElementById('cardViewCard').addEventListener('click', (e) => {
   const b = e.target.closest('#printToggle [data-print]');
-  if (!b || b.disabled || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id) return;
-  const other = PRINT_PAIR.get(shownCard.id + '|' + b.dataset.print);
-  if (other) { currentCardsExtra.set(other.id, other); }
+  if (!b || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id || !shownCard) return;
+  const c = shownLangs && shownLangs[b.dataset.print];
+  if (c && c.id === b.dataset.id) currentCardsExtra.set(c.id, c);
   goTo(`?card=${encodeURIComponent(b.dataset.id)}&print=${b.dataset.print}`);
 });
 const currentCardsExtra = new Map();   // printings opened with the switch: shown at once
