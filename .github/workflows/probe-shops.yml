@@ -21,8 +21,9 @@ jobs:
             echo "$URL"
             curl -sS -A "$UA" -o all.jsonl.gz "$URL"; ls -l all.jsonl.gz
             sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
-            python3 tools/audit_printings.py all.jsonl.gz sets.json ja_cards.json.gz probe_out/audit_printings.json
-          ) > probe_out/audit_log.txt 2>&1 || true
-          tail -20 probe_out/audit_log.txt
+            pip install -q pillow
+            python3 tools/face_sheets.py all.jsonl.gz tools/face_targets.json probe_out/faces
+          ) > probe_out/faces_log.txt 2>&1 || true
+          tail -20 probe_out/faces_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
