@@ -1,0 +1,56 @@
+== page
+6fc70f25ff6a331e1c7581cf6bd95002d5ae27b374af34f80c78431307fa0610  -
+== /ja_cards.json
+HTTP/2 200 
+content-type: application/json; charset=utf-8
+content-encoding: br
+3754738
+== /manifest.webmanifest
+HTTP/2 200 
+content-type: application/manifest+json
+content-encoding: br
+409
+== /sw.js
+HTTP/2 200 
+content-type: text/javascript
+content-encoding: br
+943
+== /icons/apple-touch-icon-v2.png
+HTTP/2 200 
+content-type: image/png
+5850
+== /og.png
+HTTP/2 200 
+content-type: image/png
+227720
+== /meta_lists/30-modern.json
+HTTP/2 200 
+content-type: application/json
+content-encoding: br
+34657
+2f6f29361bb9b37f39430b30a4abb77588f9dd870817d97d216b7861d6070978  body.bin
+c007c7b94c58f9f96029835cd2f87bdba99d1d291c50d60b744ccb71044fbc9a  -
+== https://warujie.warujie-mtg.workers.dev Twitterbot/1.0
+HTTP/2 200 
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+== https://warujie.warujie-mtg.workers.dev facebookexternalhit/1.1;line-poker/1.0
+HTTP/2 200 
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+== https://warujie.warujie-mtg.workers.dev Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+HTTP/2 200 
+<title>稲妻（Lightning Bolt） | 悪知恵（warujie）
+<meta property="og:image" content="https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+== https://warujie.jp Twitterbot/1.0
+HTTP/2 403 
+cf-mitigated: challenge
+<title>Just a moment...
+== https://warujie.jp facebookexternalhit/1.1;line-poker/1.0
+HTTP/2 403 
+cf-mitigated: challenge
+<title>Just a moment...
+== https://warujie.jp Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)
+HTTP/2 403 
+cf-mitigated: challenge
+<title>Just a moment...
