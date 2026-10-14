@@ -62,14 +62,14 @@ import urllib.request
 from datetime import date
 
 BULK_DATA_ENDPOINT = "https://api.scryfall.com/bulk-data"
-OUT_PATH = r"A:\Akuchie\ja_cards.json.gz"
+OUT_PATH = r"A:\Warujie\ja_cards.json.gz"
 
 # Scryfall requires every request to carry a real User-Agent identifying the
 # calling app, plus an Accept header - requests missing either are rejected
 # with 400 Bad Request:
 # https://scryfall.com/docs/faqs/i-m-having-trouble-accessing-the-scryfall-api-or-i-m-blocked-17
 HEADERS = {
-    "User-Agent": "AkuchieJaCardDatabaseBuilder/2.0",
+    "User-Agent": "WarujieJaCardDatabaseBuilder/2.0",
     "Accept": "application/json",
 }
 

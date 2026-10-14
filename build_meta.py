@@ -78,12 +78,12 @@ DECKLIST_REPO = "Jiliac/MTGODecklistCache"
 FORMATDATA_REPO = "Badaro/MTGOFormatData"
 
 # Base addresses (overridable for testing).
-GITHUB_BASE = os.environ.get("AKUCHIE_GITHUB_BASE", "https://github.com")
-API_BASE = os.environ.get("AKUCHIE_API_BASE", "https://api.github.com")
-RAW_BASE = os.environ.get("AKUCHIE_RAW_BASE", "https://raw.githubusercontent.com")
-CODELOAD_BASE = os.environ.get("AKUCHIE_CODELOAD_BASE", "https://codeload.github.com")
+GITHUB_BASE = os.environ.get("WARUJIE_GITHUB_BASE", "https://github.com")
+API_BASE = os.environ.get("WARUJIE_API_BASE", "https://api.github.com")
+RAW_BASE = os.environ.get("WARUJIE_RAW_BASE", "https://raw.githubusercontent.com")
+CODELOAD_BASE = os.environ.get("WARUJIE_CODELOAD_BASE", "https://codeload.github.com")
 
-HEADERS = {"User-Agent": "AkuchieMetaBuilder/1.0", "Accept": "application/json"}
+HEADERS = {"User-Agent": "WarujieMetaBuilder/1.0", "Accept": "application/json"}
 
 FORMATS = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper"]
 SOURCES = ["melee.gg", "mtgo.com_limited_data"]
@@ -922,7 +922,7 @@ def classify_event(date, src, data, rules, land_names=frozenset()):
 # ------------------------------------------------------------------ main
 
 def default_out_path():
-    folder = r"A:\Akuchie"
+    folder = r"A:\Warujie"
     return os.path.join(folder, "meta.json") if os.path.isdir(folder) else "meta.json"
 
 

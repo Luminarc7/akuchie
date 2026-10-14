@@ -47,7 +47,7 @@ It has no sign-up, cookies, analytics or ads. The footer promises that, so keep 
 | What | Where |
 |---|---|
 | Site code + data | `warujie/Warujie` (this repo, public) |
-| Price history, combos, role tags | `warujie/warujie-prices` (formerly `Luminarc7/warujie-prices`), published by GitHub Pages at `https://warujie.github.io/warujie-prices/` |
+| Price history, combos, role tags | `warujie/warujie-prices`, published by GitHub Pages at `https://warujie.github.io/warujie-prices/` |
 | Hosting | Cloudflare Workers (static assets + `worker.js`), Workers Builds deploys each push: `main` → warujie.jp, any other branch → `https://<branch>-warujie.warujie-mtg.workers.dev` |
 | Domain | warujie.jp (registrar XServer Domain; DNS on Cloudflare) |
 
@@ -91,8 +91,10 @@ never shown or searched).
 - **Built by `tools/build_ja_database.py`** from Scryfall's `all_cards` bulk file. Scryfall
   serves bulk files as gzipped JSON Lines (`jsonl_download_uri`) since September 2026; the builder
   and `warujie-prices` already handle that. Rebuild after new sets.
-- **Whenever the database changes** (on any branch), `.github/workflows/name-readings.yml` runs
-  and commits back to that branch, so pull before your next commit. It runs:
+- **Whenever the database changes on `main` or `staging`** (or `tools/name_fixes_ja.json`,
+  `tools/fix_names.py` or `tools/name_readings.py` changes there),
+  `.github/workflows/name-readings.yml` runs and commits back to that branch, so pull before your
+  next commit. It runs:
   - `tools/fix_names.py`, which applies `tools/name_fixes_ja.json` (280 Japanese names Scryfall
     has wrong or missing, read off the real Japanese cards);
   - `tools/name_readings.py`, which writes `name_kana` with SudachiDict, preferring printed
@@ -131,8 +133,8 @@ never shown or searched).
   fallback if the database can't load.
 - **Default order:** best matches first, then A→Z, with Japanese names ordered by reading
   (`name_kana`). Readings are never displayed.
-- **Name matching ignores punctuation:** `nameKey()` turns "Yawgmoth Thran" into
-  "Yawgmoth, Thran Physician".
+- **Name matching ignores punctuation:** `nameKey()` drops punctuation and spaces (and folds
+  kana), so "yawgmoth thran" finds "Yawgmoth, Thran Physician".
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -153,8 +155,9 @@ never shown or searched).
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
 5. **Confirm the build:**
-   `gh api repos/warujie/Warujie/commits/<sha>/check-runs` should show "Workers Builds: warujie"
-   as success. If a push didn't start a build, an empty commit retriggers it.
+   `gh api repos/warujie/Warujie/commits/<sha>/check-runs` (or the GitHub MCP tools where `gh`
+   isn't available) should show "Workers Builds: warujie" as success. If a push didn't start a
+   build, an empty commit retriggers it.
 6. **Tell the owner** what's on the test site, and **publish only on "publish"** (rule 2).
 7. **Rolling back:** Cloudflare dashboard → Workers & Pages → warujie → Deployments → Rollback
    (fast). Or reset `main` to the backup branch and push. `README.md` explains both for the owner.
@@ -194,8 +197,11 @@ Check the live site through the `*.workers.dev` address, which runs the same Wor
   - lowest listings from TCGCSV and Cardmarket's price guide;
   - Card Kingdom and Mana Pool offers;
   - CardTrader EU sellers (needs the secret).
-- **`build_combos.py`** (weekly, Commander Spellbook) feeds the combo panel.
-- **`build_tags.py`** (weekly, Scryfall Tagger) feeds role search and similar cards.
+- **`build_combos.py`** (Commander Spellbook) feeds the combo panel.
+- **`build_tags.py`** (Scryfall Tagger) feeds role search and similar cards.
+- All three are steps of the one daily workflow, `.github/workflows/update-prices.yml` (it also
+  runs when a builder or the workflow changes on `main`). Combos and tags are rebuilt weekly and
+  copied over from the published data on the other days.
 - The site reads it all from `https://warujie.github.io/warujie-prices/`. The exchange rate comes
   from frankfurter.dev (ECB).
 - The **JP market tab** shows "準備中" (in preparation) plus shop links until shops grant
@@ -210,3 +216,5 @@ Check the live site through the `*.workers.dev` address, which runs the same Wor
 - **Two-part card names** read in their own language on both halves (e.g. 呪文嘲りの集会 // お返し).
 - **Star City Games:** link only; there's no price feed.
 - **Colour editions** (Selesnya/Golgari test pages) are retired. `EDITIONS` keeps only `main`.
+- **Saved browser settings** keep their old `akuchie-` names (theme, language, view, market…).
+  Renaming them would reset every visitor's saved choices, so leave them.

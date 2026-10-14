@@ -11,7 +11,7 @@ CONTACT = "@".join(["warujie.mtg", "gmail.com"])
 from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 
-SITE = "https://luminarc7.github.io/akuchie/"
+SITE = "https://warujie.github.io/Warujie/"
 INDEX = open(_os.path.join(PAGES, "index.html"), encoding="utf-8").read()
 PREVIEW = open(_os.path.join(PAGES, "preview.html"), encoding="utf-8").read()
 COMBO_JA_JS = open(_os.path.join(PAGES, "combo_ja.js"), encoding="utf-8").read()
@@ -23,7 +23,7 @@ DB_MODE = {"present": True, "extra": False, "search": False, "variant": None}
 DECKS_MODE = {"mode": "absent"}   # fixture | absent
 SHOTS = len(sys.argv) > 1 and sys.argv[1] == "shots"
 PRICE_SITE = {"dir": None}
-PRICES_BASE = "https://luminarc7.github.io/warujie-prices/"
+PRICES_BASE = "https://warujie.github.io/warujie-prices/"
 
 def png(w, h, top, bottom, label=""):
     im = Image.new("RGB", (w, h))
@@ -380,7 +380,7 @@ def handle(route):
             return route.fulfill(status=200, content_type="application/gzip" if rel.endswith(".gz") else "application/json", body=open(f, "rb").read())
         return route.fulfill(status=404, body="not found")
     if url.startswith(SITE):
-        path = u.path[len("/akuchie/"):]
+        path = u.path[len("/Warujie/"):]
         if path in ("", "index.html"):
             return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=INDEX)
         if path == "preview.html":
@@ -1539,9 +1539,9 @@ with sync_playwright() as p:
     home(SITE + "preview.html"); page.wait_for_selector("#hxList a.hx-item")
     check("preview.html: same site, kept out of search engines", page.locator("meta[name=robots]").get_attribute("content") == "noindex" and page.locator("#homeHero").is_visible())
     page.locator("#hxList a.hx-item").first.click(); page.wait_for_selector("#cardView .cp-name")
-    check("preview.html: card links stay on the preview page", "/akuchie/preview.html?card=" in page.url, page.url)
+    check("preview.html: card links stay on the preview page", "/Warujie/preview.html?card=" in page.url, page.url)
     page.click("#brandLink"); page.wait_for_selector("#homeHero", state="visible")
-    check("preview.html: the logo returns to the preview home page", page.url.endswith("/akuchie/preview.html"), page.url)
+    check("preview.html: the logo returns to the preview home page", page.url.endswith("/Warujie/preview.html"), page.url)
     # English home
     page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_function("document.querySelector('#homeMetaTabs .seg-btn').textContent === 'Standard'")
@@ -1606,7 +1606,7 @@ with sync_playwright() as p:
     DB_MODE["variant"] = None
 
     # deck pages
-    ctx.grant_permissions(["clipboard-read", "clipboard-write"], origin="https://luminarc7.github.io")
+    ctx.grant_permissions(["clipboard-read", "clipboard-write"], origin="https://warujie.github.io")
     DECKS_MODE["mode"] = "fixture"
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
     first = page.locator("#metaBody .meta-row").first
