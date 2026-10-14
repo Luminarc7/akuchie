@@ -17,11 +17,11 @@ jobs:
             UA='Warujie/1.0 (+https://warujie.jp)'
             curl -sS -A "$UA" -H 'Accept: application/json' -o bulk.json https://api.scryfall.com/bulk-data
             head -c 1500 bulk.json; echo
-            URL=$(python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("download_uri") or b.get("uri"))')
+            URL=$(python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("jsonl_download_uri") or b.get("download_uri"))')
             echo "$URL"
-            curl -sS -A "$UA" -o all.json "$URL"; ls -l all.json
+            curl -sS -A "$UA" -o all.jsonl.gz "$URL"; ls -l all.jsonl.gz
             sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
-            python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
+            python3 tools/audit_printings.py all.jsonl.gz sets.json ja_cards.json.gz probe_out/audit_printings.json
           ) > probe_out/audit_log.txt 2>&1 || true
           tail -20 probe_out/audit_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com

@@ -20,8 +20,18 @@ ja_faces = collections.defaultdict(lambda: collections.defaultdict(collections.C
 ja_top = collections.defaultdict(collections.Counter)
 missing = []                                    # Japanese multi-face printings lacking a face name
 n = 0
-with (gzip.open(bulk) if bulk.endswith('.gz') else open(bulk, 'rb')) as f:
-    for c in ijson.items(f, 'item'):
+def cards_of(path):
+    with (gzip.open(path) if path.endswith('.gz') else open(path, 'rb')) as f:
+        if '.jsonl' in path:
+            for line in f:
+                if line.strip():
+                    yield json.loads(line)
+        else:
+            yield from ijson.items(f, 'item')
+
+
+if True:
+    for c in cards_of(bulk):
         n += 1
         o = oid(c)
         k = (c['set'], c['collector_number'])
