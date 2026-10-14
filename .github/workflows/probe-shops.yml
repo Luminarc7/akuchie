@@ -22,7 +22,7 @@ jobs:
             curl -sS -A "$UA" -o all.jsonl.gz "$URL"; ls -l all.jsonl.gz
             sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
             mkdir -p probe_out/text
-            python3 tools/missing_ja.py all.jsonl.gz probe_out/text/missing_ja.json
+            python3 tools/db_updates.py all.jsonl.gz ja_cards.json.gz probe_out/text/db_updates.json
           ) > probe_out/text_log.txt 2>&1 || true
           tail -20 probe_out/text_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
