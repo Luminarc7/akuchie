@@ -1,0 +1,22 @@
++ pip install -q ijson
++ UA='Warujie/1.0 (+https://warujie.jp)'
+++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' https://api.scryfall.com/bulk-data
+++ python3 -c 'import json,sys; print([b["download_uri"] for b in json.load(sys.stdin)["data"] if b["type"]=="all_cards"][0])'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'download_uri'
++ URL=
++ echo ''
+
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.json ''
+curl: (3) URL rejected: Malformed input to a URL function
++ ls -l all.json
+ls: cannot access 'all.json': No such file or directory
++ sleep 1
++ curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o sets.json https://api.scryfall.com/sets
++ python3 tools/audit_printings.py all.json sets.json ja_cards.json.gz probe_out/audit_printings.json
+Traceback (most recent call last):
+  File "/home/runner/work/Warujie/Warujie/tools/audit_printings.py", line 23, in <module>
+    with (gzip.open(bulk) if bulk.endswith('.gz') else open(bulk, 'rb')) as f:
+                                                       ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'all.json'
