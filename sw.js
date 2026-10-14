@@ -4,12 +4,12 @@
 // It always asks the network first and only falls back to what it kept when the
 // network cannot answer, so it never keeps visitors on an old version of the site.
 // The card database (about 22 MB once unpacked) is stored again only when it changed.
-const CACHE = 'warujie-v1';
+const CACHE = 'warujie-v2';
 const KEEP = ['/ja_cards.json', '/meta.json', '/meta_decks.json', '/combo_ja.js', '/manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icons/icon-192.png'])).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icons/icon-192-v2.png'])).catch(() => {}));
 });
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {

@@ -18,3 +18,17 @@ eventually will add prices for local stores
 - `manifest.webmanifest`, `sw.js`, `icons/`, `og.png` – the installable app, its offline copy and the
   picture shown when a link to the site is shared. `worker.js` fills in card and deck share tags for
   link-preview bots.
+
+## Backups and rolling back
+
+Before every publish the live version is tagged in git: `backup/<date>-before-<what>` (the site as it
+was) and `release/<date>` (what was published). To go back:
+
+1. **Fastest (a minute, no code change):** Cloudflare dashboard → Workers & Pages → **warujie** →
+   **Deployments** → pick the earlier deployment → **Rollback**. The next push to `main` deploys the
+   code in `main` again, so also do step 2 if the problem is in the code.
+2. **In the code:** put `main` back to a backup tag (ask Claude, or on GitHub restore the files from
+   the tag) and push: Cloudflare redeploys it.
+
+The app's offline copy (`sw.js`) always asks the network first, so a rollback reaches visitors on
+their next visit.
