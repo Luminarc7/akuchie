@@ -10,9 +10,9 @@
 https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
 + curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.jsonl.gz https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
 + ls -l all.jsonl.gz
--rw-r--r-- 1 runner runner 400664919 Oct 14 13:02 all.jsonl.gz
+-rw-r--r-- 1 runner runner 400664919 Oct 14 13:04 all.jsonl.gz
 + sleep 1
 + curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o sets.json https://api.scryfall.com/sets
 + mkdir -p probe_out/text
-+ python3 tools/missing_ja.py all.jsonl.gz probe_out/text/missing_ja.json
-other number 23 not in scryfall 4794
++ python3 tools/db_updates.py all.jsonl.gz ja_cards.json.gz probe_out/text/db_updates.json
+type_ja 888 picture 356
