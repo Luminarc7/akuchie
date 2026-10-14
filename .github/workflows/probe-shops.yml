@@ -15,7 +15,9 @@ jobs:
             set -x
             pip install -q ijson
             UA='Warujie/1.0 (+https://warujie.jp)'
-            URL=$(curl -sS -A "$UA" https://api.scryfall.com/bulk-data | python3 -c 'import json,sys; print([b["download_uri"] for b in json.load(sys.stdin)["data"] if b["type"]=="all_cards"][0])')
+            curl -sS -A "$UA" -H 'Accept: application/json' -o bulk.json https://api.scryfall.com/bulk-data
+            head -c 1500 bulk.json; echo
+            URL=$(python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("download_uri") or b.get("uri"))')
             echo "$URL"
             curl -sS -A "$UA" -o all.json "$URL"; ls -l all.json
             sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
