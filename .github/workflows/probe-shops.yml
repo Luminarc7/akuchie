@@ -11,19 +11,7 @@ jobs:
         with: { python-version: '3.12' }
       - run: |
           mkdir -p probe_out
-          (
-            set -x
-            pip install -q ijson
-            UA='Warujie/1.0 (+https://warujie.jp)'
-            curl -sS -A "$UA" -H 'Accept: application/json' -o bulk.json https://api.scryfall.com/bulk-data
-            head -c 1500 bulk.json; echo
-            URL=$(python3 -c 'import json; d=json.load(open("bulk.json")); b=[b for b in d["data"] if b["type"]=="all_cards"][0]; print(b.get("jsonl_download_uri") or b.get("download_uri"))')
-            echo "$URL"
-            curl -sS -A "$UA" -o all.jsonl.gz "$URL"; ls -l all.jsonl.gz
-            sleep 1; curl -sS -A "$UA" -o sets.json https://api.scryfall.com/sets
-            mkdir -p probe_out/text
-            python3 tools/db_updates.py all.jsonl.gz ja_cards.json.gz probe_out/text/db_updates.json
-          ) > probe_out/text_log.txt 2>&1 || true
-          tail -20 probe_out/text_log.txt
+          bash tools/fetch_terms.sh > probe_out/terms_log.txt 2>&1 || true
+          cat probe_out/terms_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
