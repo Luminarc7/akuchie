@@ -10,9 +10,10 @@
 https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
 + curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o all.jsonl.gz https://data.scryfall.io/all-cards/all-cards-20261014091801.jsonl.gz
 + ls -l all.jsonl.gz
--rw-r--r-- 1 runner runner 400664919 Oct 14 12:29 all.jsonl.gz
+-rw-r--r-- 1 runner runner 400664919 Oct 14 12:32 all.jsonl.gz
 + sleep 1
 + curl -sS -A 'Warujie/1.0 (+https://warujie.jp)' -o sets.json https://api.scryfall.com/sets
 + pip install -q pillow
++ rm -rf probe_out/faces
 + python3 tools/face_sheets.py all.jsonl.gz tools/face_targets.json probe_out/faces
-sheets 167 cards 216
+sheets 33 cards 216
