@@ -2640,6 +2640,44 @@ with sync_playwright() as p:
     check("back to Japanese: buttons still there, the note names Japanese", page.locator("#printSlot .print-lang").count() == 3
           and "日本語版の画像" in page.locator(".cp-img-note").inner_text(), page.locator("#printSlot").inner_html()[:200])
 
+    # ---- 31. round 19: slang and everyday wording in the search box ----
+    sl = page.evaluate("""(() => {
+      const alt = q => { const u = prepareJapanese([q])[0]; return [u.alts.map(f => f.n), u.alias ? u.alias.to : null, u.kw]; };
+      const roles = q => { const f = findRoleWords(tokenizeQuery(q)); return [f.roles.map(r => r.id), f.quotedRoles.map(r => r.id + '>' + r.word), f.derived.map(d => d.label)]; };
+      const ps = q => { const r = parseSearch(q); return [r.words, r.filters.length, r.aliases.map(a => a.from + '>' + a.to)]; };
+      return {
+        deck: alt('山札の上'), dmg: alt('3ダメージ'), draw: alt('2ドロー'), toki: alt('戦場に出た時'), all: alt('全てのクリーチャー'),
+        fly: alt('飛行持ち'), flyer: alt('フライヤー'), sac: alt('サクる'), mine: alt('自分のクリーチャー'), attack: alt('攻撃したとき'), plain: alt('飛行'),
+        dot: [normJaSearch('宝物・トークン'), normJaSearch('宝物トークン')], split: prepareJapanese(['墓地から手札'])[0].chunks, karakuri: prepareJapanese(['からくり'])[0].chunks,
+        counter: roles('カウンター'), blueCounter: roles('青のカウンター'), lord: roles('ロード'), sure: roles('確定除去'), etbc: roles('ETBクリーチャー'),
+        etbm: roles('ETB持ち'), cheap: roles('軽量除去'), pw: roles('PW除去'), quoted: roles('"ランプ"'),
+        unbl: ps('unblockable'), pwType: ps('PW'), sacEn: ps('sac'),
+        sugg: roleSuggestions('ロー').map(s => s.word), rq: [roleQuery('lord'), roleQuery('counterspell')],
+      };
+    })()""")
+    check("slang: 山札/トップ = ライブラリーの一番上", sl["deck"][0] == ["ライブラリーの一番上"], sl["deck"])
+    check("slang: 3ダメージ = 3点のダメージ (with a note), 2ドロー = カードを2枚引く", sl["dmg"][0] == ["3点のダメージ"] and sl["dmg"][1] == "3点のダメージ" and sl["draw"][0] == ["カードを2つ引く"], (sl["dmg"], sl["draw"]))
+    check("spelling: 出た時 = 出たとき, 全て = すべて (no note)", sl["toki"][0] == ["戦場に出たとき"] and sl["toki"][1] is None and sl["all"][0] == ["すべてのクリーチャー"] and sl["all"][1] is None, (sl["toki"], sl["all"]))
+    check("keywords: 飛行持ち and フライヤー = 飛行 (flying)", sl["fly"][2] == "flying" and sl["flyer"][2] == "flying" and sl["plain"][0] == [], (sl["fly"], sl["flyer"], sl["plain"]))
+    check("slang: サクる, 自分のクリーチャー, 攻撃したとき", sl["sac"][0] == ["生け贄に捧げ"] and sl["mine"][0] == ["あなたがコントロールするクリーチャー"] and sl["attack"][0] == ["攻撃するたび"], (sl["sac"], sl["mine"], sl["attack"]))
+    check("・ is ignored in text: 宝物・トークン = 宝物トークン", sl["dot"][0] == sl["dot"][1] == "宝物トークン", sl["dot"])
+    check("から splits a phrase (墓地から手札), not a word (からくり)", sl["split"] == ["墓地", "手札"] and sl["karakuri"] == ["からくり"], (sl["split"], sl["karakuri"]))
+    check("カウンター alone: text, with 打ち消し offered; 青のカウンター: blue counterspells", sl["counter"][0] == [] and sl["counter"][1] == ["counterspell>打ち消し"]
+          and sl["blueCounter"][0] == ["counterspell"] and sl["blueCounter"][2] == ["青"], (sl["counter"], sl["blueCounter"]))
+    check("ロード alone: names, with the lord role offered as 部族ロード", sl["lord"][0] == [] and sl["lord"][1] == ["lord>部族ロード"] and sl["rq"] == ["部族ロード", "打ち消し"], (sl["lord"], sl["rq"]))
+    check("new roles: 確定除去, PW除去; ETBクリーチャー = ETB + creatures; ETB持ち; 軽量除去 = 2 mana or less",
+          sl["sure"][0] == ["sure-removal"] and sl["pw"][0] == ["pw-removal"] and sl["etbc"][0] == ["etb"] and sl["etbc"][2] == ["クリーチャー"]
+          and sl["etbm"][0] == ["etb"] and sl["cheap"][0] == ["removal"] and len(sl["cheap"][2]) == 1, (sl["sure"], sl["etbc"], sl["etbm"], sl["cheap"]))
+    check("a quoted role word is still offered as before", sl["quoted"][0] == [] and sl["quoted"][1] == ["ramp>ランプ"], sl["quoted"])
+    check("English: unblockable = can't be blocked, sac = sacrifice; PW = planeswalkers (a filter)",
+          sl["unbl"][0] == ["can't", "be", "blocked"] and sl["sacEn"][0] == ["sacrifice"] and sl["pwType"][1] == 1 and sl["pwType"][2] == ["PW>プレインズウォーカー"], (sl["unbl"], sl["sacEn"], sl["pwType"]))
+    check("suggestions never offer an ambiguous word as a role (ロー -> not ロード)", "ロード" not in sl["sugg"], sl["sugg"])
+    run("3ダメージ")
+    check("the note says what the slang was read as", "「3ダメージ」は「3点のダメージ」としても検索しました" in page.locator("#matchNote").inner_text()
+          and "稲妻" in page.locator("#cardGrid").inner_text(), page.locator("#matchNote").inner_text())
+    run("カウンター")
+    check("カウンター without the role data: searched as text, nothing offered", "役割" not in page.locator("#matchNote").inner_text(), page.locator("#matchNote").inner_text())
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 

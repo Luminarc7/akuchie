@@ -97,6 +97,90 @@ with sync_playwright() as p:
     check("operators unchanged: t:クリーチャー c:r cmc<=2 = 1034", R["t:クリーチャー c:r cmc<=2"]["n"] == 1034, R["t:クリーチャー c:r cmc<=2"]["n"])
     check("no search throws", not any("err" in r for r in R.values()), [r for r in R.values() if "err" in r])
 
+    # ---- round 19: slang and loosely worded effects (each of these found nothing, or the wrong cards, before)
+    ALL = """(qs) => {
+      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      return qs.map(q => { try { const r = searchRows(q, st);
+        return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), roles: r.info.roles.map(x => x.id || x.tag || '?'), aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to),
+                 asRole: (r.info.asRole || []).map(a => a.id + '>' + a.query), derived: r.info.derived, cmc: r.rows.map(x => x._cmc),
+                 types: r.rows.map(x => x._typeEn), ja: r.rows.slice(0, 40).map(x => x.oracle_ja || '') };
+      } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });
+    }"""
+    S = {r["q"]: r for r in page.evaluate(ALL, [
+        "場に出たとき", "場に出た時", "戦場に出たとき", "戦場に出た時", "死亡したとき", "死んだとき", "確定除去", "追放除去", "疑似除去", "軽量除去", "cheap removal",
+        "PW除去", "3点火力", "3ダメージ", "3点ダメージ", "全体火力", "確定カウンター", "ソフトカウンター", "hard counter", "soft counter", "2ドロー", "デッキから探す", "山札から探す",
+        "サクる", "宝物トークン", "宝物・トークン", "アンブロッカブル", "unblockable", "フライヤー", "飛行持ち", "flyer", "ストーム", "タップイン", "tapland", "デュアルランド",
+        "2色土地", "引いて捨てる", "自分のクリーチャー", "全てのクリーチャーを破壊", "すべてのクリーチャーを破壊", "エンド時", "山札の上", "トップ", "PW", "ピンガー", "pinger",
+        "ティム", "カウンター", "青のカウンター", "2マナのカウンター", "ロード", "部族ロード", "lord", "赤のロード", "トークン倍増", "バニラ", "ETBクリーチャー", "ETB持ち",
+        "コスト踏み倒し", "タダで唱える", "墓地から手札", "置物", "ライフロス", "ダブルストライク", "ラス", "sac", "マナコスト"])}
+    has = lambda q, *names: all(n in S[q]["en"] for n in names)
+    hasnt = lambda q, *names: not any(n in S[q]["en"] for n in names)
+    check("slang: no search throws", not any("err" in r for r in S.values()), [r for r in S.values() if "err" in r])
+    check("場に出た時 / 戦場に出た時 (時 for とき) = the same cards as とき",
+          S["場に出た時"]["n"] >= S["場に出たとき"]["n"] > 3000 and S["戦場に出た時"]["n"] >= S["戦場に出たとき"]["n"], (S["場に出た時"]["n"], S["場に出たとき"]["n"]))
+    check("死んだとき = 死亡したとき", S["死んだとき"]["n"] >= S["死亡したとき"]["n"] > 500 and S["死んだとき"]["n"] < 1.1 * S["死亡したとき"]["n"], (S["死んだとき"]["n"], S["死亡したとき"]["n"]))
+    check("確定除去: Murder, Swords, Path, Vindicate, Hero's Downfall; not Doom Blade or Lightning Bolt",
+          S["確定除去"]["roles"] == ["sure-removal"] and has("確定除去", "Murder", "Swords to Plowshares", "Path to Exile", "Vindicate", "Hero's Downfall")
+          and hasnt("確定除去", "Doom Blade", "Lightning Bolt"), S["確定除去"]["en"][:10])
+    check("追放除去: Swords and Path, not Murder", has("追放除去", "Swords to Plowshares", "Path to Exile") and hasnt("追放除去", "Murder"), S["追放除去"]["n"])
+    check("疑似除去: Pacifism and Arrest, not Murder", has("疑似除去", "Pacifism", "Arrest") and hasnt("疑似除去", "Murder"), S["疑似除去"]["en"][:10])
+    check("軽量除去 = cheap removal (2 mana or less)", S["軽量除去"]["n"] == S["cheap removal"]["n"] > 1000 and max(S["軽量除去"]["cmc"]) <= 2, S["軽量除去"]["n"])
+    check("PW除去: Hero's Downfall and Lightning Bolt, not Murder", has("PW除去", "Hero's Downfall", "Lightning Bolt") and hasnt("PW除去", "Murder"), S["PW除去"]["n"])
+    check("3点火力 / 3ダメージ = 3点ダメージ, Lightning Bolt included", S["3点火力"]["n"] == S["3ダメージ"]["n"] >= S["3点ダメージ"]["n"] > 300 and has("3ダメージ", "Lightning Bolt")
+          and "3ダメージ>3点のダメージ" in S["3ダメージ"]["aliases"], (S["3点火力"]["n"], S["3ダメージ"]["n"], S["3点ダメージ"]["n"], S["3ダメージ"]["aliases"]))
+    check("全体火力: Pyroclasm, Anger of the Gods; not Wrath of God", has("全体火力", "Pyroclasm", "Anger of the Gods") and hasnt("全体火力", "Wrath of God"), S["全体火力"]["n"])
+    check("確定カウンター: Counterspell, not Mana Leak; ソフトカウンター: Mana Leak, not Counterspell",
+          has("確定カウンター", "Counterspell") and hasnt("確定カウンター", "Mana Leak") and has("ソフトカウンター", "Mana Leak") and hasnt("ソフトカウンター", "Counterspell")
+          and S["hard counter"]["n"] == S["確定カウンター"]["n"] and S["soft counter"]["n"] == S["ソフトカウンター"]["n"], (S["確定カウンター"]["n"], S["ソフトカウンター"]["n"]))
+    check("2ドロー: Divination", has("2ドロー", "Divination"), S["2ドロー"]["n"])
+    check("デッキから探す / 山札から探す (= ライブラリーから探し): Demonic Tutor", has("デッキから探す", "Demonic Tutor") and S["山札から探す"]["n"] == S["デッキから探す"]["n"] > 500, S["デッキから探す"]["n"])
+    check("サクる = 生け贄に捧げる: Viscera Seer", has("サクる", "Viscera Seer") and S["サクる"]["n"] > 2500, S["サクる"]["n"])
+    check("宝物トークン (without ・) = 宝物・トークン: Smothering Tithe", S["宝物トークン"]["n"] == S["宝物・トークン"]["n"] > 200 and has("宝物トークン", "Smothering Tithe"), S["宝物トークン"]["n"])
+    check("アンブロッカブル / unblockable: Invisible Stalker", has("アンブロッカブル", "Invisible Stalker") and has("unblockable", "Invisible Stalker"), (S["アンブロッカブル"]["n"], S["unblockable"]["n"]))
+    check("フライヤー / 飛行持ち / flyer: flying (Serra Angel), thousands", all(has(q, "Serra Angel") and S[q]["n"] > 4000 for q in ("フライヤー", "飛行持ち", "flyer")),
+          [S[q]["n"] for q in ("フライヤー", "飛行持ち", "flyer")])
+    check("ストーム: the keyword (Grapeshot, Tendrils of Agony)", has("ストーム", "Grapeshot", "Tendrils of Agony"), S["ストーム"]["n"])
+    check("タップイン / tapland: Azorius Guildgate; not shock lands or check lands",
+          has("タップイン", "Azorius Guildgate") and hasnt("タップイン", "Hallowed Fountain", "Glacial Fortress", "Plains") and S["tapland"]["n"] == S["タップイン"]["n"], S["タップイン"]["n"])
+    check("デュアルランド / 2色土地: Tundra, Hallowed Fountain, Adarkar Wastes; not tri-lands or Plains",
+          has("デュアルランド", "Tundra", "Hallowed Fountain", "Adarkar Wastes") and hasnt("デュアルランド", "Arcane Sanctum", "Plains") and S["2色土地"]["n"] == S["デュアルランド"]["n"], S["デュアルランド"]["n"])
+    check("引いて捨てる: looting (Faithless Looting)", S["引いて捨てる"]["roles"] == ["loot"] and has("引いて捨てる", "Faithless Looting"), S["引いて捨てる"]["roles"])
+    check("自分のクリーチャー = あなたがコントロールするクリーチャー: Glorious Anthem", has("自分のクリーチャー", "Glorious Anthem") and S["自分のクリーチャー"]["n"] > 800, S["自分のクリーチャー"]["n"])
+    check("全てのクリーチャーを破壊 = すべての…: Wrath of God", S["全てのクリーチャーを破壊"]["n"] == S["すべてのクリーチャーを破壊"]["n"] > 100 and has("全てのクリーチャーを破壊", "Wrath of God"),
+          (S["全てのクリーチャーを破壊"]["n"], S["すべてのクリーチャーを破壊"]["n"]))
+    check("エンド時 = 終了ステップの開始時", S["エンド時"]["n"] > 500, S["エンド時"]["n"])
+    check("山札の上 / トップ = ライブラリーの一番上: Brainstorm", has("山札の上", "Brainstorm") and has("トップ", "Brainstorm"), (S["山札の上"]["n"], S["トップ"]["n"]))
+    check("PW: planeswalkers only", S["PW"]["n"] > 300 and all("planeswalker" in t_.lower() for t_ in S["PW"]["types"]), S["PW"]["n"])
+    check("ピンガー / pinger: Prodigal Sorcerer", has("ピンガー", "Prodigal Sorcerer") and S["pinger"]["n"] == S["ピンガー"]["n"], S["ピンガー"]["n"])
+    check("ティム (also part of names): searched as text, the pinger role offered", S["ティム"]["roles"] == [] and any(a.startswith("pinger>") for a in S["ティム"]["asRole"]), S["ティム"]["asRole"])
+    check("カウンター (counters or counterspells): searched as text, 打ち消し offered", S["カウンター"]["n"] > 4000 and "counterspell>打ち消し" in S["カウンター"]["asRole"], S["カウンター"]["asRole"])
+    check("青のカウンター: blue counterspells (Counterspell)", S["青のカウンター"]["roles"] == ["counterspell"] and has("青のカウンター", "Counterspell"), S["青のカウンター"]["roles"])
+    check("2マナのカウンター: counterspells of mana value 2", S["2マナのカウンター"]["roles"] == ["counterspell"] and set(S["2マナのカウンター"]["cmc"]) == {2} and has("2マナのカウンター", "Counterspell"),
+          S["2マナのカウンター"]["n"])
+    check("ロード / lord (also in names): searched as names, the lord role offered", S["ロード"]["roles"] == [] and any(a.startswith("lord>") for a in S["ロード"]["asRole"])
+          and S["lord"]["roles"] == [] and any(a.startswith("lord>") for a in S["lord"]["asRole"]), (S["ロード"]["asRole"], S["lord"]["asRole"]))
+    check("部族ロード: Lord of Atlantis, Goblin King, Elvish Archdruid; not Glorious Anthem",
+          has("部族ロード", "Lord of Atlantis", "Goblin King", "Elvish Archdruid") and hasnt("部族ロード", "Glorious Anthem"), S["部族ロード"]["n"])
+    check("赤のロード: red lords (Goblin King)", S["赤のロード"]["roles"] == ["lord"] and has("赤のロード", "Goblin King"), S["赤のロード"]["n"])
+    check("トークン倍増: Doubling Season, Parallel Lives", has("トークン倍増", "Doubling Season", "Parallel Lives"), S["トークン倍増"]["n"])
+    check("バニラ: Grizzly Bears, not Llanowar Elves", has("バニラ", "Grizzly Bears") and hasnt("バニラ", "Llanowar Elves"), S["バニラ"]["n"])
+    check("ETBクリーチャー: ETB, creatures only; ETB持ち = ETB", S["ETBクリーチャー"]["roles"] == ["etb"] and all("creature" in t_.lower() for t_ in S["ETBクリーチャー"]["types"])
+          and S["ETB持ち"]["roles"] == ["etb"], (S["ETBクリーチャー"]["roles"], S["ETBクリーチャー"]["n"]))
+    check("コスト踏み倒し: the cheat role", S["コスト踏み倒し"]["roles"] == ["cheat"], S["コスト踏み倒し"]["roles"])
+    check("タダで唱える = マナ・コストを支払うことなく唱える", S["タダで唱える"]["n"] > 30, S["タダで唱える"]["n"])
+    check("マナコスト (without ・) finds マナ・コスト", S["マナコスト"]["n"] > 1000, S["マナコスト"]["n"])
+    ordered = lambda tx: (tx.find("墓地") >= 0 and tx.find("手札", tx.find("墓地")) >= 0)
+    check("墓地から手札: same ability, from the graveyard to the hand first", S["墓地から手札"]["n"] > 300 and has("墓地から手札", "Raise Dead")
+          and all(ordered(tx) for tx in S["墓地から手札"]["ja"][:30]), [tx[:40] for tx in S["墓地から手札"]["ja"][:30] if not ordered(tx)][:3])
+    check("置物: noncreature artifacts and enchantments (Sol Ring, not Solemn Simulacrum)", has("置物", "Sol Ring") and hasnt("置物", "Solemn Simulacrum"), S["置物"]["n"])
+    check("ライフロス = ライフを失う", S["ライフロス"]["n"] > 800, S["ライフロス"]["n"])
+    check("ダブルストライク = 二段攻撃", has("ダブルストライク", "Fencing Ace"), S["ダブルストライク"]["n"])
+    A2 = {r["q"]: r for r in page.evaluate(ALL, ["攻撃したとき", "攻撃するたび"])}
+    check("攻撃したとき also finds 攻撃するたび (the cards' wording), with a note", A2["攻撃したとき"]["n"] >= A2["攻撃するたび"]["n"] > 1000
+          and "攻撃したとき>攻撃するたび" in A2["攻撃したとき"]["aliases"], (A2["攻撃したとき"]["n"], A2["攻撃したとき"]["aliases"]))
+    check("ラス: names first, the board wipe role offered", any(a.startswith("boardwipe>") for a in S["ラス"]["asRole"]), S["ラス"]["asRole"])
+    check("sac = sacrifice (not Sacred...)", has("sac", "Viscera Seer") and hasnt("sac", "Sacred Foundry"), S["sac"]["n"])
+
     # the same search twice: the second asks Scryfall nothing
     def search(q):
         sel = "#searchInput" if page.locator("#searchInput").is_visible() else "#heroInput"

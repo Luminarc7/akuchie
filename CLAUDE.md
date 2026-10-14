@@ -135,6 +135,14 @@ never shown or searched).
   (`name_kana`). Readings are never displayed.
 - **Name matching ignores punctuation:** `nameKey()` drops punctuation and spaces (and folds
   kana), so "yawgmoth thran" finds "Yawgmoth, Thran Physician".
+- **Players' words count:** slang and everyday wording are read as the cards' own wording
+  as well (`JA_SLANG`, `JA_KW_SLANG`, `EN_WORD_ALIAS`, `WORD_FILTERS`): 山札 → ライブラリー,
+  3ダメージ → 3点のダメージ, 2ドロー, サクる, 自分のクリーチャー, 攻撃したとき → 攻撃するたび,
+  フライヤー/飛行持ち → 飛行, PW, 置物, unblockable, sac. `・`, 全て/すべて and 時/とき are
+  ignored. 墓地から手札 matches the two words in one ability, in that order first. A note
+  above the results says what a word was read as. Words that are slang only sometimes
+  (カウンター, ロード, ラス, ティム) stay text and the note offers the role
+  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role.
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -149,9 +157,9 @@ never shown or searched).
    `git config --add remote.origin.fetch '+refs/heads/staging:refs/remotes/origin/staging'`.
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
-3. **Test** with `python3 dev/tests/e2e.py` (about 580 offline checks; needs a warujie-prices
+3. **Test** with `python3 dev/tests/e2e.py` (about 600 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (46 real-data search checks). Add checks for every new feature or fix. Look at it too:
+   (93 real-data search checks). Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
 5. **Confirm the build:**
