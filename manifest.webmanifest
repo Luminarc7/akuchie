@@ -1,0 +1,17 @@
+{
+  "name": "悪知恵（warujie）— 効果テキストで探せるMTGカード検索",
+  "short_name": "悪知恵",
+  "description": "カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索。価格・メタゲーム・デッキリストも。",
+  "lang": "ja",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0e",
+  "theme_color": "#121214",
+  "icons": [
+    { "src": "icons/icon-192-v2.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-v2.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512-v2.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

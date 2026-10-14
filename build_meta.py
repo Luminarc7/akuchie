@@ -97,6 +97,8 @@ KEY_CARDS_NO_DB = 14         # without it: send more, the site filters lands its
 KEY_CARD_PRESENCE = 0.4      # a key card is in at least 40% of the lists
 MORE_PRESENCE = 0.25         # deck page: other cards played in at least 25% of the lists...
 MORE_CARDS = 12              # ...at most this many of them
+SAMPLE_LISTS = 8             # deck page: this many lists to choose from (best finishes first)
+TREND_WEEKS = 12             # metagame trends: weekly share of the field, this many weeks back
 
 
 # ---------------------------------------------------------------- utilities
@@ -642,7 +644,7 @@ def place_of(result):
 
 class ArchetypeStats:
     __slots__ = ("name", "unclassified", "decks", "colors", "wins", "losses", "draws", "cards", "copies", "best",
-                 "main_in", "main_copies", "side_in", "list_best", "icons")
+                 "main_in", "main_copies", "side_in", "list_best", "icons", "lists")
 
     def __init__(self, name, unclassified):
         self.name, self.unclassified = name, unclassified
@@ -657,6 +659,7 @@ class ArchetypeStats:
         self.side_in = collections.Counter()      # decks with the card in the sideboard
         self.list_best = None                # (sort key, deck, event): the list shown on the deck page
         self.icons = collections.Counter()   # the card picturing the deck, per list
+        self.lists = []                      # [(sort key, deck, event)]: the best SAMPLE_LISTS lists
 
 
 def load_tournaments(decklists_dir, start, end):
@@ -743,6 +746,10 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             list_key = (0 if deck["url"] else 1,) + sort_key
             if st.list_best is None or list_key < st.list_best[0]:
                 st.list_best = (list_key, deck, ev)
+            if len(st.lists) < SAMPLE_LISTS or list_key < st.lists[-1][0]:
+                st.lists.append((list_key, deck, ev))
+                st.lists.sort(key=lambda x: x[0])
+                del st.lists[SAMPLE_LISTS:]
         for a, b, outcome in ev["matches"]:
             if a == b:
                 continue  # mirror match
@@ -784,6 +791,7 @@ def analyse(tournaments, rules, start, end, max_key_cards=KEY_CARDS):
             row["sample"] = st.best[1]
         if st.list_best:
             row["_deck"] = deck_entry(st)   # moved to meta_decks.json by main()
+            row["_lists"] = sample_lists(st)   # moved to meta_lists/ by main()
         out.append(row)
     result = {
         "events": events, "decks": decks_total, "matches": matches,
@@ -813,6 +821,42 @@ def deck_entry(st):
     more.sort(key=lambda kv: (-kv[1], kv[0]))
     entry["more"] = [[card, round(100 * k / n), round(st.main_copies[card] / k, 1)] for card, k in more[:MORE_CARDS]]
     return entry
+
+
+def sample_lists(st):
+    """More lists for the deck page to choose from: the best finishes (the
+    first is the one in meta_decks.json), each with its cards and how many of
+    this archetype's lists play each card."""
+    n = st.decks
+    by_count = lambda board: sorted(board.items(), key=lambda kv: (-kv[1], kv[0]))
+    out = []
+    for _, deck, ev in st.lists:
+        out.append({
+            "list": {"url": deck["url"], "event": ev["name"], "date": ev["date"].isoformat(), "result": deck["result"]},
+            "main": [[count, card, round(100 * st.main_in[card] / n)] for card, count in by_count(deck["main"])],
+            "side": [[count, card, round(100 * st.side_in[card] / n)] for card, count in by_count(deck["side"])],
+        })
+    return out
+
+
+def trends(events, today, keys):
+    """Weekly share of the field for each deck in `keys` (deck_key -> (name, classified)),
+    over the last TREND_WEEKS weeks ending today. Weeks with no events have null."""
+    starts = [today - datetime.timedelta(days=7 * (TREND_WEEKS - i) - 1) for i in range(TREND_WEEKS)]
+    totals = [0] * TREND_WEEKS
+    counts = collections.defaultdict(lambda: [0] * TREND_WEEKS)
+    for ev in events:
+        if not (starts[0] <= ev["date"] <= today):
+            continue
+        w = min(TREND_WEEKS - 1, (ev["date"] - starts[0]).days // 7)
+        for deck in ev["decks"]:
+            totals[w] += 1
+            counts[(deck["name"], deck["classified"])][w] += 1
+    share = {}
+    for key, ident in keys.items():
+        c = counts.get(ident, [0] * TREND_WEEKS)
+        share[key] = [round(100 * c[i] / totals[i], 1) if totals[i] else None for i in range(TREND_WEEKS)]
+    return {"weeks": [d.isoformat() for d in starts], "decks": totals, "share": share}
 
 
 def deck_key(row):
@@ -966,6 +1010,17 @@ def main():
             "formats": {f.lower(): analyse(events[f], rules[f], start, today, key_cards) for f in FORMATS if f in rules},
         }
 
+    # metagame trends: every deck shown in any window, week by week
+    payload["trends"] = {}
+    for f in FORMATS:
+        if f not in rules:
+            continue
+        keys = {}
+        for win in payload["windows"].values():
+            for row in win["formats"][f.lower()]["archetypes"]:
+                keys[deck_key(row)] = (row["name"], not row.get("unclassified"))
+        payload["trends"][f.lower()] = trends(events[f], today, keys)
+
     # deck lists go to their own file: only a deck's page needs them
     decks_payload = {
         "version": 1,
@@ -973,15 +1028,25 @@ def main():
         "data_through": payload["data_through"],
         "windows": {},
     }
+    lists_files = {}   # meta_lists/<days>-<format>.json: the sample lists, one small file per page
     for days, win in payload["windows"].items():
         per_format = decks_payload["windows"][days] = {}
         for fmt, block in win["formats"].items():
             per_format[fmt] = {}
+            lists = lists_files[f"{days}-{fmt}"] = {}
             for row in block["archetypes"]:
                 entry = row.pop("_deck", None)
                 if entry:
                     per_format[fmt][deck_key(row)] = entry
+                more = row.pop("_lists", None)
+                if more:
+                    lists[deck_key(row)] = more
     decks_path = args.decks_out or os.path.join(os.path.dirname(os.path.abspath(out_path)), "meta_decks.json")
+    lists_dir = os.path.join(os.path.dirname(os.path.abspath(decks_path)), "meta_lists")
+    os.makedirs(lists_dir, exist_ok=True)
+    for name, lists in lists_files.items():
+        with open(os.path.join(lists_dir, name + ".json"), "w", encoding="utf-8") as f:
+            json.dump({"version": 1, "generated": payload["generated"], "decks": lists}, f, ensure_ascii=False, separators=(",", ":"))
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:

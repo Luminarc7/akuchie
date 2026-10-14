@@ -1,20 +1,34 @@
 // warujie.jp: serves the site's files as they are (Cloudflare Workers static assets).
 //
-// Only the HTML pages pass through here. They go out compressed by this Worker and
-// marked "no-transform", so Cloudflare does not add its own scripts to them (the Web
-// Analytics beacon, the bot-detection script): the site promises no analytics.
-// ("no-transform" alone would also stop Cloudflare compressing the page, 3.5x bigger.)
+// Only these requests pass through here:
+// - The HTML pages go out compressed by this Worker and marked "no-transform", so
+//   Cloudflare does not add its own scripts to them (the Web Analytics beacon, the
+//   bot-detection script): the site promises no analytics. ("no-transform" alone
+//   would also stop Cloudflare compressing the page, 3.5x bigger.)
+// - Link previews: when LINE, X, Discord, Slack, a search engine... asks for a card's
+//   or a deck's page, its title, text and picture are written into the page's share
+//   tags (og:…), so the shared link shows that card. People get the page unchanged.
+// - /ja_cards.json, the card database: sent brotli-compressed (ja_cards.json.br, made
+//   at deploy by tools/brotli_db.mjs, about half the size of the .gz), or as the .gz
+//   to a browser without brotli. The browser unpacks either one itself.
 export default {
   async fetch(request, env) {
-    const res = await env.ASSETS.fetch(request);
+    const url = new URL(request.url);
+    if (url.pathname === '/ja_cards.json') return cardDatabase(request, env, url);
+    let res = await env.ASSETS.fetch(request);
     const type = res.headers.get('Content-Type') || '';
     if (!type.startsWith('text/html')) return res;
+    if (res.status === 200 && isPreviewBot(request) && url.search) {
+      try {
+        const tags = await shareTags(url, env);
+        if (tags) res = rewriteTags(res, tags);
+      } catch (err) { /* the page's own tags stay */ }
+    }
     const headers = new Headers(res.headers);
     headers.set('Cache-Control', 'public, max-age=0, must-revalidate, no-transform');
     const etag = headers.get('ETag');
     if (etag && !etag.startsWith('W/')) headers.set('ETag', 'W/' + etag);   // the compressed bytes differ from the file
-    const accept = (request.cf && request.cf.clientAcceptEncoding) || request.headers.get('Accept-Encoding') || '';
-    if (!res.body || !/\bgzip\b/i.test(accept)) {
+    if (!res.body || !accepts(request, 'gzip')) {
       return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
     }
     headers.set('Content-Encoding', 'gzip');
@@ -24,3 +38,112 @@ export default {
       { status: res.status, statusText: res.statusText, headers, encodeBody: 'manual' });
   },
 };
+
+function accepts(request, encoding) {
+  const accept = (request.cf && request.cf.clientAcceptEncoding) || request.headers.get('Accept-Encoding') || '';
+  return new RegExp(`(^|[\\s,])${encoding}(\\s*(;\\s*q=(?!0(\\.0*)?\\b)[\\d.]+)?)?\\s*(,|$)`, 'i').test(accept);
+}
+
+async function cardDatabase(request, env, url) {
+  for (const [encoding, file] of [['br', '/ja_cards.json.br'], ['gzip', '/ja_cards.json.gz']]) {
+    if (!accepts(request, encoding)) continue;
+    const res = await env.ASSETS.fetch(new Request(new URL(file, url), request));
+    if (res.status === 404) continue;
+    const headers = new Headers(res.headers);
+    headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers.set('Cache-Control', 'public, max-age=0, must-revalidate, no-transform');
+    headers.append('Vary', 'Accept-Encoding');
+    if (!res.body || res.status === 304) return new Response(null, { status: res.status, statusText: res.statusText, headers });
+    headers.set('Content-Encoding', encoding);
+    return new Response(res.body, { status: res.status, statusText: res.statusText, headers, encodeBody: 'manual' });
+  }
+  return new Response('not found', { status: 404 });
+}
+
+// ---- link previews -------------------------------------------------------------------------
+// The apps and search engines that read a page's share tags (people's browsers don't need them).
+const PREVIEW_BOTS = /bot\b|bot\/|crawler|spider|slurp|facebookexternalhit|meta-externalagent|embedly|slack|discord|telegram|whatsapp|line\/|linespider|skype|pinterest|applebot|bingpreview|hatena|mastodon|misskey|cardyb|bluesky|google-inspectiontool|yandex|duckduck|baidu|naver|daum|iframely|vkshare|redditbot|quora link preview|preview/i;
+function isPreviewBot(request) {
+  return PREVIEW_BOTS.test(request.headers.get('User-Agent') || '');
+}
+
+const FORMAT_JA = { standard: 'スタンダード', pioneer: 'パイオニア', modern: 'モダン', legacy: 'レガシー', vintage: 'ヴィンテージ', pauper: 'パウパー' };
+const SITE = '悪知恵（warujie）';
+const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+
+async function scryfall(path) {
+  const res = await fetch('https://api.scryfall.com' + path, {
+    headers: { 'User-Agent': 'Warujie/1.0 (+https://warujie.jp)', Accept: 'application/json' },
+    cf: { cacheTtl: 86400, cacheEverything: true },
+  });
+  return res.ok ? res.json() : null;
+}
+
+// title, description and picture for the page the URL points at (null: the site's own)
+async function shareTags(url, env) {
+  const p = url.searchParams;
+  const pageUrl = url.origin + url.pathname + url.search;
+  const id = p.get('card');
+  if (id && /^[0-9a-f-]{36}$/i.test(id)) {
+    const c = await scryfall(`/cards/${id}`);
+    if (!c) return null;
+    const faces = c.card_faces || [];
+    const name = c.name || faces.map(f => f.name).join(' // ');
+    const printed = c.printed_name || faces.map(f => f.printed_name).filter(Boolean).join(' // ');
+    const text = c.printed_text || c.oracle_text || faces.map(f => f.printed_text || f.oracle_text || '').filter(Boolean).join(' / ');
+    const type = c.printed_type_line || c.type_line || faces.map(f => f.printed_type_line || f.type_line || '').join(' // ');
+    const img = (c.image_uris && c.image_uris.normal) || (faces[0] && faces[0].image_uris && faces[0].image_uris.normal) || '';
+    return {
+      title: `${printed && printed !== name ? `${printed}（${name}）` : name} | ${SITE}`,
+      description: clip(`${type}。${text}`, 160),
+      image: img, width: img ? '488' : '', height: img ? '680' : '', card: 'summary', url: pageUrl,
+    };
+  }
+  const view = p.get('view');
+  const format = (p.get('format') || '').toLowerCase();
+  if (view === 'deck' && p.get('deck')) {
+    const deck = p.get('deck');
+    let facts = '';
+    try {
+      const meta = await (await env.ASSETS.fetch(new URL('/meta.json', url))).json();
+      const days = p.get('days') || Object.keys(meta.windows || {}).sort((a, b) => a - b)[0];
+      const a = ((((meta.windows || {})[days] || {}).formats || {})[format] || {}).archetypes || [];
+      const row = a.find(x => x.name === deck);
+      if (row) facts = `使用率 ${row.share.toFixed(1)}%（${row.decks}デッキ）` + (typeof row.winrate === 'number' && row.wins + row.losses >= 20 ? `・勝率 ${row.winrate.toFixed(1)}%` : '') + `（直近${days}日）。`;
+    } catch (err) { /* without the numbers */ }
+    return {
+      title: `${deck} — ${FORMAT_JA[format] || format} のデッキ | ${SITE}`,
+      description: clip(`${facts}大会で結果を出したサンプルリスト、よく使われるカード、使用率の推移。MTGアリーナ・MTGO形式でも書き出せます。`, 160),
+      url: pageUrl,
+    };
+  }
+  if (view === 'meta') {
+    return { title: `メタゲーム — ${FORMAT_JA[format] || 'スタンダード'} | ${SITE}`, description: '大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。', url: pageUrl };
+  }
+  if (view === 'prices') {
+    return { title: `価格の動き | ${SITE}`, description: '値上がり・値下がりしたカード（米国・欧州の相場、円換算つき）。', url: pageUrl };
+  }
+  const set = p.get('set');
+  if (set && /^[a-z0-9]{2,6}$/i.test(set)) {
+    const s = await scryfall(`/sets/${set.toLowerCase()}`);
+    if (s && s.name) return { title: `${s.name}（${s.code.toUpperCase()}）のカード一覧 | ${SITE}`, description: `${s.name} のカード${s.card_count ? ` ${s.card_count}枚` : ''}を日本語で。`, url: pageUrl };
+  }
+  return null;
+}
+
+function rewriteTags(res, tags) {
+  const set = (value) => ({ element(el) { if (value !== undefined && value !== '') el.setAttribute('content', value); } });
+  let rw = new HTMLRewriter()
+    .on('title', { element(el) { el.setInnerContent(tags.title); } })
+    .on('meta[property="og:title"]', set(tags.title))
+    .on('meta[name="description"]', set(tags.description))
+    .on('meta[property="og:description"]', set(tags.description))
+    .on('meta[property="og:url"]', set(tags.url))
+    .on('meta[name="twitter:card"]', set(tags.card));
+  if (tags.image) {
+    rw = rw.on('meta[property="og:image"]', set(tags.image))
+      .on('meta[property="og:image:width"]', set(tags.width))
+      .on('meta[property="og:image:height"]', set(tags.height));
+  }
+  return rw.transform(res);
+}

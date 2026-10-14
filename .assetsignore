@@ -7,3 +7,5 @@ build_meta.py
 README.md
 worker.js
 _headers
+tools
+.gitignore
