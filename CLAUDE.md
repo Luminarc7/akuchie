@@ -55,7 +55,8 @@ fuller technical detail.
   `docs/troubleshooting.md`.
 - Name code by function, constant or `// ---- section ----` marker, never by line number.
 - Before pushing, run `python3 dev/check_docs.py`: it fails when a name the docs mention no
-  longer exists in the code.
+  longer exists in the code. GitHub runs it too on every push to `staging`/`main`
+  (`.github/workflows/check-docs.yml`); a red "Docs match the code" check means fix the doc.
 - When a rule or decision below changes, change it here too.
 
 ## Where things live

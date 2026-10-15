@@ -106,5 +106,9 @@ Cloudflare Workers Builds deploys every push. Before each deploy it runs
 | Name readings (`.github/workflows/name-readings.yml`) | when `ja_cards.json.gz` or the name tools change on `main`/`staging` | this one | Applies the Japanese name fixes and readings, commits back to that branch |
 | Update price history (`update-prices.yml`) | daily 12:17 | warujie-prices | Builds prices, combos (weekly) and role tags (weekly), publishes to GitHub Pages without committing |
 
+Every push to `staging` or `main` also runs **Docs match the code**
+(`.github/workflows/check-docs.yml`), which only reads files (see
+[workflow.md](workflow.md#keeping-these-docs-true)).
+
 Because two bots commit to this repo, **pull before you commit** (`git pull --no-rebase` on
 `staging`; publishing merges, never force-pushes `main`).
