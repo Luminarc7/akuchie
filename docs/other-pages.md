@@ -59,7 +59,10 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
   (`toggleMetaRow()`). Closed rows show a short name the way players say it
   (`deckNameShort()`: guilds as colour pairs from `DECK_GUILD_SHORT`, words from `DECK_WORD_SHORT`,
   e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name, and the English name only
-  when open. The format buttons show two-letter codes (`FORMAT_SHORT`: ST, PI, MO, LE, VI, PA), the
+  when open. A closed row keeps its name on one line: `fitMetaNames()` shrinks the font of a long
+  name (down to `META_NAME_MIN` px) after each render, resize and toggle, and the mana symbols are
+  small (11px) so the name and its colours sit as one centred block. The format buttons show
+  two-letter codes (`FORMAT_SHORT`: ST, Pi, Mo, LC, VT, Pa, the owner's choice), the
   periods 30日/30d, the ⓘ button no words, and the win-rate column says 勝率/Win%; each button
   keeps its full name as a tooltip (`.sh-full` / `.sh-short` spans).
 - **Rank arrows.** In the default share order, each rank has ▲ or ▼ beside it when the deck's
@@ -88,7 +91,8 @@ to the database's rarity when the price file has none).
 with how often each card is played across all lists) and `meta_lists/<days>-<format>.json`
 (more sample lists, loaded only when asked for). Cards are grouped by type (`DECK_GROUPS`);
 image or list view is saved in `akuchie-deck-view`. The trend chart is `deckTrendHtml()`.
-Under the title, `deckCostHtml()` draws two one-line boxes: 価格 and the deck's price in yen
+Under the title, `deckCostHtml()` draws two one-line boxes of the same height, side by side
+(on phones the wildcard box is labelled just "Arena"): 価格 and the deck's price in yen
 (how it is worked out is a tooltip and the note at the foot of the page) and the Arena wildcards (Standard only; the rarity names are tooltips). The sample-list picker sits in a
 bar that stays under the top bar while the page scrolls (`.deck-pick-bar`). After the main deck
 and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-land cards (0 to

@@ -752,12 +752,16 @@
     .meta-rank { text-align: left; font-size: 12px; }
     .meta-row .meta-rank { justify-content: flex-start; gap: 1px; }
     .rank-mv { font-size: 8.5px; }
+    .meta-row:not(.open) .meta-name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .meta-row:not(.open) .meta-name-text .nm-full { display: none; }
     .meta-row:not(.open) .meta-name-text .nm-short { display: inline; }
     .meta-name { font-size: 13.5px; gap: 0 5px; line-height: 1.35; }
     .meta-name-text { flex-basis: 100%; }
     .meta-name .pips { order: 2; }
-    .meta-name .pips img.pip, .meta-name .pip { width: 13px; height: 13px; }
+    /* small mana symbols so the name and its colours sit as one centred block */
+    .meta-row .meta-name .pips img.pip, .meta-row .meta-name .pip { width: 11px; height: 11px; }
+    .meta-row .meta-name .pips { gap: 2px; }
+    .meta-row:not(.open) .meta-name { row-gap: 1px; }
     .meta-name-en { order: 3; font-size: 10.5px; }
     .meta-name-en, .meta-name .pips { line-height: 1.3; }
     .meta-share, .meta-wr { text-align: right; }
@@ -794,6 +798,10 @@
     .meta-price .meta-cost { font-size: 11px; }
     #metaView .meta-bar .meta-title { display: none; }
     .meta-row:not(.open) .meta-name-en { display: none; }
+    .deck-cost { flex-wrap: nowrap; }
+    .deck-cost .dcst { padding: 5px 9px; }
+    .deck-cost .dcst-wc .sh-full { display: none; }
+    .deck-cost .dcst-wc .sh-short { display: inline; }
     .deck-cost .dcst .wcs .wc { min-width: 26px; }
     .meta-row:not(.open) .meta-wc { display: none; }
     .meta-controls select { flex: 1 1 auto; min-width: 0; padding: 3px 8px; font-size: 12.5px; }
@@ -1201,12 +1209,12 @@
   .dl-yen:empty { display: none; }
   .dc-yen { font-size: 11px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
   /* a deck's price, Arena wildcards and mana curve */
-  .deck-cost { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 2px; }
+  .deck-cost { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 4px 0 2px; }
   .dcst { display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; min-width: 0; }
   .dcst-l { font-size: 11px; font-weight: 700; color: var(--muted); }
   .dcst-v { font-size: 15px; font-weight: 800; line-height: 1.3; font-variant-numeric: tabular-nums; }
   .dcst-s { font-size: 10.5px; color: var(--muted); }
-  .deck-cost .dcst { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+  .deck-cost .dcst { flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 2px 8px; min-height: 44px; white-space: nowrap; }
   .deck-pick-bar { position: sticky; top: var(--stick-top, 0px); z-index: 20; margin: 6px -6px 6px; padding: 7px 6px; background: var(--page); border-bottom: 1px solid var(--line); }
   .deck-pick-bar .deck-pick { flex-wrap: nowrap; }
   .deck-pick-bar .deck-pick > span:first-child { flex: none; white-space: nowrap; }
@@ -1936,6 +1944,7 @@ const STR = {
   'deck.cost.wait': ['価格を読み込み中…', 'Loading prices…'],
   'deck.cost.none': ['価格を読み込めませんでした', 'Prices could not be loaded'],
   'deck.wc': ['Arena ワイルドカード', 'Arena wildcards'],
+  'deck.wc.short': ['Arena', 'Arena'],
   'deck.curve': ['マナカーブ', 'Mana curve'],
   'deck.curve.sub': ['土地以外 {n}枚', '{n} nonland cards'],
   'deck.curve.title': ['マナ総量{v}：{n}枚', 'Mana value {v}: {n} cards'],
@@ -4508,7 +4517,7 @@ const FORMAT_EN = {
 };
 function formatName(f) { return (LANG === 'en' ? FORMAT_EN[f] : FORMAT_JA[f]) || f; }
 // two-letter format names for the metagame tab's buttons on phones
-const FORMAT_SHORT = { standard: 'ST', pioneer: 'PI', modern: 'MO', legacy: 'LE', vintage: 'VI', pauper: 'PA' };
+const FORMAT_SHORT = { standard: 'ST', pioneer: 'Pi', modern: 'Mo', legacy: 'LC', vintage: 'VT', pauper: 'Pa' };
 function legalityLabel(status) { return STR['legal.' + status] ? t('legal.' + status) : status; }
 
 const MAIN_FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage', 'pauper', 'commander'];
@@ -7839,6 +7848,21 @@ function renderMeta() {
       ${rest}
     </div>`;
   creditDeckArt(body);
+  fitMetaNames(body);
+  requestAnimationFrame(() => fitMetaNames(body));
+}
+// Phones: a long deck name in a closed row gets a smaller font (down to META_NAME_MIN px) so it stays on one line.
+const META_NAME_MIN = 9;
+function fitMetaNames(root) {
+  (root || document).querySelectorAll('#metaBody .meta-name-text').forEach(a => {
+    a.style.fontSize = '';
+    if (!META_PHONE.matches || a.closest('.meta-row.open')) return;
+    let size = parseFloat(getComputedStyle(a).fontSize);
+    while (a.scrollWidth > a.clientWidth + 0.5 && size > META_NAME_MIN) {
+      size = Math.max(META_NAME_MIN, size - 0.5);
+      a.style.fontSize = `${size}px`;
+    }
+  });
 }
 
 function metaSelect(change) {
@@ -7867,7 +7891,11 @@ function toggleMetaRow(row) {
   const open = row.classList.toggle('open');
   const b = row.querySelector('.meta-toggle');
   if (b) b.setAttribute('aria-expanded', String(open));
+  fitMetaNames(row);
 }
+let metaFitTick = 0;
+window.addEventListener('resize', () => { clearTimeout(metaFitTick); metaFitTick = setTimeout(() => fitMetaNames(), 150); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitMetaNames());
 document.getElementById('metaBody').addEventListener('click', (e) => {
   const tog = e.target.closest('.meta-toggle');
   if (tog) { toggleMetaRow(tog.closest('.meta-row')); return; }
@@ -9446,7 +9474,7 @@ function deckCostHtml(main, side, format) {
   const wcs = wildcardsHtml(cost, format);
   return `<div class="deck-cost">
       <div class="dcst dcst-price"><span class="dcst-l">${esc(t('deck.cost'))}</span>${price}</div>
-      ${wcs ? `<div class="dcst"><span class="dcst-l">${esc(t('deck.wc'))}</span>${wcs}</div>` : ''}
+      ${wcs ? `<div class="dcst dcst-wc"><span class="dcst-l"><span class="sh-full">${esc(t('deck.wc'))}</span><span class="sh-short">${esc(t('deck.wc.short'))}</span></span>${wcs}</div>` : ''}
     </div>`;
 }
 // mana curve: the main deck without lands, by mana value (6 and up together)

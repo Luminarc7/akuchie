@@ -2844,8 +2844,8 @@ with sync_playwright() as p:
           and "価格" in page.locator(".meta-cols").inner_text() and page.locator("#metaHelpBtn").inner_text() == "ⓘ 見方")
     page.wait_for_function("document.querySelector('#metaBody .meta-price .meta-cost')")
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
-    check("phone, metagame: formats as ST PI MO LE VI PA, periods as 30日 90日",
-          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["ST", "PI", "MO", "LE", "VI", "PA"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
+    check("phone, metagame: formats as ST Pi Mo LC VT Pa, periods as 30日 90日",
+          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["ST", "Pi", "Mo", "LC", "VT", "Pa"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
           (page.locator("#metaFormats .seg-btn").all_inner_texts(), page.locator("#metaWindows .seg-btn").all_inner_texts()))
     fr = page.evaluate("[...document.querySelectorAll('#metaFormats .seg-btn')].map(b => Math.round(b.getBoundingClientRect().right))")
     check("phone, metagame: all six formats fit on screen", max(fr) <= 390 - 16, fr)
@@ -2854,6 +2854,14 @@ with sync_playwright() as p:
     row = page.locator("#metaBody .meta-row").first
     pr, sh = row.locator(".meta-price").bounding_box(), row.locator(".meta-share").bounding_box()
     check("phone, metagame: the price sits in its own column left of the share", row.locator(".meta-price").inner_text().startswith("¥") and pr["x"] + pr["width"] <= sh["x"] + 1, (pr, sh))
+    pip = page.evaluate("(() => { const p = document.querySelector('#metaBody .meta-row .meta-name .pips img.pip, #metaBody .meta-row .meta-name .pips .pip'); return p ? p.getBoundingClientRect().width : 0; })()")
+    check("phone, metagame: small mana symbols (11px) next to the deck name", 0 < pip <= 12, pip)
+    page.evaluate("document.querySelector('#metaBody .meta-row .meta-name-text').textContent = '青赤スペルメンタル・リアニメイト'; fitMetaNames()")
+    fit = page.evaluate("(() => { const a = document.querySelector('#metaBody .meta-row .meta-name-text'); return [parseFloat(getComputedStyle(a).fontSize), a.getBoundingClientRect().height, a.scrollWidth <= a.clientWidth + 1]; })()")
+    check("phone, metagame: a long deck name gets a smaller font and stays on one line", fit[0] < 13.5 and fit[0] >= 9 and fit[1] < 20, fit)
+    page.locator("#metaBody .meta-row").first.locator(".meta-toggle").click()
+    check("phone, metagame: …and its full size when the row is opened", page.evaluate("document.querySelector('#metaBody .meta-row .meta-name-text').style.fontSize") == "")
+    page.locator("#metaBody .meta-row").first.locator(".meta-toggle").click()
     page.set_viewport_size({"width": 1280, "height": 900})
     page.evaluate("setLang('en')"); page.wait_for_timeout(200)
     check("metagame in English: the column says Share, not Share of field", "Share of field" not in page.locator(".meta-cols").inner_text() and "Share" in page.locator(".meta-cols").inner_text())
