@@ -610,7 +610,7 @@
   .mover-from { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
   .meta-list { list-style: none; margin: 0; padding: 0; }
   .meta-cols, .meta-row {
-    display: grid; grid-template-columns: 30px 64px minmax(0, 1fr) 176px 176px;
+    display: grid; grid-template-columns: 44px 64px minmax(0, 1fr) 176px 176px;
     grid-template-areas: "rank art deck share wr"; gap: 4px 16px; align-items: center; padding: 12px 16px;
   }
   .meta-art { grid-area: art; display: block; width: 64px; height: 46px; border-radius: 6px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); align-self: center; }
@@ -620,6 +620,12 @@
   .meta-row + .meta-row { border-top: 1px solid var(--line); }
   .meta-rank { grid-area: rank; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
   .meta-deck { grid-area: deck; min-width: 0; }
+  .meta-row .meta-rank { display: flex; align-items: center; justify-content: flex-end; gap: 3px; white-space: nowrap; }
+  .rank-mv { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; font-weight: 700; }
+  .rank-mv.up { color: var(--ok); }
+  .rank-mv.down { color: var(--bad); }
+  .rank-mv.same { color: var(--muted); opacity: 0.7; }
+  .nm-short { display: none; }
   .meta-share { grid-area: share; min-width: 0; }
   .meta-wr { grid-area: wr; min-width: 0; }
   .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
@@ -733,11 +739,15 @@
     .meta-cols > span:nth-child(5) { text-align: right; }
     .meta-cols .wr-axis { display: none; }
     .meta-row {
-      grid-template-columns: 14px 32px minmax(0, 1fr) 52px 46px 14px;
+      grid-template-columns: 25px 32px minmax(0, 1fr) 52px 46px 14px;
       grid-template-areas: "rank art deck share wr tog"; gap: 0 6px; padding: 9px 10px; align-items: center; cursor: pointer;
     }
     .meta-art { width: 32px; height: 24px; border-radius: 4px; }
     .meta-rank { text-align: left; font-size: 12px; }
+    .meta-row .meta-rank { justify-content: flex-start; gap: 1px; }
+    .rank-mv { font-size: 8.5px; }
+    .meta-row:not(.open) .meta-name-text .nm-full { display: none; }
+    .meta-row:not(.open) .meta-name-text .nm-short { display: inline; }
     .meta-name { font-size: 13.5px; gap: 0 5px; line-height: 1.35; }
     .meta-name-text { flex-basis: 100%; }
     .meta-name .pips { order: 2; }
@@ -755,7 +765,7 @@
     .meta-toggle::before { content: "▾"; }
     .meta-row.open .meta-toggle::before { content: "▴"; }
     .meta-row.open {
-      grid-template-columns: 14px 48px minmax(0, 1fr) minmax(0, 1fr) 14px;
+      grid-template-columns: 25px 48px minmax(0, 1fr) minmax(0, 1fr) 14px;
       grid-template-areas: "rank art deck deck tog" ". . share wr ."; gap: 10px 8px; align-items: start; background: var(--hl);
     }
     .meta-row.open .meta-art { width: 48px; height: 36px; align-self: start; }
@@ -775,8 +785,6 @@
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
     .meta-decklink { order: 4; }
     .meta-cost { order: 3; font-size: 10.5px; }
-    div.deck-cost { display: grid; grid-template-columns: 1fr 1fr; }
-    div.deck-cost .dcst-curve { grid-column: 1 / -1; }
     .deck-cost .dcst .wcs .wc { min-width: 26px; }
     .meta-row:not(.open) .meta-wc { display: none; }
     .meta-controls select { flex: 1 1 auto; min-width: 0; padding: 3px 8px; font-size: 12.5px; }
@@ -1184,15 +1192,20 @@
   .dc-yen { font-size: 11px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
   /* a deck's price, Arena wildcards and mana curve */
   .deck-cost { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 2px; }
-  .dcst { display: flex; flex-direction: column; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
-  .dcst-l { font-size: 11.5px; font-weight: 700; color: var(--muted); }
-  .dcst-l small { font-weight: 400; margin-left: 6px; }
-  .dcst-v { font-size: 20px; font-weight: 800; line-height: 1.25; font-variant-numeric: tabular-nums; }
-  .dcst-s { font-size: 11px; color: var(--muted); }
+  .dcst { display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; min-width: 0; }
+  .dcst-l { font-size: 11px; font-weight: 700; color: var(--muted); }
+  .dcst-v { font-size: 15px; font-weight: 800; line-height: 1.3; font-variant-numeric: tabular-nums; }
+  .dcst-s { font-size: 10.5px; color: var(--muted); }
+  .deck-pick-bar { position: sticky; top: var(--stick-top, 0px); z-index: 20; margin: 6px -6px 6px; padding: 7px 6px; background: var(--page); border-bottom: 1px solid var(--line); }
+  .deck-pick-bar .deck-pick { flex-wrap: nowrap; }
+  .deck-pick-bar .deck-pick > span:first-child { flex: none; white-space: nowrap; }
+  .deck-pick-bar .deck-pick select { flex: 1 1 auto; width: 0; max-width: 560px; }
+  .deck-pick-bar .deck-pick-n { white-space: nowrap; }
+  .deck-curve .cv { margin-top: 6px; }
   .wcs { display: inline-flex; gap: 3px; vertical-align: middle; }
   .wc { min-width: 24px; padding: 0 4px; border-radius: 4px; text-align: center; font-size: 11.5px; font-weight: 700; line-height: 1.6; color: #fff; font-variant-numeric: tabular-nums; }
   .wc-m { background: #c8531c; } .wc-r { background: #a8801a; } .wc-u { background: #6f8197; } .wc-c { background: #3b3946; }
-  .dcst .wcs .wc { font-size: 13px; min-width: 30px; line-height: 1.7; }
+  .dcst .wcs .wc { font-size: 12px; min-width: 26px; line-height: 1.6; }
   .cv { display: grid; grid-template-columns: repeat(7, 22px); gap: 4px; height: 64px; align-items: end; }
   .cv-col { display: grid; grid-template-rows: 13px 1fr 13px; height: 100%; justify-items: center; font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .cv-bar { width: 14px; min-height: 0; background: var(--accent); border-radius: 3px 3px 0 0; align-self: end; }
@@ -1906,7 +1919,7 @@ const STR = {
   'meta.cost.title': ['{name}：揃えると約{y}（メイン＋サイドボード、いちばん安い版で。基本土地を除く）', '{name}: about {y} to build (main deck and sideboard, cheapest printings, basic lands left out)'],
   'wc.m': ['神話レア', 'Mythic'], 'wc.r': ['レア', 'Rare'], 'wc.u': ['アンコモン', 'Uncommon'], 'wc.c': ['コモン', 'Common'],
   'wc.title': ['MTG Arenaで作るのに要るワイルドカード：神話レア・レア・アンコモン・コモン（基本土地を除く）', 'Wildcards needed to build it in MTG Arena: mythic, rare, uncommon, common (basic lands left out)'],
-  'deck.cost': ['揃えると', 'To build'],
+  'deck.cost': ['価格', 'Price'],
   'deck.cost.sub': ['いちばん安い版で・サイドボード込み', 'Cheapest printings, sideboard included'],
   'deck.cost.missing': ['価格のないカード{n}枚を除く', 'Leaves out {n} cards with no price'],
   'deck.cost.wait': ['価格を読み込み中…', 'Loading prices…'],
@@ -1925,12 +1938,18 @@ const STR = {
   'meta.help': [
     '<dl><dt>使用率</dt><dd>集計した大会に出たデッキのうち、そのデッキだった割合です。</dd>'
     + '<dt>▲▼</dt><dd>直近4週の使用率と、その前の4週の使用率の差です（pt＝パーセントポイント）。</dd>'
+    + '<dt>順位の横の▲▼—</dt><dd>使用率の順位が、その前の4週より上がった（▲）か、下がった（▼）か、同じ（—）か。</dd>'
     + '<dt>勝率</dt><dd>マッチの勝ち数 ÷（勝ち＋負け）。同じデッキどうしの対戦と引き分けは数えません。試合が30未満のデッキは数字がぶれやすいので「—」にしています。</dd>'
     + '<dt>勝率の線</dt><dd>点が勝率、横の線が「本当の勝率はたぶんこの範囲」（95%信頼区間）、まん中の縦線が50%です。線が短いほど確かな数字です。</dd></dl>',
     '<dl><dt>Share</dt><dd>Of all the decks in the events counted, the part that were this deck.</dd>'
     + '<dt>▲▼</dt><dd>The share over the last 4 weeks minus the share over the 4 weeks before (pt = percentage points).</dd>'
+    + '<dt>▲▼— by the rank</dt><dd>Whether the deck moved up (▲), down (▼) or stayed (—) in share rank against the 4 weeks before.</dd>'
     + '<dt>Win rate</dt><dd>Match wins ÷ (wins + losses). Mirror matches and draws are left out. Decks with fewer than 30 matches show "—" because their numbers swing too much.</dd>'
     + '<dt>The win-rate line</dt><dd>The dot is the win rate, the line is where the true win rate most likely is (95% interval), and the mark in the middle is 50%. A shorter line means a surer number.</dd></dl>'],
+  'meta.rank.up': ['使用率の順位が{n}つ上がりました（直近4週とその前の4週）', 'Up {n} in share rank (last 4 weeks against the 4 before)'],
+  'meta.rank.down': ['使用率の順位が{n}つ下がりました（直近4週とその前の4週）', 'Down {n} in share rank (last 4 weeks against the 4 before)'],
+  'meta.rank.same': ['使用率の順位は変わっていません（直近4週とその前の4週）', 'Same share rank as the 4 weeks before'],
+  'meta.rank.new': ['その前の4週にはいなかったデッキ', 'Not seen in the 4 weeks before'],
   'meta.trend.title': ['{name}：直近{n}週の使用率（週ごと）{from}% → {to}%', '{name}: share of the field over the last {n} weeks, {from}% → {to}%'],
   'meta.trend.delta': ['4週で{d}', '{d} over 4 weeks'],
   'deck.trend': ['使用率の推移', 'Share over time'],
@@ -7044,12 +7063,41 @@ function deckNameJa(name) {
   if (!rest.length) return head;
   return head + (/[単色]$/.test(head) ? '' : '・') + rest.join('・');
 }
+// Short names for phones, the way players say them: guilds as colour pairs (青赤, UR),
+// ミッドレンジ → ミッド, コントロール → コン. Names with no short form stay as they are.
+const DECK_GUILD_SHORT = {
+  azorius: ['白青', 'WU'], dimir: ['青黒', 'UB'], rakdos: ['黒赤', 'BR'], gruul: ['赤緑', 'RG'], selesnya: ['白緑', 'GW'],
+  orzhov: ['白黒', 'WB'], izzet: ['青赤', 'UR'], golgari: ['黒緑', 'BG'], boros: ['白赤', 'RW'], simic: ['青緑', 'GU'],
+};
+const DECK_WORD_SHORT = { midrange: ['ミッド', 'Mid'], control: ['コン', ''], reanimator: ['リアニ', 'Reanimator'] };
+function deckNameShort(name) {
+  const n = String(name || '').trim();
+  if (!n || DECK_NAME_WHOLE[n]) return '';
+  const en = LANG === 'en', words = n.split(/\s+/);
+  const w0 = (words[0] || '').toLowerCase(), w1 = (words[1] || '').toLowerCase();
+  let head = '', i = 0;
+  if (w0 === 'mono' && DECK_MONO_JA[w1]) { head = en ? 'Mono-' + 'WUBRG'['white blue black red green'.split(' ').indexOf(w1)] : DECK_MONO_JA[w1]; i = 2; }
+  else if (DECK_GUILD_SHORT[w0]) { head = DECK_GUILD_SHORT[w0][en ? 1 : 0]; i = 1; }
+  else if (!en && DECK_GUILD_JA[w0]) { head = DECK_GUILD_JA[w0]; i = 1; }
+  const rest = [];
+  for (; i < words.length; i++) {
+    const w = words[i].toLowerCase(), short = DECK_WORD_SHORT[w];
+    if (en) rest.push(short && short[1] ? short[1] : words[i]);
+    else if (short) rest.push(short[0]);
+    else if (DECK_WORD_JA[w]) rest.push(DECK_WORD_JA[w]);
+    else return '';
+  }
+  const out = en ? [head, ...rest].filter(Boolean).join(' ') : head + rest.join('・');
+  return out === n || out === deckNameJa(n) ? '' : out;
+}
 // The name to show (site language) and the other one, small, for searching elsewhere.
 function deckLabel(a) {
   const ja = LANG === 'en' ? '' : deckNameJa(a.name);
   const main = ja || a.name;
+  const short = deckNameShort(a.name);
   return {
     name: a.unclassified ? t('meta.unclassified', { name: main }) : main,
+    short: short ? (a.unclassified ? t('meta.unclassified', { name: short }) : short) : '',
     sub: ja && ja !== a.name ? a.name : '',
   };
 }
@@ -7171,6 +7219,35 @@ function metaTrend(format, a) {
   const n = v.length, last4 = avg(v.slice(n - 4)), prev4 = avg(v.slice(n - 8, n - 4));
   return { weeks: tr.weeks, decks: tr.decks, v, delta: last4 !== null && prev4 !== null ? last4 - prev4 : null };
 }
+// Each deck's share rank over the last four weeks against the four before (from the weekly trend).
+const metaRankCache = new Map();
+function metaRankMoves(format) {
+  const tr = metaState.data && metaState.data.trends && metaState.data.trends[format];
+  if (!tr || !tr.share) return null;
+  if (metaRankCache.get(format) && metaRankCache.get(format).tr === tr) return metaRankCache.get(format).moves;
+  const avg = xs => { const ok = xs.filter(x => typeof x === 'number'); return ok.length ? ok.reduce((p, x) => p + x, 0) / ok.length : 0; };
+  const keys = Object.keys(tr.share);
+  const n = tr.weeks ? tr.weeks.length : Math.max(...keys.map(k => tr.share[k].length));
+  const now = new Map(keys.map(k => [k, avg(tr.share[k].slice(n - 4))]));
+  const before = new Map(keys.map(k => [k, avg(tr.share[k].slice(Math.max(0, n - 8), n - 4))]));
+  const rank = (m, k) => 1 + keys.filter(o => m.get(o) > m.get(k)).length;
+  const moves = new Map();
+  keys.forEach(k => {
+    if (!(now.get(k) > 0)) return;
+    moves.set(k, before.get(k) > 0 ? rank(before, k) - rank(now, k) : 'new');
+  });
+  metaRankCache.set(format, { tr, moves });
+  return moves;
+}
+function rankMoveHtml(a) {
+  if (metaState.sort !== 'share') return '';
+  const moves = metaRankMoves(metaState.format);
+  const m = moves ? moves.get(a.name + (a.unclassified ? '|u' : '')) : undefined;
+  if (m === undefined) return '';
+  if (m === 'new') return `<span class="rank-mv up" title="${esc(t('meta.rank.new'))}">▲</span>`;
+  if (m === 0) return `<span class="rank-mv same" title="${esc(t('meta.rank.same'))}">—</span>`;
+  return `<span class="rank-mv ${m > 0 ? 'up' : 'down'}" title="${esc(t(m > 0 ? 'meta.rank.up' : 'meta.rank.down', { n: Math.abs(m) }))}">${m > 0 ? '▲' : '▼'}</span>`;
+}
 function sparkline(v, w, h) {
   const nums = v.filter(x => typeof x === 'number');
   const max = Math.max(1, ...nums), step = w / Math.max(1, v.length - 1);
@@ -7233,10 +7310,10 @@ function metaRowHtml(a, index, maxShare, costs) {
     : '';
 
   return `<li class="meta-row${a.unclassified ? ' unclassified' : ''}">
-      <div class="meta-rank">${index + 1}</div>
+      <div class="meta-rank">${rankMoveHtml(a)}<span class="rank-n">${index + 1}</span></div>
       ${art}
       <div class="meta-deck">
-        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a>${costLine ? `<span class="meta-cost" title="${esc(t('meta.cost.title', { name, y: yenRound(cost.yen) }))}">${esc(costLine)}</span>` : ''}</div>
+        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${label.short ? `<span class="nm-full">${esc(name)}</span><span class="nm-short" title="${esc(name)}">${esc(label.short)}</span>` : esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a>${costLine ? `<span class="meta-cost" title="${esc(t('meta.cost.title', { name, y: yenRound(cost.yen) }))}">${esc(costLine)}</span>` : ''}</div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
         ${wcs ? `<div class="meta-wc"><span class="meta-wc-l">${esc(t('deck.wc'))}</span>${wcs}</div>` : ''}
@@ -8810,7 +8887,7 @@ function costText(cost) {
 function wildcardsHtml(cost, format) {
   if (!cost || !cost.wc || format !== 'standard') return '';
   return `<span class="wcs" title="${esc(t('wc.title'))}">${['m', 'r', 'u', 'c'].map(k =>
-    `<span class="wc wc-${k}" aria-label="${esc(t('wc.' + k))} ${cost.wc[k]}">${cost.wc[k]}</span>`).join('')}</span>`;
+    `<span class="wc wc-${k}" title="${esc(t('wc.' + k))}" aria-label="${esc(t('wc.' + k))} ${cost.wc[k]}">${cost.wc[k]}</span>`).join('')}</span>`;
 }
 // the metagame tab: every deck's cost for one period and format, worked out once its lists are in
 const metaCosts = new Map();
@@ -8967,16 +9044,19 @@ function deckCostHtml(main, side, format) {
     price = `<span class="dcst-s">${esc(t(deckState.costTried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`;
   }
   const wcs = wildcardsHtml(cost, format);
-  // mana curve: the main deck without lands, by mana value (6 and up together)
+  return `<div class="deck-cost">
+      <div class="dcst"><span class="dcst-l">${esc(t('deck.cost'))}</span>${price}</div>
+      ${wcs ? `<div class="dcst"><span class="dcst-l">${esc(t('deck.wc'))}</span>${wcs}</div>` : ''}
+    </div>`;
+}
+// mana curve: the main deck without lands, by mana value (6 and up together)
+function deckCurveHtml(main) {
   const curve = [0, 0, 0, 0, 0, 0, 0];
   main.forEach(it => { if (it.group !== 'land' && it.count) curve[Math.min(6, Math.max(0, Math.floor(it.cmc)))] += it.count; });
   const nonland = curve.reduce((x, y) => x + y, 0), top = Math.max(1, ...curve);
   const bars = curve.map((n, v) => `<span class="cv-col" title="${esc(t('deck.curve.title', { v: v === 6 ? '6+' : v, n }))}"><span class="cv-n">${n || ''}</span><span class="cv-bar" style="height:${(n / top * 100).toFixed(0)}%"></span><span class="cv-v">${v === 6 ? '6+' : v}</span></span>`).join('');
-  return `<div class="deck-cost">
-      <div class="dcst"><span class="dcst-l">${esc(t('deck.cost'))}</span>${price}</div>
-      ${wcs ? `<div class="dcst"><span class="dcst-l">${esc(t('deck.wc'))}</span>${wcs}<span class="dcst-s">${['m', 'r', 'u', 'c'].map(k => esc(t('wc.' + k))).join('・')}</span></div>` : ''}
-      ${nonland ? `<div class="dcst dcst-curve"><span class="dcst-l">${esc(t('deck.curve'))}<small>${esc(t('deck.curve.sub', { n: nonland }))}</small></span><span class="cv">${bars}</span></div>` : ''}
-    </div>`;
+  if (!nonland) return '';
+  return `<section class="deck-section deck-curve"><h2>${esc(t('deck.curve'))}<span class="dg-n">${esc(t('deck.curve.sub', { n: nonland }))}</span></h2><div class="cv">${bars}</div></section>`;
 }
 
 async function renderDeck(route) {
@@ -9133,12 +9213,14 @@ function drawDeck() {
       </div>
       <p class="deck-meta">${factHtml}</p>
       ${entry ? deckCostHtml(main, side, format) : ''}
-      ${listPicker}
-      ${srcHtml}
     </div>`;
+  // the sample-list picker stays under the top bar while the lists scroll by
+  if (listPicker) html += `<div class="deck-pick-bar">${listPicker}</div>`;
+  html += srcHtml;
   if (!entry) html += `<p class="deck-note">${t('deck.keyonly')}</p>`;
   html += `<section class="deck-section"><h2>${entry ? t('deck.main') : t('deck.keycards')}${entry ? `<span class="dg-n">${tn('deck.cards', total(main))}</span>` : ''}</h2>${deckGroupsHtml(main, view, true)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
+  if (entry) html += deckCurveHtml(main);
   if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(deckRowHtml).join('')}</ul></section>`;
   html += deckTrendHtml(format, a);
   if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
