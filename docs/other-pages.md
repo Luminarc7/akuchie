@@ -58,14 +58,17 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
 - **Phones** (`META_PHONE`, 760px): each deck is one short row; tapping it opens the details
   (`toggleMetaRow()`). Closed rows show a short name the way players say it
   (`deckNameShort()`: guilds as colour pairs from `DECK_GUILD_SHORT`, words from `DECK_WORD_SHORT`,
-  e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name.
+  e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name, and the English name only
+  when open. The format buttons show two-letter codes (`FORMAT_SHORT`: ST, PI, MO, LE, VI, PA), the
+  periods 30日/30d, the ⓘ button no words, and the win-rate column says 勝率/Win%; each button
+  keeps its full name as a tooltip (`.sh-full` / `.sh-short` spans).
 - **Rank arrows.** In the default share order, each rank has ▲ or ▼ beside it when the deck's
   average weekly share over the last 4 weeks rose or fell by `META_RANK_SHARE` (2) points or more
   against the 4 weeks before (`rankMoveHtml()`, `metaRankMoves()`, from `trends`: the same weeks
   as the ▲▼pt numbers). Under 2 points is shown as a grey — (no real change), whatever the rank
   did; the tooltip also says how the rank moved. A deck absent from the earlier 4 weeks gets ▲.
-- **Deck price.** Each row shows about how much the sample list costs in yen
-  (`metaCostsFor()`, cached in `metaCosts`), and the sort menu has 安い順 (cheapest first;
+- **Deck price.** A 価格 column left of the share shows about how much the sample list costs in
+  yen (`metaCostsFor()`, cached in `metaCosts`; a + when some cards have no price), and the sort menu has 安い順 (cheapest first;
   decks without a price go last). In Standard, the Arena wildcards the list needs appear too
   (`wildcardsHtml()`).
 
@@ -85,8 +88,8 @@ to the database's rarity when the price file has none).
 with how often each card is played across all lists) and `meta_lists/<days>-<format>.json`
 (more sample lists, loaded only when asked for). Cards are grouped by type (`DECK_GROUPS`);
 image or list view is saved in `akuchie-deck-view`. The trend chart is `deckTrendHtml()`.
-Under the title, `deckCostHtml()` draws two small boxes: the deck's price (価格) in yen and the
-Arena wildcards (Standard only; the rarity names are tooltips). The sample-list picker sits in a
+Under the title, `deckCostHtml()` draws two one-line boxes: 価格 and the deck's price in yen
+(how it is worked out is a tooltip and the note at the foot of the page) and the Arena wildcards (Standard only; the rarity names are tooltips). The sample-list picker sits in a
 bar that stays under the top bar while the page scrolls (`.deck-pick-bar`). After the main deck
 and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-land cards (0 to
 6+). Each card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list
