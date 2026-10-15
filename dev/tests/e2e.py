@@ -1616,7 +1616,7 @@ with sync_playwright() as p:
     page.wait_for_selector("#deckBody .deck-group")
     check("deck page: own address, title, metagame tab selected", "view=deck" in page.url and "deck=Gruul%20Dragons" in page.url
           and page.title() == "グルール・ドラゴン（スタンダード）のデッキリスト — 悪知恵" and page.get_attribute("#tabMeta", "aria-selected") == "true", (page.url, page.title()))
-    head = page.locator(".deck-head").inner_text()
+    head = page.locator(".deck-head").inner_text() + page.locator(".deck-src").inner_text()
     check("deck page: format, period, share, win rate and where the list comes from", all(x in head for x in ["スタンダード・直近30日", "使用率 25.0%（100デッキ）", "勝率 55.0%（400試合）", "1st Place・Big Open（2026-10-03）"])
           and page.locator(".deck-src a").get_attribute("href") == "https://melee.gg/Decklist/View/abc", head)
     page.wait_for_function("document.querySelectorAll('#deckBody .deck-section')[0].querySelectorAll('.deck-card img').length >= 6")
@@ -2780,6 +2780,47 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
     page.wait_for_function("document.querySelector('.deck-cost') && document.querySelector('.deck-cost').textContent.includes('読み込めませんでした')")
     check("deck page: without the price file it says so, and the mana curve is still there", page.locator(".cv-col").count() == 7)
+
+    # ---- 34. round 22: smaller price box, curve under the list, picker that stays, short names and rank arrows ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost') && !document.querySelector('.deck-cost').textContent.includes('読み込み中')")
+    check("deck page: the price box is called 価格", page.locator(".deck-cost .dcst-l").first.inner_text() == "価格", page.locator(".deck-cost").inner_text())
+    wc = page.evaluate("wildcardsHtml({ wc: { m: 1, r: 2, u: 3, c: 4 } }, 'standard')")
+    wc_text = page.evaluate("(() => { const d = document.createElement('div'); d.innerHTML = wildcardsHtml({ wc: { m: 1, r: 2, u: 3, c: 4 } }, 'standard'); return d.textContent; })()")
+    check("Arena wildcards: only the counts show, the rarity names are tooltips", 'title="神話レア"' in wc and wc_text == "1234", (wc, wc_text))
+    secs = page.evaluate("[...document.querySelectorAll('#deckBody > *')].map(e => e.classList.contains('deck-curve') ? 'curve' : (e.querySelector('h2') ? e.querySelector('h2').firstChild.textContent : e.className))")
+    check("deck page: the mana curve sits after the main deck and sideboard, not in the price boxes",
+          "curve" in secs and secs.index("curve") > secs.index("サイドボード") and page.locator(".deck-cost .cv").count() == 0, secs)
+    check("deck page: the sample-list picker is in a bar that stays at the top", page.evaluate("getComputedStyle(document.querySelector('.deck-pick-bar')).position") == "sticky"
+          and page.locator(".deck-pick-bar #deckListSel").count() == 1)
+    page.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)"); page.wait_for_timeout(200)
+    stuck = page.evaluate("[document.querySelector('.deck-pick-bar').getBoundingClientRect().top, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick-top')) || 0]")
+    check("deck page: …and it is still on screen after scrolling to the bottom", abs(stuck[0] - stuck[1]) <= 2, stuck)
+    page.evaluate("window.scrollTo(0, 0)")
+    shorts = page.evaluate("""['Izzet Spellementals', 'Dimir Midrange', 'Azorius Control', 'Mono Red Burn', 'Living End', 'Selesnya Cats', 'Jeskai Control'].map(deckNameShort)""")
+    check("short deck names: guilds as colour pairs, ミッド, コン; none where nothing gets shorter",
+          shorts == ["青赤スペルメンタル", "青黒ミッド", "白青コン", "", "", "", "ジェスカイコン"], shorts)
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    page.evaluate("""metaState.data.trends = metaState.data.trends || {};
+        metaState.data.trends.standard = { weeks: ['a','b','c','d','e','f','g','h'], decks: [1,1,1,1,1,1,1,1], share: {
+          'Gruul Dragons': [1,1,1,1,10,10,10,10], 'Selesnya Cats': [5,5,5,5,5,5,5,5], 'Mono Red Burn': [8,8,8,8,2,2,2,2], 'Orzhov|u': [0,0,0,0,1,1,1,1] } };
+        metaRankCache.clear(); renderMeta();""")
+    mv = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => [r.querySelector('.meta-name-text').innerText, (r.querySelector('.rank-mv') || {}).className || '', r.querySelector('.rank-n').innerText])")
+    want_mv = {"グルール・ドラゴン": "rank-mv up", "Selesnya Cats": "rank-mv same", "赤単バーン": "rank-mv down", "オルゾフ（未分類）": "rank-mv up"}
+    check("metagame: an arrow by each rank: ▲ moved up, ▼ down, grey — same (4 weeks against the 4 before)",
+          all(want_mv.get(n) == c for n, c, _ in mv) and [r for _, _, r in mv] == ["1", "2", "3", "4"], mv)
+    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("使用率の順位は変わっていません"))
+    page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
+    check("metagame: no rank arrows when sorted by something other than share", page.locator("#metaBody .rank-mv").count() == 0)
+    page.select_option("#metaSort", "share"); page.wait_for_timeout(200)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    row = page.locator("#metaBody .meta-row").first
+    check("phone, metagame: deck names are short (赤緑ドラゴン) while the row is closed", row.locator(".meta-name-text").inner_text() == "赤緑ドラゴン", row.locator(".meta-name-text").inner_text())
+    row.locator(".meta-toggle").click()
+    check("phone, metagame: …and in full when it is opened", row.locator(".meta-name-text").inner_text() == "グルール・ドラゴン", row.locator(".meta-name-text").inner_text())
+    check("phone, metagame: rank arrows fit, no sideways scroll", row.locator(".rank-mv").is_visible() and no_hscroll())
+    page.set_viewport_size({"width": 1280, "height": 900})
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

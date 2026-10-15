@@ -56,7 +56,13 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
   small beside it, here, on deck pages and in the home page's top decks. New archetypes need
   their words added to these lists.
 - **Phones** (`META_PHONE`, 760px): each deck is one short row; tapping it opens the details
-  (`toggleMetaRow()`).
+  (`toggleMetaRow()`). Closed rows show a short name the way players say it
+  (`deckNameShort()`: guilds as colour pairs from `DECK_GUILD_SHORT`, words from `DECK_WORD_SHORT`,
+  e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name.
+- **Rank arrows.** In the default share order, each rank has ▲ (moved up), ▼ (down) or a grey —
+  (same) beside it (`rankMoveHtml()`). The ranks compare the average weekly share of the last 4
+  weeks with the 4 weeks before, from `trends` (`metaRankMoves()`, the same weeks as the ▲▼pt
+  numbers); a deck absent from the earlier 4 weeks gets ▲.
 - **Deck price.** Each row shows about how much the sample list costs in yen
   (`metaCostsFor()`, cached in `metaCosts`), and the sort menu has 安い順 (cheapest first;
   decks without a price go last). In Standard, the Arena wildcards the list needs appear too
@@ -78,9 +84,12 @@ to the database's rarity when the price file has none).
 with how often each card is played across all lists) and `meta_lists/<days>-<format>.json`
 (more sample lists, loaded only when asked for). Cards are grouped by type (`DECK_GROUPS`);
 image or list view is saved in `akuchie-deck-view`. The trend chart is `deckTrendHtml()`.
-Under the title, `deckCostHtml()` draws three boxes: the deck's price in yen, the Arena
-wildcards (Standard only) and the mana curve of the main deck's non-land cards (0 to 6+). Each
-card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list view).
+Under the title, `deckCostHtml()` draws two small boxes: the deck's price (価格) in yen and the
+Arena wildcards (Standard only; the rarity names are tooltips). The sample-list picker sits in a
+bar that stays under the top bar while the page scrolls (`.deck-pick-bar`). After the main deck
+and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-land cards (0 to
+6+). Each card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list
+view).
 
 ## Export (MTG Arena / Magic Online)
 
