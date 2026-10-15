@@ -626,6 +626,9 @@
   .meta-name { display: flex; flex-wrap: wrap; gap: 4px 9px; align-items: center; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15.5px; line-height: 1.4; }
   .meta-name .pip { width: 17px; height: 17px; font-size: 9.5px; }
   .meta-row.unclassified .meta-name-text { color: var(--muted); font-weight: 500; }
+  .meta-name-en { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 11.5px; color: var(--muted); }
+  .deck-title-en { display: block; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 400; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .meta-toggle { display: none; }
   .meta-cards { display: flex; flex-wrap: wrap; gap: 4px 5px; margin-top: 6px; }
   .meta-card {
     font-size: 11.5px; line-height: 1.6; border: 1px solid var(--line); border-radius: 999px; padding: 0 9px;
@@ -651,6 +654,12 @@
     background: var(--accent); box-shadow: 0 0 0 2px var(--surface);
   }
   .wr-axis { display: flex; justify-content: space-between; font-weight: 400; font-size: 10px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .meta-hint { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; margin: 0 0 12px; padding: 8px 14px; border: 1px solid var(--warn-line); background: var(--warn-bg); color: var(--warn); border-radius: 10px; font-size: 12.5px; line-height: 1.6; }
+  .meta-hint-btn { border: 0; background: none; padding: 0; color: inherit; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .meta-help { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; margin: 0 0 12px; font-size: 12.5px; line-height: 1.7; }
+  .meta-help dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; }
+  .meta-help dt { font-weight: 700; }
+  .meta-help dd { margin: 0; color: var(--text-2); }
   .meta-rest { padding: 10px 16px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); }
   .meta-note { font-size: 11.5px; color: var(--muted); line-height: 1.85; margin: 12px 4px 0; }
   .meta-note a { color: var(--accent); }
@@ -718,19 +727,56 @@
     .top-tab { font-size: 13.5px; padding: 9px 4px; }
   }
   @media (max-width: 760px) {
-    .meta-cols { display: none; }
+    /* phones: each deck is one short row (name, share, win rate); a tap opens it */
+    .meta-cols { display: grid; grid-template-columns: minmax(0, 1fr) 52px 46px 14px; grid-template-areas: none; gap: 0 6px; padding: 7px 10px; }
+    .meta-cols > span:nth-child(-n+2) { display: none; }
+    .meta-cols > span:nth-child(4) { text-align: right; }
+    .meta-cols > span:nth-child(5) { text-align: right; }
+    .meta-cols .wr-axis { display: none; }
     .meta-row {
-      grid-template-columns: 22px 48px minmax(0, 1fr) minmax(0, 1fr);
-      grid-template-areas: "rank art deck deck" ". . share wr"; gap: 10px 12px; padding: 12px 12px; align-items: start;
+      grid-template-columns: 14px 32px minmax(0, 1fr) 52px 46px 14px;
+      grid-template-areas: "rank art deck share wr tog"; gap: 0 6px; padding: 9px 10px; align-items: center; cursor: pointer;
     }
-    .meta-art { width: 48px; height: 36px; align-self: start; margin-top: 2px; }
-    .meta-rank { text-align: left; padding-top: 1px; }
-    .meta-lbl { display: block; }
-    .meta-controls { margin-left: 0; }
-    /* phones: the sticky box stays short - the buttons scroll sideways */
-    .meta-bar .meta-head { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 12px; gap: 10px; }
-    .meta-bar .meta-head::-webkit-scrollbar { display: none; }
-    .meta-bar .meta-head .seg, .meta-bar .meta-controls { flex-wrap: nowrap; flex: none; }
+    .meta-art { width: 32px; height: 24px; border-radius: 4px; }
+    .meta-rank { text-align: left; font-size: 12px; }
+    .meta-name { font-size: 13.5px; gap: 0 5px; line-height: 1.35; }
+    .meta-name-text { flex-basis: 100%; }
+    .meta-name .pips { order: 2; }
+    .meta-name .pips img.pip, .meta-name .pip { width: 13px; height: 13px; }
+    .meta-name-en { order: 3; font-size: 10.5px; }
+    .meta-name-en, .meta-name .pips { line-height: 1.3; }
+    .meta-share, .meta-wr { text-align: right; }
+    .meta-num { font-size: 14px; }
+    .meta-trend { justify-content: flex-end; margin-top: 0; min-height: 0; }
+    .meta-row:not(.open) :is(.meta-cards, .meta-sample, .meta-decklink, .bar-track, .wr-track, .meta-sub, .meta-lbl, .spark) { display: none; }
+    .meta-toggle {
+      display: block; grid-area: tog; width: 14px; height: 22px; padding: 0; border: 0; background: none; color: var(--muted);
+      font-size: 12px; line-height: 22px; text-align: center;
+    }
+    .meta-toggle::before { content: "▾"; }
+    .meta-row.open .meta-toggle::before { content: "▴"; }
+    .meta-row.open {
+      grid-template-columns: 14px 48px minmax(0, 1fr) minmax(0, 1fr) 14px;
+      grid-template-areas: "rank art deck deck tog" ". . share wr ."; gap: 10px 8px; align-items: start; background: var(--hl);
+    }
+    .meta-row.open .meta-art { width: 48px; height: 36px; align-self: start; }
+    .meta-row.open .meta-name-text { flex-basis: auto; }
+    .meta-row.open .meta-lbl { display: block; }
+    .meta-row.open :is(.meta-share, .meta-wr) { text-align: left; }
+    .meta-row.open .meta-trend { justify-content: flex-start; margin-top: 4px; }
+    .meta-row.open .meta-name .pips { order: 0; }
+    /* phones: the format buttons scroll sideways on the first line, the period and sort sit on the second */
+    .meta-bar .meta-head { padding: 8px 12px; gap: 6px 10px; }
+    .meta-bar #metaSummary, .meta-bar .result-count { white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .meta-bar #metaSummary::-webkit-scrollbar, .meta-bar .result-count::-webkit-scrollbar { display: none; }
+    .meta-bar .meta-head > .seg { flex: 1 1 0; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .meta-bar .meta-head > .seg::-webkit-scrollbar { display: none; }
+    .meta-bar .meta-head > .seg .seg-btn { flex: none; }
+    .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+    .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
+    .meta-decklink { order: 4; }
+    .meta-controls select { flex: 1 1 auto; min-width: 0; padding: 3px 8px; font-size: 12.5px; }
+    .meta-controls .seg { flex-wrap: nowrap; }
     .meta-bar .meta-title { font-size: 17px; flex: none; }
     .meta-bar .result-count, .meta-bar #metaSummary { padding: 6px 12px; font-size: 12px; }
     .mover-row { grid-template-columns: 20px minmax(0, 1fr) auto; gap: 4px 10px; padding: 9px 12px; }
@@ -1256,7 +1302,9 @@
   html[data-lite="1"] .spinner { animation: spin 0.9s linear infinite !important; animation-duration: 0.9s !important; }
   .lite-load { margin: 4px 0; }
   @media (max-width: 760px) {
-    html[data-lite="1"] .meta-row { grid-template-columns: 22px 0 minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; }
+    html[data-lite="1"] .meta-row { grid-template-columns: 14px 0 minmax(0, 1fr) 52px 46px 14px; column-gap: 6px; }
+    html[data-lite="1"] .meta-cols { grid-template-columns: minmax(0, 1fr) 52px 46px 14px; column-gap: 6px; }
+    html[data-lite="1"] .meta-row.open { grid-template-columns: 14px 0 minmax(0, 1fr) minmax(0, 1fr) 14px; column-gap: 8px; }
   }
 
   /* ========================== round 9: listings and stock ========================== */
@@ -1605,10 +1653,12 @@
           <option value="winrate" data-i18n="meta.sort.wr">勝率順</option>
           <option value="trend" data-i18n="meta.sort.trend">伸びている順</option>
         </select>
+        <button type="button" class="seg-btn meta-help-btn" id="metaHelpBtn" aria-expanded="false" aria-controls="metaHelp" data-i18n="meta.help.btn">ⓘ 見方</button>
       </div>
     </div>
     <p class="result-count" id="metaSummary"></p>
   </div>
+  <div class="meta-help" id="metaHelp" hidden data-i18n-html="meta.help"></div>
   <div id="metaBody"></div>
   <p class="meta-note" id="metaNote"></p>
 </div>
@@ -1823,6 +1873,19 @@ const STR = {
   'recent.clear': ['履歴を消す', 'Clear'],
   'recent.remove': ['「{q}」を履歴から消す', 'Remove “{q}” from recent searches'],
   'meta.sort.trend': ['伸びている順', 'Rising'],
+  'meta.more.aria': ['{name}：カードと数字を表示', '{name}: show cards and numbers'],
+  'meta.hint.few': ['勝率は{min}試合以上のデッキだけ表示しています（{total}デッキ中{n}）。', 'Win rates are shown only for decks with {min}+ matches ({n} of {total}). '],
+  'meta.hint.longer': ['直近{days}日で見ると{n}デッキに増えます', 'The last {days} days have {n}'],
+  'meta.help.btn': ['ⓘ 見方', 'ⓘ How to read'],
+  'meta.help': [
+    '<dl><dt>使用率</dt><dd>集計した大会に出たデッキのうち、そのデッキだった割合です。</dd>'
+    + '<dt>▲▼</dt><dd>直近4週の使用率と、その前の4週の使用率の差です（pt＝パーセントポイント）。</dd>'
+    + '<dt>勝率</dt><dd>マッチの勝ち数 ÷（勝ち＋負け）。同じデッキどうしの対戦と引き分けは数えません。試合が30未満のデッキは数字がぶれやすいので「—」にしています。</dd>'
+    + '<dt>勝率の線</dt><dd>点が勝率、横の線が「本当の勝率はたぶんこの範囲」（95%信頼区間）、まん中の縦線が50%です。線が短いほど確かな数字です。</dd></dl>',
+    '<dl><dt>Share</dt><dd>Of all the decks in the events counted, the part that were this deck.</dd>'
+    + '<dt>▲▼</dt><dd>The share over the last 4 weeks minus the share over the 4 weeks before (pt = percentage points).</dd>'
+    + '<dt>Win rate</dt><dd>Match wins ÷ (wins + losses). Mirror matches and draws are left out. Decks with fewer than 30 matches show "—" because their numbers swing too much.</dd>'
+    + '<dt>The win-rate line</dt><dd>The dot is the win rate, the line is where the true win rate most likely is (95% interval), and the mark in the middle is 50%. A shorter line means a surer number.</dd></dl>'],
   'meta.trend.title': ['{name}：直近{n}週の使用率（週ごと）{from}% → {to}%', '{name}: share of the field over the last {n} weeks, {from}% → {to}%'],
   'meta.trend.delta': ['4週で{d}', '{d} over 4 weeks'],
   'deck.trend': ['使用率の推移', 'Share over time'],
@@ -7050,6 +7113,64 @@ function loadMeta() {
   }
   return metaPromise;
 }
+// ---- deck names in Japanese: the names come in English (MTGOFormatData), so the
+// colour words and the usual deck words are put into the words Japanese players use;
+// a name with any word not in these lists stays English.
+const DECK_NAME_WHOLE = {
+  'Death & Taxes': 'デス＆タックス', 'Show and Tell': '実物提示教育', 'Living End': '死せる生', 'Amulet Titan': 'アミュレット・タイタン',
+  'Hammer Time': 'ハンマータイム', 'Boros Hammer Time': 'ボロス・ハンマータイム', 'Turbo Fog': 'ターボフォグ', 'Ruby Storm': 'ルビー・ストーム',
+  'Oops ! All Spells': 'ウップス・オール・スペル', 'Song Of Creation': '創造の歌', 'Domain Zoo': '版図ズー', 'Aura Bogles': '呪禁オーラ',
+  'Goryo Reanimator': '御霊リアニメイト', 'Necrodominance': 'ネクロドミナンス', 'Other Aggro': 'その他のアグロ', 'Other Combo': 'その他のコンボ',
+};
+const DECK_GUILD_JA = {
+  azorius: 'アゾリウス', dimir: 'ディミーア', rakdos: 'ラクドス', gruul: 'グルール', selesnya: 'セレズニア', orzhov: 'オルゾフ',
+  izzet: 'イゼット', golgari: 'ゴルガリ', boros: 'ボロス', simic: 'シミック', esper: 'エスパー', grixis: 'グリクシス', jund: 'ジャンド',
+  naya: 'ナヤ', bant: 'バント', abzan: 'アブザン', jeskai: 'ジェスカイ', sultai: 'スゥルタイ', mardu: 'マルドゥ', temur: 'ティムール',
+};
+const DECK_MONO_JA = { white: '白単', blue: '青単', black: '黒単', red: '赤単', green: '緑単' };
+const DECK_WORD_JA = {
+  midrange: 'ミッドレンジ', control: 'コントロール', aggro: 'アグロ', combo: 'コンボ', tempo: 'テンポ', ramp: 'ランプ', stompy: 'ストンピィ',
+  burn: 'バーン', prowess: '果敢', landfall: '上陸', lifegain: 'ライフゲイン', reanimator: 'リアニメイト', storm: 'ストーム', affinity: '親和',
+  artifacts: 'アーティファクト', blink: 'ブリンク', energy: 'エネルギー', sacrifice: 'サクリファイス', madness: 'マッドネス', delirium: '昂揚',
+  devotion: '信心', elves: 'エルフ', humans: '人間', faeries: 'フェアリー', ninjas: '忍者', spirits: 'スピリット', dragons: 'ドラゴン',
+  angels: '天使', wizards: 'ウィザード', lizards: 'トカゲ', elementals: 'エレメンタル', elemental: 'エレメンタル', lessons: '講義',
+  flash: 'フラッシュ', graveyard: '墓地', food: '食物', gates: '門', lands: 'ランズ', mill: 'ライブラリーアウト', eldrazi: 'エルドラージ',
+  tron: 'トロン', dredge: '発掘', convoke: '召集', initiative: 'イニシアチブ', scam: 'スキャム', phoenix: 'フェニックス', murktide: '濁浪',
+  doomsday: '最後の審判', oath: 'オース', tinker: 'ティンカー', painter: 'ペインター', shops: 'ショップス', delver: 'デルバー',
+  creativity: '独創力', spellementals: 'スペルメンタル', ponza: 'ポンザ', scapeshift: '風景の変容', yawgmoth: 'ヨーグモス',
+  ephemerate: '儚い存在', company: '中隊', discard: 'ハンデス',
+};
+function deckNameJa(name) {
+  const n = String(name || '').trim();
+  if (!n) return '';
+  if (DECK_NAME_WHOLE[n]) return DECK_NAME_WHOLE[n];
+  const words = n.split(/\s+/);
+  let head = '', i = 0;
+  const w0 = (words[0] || '').toLowerCase(), w1 = (words[1] || '').toLowerCase();
+  if (w0 === 'mono' && DECK_MONO_JA[w1]) { head = DECK_MONO_JA[w1]; i = 2; }
+  else if (w0 === '5' && w1 === 'color') { head = '5色'; i = 2; }
+  else if (DECK_GUILD_JA[w0]) { head = DECK_GUILD_JA[w0]; i = 1; }
+  else if (/^[WUBRG]{2,5}$/.test(words[0])) { head = words[0]; i = 1; }
+  const rest = [];
+  for (; i < words.length; i++) {
+    const ja = DECK_WORD_JA[words[i].toLowerCase()];
+    if (!ja) return '';   // a word we have no Japanese for: keep the English name
+    rest.push(ja);
+  }
+  if (!head) return rest.join('・');
+  if (!rest.length) return head;
+  return head + (/[単色]$/.test(head) ? '' : '・') + rest.join('・');
+}
+// The name to show (site language) and the other one, small, for searching elsewhere.
+function deckLabel(a) {
+  const ja = LANG === 'en' ? '' : deckNameJa(a.name);
+  const main = ja || a.name;
+  return {
+    name: a.unclassified ? t('meta.unclassified', { name: main }) : main,
+    sub: ja && ja !== a.name ? a.name : '',
+  };
+}
+
 function metaUrl() {
   return `?view=meta&format=${encodeURIComponent(metaState.format)}` + (metaState.days ? `&days=${encodeURIComponent(metaState.days)}` : '');
 }
@@ -7186,7 +7307,7 @@ function deltaHtml(delta) {
   return `<span class="trend-d ${up ? 'up' : 'down'}">${up ? '▲' : '▼'}${Math.abs(delta).toFixed(1)}pt</span>`;
 }
 function metaRowHtml(a, index, maxShare) {
-  const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
+  const label = deckLabel(a), name = label.name;
   const deckHref = deckUrl(metaState.format, metaState.days, a);
   const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c))
     .map(c => symbolImg(c, `pip ${c.toLowerCase()}`)).join('');
@@ -7229,7 +7350,7 @@ function metaRowHtml(a, index, maxShare) {
       <div class="meta-rank">${index + 1}</div>
       ${art}
       <div class="meta-deck">
-        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a><a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
+        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
       </div>
@@ -7244,6 +7365,7 @@ function metaRowHtml(a, index, maxShare) {
         <div class="meta-lbl">${t('meta.col.wr')}</div>
         ${wr}
       </div>
+      <button type="button" class="meta-toggle" aria-expanded="false" aria-label="${esc(t('meta.more.aria', { name }))}"></button>
     </li>`;
 }
 
@@ -7319,10 +7441,26 @@ function renderMeta() {
     rows.sort((a, b) => (ok(b) - ok(a)) || (ok(a) ? b.winrate - a.winrate : 0) || (b.decks - a.decks));
   }
   const maxShare = Math.max(0.01, ...rows.map(a => a.share));
+  // most win rates blank (too few matches): say why, and offer the period that has more
+  const hasWr = a => typeof a.winrate === 'number' && ((a.wins || 0) + (a.losses || 0)) >= META_MIN_MATCHES;
+  const shown = rows.filter(hasWr).length;
+  let hint = '';
+  if (shown < rows.length / 2) {
+    let better = null;
+    keys.filter(k => k !== String(metaState.days)).forEach(k => {
+      const b = ((data.windows[k] || {}).formats || {})[metaState.format];
+      const list = b && b.archetypes ? (own ? b.archetypes.filter(a => colorsInScope(String(a.colors || '').split(''))) : b.archetypes) : [];
+      const n = list.filter(hasWr).length;
+      if (n > shown && (!better || n > better.n)) better = { k, n };
+    });
+    hint = `<div class="meta-hint">${esc(t('meta.hint.few', { min: META_MIN_MATCHES, n: fmtNum(shown), total: fmtNum(rows.length) }))}`
+      + (better ? `<button type="button" class="meta-hint-btn" data-meta-days="${esc(better.k)}">${esc(t('meta.hint.longer', { days: better.k, n: fmtNum(better.n) }))} →</button>` : '')
+      + `</div>`;
+  }
   const rest = (block.rest && !own)
     ? `<div class="meta-rest">${t('meta.rest', { k: fmtNum(block.rest.archetypes), share: block.rest.share.toFixed(1), n: fmtNum(block.rest.decks) })}</div>`
     : '';
-  body.innerHTML = `<div class="meta-table">
+  body.innerHTML = `${hint}<div class="meta-table">
       <div class="meta-cols" aria-hidden="true">
         <span></span><span></span><span>${t('meta.col.deck')}</span><span>${t('meta.col.share')}</span>
         <span>${t('meta.col.wr')}<span class="wr-axis"><span>30%</span><span>50%</span><span>70%</span></span></span>
@@ -7347,7 +7485,26 @@ document.getElementById('metaWindows').addEventListener('click', (e) => {
   if (b) metaSelect({ days: b.dataset.days });
 });
 document.getElementById('metaSort').addEventListener('change', (e) => { metaState.sort = e.target.value; renderMeta(); });
+document.getElementById('metaHelpBtn').addEventListener('click', (e) => {
+  const box = document.getElementById('metaHelp');
+  box.hidden = !box.hidden;
+  e.currentTarget.setAttribute('aria-expanded', String(!box.hidden));
+  e.currentTarget.setAttribute('aria-pressed', String(!box.hidden));
+});
+// phones: a deck is one short row; a tap opens it to show the key cards and the bars
+const META_PHONE = window.matchMedia('(max-width: 760px)');
+function toggleMetaRow(row) {
+  const open = row.classList.toggle('open');
+  const b = row.querySelector('.meta-toggle');
+  if (b) b.setAttribute('aria-expanded', String(open));
+}
 document.getElementById('metaBody').addEventListener('click', (e) => {
+  const tog = e.target.closest('.meta-toggle');
+  if (tog) { toggleMetaRow(tog.closest('.meta-row')); return; }
+  const hintBtn = e.target.closest('[data-meta-days]');
+  if (hintBtn) { metaSelect({ days: hintBtn.dataset.metaDays }); return; }
+  const row = e.target.closest('.meta-row');
+  if (row && META_PHONE.matches && !e.target.closest('a')) { toggleMetaRow(row); return; }
   const link = e.target.closest('a.meta-card, a[data-deck]');
   if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
@@ -8615,7 +8772,7 @@ async function renderHomeMeta() {
     const wr = (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) ? t('home.meta.wr', { v: a.winrate.toFixed(1) }) : '';
     const href = deckUrl(homeMetaFormat, winKey, a);
     return `<li class="hb-row hb-deck"><span class="hb-rank">${i + 1}</span>${deckArtHtml(a, href, 'hb-art')}
-        <a class="hb-name" href="${esc(href)}" data-deck="1">${syms}${esc(a.name)}</a>
+        <a class="hb-name" href="${esc(href)}" data-deck="1">${syms}${esc(deckLabel(a).name)}</a>
         <span class="hb-sub">${esc(t('home.meta.share', { v: a.share.toFixed(1) }))}${wr ? `<br>${esc(wr)}` : ''}</span></li>`;
   }).join('')}</ol>`;
   creditDeckArt(body);
@@ -8931,7 +9088,7 @@ function drawDeck() {
   const { a, lists, infos, days, format, choices, pick, chosen } = cur;
   const entry = chosen;
   const view = deckState.view;
-  const name = a.unclassified ? t('meta.unclassified', { name: a.name }) : a.name;
+  const label = deckLabel(a), name = label.name;
   document.title = t('deck.title', { name, fmt: formatName(format) });
   const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c)).map(c => symbolImg(c, 'sym')).join('');
   const played = (a.wins || 0) + (a.losses || 0);
@@ -8965,7 +9122,7 @@ function drawDeck() {
   const total = list => list.reduce((s, it) => s + (it.count || 0), 0);
   let html = `<div class="deck-head">
       <div class="deck-title-row">
-        <h1 class="deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(name)}</span></h1>
+        <h1 class="deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(name)}</span>${label.sub ? `<small class="deck-title-en">${esc(label.sub)}</small>` : ''}</h1>
         <div class="deck-tools">${copy}${toggle}</div>
       </div>
       <p class="deck-meta">${factHtml}</p>
