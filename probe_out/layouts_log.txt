@@ -1,0 +1,28 @@
++ python3 tools/layouts.py
+downloading https://data.scryfall.io/oracle-cards/oracle-cards-20261015090201.jsonl.gz
+38751 oracle cards, 5320 non-normal
+normal	33431	['Nissa, Worldsoul Speaker', 'Mine Security', 'Static Orb', 'Sensory Deprivation', 'Kavaron Consumed', 'Road of Return', 'Storm Crow', 'Snarlfang Vermin']
+art_series	2244	['Brightglass Gearhulk // Brightglass Gearhulk', 'Gigantosaurus // Gigantosaurus', 'Gleeful Demolition // Gleeful Demolition', 'Tatsunari, Toad Rider // Tatsunari, Toad Rider', 'Professor of Zoomancy // Professor of Zoomancy', "Olórin's Searing Light // Olórin's Searing Light", 'Ran and Shaw // Ran and Shaw', 'Black Widow, Deadly Hunter // Black Widow, Deadly Hunter']
+token	926	['Tyranid', 'Demon', 'Pirate', 'Forest Tentacle', 'Elemental', 'Ultramarines Honour Guard', 'Chrome Dome, Cyber-Ninja', 'Dragon Egg']
+transform	394	['Ulvenwald Captive // Ulvenwald Abomination', "Azusa's Many Journeys // Likeness of the Seeker", 'The Emperor of Palamecia // The Lord Master of Hell', 'Westvale Abbey // Ormendahl, Profane Prince', 'Lunarch Veteran // Luminous Phantom', 'Seraph of New Capenna // Seraph of New Phyrexia', 'Extricator of Sin // Extricator of Flesh', "Tales of Master Seshiro // Seshiro's Living Legacy"]
+front_card	291	['Surprise!', 'Thunderbolts', 'Heavily Armored', 'Coalition Corps', 'Gigantic', 'Airbending', 'Fearless', 'Cult of Rakdos']
+planar	207	['The Great Aerie', 'Strixhaven', 'The Windy City', 'Shy Town', 'The Pro Tour', 'Horizon Boughs', 'Murasa', 'Tarnation']
+saga	193	['Long List of the Ents', 'Summon: Primal Odin', 'Nightmares and Daydreams', 'Summon: Magus Sisters', 'Battle at the Helvault', 'Summon: Anima', 'The Sea Devils', 'Summon: Esper Ramuh']
+adventure	167	['Gollum, Silent Slinker // Meager Meal', 'Twice Upon a Time // Unlikely Meeting', 'Faerie Guidemother // Gift of the Fae', 'Beluna Grandsquall // Seek Thrills', 'Tuinvale Treefolk // Oaken Boon', 'Amethyst Dragon // Explosive Crystal', 'Marang River Regent // Coil and Catch', 'The Arkenstone // Seek the Heart']
+split	137	['Heaven // Earth', 'Breaking // Entering', 'Flesh // Blood', 'Assure // Assemble', 'Struggle // Survive', 'Integrity // Intervention', 'Claim // Fame', 'Warrant // Warden']
+vanguard	107	['Titania', 'Sisters of Stone Death Avatar', 'Stuffy Doll Avatar', 'Prodigal Sorcerer Avatar', 'Orcish Squatters Avatar', 'Ashnod', 'Teysa, Orzhov Scion Avatar', 'Starke']
+scheme	102	["What's Yours Is Now Mine", 'Dark Wings Bring Your Downfall', 'My Undead Horde Awakens', 'Nature Demands an Offering', 'Every Dream a Nightmare', 'Dance, Pathetic Marionette', 'I Am Duskmourn', 'Your Will Is Not Your Own']
+modal_dfc	99	['Witch Enchanter // Witch-Blessed Meadow', 'Fell the Profane // Fell Mire', 'Alrund, God of the Cosmos // Hakka, Whispering Raven', 'Extus, Oriq Overlord // Awaken the Blood Avatar', 'Kabira Takedown // Kabira Plateau', 'Clearwater Pathway // Murkwater Pathway', 'Ondu Inversion // Ondu Skyruins', 'Strength of the Harvest // Haven of the Harvest']
+emblem	89	['Koth of the Hammer Emblem', 'Tezzeret, Betrayer of Flesh Emblem', 'Essence of Ajani', 'Ral, Crackling Wit Emblem', 'Elspeth, Knight-Errant Emblem', 'Tyvar Kell Emblem', 'Kiora, the Crashing Wave Emblem', 'Jaya, Fiery Negotiator Emblem']
+double_faced_token	80	["Foraging Squirrels // Foraging Squirrels (cont'd)", 'Angel // Demon', "Demon's Due (minigame) // Demon's Due (cont'd)", 'Soldier // Soldier', "City's Blessing // Elemental", 'Goblin // Soldier', 'Into the Story: Assassin Edition // Story Beats', 'Bounty: Miron Tillas Jr. // Wanted!']
+prepare	72	['Adventurous Eater // Have a Bite', 'Maelstrom Artisan // Rocket Volley', 'Eiganjo Dynastorian // Replenish', 'Striding Shotcaller // Run the Play', 'Fatehold Chronologist // Peer Review', 'Blazing Firesinger // Seething Song', 'Semester Foreseer // Peer Review', 'Goblin Glasswright // Craft with Pride']
+class	35	["Stormchaser's Talent", "Builder's Talent", "Leader's Talent", 'Sorcerer Class', "Fortune Teller's Talent", 'Cool but Rude', 'Ninja Teen', 'Wizard Class']
+mutate	34	['Illuna, Apex of Wishes', 'Sea-Dasher Octopus', 'Vulpikeet', 'Dreamtail Heron', 'Pouncing Shoreshark', 'Huntmaster Liger', 'Gemrazer', 'Lore Drakkis']
+flip	26	['Wicked // Cursed', 'Monster // Virtuous', 'Nezumi Graverobber // Nighteyes the Desecrator', 'Faithful Squire // Kaiso, Memory of Loyalty', 'Jushi Apprentice // Tomoya the Revealer', 'Cunning Bandit // Azamuki, Treachery Incarnate', 'Nezumi Shortfang // Stabwhisker the Odious', 'Akki Lavarunner // Tok-Tok, Volcano Born']
+leveler	26	['Zulaport Enforcer', 'Student of Warfare', 'Coralhelm Commander', 'Transcendent Master', 'Halimar Wavewatch', 'Ikiral Outrider', 'Knight of Cliffhaven', 'Hexdrinker']
+meld	21	['Phyrexian Dragon Engine', "Fang, Fearless l'Cie", 'Hanweir Battlements', 'Ragnarok, Divine Deliverance', 'Midnight Scavengers', 'Mishra, Claimed by Gix', 'Mishra, Lost to Phyrexia', 'Titania, Voice of Gaea']
+prototype	21	['Goring Warplow', 'Combat Thresher', 'Woodcaller Automaton', 'Blitz Automaton', 'Cradle Clearcutter', 'Warzone Duplicator', 'Autonomous Assembler', 'Rust Goliath']
+host	20	['Labro Bot', 'Strutting Turkey', 'Bumbling Pangolin', 'Numbing Jellyfish', 'Ordinary Pony', 'Mer Man', 'Crafty Octopus', 'Gnome-Made Engine']
+case	15	['Case of the Uneaten Feast', 'Case of the Lost Witness', 'Case of the Locked Hothouse', 'Case of the Filched Falcon', 'Case of the Shifting Visage', 'Case of the Gateway Express', 'Case of the Trampled Garden', 'Case of the Stashed Skeleton']
+augment	14	['Humming-', 'Ninja', 'Robo-', 'Half-Squirrel, Half-', 'Zombified', 'Half-Orc, Half-', 'Rhino-', 'Steam-Powered']
+
