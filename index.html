@@ -1139,7 +1139,7 @@
   .deck-title .sym { width: 22px; height: 22px; }
   .deck-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .deck-meta { margin: 0; font-size: 13.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
-  .deck-meta .sep { color: var(--muted); margin: 0 8px; }
+  .deck-meta .sep { color: var(--muted); margin: 0 8px 0 4px; }
   .deck-meta .fact { white-space: nowrap; }
   .deck-src { margin: 0; font-size: 13px; color: var(--muted); }
   /* round 14: sample lists, export, trends, recent searches, install */
@@ -9609,7 +9609,8 @@ function drawDeck() {
   const facts = [`${esc(formatName(format))}・${esc(t('meta.window', { n: days }))}`,
     esc(t('deck.share', { v: a.share.toFixed(1), n: tn('meta.decks', a.decks) }))];
   if (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) facts.push(esc(t('deck.wr', { v: a.winrate.toFixed(1), n: tn('meta.matches', played) })));
-  const factHtml = facts.map(f => `<span class="fact">${f}</span>`).join('<span class="sep">·</span>');
+  // a space before each · so a phone can wrap the line there (English has no other break between the facts)
+  const factHtml = facts.map(f => `<span class="fact">${f}</span>`).join(' <span class="sep">·</span>');
   const src = entry && entry.list;
   const srcText = src ? [src.result, src.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (src.date ? `（${src.date}）` : '') : '';
   const srcHtml = !src ? '' : `<p class="deck-src">${t('deck.src')}${/^https:\/\//.test(src.url || '')

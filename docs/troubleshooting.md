@@ -34,6 +34,7 @@ here.
 |---|---|---|
 | Metagame data is old | The daily **Update metagame data** run failed | GitHub → Warujie → Actions. Run it by hand ("Run workflow"). If MTGODecklistCache changed its format, `build_meta.py` needs a fix |
 | A deck has an odd name or is "unclassified" | MTGOFormatData's archetype rules don't know it yet | Usually fixed upstream within days; nothing to change here |
+| A phone page scrolls sideways in English only | Short pieces with `white-space: nowrap` joined with no space between them: English has no place to break the line (Japanese breaks after （）) | Join them with a space, as the deck page's facts line (`.deck-meta`) does before each ·; check with `dev/tests/e2e.py`'s `no_hscroll()` at 360px in English |
 | Arena/MTGO import complains about a card name | The two clients spell some two-part names differently | `exportName()` |
 
 ## Deploys and hosting

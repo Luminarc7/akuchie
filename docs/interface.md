@@ -52,7 +52,8 @@ Breakpoints are plain `@media (max-width: …)` rules next to the styles they ch
 ones are 820px (phone layout: filter panel becomes a drawer, `setFilterDrawer()`) and 480px.
 On phones the theme and lightweight switches sit in a small menu (`#menuBtn`, `setMenu()`),
 and the Japanese shop list shows `JP_DIR_PHONE` shops before "load more". Always look at a
-change at 390px wide as well as 1280px.
+change at 390px wide as well as 1280px, and in English too: English words are longer and only
+break at spaces, so a line that wraps fine in Japanese can push the page sideways.
 
 ## Settings saved in the browser
 

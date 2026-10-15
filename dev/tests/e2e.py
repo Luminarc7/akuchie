@@ -2921,6 +2921,18 @@ with sync_playwright() as p:
     search("白")
     check("the note says what a color word did: 「白」で白のカードに絞り込みました。", "「白」で白のカードに絞り込みました。" in page.locator("#matchNote").inner_text(), page.locator("#matchNote").inner_text())
 
+    # ---- 38. phones: the English deck page's facts line wraps instead of widening the page ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    page.set_viewport_size({"width": 360, "height": 800})
+    page.evaluate("setLang('en', true)")
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost .dcst-v')"); page.wait_for_timeout(200)
+    check("phone, English deck page: '… match wins (… matches)' wraps at the ·, no sideways scroll",
+          "match wins" in page.locator(".deck-meta").inner_text() and no_hscroll(), (page.locator(".deck-meta").inner_text(), page.evaluate("document.documentElement.scrollWidth")))
+    page.evaluate("setLang('ja', true)")
+    PRICE_SITE["dir"] = None
+    page.set_viewport_size({"width": 1280, "height": 900})
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 
