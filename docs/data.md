@@ -96,7 +96,8 @@ If the metagame stops updating, look at the **Update metagame data** runs in Git
 ## warujie-prices files the site reads
 
 All from `https://warujie.github.io/warujie-prices/` (`PRICE_DATA_URL`). The exact formats are
-documented in the warujie-prices repository (`docs/data-formats.md`); in short:
+documented in the warujie-prices repository
+([docs/data-formats.md](https://github.com/warujie/warujie-prices/blob/main/docs/data-formats.md)); in short:
 
 | Path | Read by | What |
 |---|---|---|
