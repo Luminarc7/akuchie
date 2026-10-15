@@ -57,6 +57,20 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
   their words added to these lists.
 - **Phones** (`META_PHONE`, 760px): each deck is one short row; tapping it opens the details
   (`toggleMetaRow()`).
+- **Deck price.** Each row shows about how much the sample list costs in yen
+  (`metaCostsFor()`, cached in `metaCosts`), and the sort menu has 安い順 (cheapest first;
+  decks without a price go last). In Standard, the Arena wildcards the list needs appear too
+  (`wildcardsHtml()`).
+
+### How a deck's price is worked out
+
+`deckCost()` adds up, for every card in the main deck and sideboard, the cheapest paper
+printing's price (`cheap.json.gz` from warujie-prices, `loadCheapest()`, matched by
+`cheapRow()`): the lower of USD × the dollar rate and EUR × the euro rate (`cardYen()`).
+Basic lands count as free (`isBasicLand()`). Totals are rounded (`yenRound()`) and shown as
+「約¥…」; when some cards have no price, `costText()` says 「〜」 and the deck page says how many
+are missing. Wildcards count each card at its lowest Arena rarity (`RARITY_LETTER`, falling back
+to the database's rarity when the price file has none).
 
 ## Deck pages
 
@@ -64,6 +78,9 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
 with how often each card is played across all lists) and `meta_lists/<days>-<format>.json`
 (more sample lists, loaded only when asked for). Cards are grouped by type (`DECK_GROUPS`);
 image or list view is saved in `akuchie-deck-view`. The trend chart is `deckTrendHtml()`.
+Under the title, `deckCostHtml()` draws three boxes: the deck's price in yen, the Arena
+wildcards (Standard only) and the mana curve of the main deck's non-land cards (0 to 6+). Each
+card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list view).
 
 ## Export (MTG Arena / Magic Online)
 
