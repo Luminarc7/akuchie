@@ -33,6 +33,22 @@ Colours are CSS variables at the top of `<style>`: `--page`, `--surface`, `--tex
 once for dark and once for light. **Use the variables in new CSS**, never fixed colours, so both
 themes work.
 
+## Sizes that should match
+
+- **Mana symbols** (Scryfall's images, from `symbolImg()` and `renderPips()`) come in a few sizes
+  only: `--sym-s` (16px) beside list text and deck names (search text rows, similar cards,
+  combos, deck lists, the metagame table, the home page's top decks), `--sym-l` (20px) beside a
+  page title (the card page's mana cost, a deck page's title), and 1em inside card text
+  (`.sym`). The one exception is the metagame on phones, where closed rows use 11px (the owner's
+  choice). The colour and mana value buttons of the filters use one image size per place
+  (sidebar 24px, panel 28px). Use the variables instead of new pixel sizes.
+- **Buttons side by side share one height:** the results toolbar (詳しい条件, 画像/テキスト, sort
+  menu: 34px, 36px on phones), a deck page's 書き出す and 画像/リスト (34px), and the metagame
+  header's buttons and sort menu (30px, 28px on phones). These rules are the "round 10" block at
+  the end of `<style>`.
+- **Metagame rows read along one line:** rank, deck name, price, share and win rate sit on the
+  row's first line (the rows are top-aligned), with the colours, deltas and details below.
+
 ## Lightweight mode (軽量)
 
 For slow phones and connections: `<html data-lite="1">`, saved as `akuchie-lite`. In this mode:
