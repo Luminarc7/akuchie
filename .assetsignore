@@ -10,4 +10,5 @@ _headers
 tools
 .gitignore
 dev
+docs
 CLAUDE.md

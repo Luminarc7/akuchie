@@ -1,0 +1,22 @@
+# Checks that the developer guide (docs/) still matches the code: every function, constant,
+# element id, file and index.html section the docs name must still exist (dev/check_docs.py).
+# A red check means a doc mentions something that was renamed or removed; update the doc.
+# The docs also mention warujie-prices, so that repository is checked out next to this one.
+name: Docs match the code
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with: { path: Warujie }
+      - uses: actions/checkout@v6
+        with: { repository: warujie/warujie-prices, path: warujie-prices }
+      - run: python3 Warujie/dev/check_docs.py

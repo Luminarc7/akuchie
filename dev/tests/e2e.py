@@ -899,7 +899,7 @@ with sync_playwright() as p:
     check("metagame: back from the card returns to the metagame tab", "view=meta" in page.url and page.locator("#metaView").is_visible(), page.url)
     # Japanese
     page.click("#langBtn")
-    page.wait_for_function("document.querySelector('#metaFormats .seg-btn').textContent === 'スタンダード'")
+    page.wait_for_function("document.querySelector('#metaFormats .seg-btn .sh-full').textContent === 'スタンダード'")
     r0 = page.locator("#metaBody .meta-row").nth(0).inner_text()
     check("metagame in Japanese: labels and Japanese card names", all(x in r0 for x in ["Gruul Dragons", "100デッキ", "400試合", "シヴ山のドラゴン", "稲妻", "ラノワールのエルフ", "サンプルリスト"])
           and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["直近30日", "直近90日"] and "未分類" in page.locator("#metaBody").inner_text()
@@ -1473,16 +1473,16 @@ with sync_playwright() as p:
     check("home: rows keep their height with the pictures", all(h <= 60 for h in rh), rh)
     if SHOTS: page.locator("#homeMeta").screenshot(path="home_meta_icons.png")
     check("home: top decks with format tabs", page.locator("#homeMetaTabs .seg-btn").all_inner_texts() == ["スタンダード", "パイオニア", "モダン", "レガシー"]
-          and page.locator("#homeMetaBody .hb-name").all_inner_texts()[:2] == ["Gruul Dragons", "Selesnya Cats"], page.locator("#homeMetaBody").inner_text())
+          and page.locator("#homeMetaBody .hb-name").all_inner_texts()[:2] == ["グルール・ドラゴン", "Selesnya Cats"], page.locator("#homeMetaBody").inner_text())
     page.locator("#homeMetaTabs .seg-btn[data-format=legacy]").click()
-    page.wait_for_function("document.querySelector('#homeMetaBody .hb-name') && document.querySelector('#homeMetaBody .hb-name').textContent === 'Izzet Delver'")
+    page.wait_for_function("document.querySelector('#homeMetaBody .hb-name') && document.querySelector('#homeMetaBody .hb-name').textContent === 'イゼット・デルバー'")
     check("home: switching the deck tab", page.get_attribute("#homeMetaTabs .seg-btn[data-format=legacy]", "aria-pressed") == "true" and page.locator("#homeMetaBody .hb-row").count() == 5)
     page.locator("#homeMetaTabs .seg-btn[data-format=pioneer]").click()
     page.wait_for_function("!document.querySelector('#homeMetaBody .hb-row')")
     check("home: a format without data says so", "まだありません" in page.locator("#homeMetaBody").inner_text())
     page.locator("#homeMetaTabs .seg-btn[data-format=legacy]").click(); page.wait_for_selector("#homeMetaBody .hb-row")
     page.click("#homeMetaMore"); page.wait_for_selector("#metaBody .meta-row")
-    check("home: 'open metagame' goes to the chosen format", "format=legacy" in page.url and page.locator("#metaBody .meta-name-text").first.inner_text() == "Izzet Delver", page.url)
+    check("home: 'open metagame' goes to the chosen format", "format=legacy" in page.url and page.locator("#metaBody .meta-name-text").first.inner_text() == "イゼット・デルバー", page.url)
     page.go_back(); page.wait_for_selector("#homeMoversBody .hb-row")
     page.locator("#homeMoversBody .hb-name").first.click(); page.wait_for_selector("#cardView .cp-name")
     check("home: a mover opens its card", "card=qp-en" in page.url)
@@ -1615,8 +1615,8 @@ with sync_playwright() as p:
     first.locator("a.meta-name-text").click()
     page.wait_for_selector("#deckBody .deck-group")
     check("deck page: own address, title, metagame tab selected", "view=deck" in page.url and "deck=Gruul%20Dragons" in page.url
-          and page.title() == "Gruul Dragons（スタンダード）のデッキリスト — 悪知恵" and page.get_attribute("#tabMeta", "aria-selected") == "true", (page.url, page.title()))
-    head = page.locator(".deck-head").inner_text()
+          and page.title() == "グルール・ドラゴン（スタンダード）のデッキリスト — 悪知恵" and page.get_attribute("#tabMeta", "aria-selected") == "true", (page.url, page.title()))
+    head = page.locator(".deck-head").inner_text() + page.locator(".deck-src").inner_text()
     check("deck page: format, period, share, win rate and where the list comes from", all(x in head for x in ["スタンダード・直近30日", "使用率 25.0%（100デッキ）", "勝率 55.0%（400試合）", "1st Place・Big Open（2026-10-03）"])
           and page.locator(".deck-src a").get_attribute("href") == "https://melee.gg/Decklist/View/abc", head)
     page.wait_for_function("document.querySelectorAll('#deckBody .deck-section')[0].querySelectorAll('.deck-card img').length >= 6")
@@ -1671,7 +1671,7 @@ with sync_playwright() as p:
     page.click("#deckBack"); page.wait_for_selector("#metaBody .meta-row")
     check("deck page: back to the metagame tab", "view=meta" in page.url)
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Orzhov&u=1"); page.wait_for_selector("#deckBody .deck-group")
-    check("deck page: unclassified decks too", page.title().startswith("Orzhov（未分類）") and "使用率 5.0%" in page.locator(".deck-head").inner_text())
+    check("deck page: unclassified decks too", page.title().startswith("オルゾフ（未分類）") and "使用率 5.0%" in page.locator(".deck-head").inner_text())
     page.goto(SITE + "?view=deck&format=standard&deck=Nope"); page.wait_for_selector("#deckBody .status-line .serif")
     check("deck page: an unknown deck says so", "このデッキは見つかりませんでした" in page.locator("#deckBody").inner_text() and page.locator("#deckBody .status-line a").get_attribute("href").startswith("?view=meta&format=standard"))
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
@@ -2485,7 +2485,7 @@ with sync_playwright() as p:
     check("metagame: a falling deck shows ▼", rows.nth(2).locator(".trend-d.down").inner_text() == "▼2.5pt", rows.nth(2).locator(".meta-trend").inner_html())
     page.select_option("#metaSort", "trend"); page.wait_for_timeout(200)
     order = page.locator("#metaBody .meta-row .meta-name-text").all_inner_texts()
-    check("metagame: 'rising' puts the fastest-growing deck first", order[:2] == ["Selesnya Cats", "Gruul Dragons"] and order[-1] == "Mono Red Burn", order)
+    check("metagame: 'rising' puts the fastest-growing deck first", order[:2] == ["Selesnya Cats", "グルール・ドラゴン"] and order[-1] == "赤単バーン", order)
     page.select_option("#metaSort", "share"); page.wait_for_timeout(100)
     if SHOTS: page.locator("#metaBody").screenshot(path="meta_trends.png")
     # the deck page: trend chart, sample lists, export
@@ -2639,6 +2639,200 @@ with sync_playwright() as p:
     page.wait_for_function("location.search.includes('card=bolt-ja-m10')"); page.wait_for_selector(".cp-img-note"); page.wait_for_timeout(400)
     check("back to Japanese: buttons still there, the note names Japanese", page.locator("#printSlot .print-lang").count() == 3
           and "日本語版の画像" in page.locator(".cp-img-note").inner_text(), page.locator("#printSlot").inner_html()[:200])
+
+    # ---- 32. round 20: metagame tab - Japanese deck names, short rows on phones, notes ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    names = page.evaluate("""['Dimir Midrange', 'Mono Red Burn', 'Mono Green Landfall', '5 Color Creativity', 'WUBR Midrange', 'Selesnya Cats', 'Living End', 'Boros', 'Izzet Spellementals'].map(deckNameJa)""")
+    check("deck names in Japanese: guild + deck word, mono colours, whole names; unknown words keep the English",
+          names == ["ディミーア・ミッドレンジ", "赤単バーン", "緑単上陸", "5色独創力", "WUBR・ミッドレンジ", "", "死せる生", "ボロス", "イゼット・スペルメンタル"], names)
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    shown = page.locator("#metaBody .meta-name-text").all_inner_texts()
+    check("metagame: deck names in Japanese, English kept where there is no Japanese", shown == ["グルール・ドラゴン", "Selesnya Cats", "赤単バーン", "オルゾフ（未分類）"], shown)
+    rows = page.locator("#metaBody .meta-row")
+    check("metagame: the English name sits small next to the Japanese one", rows.nth(0).locator(".meta-name-en").inner_text() == "Gruul Dragons"
+          and rows.nth(1).locator(".meta-name-en").count() == 0)
+    check("metagame: no note when most decks have a win rate", page.locator("#metaBody .meta-hint").count() == 0)
+    page.locator("#metaFormats .seg-btn[data-format=modern]").click(); page.wait_for_selector("#metaBody .meta-row")
+    hint = page.locator("#metaBody .meta-hint")
+    check("metagame: few win rates -> a note says why (no other period has more, so no button)", hint.count() == 1 and "30試合以上" in hint.inner_text()
+          and "1デッキ中0" in hint.inner_text() and hint.locator("button").count() == 0, hint.inner_text() if hint.count() else None)
+    page.locator("#metaFormats .seg-btn[data-format=standard]").click(); page.wait_for_selector("#metaBody .meta-row")
+    page.evaluate("metaState.data.windows['30'].formats.standard.archetypes.forEach(a => { a.wins = 5; a.losses = 5; }); renderMeta()")
+    btn = page.locator("#metaBody .meta-hint .meta-hint-btn")
+    check("metagame: …and offers the period with more win rates", btn.count() == 1 and btn.inner_text() == "直近90日で見ると2デッキに増えます →", btn.inner_text() if btn.count() else None)
+    btn.click(); page.wait_for_timeout(200)
+    check("metagame: the note's button switches to that period", "days=90" in page.url and page.get_attribute("#metaWindows .seg-btn[data-days='90']", "aria-pressed") == "true"
+          and page.locator("#metaBody .meta-hint").count() == 0, page.url)
+    check("metagame: the 見方 box starts closed", page.locator("#metaHelp").is_hidden())
+    page.click("#metaHelpBtn")
+    check("metagame: 見方 explains share, ▲▼, win rate and its line", page.locator("#metaHelp").is_visible() and "信頼区間" in page.locator("#metaHelp").inner_text()
+          and "4週" in page.locator("#metaHelp").inner_text() and page.get_attribute("#metaHelpBtn", "aria-expanded") == "true")
+    page.click("#metaHelpBtn")
+    check("metagame: …and closes again", page.locator("#metaHelp").is_hidden())
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row"); page.wait_for_timeout(200)
+    hs = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => Math.round(r.getBoundingClientRect().height))")
+    check("phone, metagame: each deck is one short row", all(h <= 72 for h in hs), hs)
+    first = page.locator("#metaBody .meta-row").first
+    check("phone, metagame: key cards and bars stay hidden until the row is opened", first.locator(".meta-cards").is_hidden() and first.locator(".bar-track").is_hidden()
+          and first.locator(".meta-num").first.is_visible())
+    first.locator(".meta-toggle").click()
+    check("phone, metagame: the ▾ opens the row (cards, bars, sample)", "open" in first.get_attribute("class") and first.locator(".meta-cards").is_visible()
+          and first.locator(".bar-track").is_visible() and first.locator(".meta-toggle").get_attribute("aria-expanded") == "true")
+    page.locator("#metaBody .meta-row").nth(2).locator(".meta-share").click()
+    check("phone, metagame: tapping anywhere on a row opens it too", "open" in page.locator("#metaBody .meta-row").nth(2).get_attribute("class"))
+    first.locator(".meta-toggle").click()
+    check("phone, metagame: …and closes it", "open" not in first.get_attribute("class"))
+    ctl = page.evaluate("['#metaWindows', '#metaSort', '#metaHelpBtn'].map(s => Math.round(document.querySelector(s).getBoundingClientRect().right))")
+    check("phone, metagame: period, sort and 見方 are all on screen", all(r <= 390 for r in ctl) and no_hscroll(), ctl)
+    first.locator("a.meta-name-text").click(); page.wait_for_selector("#deckBody .deck-group")
+    check("phone, metagame: the deck name still opens the deck page; its title is Japanese with the English below",
+          "view=deck" in page.url and page.locator(".deck-title").inner_text().startswith("グルール・ドラゴン") and page.locator(".deck-title-en").inner_text() == "Gruul Dragons")
+    page.set_viewport_size({"width": 1280, "height": 900})
+
+    # ---- 33. round 21: what a deck costs - cheapest printings in yen, 安い順, Arena wildcards, mana curve ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    DECKS_MODE["mode"] = "fixture"
+    cheap = json.loads(gzip.decompress(open(os.path.join(PRICES_FULL, "cheap.json.gz"), "rb").read()))["cards"]
+    check("prices: the builder writes each card's cheapest price and Arena rarity", "Lightning Bolt" in cheap and len(cheap["Lightning Bolt"]) == 3, cheap.get("Lightning Bolt"))
+    gruul = [(4, "Shivan Dragon"), (4, "Llanowar Elves"), (4, "Ragavan, Nimble Pilferer"), (4, "Lightning Bolt"), (4, "Urza's Saga"), (2, "Unknown New Card"),
+             (3, "Qasali Pridemage"), (2, "Deathrite Shaman")]   # Mountain and Forest are basic lands: left out
+    want, gone = 0.0, 0
+    for n, name in gruul:
+        r = cheap.get(name)
+        opts = [x for x in ((r[0] / 100 * 150.0) if r and r[0] else None, (r[1] / 100 * 160.0) if r and r[1] else None) if x is not None]
+        if opts: want += n * min(opts)
+        else: gone += n
+    want_txt = "約¥{:,}".format(int(round(round(want) / 100) * 100)) + ("〜" if gone else "")
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost .dcst-v')")
+    cost_box = page.locator(".deck-cost").inner_text()
+    check("deck page: what the deck costs, from each card's cheapest printing (US or EU, whichever is lower), basic lands left out",
+          page.locator(".deck-cost .dcst-v").inner_text() == want_txt and ("価格のないカード{}枚を除く".format(gone) in cost_box if gone else "除く" not in cost_box), (cost_box, want_txt, gone))
+    check("deck page: the mana curve counts the main deck without lands (12 one-drops, 4 at 6+)",
+          page.locator(".cv-col").count() == 7 and page.locator(".cv-col").nth(1).locator(".cv-n").inner_text() == "12"
+          and page.locator(".cv-col").nth(6).locator(".cv-n").inner_text() == "4", page.locator(".cv").inner_text())
+    check("deck page: no Arena wildcards when some cards aren't on Arena", page.locator(".deck-cost .wcs").count() == 0)
+    check("deck page: how the price is worked out is explained", "いちばん安い版" in page.locator(".deck-cost-note").inner_text())
+    page.click("[data-dview=list]"); page.wait_for_selector("#deckBody .dl-row")
+    bolt = page.locator("#deckBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first
+    r = cheap["Lightning Bolt"]; one = min(x for x in ((r[0] / 100 * 150.0) if r[0] else None, (r[1] / 100 * 160.0) if r[1] else None) if x is not None)
+    check("deck page, list: each card's price for one copy", bolt.locator(".dl-yen").inner_text() == "¥{:,}".format(max(1, int(round(one))) if one < 1000 else int(round(one / 10) * 10)),
+          (bolt.locator(".dl-yen").inner_text(), one))
+    page.click("[data-dview=image]")
+    wc = page.evaluate("""(() => { const keep = cheapStore.data; cheapStore.data = { cards: { 'Lightning Bolt': [100, 100, 'c'], 'Shivan Dragon': [200, null, 'r'], 'Llanowar Elves': [50, 50, 'u'], 'Ragavan, Nimble Pilferer': [5000, 4000, 'm'] } };
+        const c = deckCost([[4, 'Lightning Bolt'], [3, 'Shivan Dragon'], [4, 'Llanowar Elves'], [1, 'Ragavan, Nimble Pilferer'], [20, 'Mountain']]);
+        const html = wildcardsHtml(c, 'standard'), modern = wildcardsHtml(c, 'modern'); cheapStore.data = keep; return [c.wc, c.yen, html.includes('wc-m'), modern]; })()""")
+    check("deck cost: Arena wildcards by rarity, basic lands left out; only for Standard",
+          wc[0] == {"m": 1, "r": 3, "u": 4, "c": 4} and wc[1] == round(4 * 150 + 3 * 300 + 4 * 75 + 1 * min(7500, 6400)) and wc[2] and wc[3] == "", wc)
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    page.wait_for_function("document.querySelector('#metaBody .meta-cost')")
+    gr = page.locator("#metaBody .meta-row").first
+    col_txt = want_txt.replace("約", "").replace("〜", "+")
+    check("metagame: each deck with a priced list shows its price in the price column (Orzhov's only card has no price: none shown)",
+          gr.locator(".meta-price .meta-cost").inner_text() == col_txt and page.locator("#metaBody .meta-cost").count() == 1,
+          (gr.locator(".meta-cost").inner_text(), col_txt))
+    page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
+    order = page.locator("#metaBody .meta-name-text").all_inner_texts()
+    costs_shown = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => { const c = r.querySelector('.meta-cost'); return c ? Number(c.textContent.replace(/[^0-9]/g, '')) : null; })")
+    priced = [c for c in costs_shown if c is not None]
+    check("metagame: 安い順 puts the cheapest deck first, decks without a price last (in share order)",
+          priced == sorted(priced) and costs_shown[:len(priced)] == priced and order[len(priced):] == ["Selesnya Cats", "赤単バーン", "オルゾフ（未分類）"], (order, costs_shown))
+    page.select_option("#metaSort", "share")
+    PRICE_SITE["dir"] = None
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost') && document.querySelector('.deck-cost').textContent.includes('読み込めませんでした')")
+    check("deck page: without the price file it says so, and the mana curve is still there", page.locator(".cv-col").count() == 7)
+
+    # ---- 34. round 22: smaller price box, curve under the list, picker that stays, short names and rank arrows ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost') && !document.querySelector('.deck-cost').textContent.includes('読み込み中')")
+    check("deck page: the price box is called 価格", page.locator(".deck-cost .dcst-l").first.inner_text() == "価格", page.locator(".deck-cost").inner_text())
+    wc = page.evaluate("wildcardsHtml({ wc: { m: 1, r: 2, u: 3, c: 4 } }, 'standard')")
+    wc_text = page.evaluate("(() => { const d = document.createElement('div'); d.innerHTML = wildcardsHtml({ wc: { m: 1, r: 2, u: 3, c: 4 } }, 'standard'); return d.textContent; })()")
+    check("Arena wildcards: only the counts show, the rarity names are tooltips", 'title="神話レア"' in wc and wc_text == "1234", (wc, wc_text))
+    secs = page.evaluate("[...document.querySelectorAll('#deckBody > *')].map(e => e.classList.contains('deck-curve') ? 'curve' : (e.querySelector('h2') ? e.querySelector('h2').firstChild.textContent : e.className))")
+    check("deck page: the mana curve sits after the main deck and sideboard, not in the price boxes",
+          "curve" in secs and secs.index("curve") > secs.index("サイドボード") and page.locator(".deck-cost .cv").count() == 0, secs)
+    check("deck page: the sample-list picker is in a bar that stays at the top", page.evaluate("getComputedStyle(document.querySelector('.deck-pick-bar')).position") == "sticky"
+          and page.locator(".deck-pick-bar #deckListSel").count() == 1)
+    page.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)"); page.wait_for_timeout(200)
+    stuck = page.evaluate("[document.querySelector('.deck-pick-bar').getBoundingClientRect().top, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--stick-top')) || 0]")
+    check("deck page: …and it is still on screen after scrolling to the bottom", abs(stuck[0] - stuck[1]) <= 2, stuck)
+    page.evaluate("window.scrollTo(0, 0)")
+    shorts = page.evaluate("""['Izzet Spellementals', 'Dimir Midrange', 'Azorius Control', 'Mono Red Burn', 'Living End', 'Selesnya Cats', 'Jeskai Control'].map(deckNameShort)""")
+    check("short deck names: guilds as colour pairs, ミッド, コン; none where nothing gets shorter",
+          shorts == ["青赤スペルメンタル", "青黒ミッド", "白青コン", "", "", "", "ジェスカイコン"], shorts)
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    page.evaluate("""metaState.data.trends = metaState.data.trends || {};
+        metaState.data.trends.standard = { weeks: ['a','b','c','d','e','f','g','h'], decks: [1,1,1,1,1,1,1,1], share: {
+          'Gruul Dragons': [1,1,1,1,10,10,10,10], 'Selesnya Cats': [5,5,5,5,5,5,5,5], 'Mono Red Burn': [8,8,8,8,2,2,2,2], 'Orzhov|u': [0,0,0,0,1,1,1,1] } };
+        metaRankCache.clear(); renderMeta();
+        metaRankCache.clear(); renderMeta();""")
+    mv = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => [r.querySelector('.meta-name-text').innerText, (r.querySelector('.rank-mv') || {}).className || '', r.querySelector('.rank-n').innerText])")
+    want_mv = {"グルール・ドラゴン": "rank-mv up", "Selesnya Cats": "rank-mv same", "赤単バーン": "rank-mv down", "オルゾフ（未分類）": "rank-mv up"}
+    check("metagame: an arrow by each rank: ▲ moved up, ▼ down, grey — same (4 weeks against the 4 before)",
+          all(want_mv.get(n) == c for n, c, _ in mv) and [r for _, _, r in mv] == ["1", "2", "3", "4"], mv)
+    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("使用率の変化は2pt未満"))
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,7,7,7,7.5]; metaRankCache.clear(); renderMeta();")
+    sel = page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv")
+    check("metagame: same rank but the share rose 2pt or more -> ▲", sel.get_attribute("class") == "rank-mv up" and "2.1pt上がりました" in sel.get_attribute("title"), sel.get_attribute("title"))
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,2.9,2.9,2.9,2.9]; metaRankCache.clear(); renderMeta();")
+    check("metagame: same rank but the share fell 2pt or more -> ▼", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv down")
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,6.9,6.9,6.9,6.9]; metaRankCache.clear(); renderMeta();")
+    check("metagame: same rank and under 2pt -> grey —", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv same")
+    page.evaluate("""Object.assign(metaState.data.trends.standard.share, { 'Selesnya Cats': [5,5,5,5,4,4,4,4], 'Mono Red Burn': [4.5,4.5,4.5,4.5,4.6,4.6,4.6,4.6] });
+        metaRankCache.clear(); renderMeta();""")
+    mv = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => [r.querySelector('.meta-name-text').innerText, (r.querySelector('.rank-mv') || {}).className || ''])")
+    check("metagame: a rank that moved with under 2pt of share change still gets the grey —",
+          dict(mv).get("Selesnya Cats") == "rank-mv same" and dict(mv).get("赤単バーン") == "rank-mv same", mv)
+    page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
+    check("metagame: no rank arrows when sorted by something other than share", page.locator("#metaBody .rank-mv").count() == 0)
+    page.select_option("#metaSort", "share"); page.wait_for_timeout(200)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    row = page.locator("#metaBody .meta-row").first
+    check("phone, metagame: deck names are short (赤緑ドラゴン) while the row is closed", row.locator(".meta-name-text").inner_text() == "赤緑ドラゴン", row.locator(".meta-name-text").inner_text())
+    row.locator(".meta-toggle").click()
+    check("phone, metagame: …and in full when it is opened", row.locator(".meta-name-text").inner_text() == "グルール・ドラゴン", row.locator(".meta-name-text").inner_text())
+    check("phone, metagame: rank arrows fit, no sideways scroll", row.locator(".rank-mv").is_visible() and no_hscroll())
+    page.set_viewport_size({"width": 1280, "height": 900})
+
+    # ---- 35. round 23: phone metagame - short format and period buttons, ⓘ only, price column; one-line price box ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    check("metagame: desktop keeps the full format names and a 価格 column", page.locator("#metaFormats .seg-btn").first.inner_text() == "スタンダード"
+          and "価格" in page.locator(".meta-cols").inner_text() and page.locator("#metaHelpBtn").inner_text() == "ⓘ 見方")
+    page.wait_for_function("document.querySelector('#metaBody .meta-price .meta-cost')")
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    check("phone, metagame: formats as ST Pi Mo LC VT Pa, periods as 30日 90日",
+          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["ST", "Pi", "Mo", "LC", "VT", "Pa"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
+          (page.locator("#metaFormats .seg-btn").all_inner_texts(), page.locator("#metaWindows .seg-btn").all_inner_texts()))
+    fr = page.evaluate("[...document.querySelectorAll('#metaFormats .seg-btn')].map(b => Math.round(b.getBoundingClientRect().right))")
+    check("phone, metagame: all six formats fit on screen", max(fr) <= 390 - 16, fr)
+    check("phone, metagame: the help button is just ⓘ (named for screen readers) and fits", page.locator("#metaHelpBtn").inner_text() == "ⓘ"
+          and page.get_attribute("#metaHelpBtn", "aria-label") == "見方" and page.evaluate("document.querySelector('#metaHelpBtn').getBoundingClientRect().right") <= 390 - 16)
+    row = page.locator("#metaBody .meta-row").first
+    pr, sh = row.locator(".meta-price").bounding_box(), row.locator(".meta-share").bounding_box()
+    check("phone, metagame: the price sits in its own column left of the share", row.locator(".meta-price").inner_text().startswith("¥") and pr["x"] + pr["width"] <= sh["x"] + 1, (pr, sh))
+    pip = page.evaluate("(() => { const p = document.querySelector('#metaBody .meta-row .meta-name .pips img.pip, #metaBody .meta-row .meta-name .pips .pip'); return p ? p.getBoundingClientRect().width : 0; })()")
+    check("phone, metagame: small mana symbols (11px) next to the deck name", 0 < pip <= 12, pip)
+    page.evaluate("document.querySelector('#metaBody .meta-row .meta-name-text').textContent = '青赤スペルメンタル・リアニメイト'; fitMetaNames()")
+    fit = page.evaluate("(() => { const a = document.querySelector('#metaBody .meta-row .meta-name-text'); return [parseFloat(getComputedStyle(a).fontSize), a.getBoundingClientRect().height, a.scrollWidth <= a.clientWidth + 1]; })()")
+    check("phone, metagame: a long deck name gets a smaller font and stays on one line", fit[0] < 13.5 and fit[0] >= 9 and fit[1] < 20, fit)
+    page.locator("#metaBody .meta-row").first.locator(".meta-toggle").click()
+    check("phone, metagame: …and its full size when the row is opened", page.evaluate("document.querySelector('#metaBody .meta-row .meta-name-text').style.fontSize") == "")
+    page.locator("#metaBody .meta-row").first.locator(".meta-toggle").click()
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("setLang('en')"); page.wait_for_timeout(200)
+    check("metagame in English: the column says Share, not Share of field", "Share of field" not in page.locator(".meta-cols").inner_text() and "Share" in page.locator(".meta-cols").inner_text())
+    page.evaluate("setLang('ja')"); page.wait_for_timeout(200)
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost .dcst-v')")
+    box = page.locator(".deck-cost .dcst-price")
+    PRICE_SITE["dir"] = None
+    check("deck page: the price box is just 価格 and the value, on one line", "いちばん安い版" not in box.inner_text() and box.bounding_box()["height"] < 48, (box.inner_text(), box.bounding_box()))
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

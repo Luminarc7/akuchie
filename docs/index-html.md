@@ -1,0 +1,120 @@
+# A map of `index.html`
+
+`index.html` is the whole site: about 9,000 lines in three blocks.
+
+| Block | What's in it |
+|---|---|
+| `<head>` | Title and share tags (the Worker rewrites some for bots), the manifest, and a tiny script that applies the saved theme, language and lightweight mode before the page paints and loads the web fonts. |
+| `<style>` | All the CSS. Colours are CSS variables, set for dark (`:root, html[data-theme="dark"]`) and light (`html[data-theme="light"]`). Lightweight mode is `html[data-lite="1"]`; the current view is `html[data-view="…"]`; the home page is `html[data-home="true"]`. |
+| `<body>` HTML | The fixed skeleton: top bar, home hero, filter panel, results, and one empty `<div>` per view. Most content is drawn later by JavaScript. |
+| `<script>` | All the behaviour, in sections marked `// ---- name ----`. |
+
+To see the sections with their current line numbers:
+
+```sh
+grep -n -- '// ---- ' index.html
+```
+
+**Never edit `preview.html`.** After changing `index.html`, run `python3 tools/make_preview.py`.
+
+## The HTML skeleton
+
+| Element | What it is |
+|---|---|
+| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), language (`#langBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
+| `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
+| `#cardView` | The card page; everything is drawn into `#cardViewCard` |
+| `#setsView` | Set list (`#setListPanel`) and one set (`#setDetailPanel`, `#setGrid`) |
+| `#metaView` | The metagame tab |
+| `#pricesView` | Price movers |
+| `#deckView` | One deck's page |
+| `footer.attribution` | Data credits, the Fan Content Policy notice, the privacy promise and the contact link (address assembled in JS) |
+
+`showView(name)` shows one of the six views and marks the right tab.
+
+## The script, section by section
+
+In file order. "Key names" are what to search for.
+
+### Set-up and shared helpers (top of the script, no marker)
+
+- `EDITIONS`, `SITE`: the retired colour editions; only `main` is left. Keep as is.
+- `STR`, `t(key, vars)`, `tn(key, n)`: every interface string, Japanese then English. See
+  [interface.md](interface.md).
+- `state`: the search state (query, colour/type/keyword/mana/role sets, rarity, format, sort,
+  image/text view, `showLoose`). The filter panel, the URL and the search all read it.
+- `CREATURE_TYPE_JA`, `JA_KEYWORDS`, `JA_PHRASES`, `JA_OPERATORS`: Japanese words for creature
+  types, keyword abilities, rules phrases and search operators.
+
+### Card database and Scryfall
+
+| Section marker | What it does | Key names |
+|---|---|---|
+| `Japanese card-name index (legacy, name-only)` | An old fallback when only `ja_names.json` exists. Not deployed any more. | `JA_NAME_INDEX` |
+| `local card database (full, effect-text-searchable)` | Downloads and unpacks the database, turns each row into an object with pre-computed lowercase fields, starts the idle-time warm-up. | `LOCAL_FIELDS`, `LOCAL_DB`, `dbState`, `dbReady`, `DB_FILES`, `fetchMaybeGzipJson()`, `loadCardDatabase()`, `indexRow()`, `warmSearch()`, `rowToCard()` |
+| `Scryfall's /cards/collection…` | Fetches full card objects (pictures, prices) for result rows, 100 ms apart, retries 429/5xx, caches for the visit. Also local matching helpers (types, names, operators, filter panel). | `scryfallTurn()`, `scryfallCollection()`, `CARD_CACHE`, `hydrateRows()`, `nameKey()`, `textMatches()`, `localOperatorMatch()`, `localFilterRow()`, `relevance()`, `jaSortKey()`, `popularity()`, `ROLE_LIST` |
+| `the tag file` | Loads the role tags and EDHREC ranks from warujie-prices `t/tags.json.gz`. | `loadTags()`, `TAG_MAP`, `tagsState`, `rowTags()`, `rowRoles()`, `hasRole()` |
+| `reading role words in the search box` | Finds role words (除去, ドロー, ramp…) and the colour/type/mana words that narrow them. | `findRoleWords()`, `splitRoleToken()`, `derivedFromWord()`, `roleSuggestions()` |
+| `spelling…` | Corrects English words that appear on no card to the nearest one that does. | `enVocab()`, `editDistance()`, `correctEnglish()` |
+| `reading the search box` | Splits the query into operators, quoted phrases, English words and Japanese words. | `parseSearch()`, `KNOWN_OPS`, `prepareEnglish()`, `englishTier()` |
+| `Japanese` | Japanese text matching: splitting at particles, verb endings. Then the search plan, scoring and ordering. | `normJaSearch()`, `prepareJapanese()`, `japaneseWordTier()`, `buildSearchPlan()`, `evaluateRow()`, `searchRows()`, `resultTilesHtml()`, `renderMatchNote()` |
+| `format legality` | Format names and legality badges; the Scryfall-fallback translation of Japanese queries. | `FORMAT_JA`, `FORMAT_ORDER`, `MAIN_FORMATS`, `legalityHtml()`, `translateQuery()`, `FORMAT_CODE`, `buildSearchQuery()` |
+
+### Drawing cards and prices
+
+| Section marker | What it does | Key names |
+|---|---|---|
+| `card pictures` | Picks the best picture (real scan over placeholder), `srcset` sizes. | `imageQuality()`, `pictureTag()`, `getImage()` |
+| `exchange rate (USD -> JPY)` | Dollar and euro to yen. | `fetchJpyRate()`, `USD_JPY`, `EUR_JPY`, `yenFor()`, `updateYenLabels()` |
+| `prices` | Prices on result tiles; a Japanese printing borrows its English twin's prices. | `effectivePrices()`, `ensureEnglishPrices()`, `tilePriceHtml()` |
+| `Japanese names/text for any printing` | Japanese name, type and text for any printing, from the database when Scryfall lacks them; type-line translation. | `displayNameJa()`, `displayTypeJa()`, `displayTextJa()`, `translateTypeLine()`, `cardNames()` |
+| `treatments…` | Labels such as borderless, showcase, extended art; the result tile. | `treatmentLabels()`, `cardTileHtml()` |
+| `prices on the card page, by market` | JP / US / EU price tabs. | `PRICE_MARKETS`, `priceMarket`, `marketRows()`, `priceHtml()` |
+| `listings and stock…` | Per-shop offers by condition, cheapest first. | `OFFER_SHOPS`, `offerRows()`, `offersHtml()` |
+| `the notes under the card page…` | Where each price comes from; loads today's shop prices (`q/`). Also the card page itself. | `priceNotesHtml()`, `loadCardQuotes()`, `renderCardViewContent()` |
+| `links to shops and deck sites` | Search links to shops (Japanese, US, EU) and deck sites; all printings. | `JP_SHOP_SEARCH`, `JP_MAIN_SHOPS`, `jpShopDirHtml()`, `hareruyaUrl()`, `tcgplayerUrl()`, `loadPrintings()` |
+| `the printing's language: 日本語版 / 英語版` | The language buttons under the picture. | `PRINT_LANGS`, `SET_TWIN`, `printingLanguages()`, `fillPrintToggle()`, `showView()`, `navigateToCard()` |
+
+### Pages, navigation and controls
+
+| Section marker | What it does | Key names |
+|---|---|---|
+| `set browser` | Set list and one set's cards. | `SET_GROUPS`, `SET_NAME_JA`, `loadSets()`, `openSet()` |
+| `routing` | URL ↔ view. Also runs a search (`runSearch()`), random cards, the live-API fallback. | `routeFromUrl()`, `applyRoute()`, `goTo()`, `resetToHome()`, `runLocalSearch()`, `runSearch()` |
+| `controls` | Sort, view and load-more controls. | `refreshResults()`, `hasActiveFilters()` |
+| `filters` | The filter panel: colours, types, creature types, keywords, mana value, roles, rarity, format; similar cards (`似:`). | `syncFilterUI()`, `removeFilter()`, `wireCheckList()`, `similarTo()`, `showSimilar()`, `showCardRoles()` |
+| `recent searches…` | Last 10 searches in `localStorage`; the "no results" help. | `RECENT_KEY`, `rememberSearch()`, `renderZeroHelp()`, `fuzzyNameRows()` |
+| `themes: light / dark` | Theme and lightweight mode switches; the contact link. | `setTheme()`, `setLite()` |
+| `search tips…` | The tips table under the results. | `GUIDE_ROWS`, `GUIDE_EXAMPLES`, `renderGuide()` |
+| `links between the main site and the colour editions` | Retired; harmless. | `renderSiteSwitch()` |
+| `language switch` | Redraws everything in the other language. | `applyStaticText()`, `setLang()` |
+| `metagame tab` | Deck shares, win rates, trends. | `META_FORMATS`, `META_MIN_MATCHES`, `loadMeta()`, `renderMeta()` |
+| `deck names in Japanese…` | Turns English archetype names into the words Japanese players use (ディミーア・ミッドレンジ, 赤単バーン); a name with an unknown word stays English. | `DECK_NAME_WHOLE`, `DECK_GUILD_JA`, `DECK_MONO_JA`, `DECK_WORD_JA`, `deckNameJa()`, `deckLabel()`, `toggleMetaRow()` |
+| `price history & price movers` | The price chart on card pages and the movers tab. | `PRICE_DATA_URL`, `loadPriceShard()`, `priceHistoryId()`, `drawPriceHistory()`, `loadMovers()`, `renderMovers()` |
+| `combo suggestions` | Commander combos (only where `data-combos="1"`, i.e. the preview page). | `COMBOS_ON`, `loadCardCombos()`, `comboText()` |
+| `highlighting…` | Marks the matching part of a card's text. | `highlightRanges()`, `highlightHtml()` |
+| `the text view of the results` | Text-only results. | `textRowHtml()`, `renderViewToggle()` |
+| `more results load by themselves…` | Auto "load more" near the bottom. | `watchAutoLoad()` |
+| `card name suggestions under the search boxes…` | The dropdown of card names while typing. | `nameSuggestions()`, `attachNameSuggest()` |
+| `install as an app` | Registers `sw.js` (HTTPS only, not on github.io) and shows the install button in the footer. | `installButton`, `#appInstall` |
+| `home: …` (three sections) | Example searches, three effects to try, price risers and top decks on the home page. | `HERO_TRY`, `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHomeMovers()`, `renderHomeMeta()` |
+| `phones: the theme buttons sit in a small menu` | The phone menu. | `setMenu()` |
+| `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
+| `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
+| `the search box follows the page` | Sticky search bar when the hero scrolls away. | `updateHeroOut()`, `updateBarTop()` |
+| `start…` | Applies the saved language, then the route. | |
+
+## Conventions in the code
+
+- **Plain JavaScript**, no modules, no build. Everything is global inside one `<script>`.
+- **Comments say why**, in plain English. Keep them that way.
+- **Two languages always.** Any new visible text goes in `STR` with Japanese and English.
+- **HTML is built with template strings.** Always pass outside text through `esc()`.
+- **Race guards.** Searches carry a token (`searchToken`); a slow answer for an old search is
+  dropped. Card-page loaders check `shownCard === card` before drawing.
+- **Memo caches** (`PLAN_MEMO`, `TERM_MEMO`, `STEM_MEMO`…) keep typing fast. When a memo key
+  depends on something new (for example the language), add it to the key.
+- **Row fields starting with `_`** (`_nameEn`, `_typeEn`, `_colors`, `_cmc`…) are computed in
+  `indexRow()` when the database loads; they are not in the file.
+- **Browser storage keys start with `akuchie-`** for historical reasons. Don't rename them
+  (visitors would lose their settings).

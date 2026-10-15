@@ -35,3 +35,11 @@ the app install, link previews, English mode, lightweight mode (軽量), phones.
 punctuation-free names, role words) against the real `ja_cards.json.gz` and role tags.
 `harness.py` opens the site with the real database and stubs Scryfall; use it for
 screenshots or to reproduce a bug with real data.
+
+## `check_docs.py` — the docs still match the code
+
+    python3 dev/check_docs.py
+
+Every function, constant, element id, file, saved setting and `index.html` section named in
+`docs/` must still exist; it lists the ones that don't. Run it before every push, together with
+the two suites above.
