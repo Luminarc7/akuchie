@@ -1939,17 +1939,19 @@ const STR = {
   'meta.help': [
     '<dl><dt>使用率</dt><dd>集計した大会に出たデッキのうち、そのデッキだった割合です。</dd>'
     + '<dt>▲▼</dt><dd>直近4週の使用率と、その前の4週の使用率の差です（pt＝パーセントポイント）。</dd>'
-    + '<dt>順位の横の▲▼—</dt><dd>使用率の順位が、その前の4週より上がった（▲）か、下がった（▼）か、同じ（—）か。</dd>'
+    + '<dt>順位の横の▲▼—</dt><dd>その前の4週とくらべて、使用率の順位が上がった（▲）か下がった（▼）か。順位が同じでも使用率が2pt以上動いたら▲▼、どちらでもなければ —。</dd>'
     + '<dt>勝率</dt><dd>マッチの勝ち数 ÷（勝ち＋負け）。同じデッキどうしの対戦と引き分けは数えません。試合が30未満のデッキは数字がぶれやすいので「—」にしています。</dd>'
     + '<dt>勝率の線</dt><dd>点が勝率、横の線が「本当の勝率はたぶんこの範囲」（95%信頼区間）、まん中の縦線が50%です。線が短いほど確かな数字です。</dd></dl>',
     '<dl><dt>Share</dt><dd>Of all the decks in the events counted, the part that were this deck.</dd>'
     + '<dt>▲▼</dt><dd>The share over the last 4 weeks minus the share over the 4 weeks before (pt = percentage points).</dd>'
-    + '<dt>▲▼— by the rank</dt><dd>Whether the deck moved up (▲), down (▼) or stayed (—) in share rank against the 4 weeks before.</dd>'
+    + '<dt>▲▼— by the rank</dt><dd>Against the 4 weeks before: ▲ or ▼ when the deck moved up or down in share rank, or kept its rank while its share moved 2 points or more; otherwise —.</dd>'
     + '<dt>Win rate</dt><dd>Match wins ÷ (wins + losses). Mirror matches and draws are left out. Decks with fewer than 30 matches show "—" because their numbers swing too much.</dd>'
     + '<dt>The win-rate line</dt><dd>The dot is the win rate, the line is where the true win rate most likely is (95% interval), and the mark in the middle is 50%. A shorter line means a surer number.</dd></dl>'],
   'meta.rank.up': ['使用率の順位が{n}つ上がりました（直近4週とその前の4週）', 'Up {n} in share rank (last 4 weeks against the 4 before)'],
   'meta.rank.down': ['使用率の順位が{n}つ下がりました（直近4週とその前の4週）', 'Down {n} in share rank (last 4 weeks against the 4 before)'],
-  'meta.rank.same': ['使用率の順位は変わっていません（直近4週とその前の4週）', 'Same share rank as the 4 weeks before'],
+  'meta.rank.same': ['順位は同じで、使用率の変化も2pt未満です（直近4週とその前の4週）', 'Same share rank, and the share moved less than 2 points (last 4 weeks against the 4 before)'],
+  'meta.rank.share.up': ['順位は同じですが、使用率が{d}pt上がりました（直近4週とその前の4週）', 'Same rank, but the share rose {d} points (last 4 weeks against the 4 before)'],
+  'meta.rank.share.down': ['順位は同じですが、使用率が{d}pt下がりました（直近4週とその前の4週）', 'Same rank, but the share fell {d} points (last 4 weeks against the 4 before)'],
   'meta.rank.new': ['その前の4週にはいなかったデッキ', 'Not seen in the 4 weeks before'],
   'meta.trend.title': ['{name}：直近{n}週の使用率（週ごと）{from}% → {to}%', '{name}: share of the field over the last {n} weeks, {from}% → {to}%'],
   'meta.trend.delta': ['4週で{d}', '{d} over 4 weeks'],
@@ -7222,6 +7224,7 @@ function metaTrend(format, a) {
 }
 // Each deck's share rank over the last four weeks against the four before (from the weekly trend).
 const metaRankCache = new Map();
+const META_RANK_SHARE = 2;   // percentage points of share that count as a move even at the same rank
 function metaRankMoves(format) {
   const tr = metaState.data && metaState.data.trends && metaState.data.trends[format];
   if (!tr || !tr.share) return null;
@@ -7235,7 +7238,7 @@ function metaRankMoves(format) {
   const moves = new Map();
   keys.forEach(k => {
     if (!(now.get(k) > 0)) return;
-    moves.set(k, before.get(k) > 0 ? rank(before, k) - rank(now, k) : 'new');
+    moves.set(k, before.get(k) > 0 ? { rank: rank(before, k) - rank(now, k), delta: now.get(k) - before.get(k) } : 'new');
   });
   metaRankCache.set(format, { tr, moves });
   return moves;
@@ -7246,8 +7249,12 @@ function rankMoveHtml(a) {
   const m = moves ? moves.get(a.name + (a.unclassified ? '|u' : '')) : undefined;
   if (m === undefined) return '';
   if (m === 'new') return `<span class="rank-mv up" title="${esc(t('meta.rank.new'))}">▲</span>`;
-  if (m === 0) return `<span class="rank-mv same" title="${esc(t('meta.rank.same'))}">—</span>`;
-  return `<span class="rank-mv ${m > 0 ? 'up' : 'down'}" title="${esc(t(m > 0 ? 'meta.rank.up' : 'meta.rank.down', { n: Math.abs(m) }))}">${m > 0 ? '▲' : '▼'}</span>`;
+  // the rank moved, or it held while the share moved by META_RANK_SHARE points or more
+  const d = Math.round(m.delta * 10) / 10;
+  if (m.rank === 0 && Math.abs(d) < META_RANK_SHARE) return `<span class="rank-mv same" title="${esc(t('meta.rank.same'))}">—</span>`;
+  const up = m.rank ? m.rank > 0 : d > 0;
+  const title = m.rank ? t(up ? 'meta.rank.up' : 'meta.rank.down', { n: Math.abs(m.rank) }) : t(up ? 'meta.rank.share.up' : 'meta.rank.share.down', { d: Math.abs(d).toFixed(1) });
+  return `<span class="rank-mv ${up ? 'up' : 'down'}" title="${esc(title)}">${up ? '▲' : '▼'}</span>`;
 }
 function sparkline(v, w, h) {
   const nums = v.filter(x => typeof x === 'number');
