@@ -11,7 +11,7 @@ jobs:
         with: { python-version: '3.12' }
       - run: |
           mkdir -p probe_out
-          bash tools/fetch_terms.sh > probe_out/terms_log.txt 2>&1 || true
-          cat probe_out/terms_log.txt
+          ( set -x; python3 tools/layouts.py ) > probe_out/layouts_log.txt 2>&1 || true
+          cat probe_out/layouts_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
