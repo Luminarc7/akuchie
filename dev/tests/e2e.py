@@ -2921,7 +2921,55 @@ with sync_playwright() as p:
     search("白")
     check("the note says what a color word did: 「白」で白のカードに絞り込みました。", "「白」で白のカードに絞り込みました。" in page.locator("#matchNote").inner_text(), page.locator("#matchNote").inner_text())
 
-    # ---- 38. phones: the English deck page's facts line wraps instead of widening the page ----
+    # ---- 38. round 26: even sizes - mana symbols on one scale, buttons in a row the same height, metagame numbers on one line ----
+    def widths(sel): return page.evaluate("s => [...document.querySelectorAll(s)].filter(e => e.offsetParent).map(e => Math.round(e.getBoundingClientRect().width * 10) / 10)", sel)
+    def heights(sel): return page.evaluate("s => [...document.querySelectorAll(s)].filter(e => e.offsetParent).map(e => Math.round(e.getBoundingClientRect().height))", sel)
+    def tops(row_sel, parts):   # the centre of each part's first line, relative to the row
+        return page.evaluate("""([rs, parts]) => { const row = document.querySelector(rs); const r0 = row.getBoundingClientRect().top;
+          return parts.map(p => { const e = row.querySelector(p); if (!e || !e.offsetParent) return null; const rg = document.createRange(); rg.selectNodeContents(e);
+            const r = rg.getClientRects()[0] || e.getBoundingClientRect(); return Math.round(((r.top + r.bottom) / 2 - r0) * 10) / 10; }); }""", [row_sel, parts])
+    PRICE_SITE["dir"] = PRICES_FULL; META_MODE["mode"] = "fixture"; DECKS_MODE["mode"] = "fixture"
+    DB_MODE["variant"] = "roles"
+    home()
+    search("加速の石")   # {3}, and {T}: Add {C}{C} in its text
+    page.click("#viewToggle .view-btn[data-view=text]"); page.wait_for_selector("#cardGrid .text-row")
+    DB_MODE["variant"] = None
+    pw = widths("#cardGrid .tr-meta img.pip")
+    check("sizes: mana costs beside list text are 16px", pw and set(pw) == {16}, pw)
+    sym = page.evaluate("[...document.querySelectorAll('#cardGrid .tr-text img.sym')].map(e => [e.getBoundingClientRect().width, parseFloat(getComputedStyle(e.parentElement).fontSize)])")
+    check("sizes: symbols inside card text are as tall as the text (1em)", sym and all(abs(a - b) < 0.6 for a, b in sym), sym)
+    tb = heights("#filterOpenBtn, #viewToggle, #sortSelect")
+    check("sizes: the results toolbar's buttons and menu are one height (34px)", len(set(tb)) == 1 and tb[0] == 34, tb)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    tb = heights("#filterOpenBtn, #viewToggle, #sortSelect")
+    clipped = page.evaluate("(() => { const s = document.getElementById('sortSelect'); const c = document.createElement('canvas').getContext('2d'); const cs = getComputedStyle(s); c.font = cs.fontSize + ' ' + cs.fontFamily; return c.measureText(s.options[s.selectedIndex].text).width + parseFloat(cs.paddingLeft) + 18 > s.clientWidth; })()")
+    check("sizes, phone: the toolbar is one height (36px) and the sort menu's text fits", len(set(tb)) == 1 and tb[0] == 36 and not clipped, (tb, clipped))
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?card=elf-ja"); page.wait_for_selector("#cardView .cp-cost img.pip")
+    check("sizes: the card page's mana cost is 20px", set(widths(".cp-cost img.pip")) == {20}, widths(".cp-cost img.pip"))
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row .meta-price .meta-cost")
+    check("sizes: deck colours in the metagame table are 16px on wide screens", set(widths("#metaBody .meta-name img.pip")) == {16}, widths("#metaBody .meta-name img.pip"))
+    mh = heights("#metaFormats .seg-btn, #metaWindows .seg-btn, #metaSort, #metaHelpBtn")
+    check("sizes: the metagame header's buttons and sort menu are one height (30px)", set(mh) == {30}, mh)
+    check("metagame: the help button still reads ⓘ 見方", page.locator("#metaHelpBtn").inner_text() == "ⓘ 見方", page.locator("#metaHelpBtn").inner_text())
+    t = tops("#metaBody .meta-row", [".meta-name-text", ".meta-price .meta-cost", ".meta-share .meta-num", ".meta-wr .meta-num"])
+    check("metagame: name, price, share and win rate read along one line", None not in t and max(t) - min(t) <= 2, t)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+    check("phone, metagame: deck colours stay 11px", set(widths("#metaBody .meta-row:not(.open) .meta-name img.pip")) == {11}, widths("#metaBody .meta-name img.pip"))
+    t = tops("#metaBody .meta-row", [".meta-name-text", ".meta-price .meta-cost", ".meta-share .meta-num", ".meta-wr .meta-num", ".meta-rank"])
+    check("phone, metagame: name, price, share, win rate and rank on one line", None not in t and max(t) - min(t) <= 2, t)
+    mh = heights("#metaFormats .seg-btn, #metaWindows .seg-btn, #metaSort, #metaHelpBtn")
+    check("phone, metagame: header buttons and menu one height (28px)", set(mh) == {28}, mh)
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    check("sizes: a deck page's title colours are 20px; 書き出す and 画像/リスト one height",
+          set(widths(".deck-title img.sym")) == {20} and len(set(heights("#deckExport > summary, .deck-tools > .view-toggle"))) == 1,
+          (widths(".deck-title img.sym"), heights("#deckExport > summary, .deck-tools > .view-toggle")))
+    home(); page.wait_for_selector("#homeMetaBody .hb-deck .hb-name img.sym")
+    hs = widths(".hb-deck .hb-name img.sym")
+    check("sizes: the home page's top decks use 16px colours", hs and set(hs) == {16}, hs)
+
+    # ---- 39. phones: the English deck page's facts line wraps instead of widening the page ----
     PRICE_SITE["dir"] = PRICES_FULL
     page.set_viewport_size({"width": 360, "height": 800})
     page.evaluate("setLang('en', true)")
