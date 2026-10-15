@@ -60,7 +60,8 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
   (`deckNameShort()`: guilds as colour pairs from `DECK_GUILD_SHORT`, words from `DECK_WORD_SHORT`,
   e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name, and the English name only
   when open. A closed row keeps its name on one line: `fitMetaNames()` shrinks the font of a long
-  name (down to `META_NAME_MIN` px) after each render, resize and toggle. The format buttons show
+  name (down to `META_NAME_MIN` px) after each render, resize and toggle, and the mana symbols are
+  small (11px) so the name and its colours sit as one centred block. The format buttons show
   two-letter codes (`FORMAT_SHORT`: ST, Pi, Mo, LC, VT, Pa, the owner's choice), the
   periods 30日/30d, the ⓘ button no words, and the win-rate column says 勝率/Win%; each button
   keeps its full name as a tooltip (`.sh-full` / `.sh-short` spans).

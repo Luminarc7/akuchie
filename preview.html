@@ -759,7 +759,10 @@
     .meta-name { font-size: 13.5px; gap: 0 5px; line-height: 1.35; }
     .meta-name-text { flex-basis: 100%; }
     .meta-name .pips { order: 2; }
-    .meta-name .pips img.pip, .meta-name .pip { width: 13px; height: 13px; }
+    /* small mana symbols so the name and its colours sit as one centred block */
+    .meta-row .meta-name .pips img.pip, .meta-row .meta-name .pip { width: 11px; height: 11px; }
+    .meta-row .meta-name .pips { gap: 2px; }
+    .meta-row:not(.open) .meta-name { row-gap: 1px; }
     .meta-name-en { order: 3; font-size: 10.5px; }
     .meta-name-en, .meta-name .pips { line-height: 1.3; }
     .meta-share, .meta-wr { text-align: right; }
