@@ -1,6 +1,9 @@
 Japanese websites to search for magic cards
 eventually will add prices for local stores
 
+**Developers:** start with [`docs/README.md`](docs/README.md), the guide to how the site works and
+where to change things.
+
 ## Test site (staging)
 
 - `main` → **warujie.jp** (live). Every push to `main` goes live.

@@ -42,6 +42,22 @@ It has no sign-up, cookies, analytics or ads. The footer promises that, so keep 
    offer 2–3 options for layout ideas, explain in plain words, and keep backups before anything
    goes live.
 
+## Documentation (keep it true)
+
+`docs/` is the developer guide for human coders: how every part works and where to change it.
+Start at `docs/README.md`. This file keeps the owner's rules and decisions; `docs/` has the
+fuller technical detail.
+
+- **Every commit that changes behaviour, a file, a data format, a URL, a workflow, a schedule or
+  a setting also updates the doc that covers it, in the same commit.** The table "Which doc
+  covers which code" in `docs/README.md` says which. New features get documented; removed ones
+  are removed from the docs; a bug whose cause wasn't obvious gets a line in
+  `docs/troubleshooting.md`.
+- Name code by function, constant or `// ---- section ----` marker, never by line number.
+- Before pushing, run `python3 dev/check_docs.py`: it fails when a name the docs mention no
+  longer exists in the code.
+- When a rule or decision below changes, change it here too.
+
 ## Where things live
 
 | What | Where |
@@ -75,9 +91,10 @@ A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is
 - **`manifest.webmanifest`, `sw.js`, `icons/`, `og.png`** make it installable, give it a
   network-first offline copy (cache `warujie-v2`) and provide the share picture.
   `tools/make_icons.py` centres the icons by ink.
-- **`.assetsignore`** lists what is *not* served: `tools/`, `dev/`, `CLAUDE.md`, workflows,
-  scripts. Anything new that shouldn't be public goes there.
+- **`.assetsignore`** lists what is *not* served: `tools/`, `dev/`, `docs/`, `CLAUDE.md`,
+  workflows, scripts. Anything new that shouldn't be public goes there.
 - **`dev/`** holds the test suites (see `dev/README.md`). **`tools/`** holds the scripts below.
+  **`docs/`** is the developer guide (not published on the site).
 
 ## The card database (`ja_cards.json.gz`)
 
@@ -157,9 +174,11 @@ never shown or searched).
    `git config --add remote.origin.fetch '+refs/heads/staging:refs/remotes/origin/staging'`.
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
+   Update the matching doc in `docs/` (see "Documentation" above).
 3. **Test** with `python3 dev/tests/e2e.py` (about 600 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (93 real-data search checks). Add checks for every new feature or fix. Look at it too:
+   (93 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
+   Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
 5. **Confirm the build:**
