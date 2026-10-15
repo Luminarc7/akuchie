@@ -59,11 +59,11 @@ read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited 
   (`toggleMetaRow()`). Closed rows show a short name the way players say it
   (`deckNameShort()`: guilds as colour pairs from `DECK_GUILD_SHORT`, words from `DECK_WORD_SHORT`,
   e.g. 青黒ミッド, 白青コン, UB Mid); the open row shows the full name.
-- **Rank arrows.** In the default share order, each rank has ▲ (moved up), ▼ (down) or a grey —
-  (same) beside it (`rankMoveHtml()`). The ranks compare the average weekly share of the last 4
-  weeks with the 4 weeks before, from `trends` (`metaRankMoves()`, the same weeks as the ▲▼pt
-  numbers). A deck that kept its rank still gets ▲ or ▼ when its share moved by
-  `META_RANK_SHARE` (2) points or more; a deck absent from the earlier 4 weeks gets ▲.
+- **Rank arrows.** In the default share order, each rank has ▲ or ▼ beside it when the deck's
+  average weekly share over the last 4 weeks rose or fell by `META_RANK_SHARE` (2) points or more
+  against the 4 weeks before (`rankMoveHtml()`, `metaRankMoves()`, from `trends`: the same weeks
+  as the ▲▼pt numbers). Under 2 points is shown as a grey — (no real change), whatever the rank
+  did; the tooltip also says how the rank moved. A deck absent from the earlier 4 weeks gets ▲.
 - **Deck price.** Each row shows about how much the sample list costs in yen
   (`metaCostsFor()`, cached in `metaCosts`), and the sort menu has 安い順 (cheapest first;
   decks without a price go last). In Standard, the Arena wildcards the list needs appear too
