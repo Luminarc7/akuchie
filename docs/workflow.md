@@ -90,6 +90,9 @@ The docs are only useful if they match the code, so they change with it:
 - A bug whose cause wasn't obvious gets a line in [troubleshooting.md](troubleshooting.md).
 - The owner's rules and decisions stay in `CLAUDE.md`; when one changes, change it there.
 - Name things by function, constant or section marker, never by line number.
+- GitHub runs the same checker on every push to `staging` and `main` and on pull requests
+  (`.github/workflows/check-docs.yml`, check "Docs match the code"). A red check means a doc
+  names something that no longer exists: fix the doc.
 - Run `python3 dev/check_docs.py` before pushing. It lists every name in backticks in `docs/`
   that no longer exists in the code (a renamed function, a deleted file), so stale docs show up
   at once. It can't tell whether a description is still right; reread the paragraphs around
