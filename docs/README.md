@@ -62,6 +62,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Change the app icon or name | `icons/`, `manifest.webmanifest`, `tools/make_icons.py` |
 | Change price-mover thresholds | warujie-prices `build_prices.py`: `MIN_PRICE_CENTS`, `MIN_CHANGE_CENTS`, `WINDOWS` |
 | Change the metagame numbers | `build_meta.py` (this repo); the tab itself is "metagame tab" in `index.html` |
+| Translate a deck name into Japanese | `DECK_NAME_WHOLE` (whole names), `DECK_WORD_JA` (words), `DECK_GUILD_JA`, `DECK_MONO_JA` |
 
 ## Which doc covers which code
 

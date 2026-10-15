@@ -89,6 +89,7 @@ In file order. "Key names" are what to search for.
 | `links between the main site and the colour editions` | Retired; harmless. | `renderSiteSwitch()` |
 | `language switch` | Redraws everything in the other language. | `applyStaticText()`, `setLang()` |
 | `metagame tab` | Deck shares, win rates, trends. | `META_FORMATS`, `META_MIN_MATCHES`, `loadMeta()`, `renderMeta()` |
+| `deck names in Japanese…` | Turns English archetype names into the words Japanese players use (ディミーア・ミッドレンジ, 赤単バーン); a name with an unknown word stays English. | `DECK_NAME_WHOLE`, `DECK_GUILD_JA`, `DECK_MONO_JA`, `DECK_WORD_JA`, `deckNameJa()`, `deckLabel()`, `toggleMetaRow()` |
 | `price history & price movers` | The price chart on card pages and the movers tab. | `PRICE_DATA_URL`, `loadPriceShard()`, `priceHistoryId()`, `drawPriceHistory()`, `loadMovers()`, `renderMovers()` |
 | `combo suggestions` | Commander combos (only where `data-combos="1"`, i.e. the preview page). | `COMBOS_ON`, `loadCardCombos()`, `comboText()` |
 | `highlighting…` | Marks the matching part of a card's text. | `highlightRanges()`, `highlightHtml()` |

@@ -44,8 +44,19 @@ Reads `meta.json` from the site itself (`loadMeta()`), which `build_meta.py` reb
 (see [data.md](data.md#metagame-files)). Shows, per format (`META_FORMATS`) and period (30 or
 90 days), each archetype's share of the field, match win rate with its confidence range, the
 weekly trend (sparklines from `trends`) and key cards. A win rate from fewer than
-`META_MIN_MATCHES` matches is hidden as noise. The deck icon is a card's art crop
-(`deckArtHtml()`, credited with `creditDeckArt()`).
+`META_MIN_MATCHES` matches is hidden as noise; when most decks are below it, a note offers the
+period with more matches. The ⓘ button (`#metaHelpBtn`, text in `STR` `meta.help`) explains how to
+read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited with
+`creditDeckArt()`).
+
+- **Deck names in Japanese.** Archetype names arrive in English from MTGOFormatData.
+  `deckNameJa()` translates them: whole names first (`DECK_NAME_WHOLE`), then guild and mono-colour
+  words (`DECK_GUILD_JA`, `DECK_MONO_JA`) and deck words (`DECK_WORD_JA`). A name with any word
+  not in the lists stays English. `deckLabel()` shows the Japanese name with the English one
+  small beside it, here, on deck pages and in the home page's top decks. New archetypes need
+  their words added to these lists.
+- **Phones** (`META_PHONE`, 760px): each deck is one short row; tapping it opens the details
+  (`toggleMetaRow()`).
 
 ## Deck pages
 
