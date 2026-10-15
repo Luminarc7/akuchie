@@ -168,9 +168,9 @@ never shown or searched).
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
    Update the matching doc in `docs/` (see "Documentation" above).
-3. **Test** with `python3 dev/tests/e2e.py` (about 600 offline checks; needs a warujie-prices
+3. **Test** with `python3 dev/tests/e2e.py` (about 640 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (93 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
+   (46 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.

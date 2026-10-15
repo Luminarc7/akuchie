@@ -27,7 +27,7 @@ code apart from a small Worker ([`worker.js`](../worker.js)) and no database ser
 |---|---|
 | [architecture.md](architecture.md) | The parts, where data comes from, branches and deploys, the outside services |
 | [index-html.md](index-html.md) | A map of `index.html`: its sections, the main functions and the page state |
-| [search.md](search.md) | How a search is read, matched and ordered; slang, roles, operators, spelling |
+| [search.md](search.md) | How a search is read, matched and ordered; roles, operators, spelling |
 | [card-page.md](card-page.md) | The card page: printings and language buttons, prices, listings, history, combos, links |
 | [other-pages.md](other-pages.md) | Home, sets, metagame and deck pages, price movers, export, the installable app |
 | [interface.md](interface.md) | Interface text in two languages, themes, lightweight mode, saved settings, phones |
@@ -45,7 +45,6 @@ is given. Search for them; line numbers move too often to be worth writing down.
 |---|---|
 | Change a piece of interface text | `STR` (Japanese and English side by side), and `data-i18n` attributes in the HTML. See [interface.md](interface.md) |
 | Change colours or spacing | CSS variables at the top of `<style>` (`html[data-theme="dark"]`, `html[data-theme="light"]`) |
-| Make a word players use find the right cards | `JA_SLANG`, `JA_KW_SLANG`, `EN_WORD_ALIAS`, `WORD_FILTERS`. See [search.md](search.md#players-words-slang) |
 | Add or change a role word (除去, ドロー, ramp…) | `ROLE_LIST`; if it needs a new Scryfall Tagger tag, also `TAGS` in warujie-prices' `build_tags.py` |
 | Change the order of search results | `searchRows()`, `relevance()`, `evaluateRow()`. See [search.md](search.md#ordering) |
 | Add a search operator (`o:`, `t:`, `色:`…) | `JA_OPERATORS`, `KNOWN_OPS`, `localOperatorMatch()` |

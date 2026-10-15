@@ -37,8 +37,6 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | `op:value`, `op>=value`… | `filters` (or `roles`/`sim`) | `o:draw`, `t:ゴブリン`, `色:赤`, `mv<=2`, `似:稲妻` |
 | `-something` | a negative filter | `-t:creature`, `-飛行` |
 | `"two words"` | `phrases` (exact phrase) | `"draw a card"` |
-| A word in `WORD_FILTERS` | a type test | PW, 置物 |
-| A word in `EN_WORD_ALIAS` | the card's own wording | unblockable → can't be blocked, sac → sacrifice |
 | Japanese text | `ja` | 墓地から手札, 飛行 |
 | Symbols only | a literal text filter | `%`, `🔥` |
 | Anything else | `words` (English) | lightning, bolt |
@@ -53,7 +51,7 @@ tips (`GUIDE_ROWS`), and checks in `dev/searchbench/search_checks.py`.
 
 The plan says how to test each row. English words go through `prepareEnglish()` (stop words
 dropped, stems, spelling correction against words that exist on cards: `correctEnglish()`);
-Japanese words through `prepareJapanese()` (split at particles, slang and spelling variants).
+Japanese words through `prepareJapanese()` (split at particles).
 `plan.graded` is true when the query has several words, so results are grouped by how closely
 they matched.
 
@@ -100,28 +98,13 @@ rows before the slower line-by-line tests. Keep any new test behind such a pre-c
 ラガバン. `relevance()` and the name suggestions (`nameSuggestions()`) use it. Older Japanese
 names (`alt_names_ja`) match too.
 
-## Players' words (slang)
-
-| Table | What it does | Examples |
-|---|---|---|
-| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ |
-| `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻 |
-| `JA_ORTHO` | Spelling variants | 全て→すべて, 時→とき |
-| `EN_WORD_ALIAS` | English slang to card wording | unblockable, flyer, sac, lifeloss |
-| `WORD_FILTERS` | A word that means a kind of card | PW, 置物 |
-| `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム |
-
-When a word is read as something else, the note above the results says so (`plan.aliases`).
-To add slang: add the entry, then a check in `dev/searchbench/search_checks.py` with a real card
-that should (and one that should not) be found.
-
 ## Roles (what a card does)
 
 Players search by role: 除去, ドロー, サーチ, マナ加速, サクり台… Each role is a line in
 `ROLE_LIST`: `[id, Japanese label, English label, Tagger tags, options, Japanese words,
 English words]`. Most roles come from **Scryfall Tagger** oracle tags, published weekly by
 warujie-prices as `t/tags.json.gz` (`loadTags()`, `TAG_MAP`); a few are read from the English
-text with regular expressions (`ROLE_TEXT`, `ROLE_TESTS`). A role word counts only as a whole,
+text with regular expressions (`ROLE_TEXT`). A role word counts only as a whole,
 unquoted word, so トランプル is still trample text and `"ランプ"` searches the text.
 
 To add a role: a `ROLE_LIST` line; if it uses a tag the site doesn't fetch yet, add the tag to
