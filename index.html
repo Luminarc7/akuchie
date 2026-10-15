@@ -774,6 +774,11 @@
     .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
     .meta-decklink { order: 4; }
+    .meta-cost { order: 3; font-size: 10.5px; }
+    div.deck-cost { display: grid; grid-template-columns: 1fr 1fr; }
+    div.deck-cost .dcst-curve { grid-column: 1 / -1; }
+    .deck-cost .dcst .wcs .wc { min-width: 26px; }
+    .meta-row:not(.open) .meta-wc { display: none; }
     .meta-controls select { flex: 1 1 auto; min-width: 0; padding: 3px 8px; font-size: 12.5px; }
     .meta-controls .seg { flex-wrap: nowrap; }
     .meta-bar .meta-title { font-size: 17px; flex: none; }
@@ -1173,9 +1178,30 @@
   .deck-cols { columns: 2 320px; column-gap: 32px; }
   .deck-cols .deck-group { break-inside: avoid; }
   .dl { list-style: none; margin: 0; padding: 0; }
-  .dl-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto 46px; gap: 10px; align-items: center; padding: 5px 0; font-size: 14px; }
+  .dl-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto auto 46px; gap: 10px; align-items: center; padding: 5px 0; font-size: 14px; }
+  .dl-yen { font-size: 12px; color: var(--text-2); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .dl-yen:empty { display: none; }
+  .dc-yen { font-size: 11px; font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  /* a deck's price, Arena wildcards and mana curve */
+  .deck-cost { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 2px; }
+  .dcst { display: flex; flex-direction: column; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+  .dcst-l { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .dcst-l small { font-weight: 400; margin-left: 6px; }
+  .dcst-v { font-size: 20px; font-weight: 800; line-height: 1.25; font-variant-numeric: tabular-nums; }
+  .dcst-s { font-size: 11px; color: var(--muted); }
+  .wcs { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .wc { min-width: 24px; padding: 0 4px; border-radius: 4px; text-align: center; font-size: 11.5px; font-weight: 700; line-height: 1.6; color: #fff; font-variant-numeric: tabular-nums; }
+  .wc-m { background: #c8531c; } .wc-r { background: #a8801a; } .wc-u { background: #6f8197; } .wc-c { background: #3b3946; }
+  .dcst .wcs .wc { font-size: 13px; min-width: 30px; line-height: 1.7; }
+  .cv { display: grid; grid-template-columns: repeat(7, 22px); gap: 4px; height: 64px; align-items: end; }
+  .cv-col { display: grid; grid-template-rows: 13px 1fr 13px; height: 100%; justify-items: center; font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .cv-bar { width: 14px; min-height: 0; background: var(--accent); border-radius: 3px 3px 0 0; align-self: end; }
+  .meta-cost { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 12px; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .meta-wc { margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+  .meta-wc-l { font-size: 11px; color: var(--muted); }
+  .meta-wc .wc { font-size: 10.5px; min-width: 22px; }
   .dl-row + .dl-row { border-top: 1px dashed var(--line); }
-  .dl-row.more { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .dl-row.more { grid-template-columns: minmax(0, 1fr) auto auto auto; }
   .dl-row.more .dl-count { display: none; }
   .dl-count { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
   .dl-name { min-width: 0; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
@@ -1185,6 +1211,7 @@
   .dl-cost img.pip { width: 15px; height: 15px; }
   .dl-rate { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .deck-foot { margin: 20px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
+  .deck-cost-note { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
   @media (max-width: 820px) {
     .deck-title { font-size: 21px; }
@@ -1651,6 +1678,7 @@
           <option value="share" data-i18n="meta.sort.share">使用率順</option>
           <option value="winrate" data-i18n="meta.sort.wr">勝率順</option>
           <option value="trend" data-i18n="meta.sort.trend">伸びている順</option>
+          <option value="cost" data-i18n="meta.sort.cost">安い順</option>
         </select>
         <button type="button" class="seg-btn meta-help-btn" id="metaHelpBtn" aria-expanded="false" aria-controls="metaHelp" data-i18n="meta.help.btn">ⓘ 見方</button>
       </div>
@@ -1872,6 +1900,24 @@ const STR = {
   'recent.clear': ['履歴を消す', 'Clear'],
   'recent.remove': ['「{q}」を履歴から消す', 'Remove “{q}” from recent searches'],
   'meta.sort.trend': ['伸びている順', 'Rising'],
+  'meta.sort.cost': ['安い順', 'Cheapest first'],
+  'meta.cost': ['約{y}', '≈{y}'],
+  'meta.cost.more': ['約{y}〜', '≈{y}+'],
+  'meta.cost.title': ['{name}：揃えると約{y}（メイン＋サイドボード、いちばん安い版で。基本土地を除く）', '{name}: about {y} to build (main deck and sideboard, cheapest printings, basic lands left out)'],
+  'wc.m': ['神話レア', 'Mythic'], 'wc.r': ['レア', 'Rare'], 'wc.u': ['アンコモン', 'Uncommon'], 'wc.c': ['コモン', 'Common'],
+  'wc.title': ['MTG Arenaで作るのに要るワイルドカード：神話レア・レア・アンコモン・コモン（基本土地を除く）', 'Wildcards needed to build it in MTG Arena: mythic, rare, uncommon, common (basic lands left out)'],
+  'deck.cost': ['揃えると', 'To build'],
+  'deck.cost.sub': ['いちばん安い版で・サイドボード込み', 'Cheapest printings, sideboard included'],
+  'deck.cost.missing': ['価格のないカード{n}枚を除く', 'Leaves out {n} cards with no price'],
+  'deck.cost.wait': ['価格を読み込み中…', 'Loading prices…'],
+  'deck.cost.none': ['価格を読み込めませんでした', 'Prices could not be loaded'],
+  'deck.wc': ['Arena ワイルドカード', 'Arena wildcards'],
+  'deck.curve': ['マナカーブ', 'Mana curve'],
+  'deck.curve.sub': ['土地以外 {n}枚', '{n} nonland cards'],
+  'deck.curve.title': ['マナ総量{v}：{n}枚', 'Mana value {v}: {n} cards'],
+  'deck.cost.note': ['金額は目安です：それぞれのカードのいちばん安い版の価格（米国の TCGplayer と欧州の Cardmarket の安いほう）を今日の為替レートで円にして、枚数分を足しました。基本土地は含みません。日本のショップの価格とは異なります。',
+    "An estimate: for each card, the price of its cheapest printing (the lower of TCGplayer in the US and Cardmarket in Europe), converted to yen at today's rate and multiplied by the number of copies. Basic lands are left out. Prices in Japanese shops differ."],
+  'deck.yen.title': ['1枚あたり・いちばん安い版の価格', 'Per copy, cheapest printing'],
   'meta.more.aria': ['{name}：カードと数字を表示', '{name}: show cards and numbers'],
   'meta.hint.few': ['勝率は{min}試合以上のデッキだけ表示しています（{total}デッキ中{n}）。', 'Win rates are shown only for decks with {min}+ matches ({n} of {total}). '],
   'meta.hint.longer': ['直近{days}日で見ると{n}デッキに増えます', 'The last {days} days have {n}'],
@@ -7143,8 +7189,11 @@ function deltaHtml(delta) {
   const up = delta > 0;
   return `<span class="trend-d ${up ? 'up' : 'down'}">${up ? '▲' : '▼'}${Math.abs(delta).toFixed(1)}pt</span>`;
 }
-function metaRowHtml(a, index, maxShare) {
+function metaRowHtml(a, index, maxShare, costs) {
   const label = deckLabel(a), name = label.name;
+  const cost = costs ? costs.get(a.name + (a.unclassified ? '|u' : '')) : null;
+  const costLine = costText(cost);
+  const wcs = wildcardsHtml(cost, metaState.format);
   const deckHref = deckUrl(metaState.format, metaState.days, a);
   const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c))
     .map(c => symbolImg(c, `pip ${c.toLowerCase()}`)).join('');
@@ -7187,9 +7236,10 @@ function metaRowHtml(a, index, maxShare) {
       <div class="meta-rank">${index + 1}</div>
       ${art}
       <div class="meta-deck">
-        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
+        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a>${costLine ? `<span class="meta-cost" title="${esc(t('meta.cost.title', { name, y: yenRound(cost.yen) }))}">${esc(costLine)}</span>` : ''}</div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
+        ${wcs ? `<div class="meta-wc"><span class="meta-wc-l">${esc(t('deck.wc'))}</span>${wcs}</div>` : ''}
       </div>
       <div class="meta-share" title="${esc(t('meta.share.title', { name, share: a.share.toFixed(1), n: fmtNum(a.decks) }))}">
         <div class="meta-lbl">${t('meta.col.share')}</div>
@@ -7267,6 +7317,12 @@ function renderMeta() {
     body.innerHTML = `<div class="status-line"><span class="serif">${t('meta.own.none.' + SITE)}</span></div>`;
     return;
   }
+  const costs = metaCostsFor(metaState.days, metaState.format);
+  if (metaState.sort === 'cost' && costs) {
+    // cheapest first; decks without a price last, in share order
+    const y = a => { const c = costs.get(a.name + (a.unclassified ? '|u' : '')); return c && c.priced ? c.yen : Infinity; };
+    rows.sort((a, b) => (y(a) - y(b)) || (b.decks - a.decks));
+  }
   if (metaState.sort === 'trend') {
     // the decks growing fastest (last four weeks against the four before) first
     const d = a => { const tr = metaTrend(metaState.format, a); return tr && tr.delta !== null ? tr.delta : -1e9; };
@@ -7302,7 +7358,7 @@ function renderMeta() {
         <span></span><span></span><span>${t('meta.col.deck')}</span><span>${t('meta.col.share')}</span>
         <span>${t('meta.col.wr')}<span class="wr-axis"><span>30%</span><span>50%</span><span>70%</span></span></span>
       </div>
-      <ol class="meta-list">${rows.map((a, i) => metaRowHtml(a, i, maxShare)).join('')}</ol>
+      <ol class="meta-list">${rows.map((a, i) => metaRowHtml(a, i, maxShare, costs)).join('')}</ol>
       ${rest}
     </div>`;
   creditDeckArt(body);
@@ -8689,6 +8745,92 @@ function loadMetaLists(days, format) {
   }
   return metaListsCache.get(key);
 }
+// ---- what a deck costs ----------------------------------------------------------------------
+// cheap.json.gz (warujie-prices, daily): card name -> [cheapest USD cents, cheapest EUR cents,
+// MTG Arena rarity c/u/r/m]. A deck's price is its cards' cheapest printings added up, in yen.
+const cheapStore = { promise: null, data: null, front: null };
+function loadCheapest() {
+  if (!cheapStore.promise) {
+    cheapStore.promise = fetchMaybeGzipJson(PRICE_DATA_URL + 'cheap.json.gz')
+      .then(d => { cheapStore.data = d && d.cards ? d : null; return cheapStore.data; })
+      .catch(() => null);
+  }
+  return cheapStore.promise;
+}
+function cheapRow(name, row) {
+  const d = cheapStore.data;
+  if (!d) return null;
+  const c = d.cards;
+  if (c[name]) return c[name];
+  if (row && c[row.name_en]) return c[row.name_en];
+  if (!cheapStore.front) {   // deck lists name two-faced cards by their front face
+    cheapStore.front = new Map();
+    Object.keys(c).forEach(k => { const f = k.split(' // ')[0]; if (f !== k && !cheapStore.front.has(f)) cheapStore.front.set(f, k); });
+  }
+  const full = cheapStore.front.get(name);
+  return full ? c[full] : null;
+}
+// one copy in yen: the cheaper of the US and the European price
+function cardYen(name, row) {
+  const r = cheapRow(name, row);
+  if (!r) return null;
+  const opts = [];
+  if (r[0] && USD_JPY) opts.push(r[0] / 100 * USD_JPY);
+  if (r[1] && EUR_JPY) opts.push(r[1] / 100 * EUR_JPY);
+  return opts.length ? Math.min(...opts) : null;
+}
+function isBasicLand(name, row) {
+  return row ? /\bBasic\b/.test(row.type_en || '') : /^(Plains|Island|Swamp|Mountain|Forest|Wastes)$/.test(name);
+}
+const RARITY_LETTER = { common: 'c', uncommon: 'u', rare: 'r', mythic: 'm' };
+// [[count, name], ...] -> { yen, missing (copies with no price), priced, wc: wildcards by rarity, or null }
+function deckCost(cards) {
+  const priced = !!cheapStore.data && !!(USD_JPY || EUR_JPY);
+  let yen = 0, missing = 0, arena = true;
+  const wc = { m: 0, r: 0, u: 0, c: 0 };
+  cards.forEach(([n, name]) => {
+    n = Number(n) || 0;
+    const row = rowByEnglishName(name);
+    if (!n || isBasicLand(name, row)) return;
+    const y = cardYen(name, row);
+    if (y === null) missing += n; else yen += y * n;
+    const cr = cheapRow(name, row);
+    const r = cheapStore.data ? (cr ? cr[2] : '') : (row ? RARITY_LETTER[row.rarity] || '' : '');
+    if (r && wc[r] !== undefined) wc[r] += n; else arena = false;
+  });
+  return { yen: Math.round(yen), missing, priced: priced && yen > 0, wc: arena ? wc : null };
+}
+function yenRound(y) { return '¥' + (Math.round(y / 100) * 100).toLocaleString('ja-JP'); }
+// one card: to the yen under ¥1,000, to ¥10 above
+function yenSmall(y) { return '¥' + (y < 1000 ? Math.max(1, Math.round(y)) : Math.round(y / 10) * 10).toLocaleString('ja-JP'); }
+function costText(cost) {
+  return cost && cost.priced ? t(cost.missing ? 'meta.cost.more' : 'meta.cost', { y: yenRound(cost.yen) }) : '';
+}
+// Arena wildcards only mean something where the format is played on Arena
+function wildcardsHtml(cost, format) {
+  if (!cost || !cost.wc || format !== 'standard') return '';
+  return `<span class="wcs" title="${esc(t('wc.title'))}">${['m', 'r', 'u', 'c'].map(k =>
+    `<span class="wc wc-${k}" aria-label="${esc(t('wc.' + k))} ${cost.wc[k]}">${cost.wc[k]}</span>`).join('')}</span>`;
+}
+// the metagame tab: every deck's cost for one period and format, worked out once its lists are in
+const metaCosts = new Map();
+function metaCostsFor(days, format) {
+  const k = `${days}|${format}`;
+  const got = metaCosts.get(k);
+  if (got && got !== 'loading') return got;
+  if (!got) {
+    metaCosts.set(k, 'loading');
+    Promise.all([loadMetaDecks(), loadCheapest(), fxReady, dbReady]).then(() => {
+      const lists = deckState.status === 'ready' ? ((deckState.data.windows[days] || {})[format] || {}) : {};
+      const m = new Map();
+      Object.entries(lists).forEach(([key, e]) => m.set(key, deckCost((e.main || []).concat(e.side || []))));
+      metaCosts.set(k, m);
+      if (document.getElementById('metaView').style.display !== 'none' && metaState.format === format && String(metaState.days) === String(days)) renderMeta();
+    });
+  }
+  return null;
+}
+
 function deckUrl(format, days, a) {
   return `?view=deck&format=${encodeURIComponent(format)}` + (days ? `&days=${encodeURIComponent(days)}` : '')
     + `&deck=${encodeURIComponent(a.name)}` + (a.unclassified ? '&u=1' : '');
@@ -8739,7 +8881,8 @@ function deckItem(name, count, pct, infos) {
   const label = LANG === 'en' ? name : (ja || name);
   const sub = LANG === 'en' ? (ja && ja !== name ? ja : '') : (ja && ja !== name ? name : '');
   const cmc = row ? row._cmc : (card && typeof card.cmc === 'number' ? card.cmc : 0);
-  return { name, count, pct, info, group: deckGroupOf(card, row), cmc: Number(cmc) || 0, label, sub };
+  const yen = isBasicLand(name, row) ? null : cardYen(name, row);
+  return { name, count, pct, info, group: deckGroupOf(card, row), cmc: Number(cmc) || 0, label, sub, yen };
 }
 function deckCardHtml(it) {
   const { card, row } = it.info;
@@ -8750,7 +8893,7 @@ function deckCardHtml(it) {
   const inner = `<span class="dc-pic">${pic
       ? pictureTag(pic, { alt: it.label, sizes: '(max-width: 820px) 31vw, 150px', use: ['small', 'normal'], main: 'normal' })
       : `<span class="dc-noimg">${esc(it.label)}</span>`}${it.count ? `<span class="dc-count">×${it.count}</span>` : ''}</span>
-    <span class="dc-name">${esc(it.label)}</span>${rate}`;
+    <span class="dc-name">${esc(it.label)}</span>${rate}${it.yen ? `<span class="dc-yen" title="${esc(t('deck.yen.title'))}">${esc(yenSmall(it.yen))}</span>` : ''}`;
   return id
     ? `<a class="deck-card" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}" title="${esc(it.name)}">${inner}</a>`
     : `<div class="deck-card" title="${esc(it.name)}">${inner}</div>`;
@@ -8769,6 +8912,7 @@ function deckRowHtml(it) {
     : (it.avg !== undefined ? t('deck.more.rate', { v: it.pct, a: it.avg }) : t('deck.rate.short', { v: it.pct }));
   return `<li class="dl-row${it.avg !== undefined ? ' more' : ''}"><span class="dl-count">${it.count || ''}</span>${nameHtml}`
     + `<span class="dl-cost">${cost ? renderPips(cost.split(' // ')[0]) : ''}</span>`
+    + `<span class="dl-yen"${it.yen ? ` title="${esc(t('deck.yen.title'))}"` : ''}>${it.yen ? esc(yenSmall(it.yen)) : ''}</span>`
     + `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span></li>`;
 }
 function deckSort(items, byType) {
@@ -8812,8 +8956,32 @@ async function copyText(text) {
   return ok;
 }
 
+// the box under a deck's title: its price, Arena wildcards and mana curve
+function deckCostHtml(main, side, format) {
+  const all = main.concat(side).map(it => [it.count, it.name]);
+  const cost = deckCost(all);
+  let price;
+  if (cost.priced) {
+    price = `<b class="dcst-v">${esc(costText(cost))}</b><span class="dcst-s">${esc(t('deck.cost.sub'))}${cost.missing ? '・' + esc(t('deck.cost.missing', { n: cost.missing })) : ''}</span>`;
+  } else {
+    price = `<span class="dcst-s">${esc(t(deckState.costTried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`;
+  }
+  const wcs = wildcardsHtml(cost, format);
+  // mana curve: the main deck without lands, by mana value (6 and up together)
+  const curve = [0, 0, 0, 0, 0, 0, 0];
+  main.forEach(it => { if (it.group !== 'land' && it.count) curve[Math.min(6, Math.max(0, Math.floor(it.cmc)))] += it.count; });
+  const nonland = curve.reduce((x, y) => x + y, 0), top = Math.max(1, ...curve);
+  const bars = curve.map((n, v) => `<span class="cv-col" title="${esc(t('deck.curve.title', { v: v === 6 ? '6+' : v, n }))}"><span class="cv-n">${n || ''}</span><span class="cv-bar" style="height:${(n / top * 100).toFixed(0)}%"></span><span class="cv-v">${v === 6 ? '6+' : v}</span></span>`).join('');
+  return `<div class="deck-cost">
+      <div class="dcst"><span class="dcst-l">${esc(t('deck.cost'))}</span>${price}</div>
+      ${wcs ? `<div class="dcst"><span class="dcst-l">${esc(t('deck.wc'))}</span>${wcs}<span class="dcst-s">${['m', 'r', 'u', 'c'].map(k => esc(t('wc.' + k))).join('・')}</span></div>` : ''}
+      ${nonland ? `<div class="dcst dcst-curve"><span class="dcst-l">${esc(t('deck.curve'))}<small>${esc(t('deck.curve.sub', { n: nonland }))}</small></span><span class="cv">${bars}</span></div>` : ''}
+    </div>`;
+}
+
 async function renderDeck(route) {
   const token = ++deckState.token;
+  loadCheapest();   // the prices arrive with the pictures (showDeckList), so the page is drawn once more, not twice
   const body = document.getElementById('deckBody');
   hideDeckPeek();
   body.innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">${t('deck.loading')}</span></div>`;
@@ -8864,8 +9032,9 @@ async function showDeckList(i) {
   if (token !== deckState.token) return;
   drawDeck();
   if (cached) return;
-  // then the pictures
-  const infos = await deckCardInfo(names, true);
+  // then the pictures, and the prices
+  const [infos] = await Promise.all([deckCardInfo(names, true), loadCheapest(), fxReady]);
+  deckState.costTried = true;
   if (deckState.cache.size > 20) deckState.cache.clear();
   deckState.cache.set(cacheKey, infos);
   if (token !== deckState.token || cur.pick !== i) return;
@@ -8963,6 +9132,7 @@ function drawDeck() {
         <div class="deck-tools">${copy}${toggle}</div>
       </div>
       <p class="deck-meta">${factHtml}</p>
+      ${entry ? deckCostHtml(main, side, format) : ''}
       ${listPicker}
       ${srcHtml}
     </div>`;
@@ -8972,9 +9142,15 @@ function drawDeck() {
   if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(deckRowHtml).join('')}</ul></section>`;
   html += deckTrendHtml(format, a);
   if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
+  if (entry) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('deckExport') || {}).open;
   document.getElementById('deckBody').innerHTML = html;
   if (exportOpen && document.getElementById('deckExport')) document.getElementById('deckExport').open = true;
+  const copied = deckState.copied;
+  if (copied && Date.now() < copied.until) {
+    const btn = document.querySelector(`#deckExport [data-export="${copied.kind}"]`);
+    if (btn) btn.textContent = t('deck.export.done');
+  }
 }
 document.getElementById('deckBody').addEventListener('click', async (e) => {
   const vb = e.target.closest('[data-dview]');
@@ -9000,7 +9176,14 @@ document.getElementById('deckBody').addEventListener('click', async (e) => {
     const label = ex.textContent;
     const ok = await copyText(deckExportText(cur.chosen, kind));
     ex.textContent = ok ? t('deck.export.done') : label;
-    setTimeout(() => { if (ex.isConnected) ex.textContent = label; const d = document.getElementById('deckExport'); if (d) d.open = false; }, 1200);
+    // the page may be drawn again meanwhile (pictures and prices arriving): it keeps the "copied" label
+    deckState.copied = ok ? { kind, until: Date.now() + 1200 } : null;
+    setTimeout(() => {
+      deckState.copied = null;
+      const btn = document.querySelector(`#deckExport [data-export="${kind}"]`);
+      if (btn) btn.textContent = t('deck.export.' + kind);
+      const d = document.getElementById('deckExport'); if (d) d.open = false;
+    }, 1200);
     return;
   }
   const link = e.target.closest('a[data-card]');

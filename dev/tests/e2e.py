@@ -2690,6 +2690,59 @@ with sync_playwright() as p:
           "view=deck" in page.url and page.locator(".deck-title").inner_text().startswith("グルール・ドラゴン") and page.locator(".deck-title-en").inner_text() == "Gruul Dragons")
     page.set_viewport_size({"width": 1280, "height": 900})
 
+    # ---- 33. round 21: what a deck costs - cheapest printings in yen, 安い順, Arena wildcards, mana curve ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    DECKS_MODE["mode"] = "fixture"
+    cheap = json.loads(gzip.decompress(open(os.path.join(PRICES_FULL, "cheap.json.gz"), "rb").read()))["cards"]
+    check("prices: the builder writes each card's cheapest price and Arena rarity", "Lightning Bolt" in cheap and len(cheap["Lightning Bolt"]) == 3, cheap.get("Lightning Bolt"))
+    gruul = [(4, "Shivan Dragon"), (4, "Llanowar Elves"), (4, "Ragavan, Nimble Pilferer"), (4, "Lightning Bolt"), (4, "Urza's Saga"), (2, "Unknown New Card"),
+             (3, "Qasali Pridemage"), (2, "Deathrite Shaman")]   # Mountain and Forest are basic lands: left out
+    want, gone = 0.0, 0
+    for n, name in gruul:
+        r = cheap.get(name)
+        opts = [x for x in ((r[0] / 100 * 150.0) if r and r[0] else None, (r[1] / 100 * 160.0) if r and r[1] else None) if x is not None]
+        if opts: want += n * min(opts)
+        else: gone += n
+    want_txt = "約¥{:,}".format(int(round(round(want) / 100) * 100)) + ("〜" if gone else "")
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost .dcst-v')")
+    cost_box = page.locator(".deck-cost").inner_text()
+    check("deck page: what the deck costs, from each card's cheapest printing (US or EU, whichever is lower), basic lands left out",
+          page.locator(".deck-cost .dcst-v").inner_text() == want_txt and ("価格のないカード{}枚を除く".format(gone) in cost_box if gone else "除く" not in cost_box), (cost_box, want_txt, gone))
+    check("deck page: the mana curve counts the main deck without lands (12 one-drops, 4 at 6+)",
+          page.locator(".cv-col").count() == 7 and page.locator(".cv-col").nth(1).locator(".cv-n").inner_text() == "12"
+          and page.locator(".cv-col").nth(6).locator(".cv-n").inner_text() == "4", page.locator(".cv").inner_text())
+    check("deck page: no Arena wildcards when some cards aren't on Arena", page.locator(".deck-cost .wcs").count() == 0)
+    check("deck page: how the price is worked out is explained", "いちばん安い版" in page.locator(".deck-cost-note").inner_text())
+    page.click("[data-dview=list]"); page.wait_for_selector("#deckBody .dl-row")
+    bolt = page.locator("#deckBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first
+    r = cheap["Lightning Bolt"]; one = min(x for x in ((r[0] / 100 * 150.0) if r[0] else None, (r[1] / 100 * 160.0) if r[1] else None) if x is not None)
+    check("deck page, list: each card's price for one copy", bolt.locator(".dl-yen").inner_text() == "¥{:,}".format(max(1, int(round(one))) if one < 1000 else int(round(one / 10) * 10)),
+          (bolt.locator(".dl-yen").inner_text(), one))
+    page.click("[data-dview=image]")
+    wc = page.evaluate("""(() => { const keep = cheapStore.data; cheapStore.data = { cards: { 'Lightning Bolt': [100, 100, 'c'], 'Shivan Dragon': [200, null, 'r'], 'Llanowar Elves': [50, 50, 'u'], 'Ragavan, Nimble Pilferer': [5000, 4000, 'm'] } };
+        const c = deckCost([[4, 'Lightning Bolt'], [3, 'Shivan Dragon'], [4, 'Llanowar Elves'], [1, 'Ragavan, Nimble Pilferer'], [20, 'Mountain']]);
+        const html = wildcardsHtml(c, 'standard'), modern = wildcardsHtml(c, 'modern'); cheapStore.data = keep; return [c.wc, c.yen, html.includes('wc-m'), modern]; })()""")
+    check("deck cost: Arena wildcards by rarity, basic lands left out; only for Standard",
+          wc[0] == {"m": 1, "r": 3, "u": 4, "c": 4} and wc[1] == round(4 * 150 + 3 * 300 + 4 * 75 + 1 * min(7500, 6400)) and wc[2] and wc[3] == "", wc)
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    page.wait_for_function("document.querySelector('#metaBody .meta-cost')")
+    gr = page.locator("#metaBody .meta-row").first
+    check("metagame: each deck with a priced list shows its price (Orzhov's only card has no price: none shown)", gr.locator(".meta-cost").inner_text() == want_txt and page.locator("#metaBody .meta-cost").count() == 1,
+          (gr.locator(".meta-cost").inner_text(), want_txt))
+    page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
+    order = page.locator("#metaBody .meta-name-text").all_inner_texts()
+    costs_shown = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => { const c = r.querySelector('.meta-cost'); return c ? Number(c.textContent.replace(/[^0-9]/g, '')) : null; })")
+    priced = [c for c in costs_shown if c is not None]
+    check("metagame: 安い順 puts the cheapest deck first, decks without a price last (in share order)",
+          priced == sorted(priced) and costs_shown[:len(priced)] == priced and order[len(priced):] == ["Selesnya Cats", "赤単バーン", "オルゾフ（未分類）"], (order, costs_shown))
+    page.select_option("#metaSort", "share")
+    PRICE_SITE["dir"] = None
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost') && document.querySelector('.deck-cost').textContent.includes('読み込めませんでした')")
+    check("deck page: without the price file it says so, and the mana curve is still there", page.locator(".cv-col").count() == 7)
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 
