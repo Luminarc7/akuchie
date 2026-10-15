@@ -2854,6 +2854,8 @@ with sync_playwright() as p:
     row = page.locator("#metaBody .meta-row").first
     pr, sh = row.locator(".meta-price").bounding_box(), row.locator(".meta-share").bounding_box()
     check("phone, metagame: the price sits in its own column left of the share", row.locator(".meta-price").inner_text().startswith("¥") and pr["x"] + pr["width"] <= sh["x"] + 1, (pr, sh))
+    pip = page.evaluate("(() => { const p = document.querySelector('#metaBody .meta-row .meta-name .pips img.pip, #metaBody .meta-row .meta-name .pips .pip'); return p ? p.getBoundingClientRect().width : 0; })()")
+    check("phone, metagame: small mana symbols (11px) next to the deck name", 0 < pip <= 12, pip)
     page.evaluate("document.querySelector('#metaBody .meta-row .meta-name-text').textContent = '青赤スペルメンタル・リアニメイト'; fitMetaNames()")
     fit = page.evaluate("(() => { const a = document.querySelector('#metaBody .meta-row .meta-name-text'); return [parseFloat(getComputedStyle(a).fontSize), a.getBoundingClientRect().height, a.scrollWidth <= a.clientWidth + 1]; })()")
     check("phone, metagame: a long deck name gets a smaller font and stays on one line", fit[0] < 13.5 and fit[0] >= 9 and fit[1] < 20, fit)
