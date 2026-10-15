@@ -2773,7 +2773,7 @@ with sync_playwright() as p:
     want_mv = {"グルール・ドラゴン": "rank-mv up", "Selesnya Cats": "rank-mv same", "赤単バーン": "rank-mv down", "オルゾフ（未分類）": "rank-mv up"}
     check("metagame: an arrow by each rank: ▲ moved up, ▼ down, grey — same (4 weeks against the 4 before)",
           all(want_mv.get(n) == c for n, c, _ in mv) and [r for _, _, r in mv] == ["1", "2", "3", "4"], mv)
-    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("順位は同じで"))
+    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("使用率の変化は2pt未満"))
     page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,7,7,7,7.5]; metaRankCache.clear(); renderMeta();")
     sel = page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv")
     check("metagame: same rank but the share rose 2pt or more -> ▲", sel.get_attribute("class") == "rank-mv up" and "2.1pt上がりました" in sel.get_attribute("title"), sel.get_attribute("title"))
@@ -2781,6 +2781,11 @@ with sync_playwright() as p:
     check("metagame: same rank but the share fell 2pt or more -> ▼", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv down")
     page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,6.9,6.9,6.9,6.9]; metaRankCache.clear(); renderMeta();")
     check("metagame: same rank and under 2pt -> grey —", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv same")
+    page.evaluate("""Object.assign(metaState.data.trends.standard.share, { 'Selesnya Cats': [5,5,5,5,4,4,4,4], 'Mono Red Burn': [4.5,4.5,4.5,4.5,4.6,4.6,4.6,4.6] });
+        metaRankCache.clear(); renderMeta();""")
+    mv = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => [r.querySelector('.meta-name-text').innerText, (r.querySelector('.rank-mv') || {}).className || ''])")
+    check("metagame: a rank that moved with under 2pt of share change still gets the grey —",
+          dict(mv).get("Selesnya Cats") == "rank-mv same" and dict(mv).get("赤単バーン") == "rank-mv same", mv)
     page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
     check("metagame: no rank arrows when sorted by something other than share", page.locator("#metaBody .rank-mv").count() == 0)
     page.select_option("#metaSort", "share"); page.wait_for_timeout(200)
