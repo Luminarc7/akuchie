@@ -3389,6 +3389,7 @@ function derivedFromWord(word) {
 // ETB持ち, ロード系, 除去カード: the role word with a tail that adds nothing
 const ROLE_TAIL_RE = /(?:持ち|系|カード)$/;
 function splitRoleToken(bare) {
+  bare = jaFromReading(bare) || bare;   // じょきょ, ぜんたいじょきょ, あかのかりょく
   const direct = ROLE_BY_WORD.get(roleKey(bare));
   if (direct) return { role: direct, derived: [] };
   const s = String(bare).normalize('NFKC');
@@ -3904,6 +3905,10 @@ function rowJaAll(row) {
   if (row._jaAll === undefined) row._jaAll = normJaSearch([row.name_ja, row.alt_names_ja, row.type_ja, row.oracle_ja].join('\n'));
   return row._jaAll;
 }
+function enPartsLine(row, parts) {
+  if (!parts.every(w => rowEnAll(row).includes(w.slice(0, 3)))) return false;
+  return rowEnLines(row).slice(2).some(line => parts.every(w => line.includes(w)));
+}
 function jaMayHave(row, u) {
   const all = rowJaAll(row);
   if (u.n && all.includes(u.n)) return true;
@@ -3916,6 +3921,7 @@ function jaMayHave(row, u) {
     if (row._jaAllBare === undefined) row._jaAllBare = all.replace(JA_PARTICLE_RE, '');
     if (row._jaAllBare.includes(u.bare)) return true;
   }
+  if (u.enParts && !row.oracle_ja && enPartsLine(row, u.enParts)) return true;
   for (const f of u.alts || []) {
     if (all.includes(f.n) || (f.chunks.length > 1 && f.chunks.every(c => all.includes(c)))) return true;
     if (row._jaAllBare === undefined) row._jaAllBare = all.replace(JA_PARTICLE_RE, '');
@@ -3968,6 +3974,53 @@ function jaSlangForm(n) {
 // in a phrase of several parts a verb counts in any form: 探す finds 探し, 捨てる finds 捨て,
 // コントロールする finds コントロールしている
 const JA_VERB_END_RE = /^(.*[\u30a1-\u30fc\u3400-\u9fff])(?:する|した|して|している)$|^(.*[\u3400-\u9fff])[\u3041-\u3096]{1,2}$/;
+// Game words typed in hiragana before converting (phones): はかい -> 破壊, ひこう -> 飛行,
+// くりーちゃーをはかい -> クリーチャーを破壊. Only a search word that is all hiragana is read this way,
+// longest word first; what isn't a known word stays as typed.
+const JA_READINGS = Object.assign({
+  'ひこう': '飛行', 'せっし': '接死', 'はんこん': '絆魂', 'そっこう': '速攻', 'けいかい': '警戒', 'せんせいこうげき': '先制攻撃',
+  'にだんこうげき': '二段攻撃', 'とうたつ': '到達', 'ぼうえい': '防衛', 'じゅごん': '呪禁', 'ごほう': '護法', 'はかいふのう': '破壊不能',
+  'かかん': '果敢', 'いはく': '威迫', 'しゅんそく': '瞬速', 'ひふく': '被覆', 'さいせい': '再生', 'へんい': '変異', 'へんしん': '変身',
+  'はんぷく': '反復', 'そうき': '想起', 'ぞくしょう': '続唱', 'たんさ': '探査', 'こうよう': '昂揚', 'じょうりく': '上陸', 'しんわ': '親和',
+  'しょうしゅう': '召集', 'そくせき': '即席', 'ぞうしょく': '増殖', 'せんじゅつ': '占術', 'ちょうほう': '諜報', 'せっさく': '切削',
+  'はっけん': '発見', 'そせい': '蘇生', 'だっしゅつ': '脱出', 'さんび': '賛美', 'かんせん': '感染', 'どくせい': '毒性', 'きょうせい': '強請',
+  'にんじゅつ': '忍術', 'たいき': '待機', 'じゅよ': '授与', 'かいぶつか': '怪物化', 'ふんそう': '紛争', 'せいぞう': '製造', 'がんきょう': '頑強',
+  'はっくつ': '発掘', 'しんか': '進化', 'ちょうか': '超過', 'きせき': '奇跡', 'とうじょう': '搭乗', 'ばいよう': '培養',
+  'はかい': '破壊', 'ついほう': '追放', 'ぼち': '墓地', 'てふだ': '手札', 'せんじょう': '戦場', 'うちけす': '打ち消す', 'うちけし': '打ち消し',
+  'じょきょ': '除去', 'ぜんたい': '全体', 'かくてい': '確定', 'かりょく': '火力', 'ふみたおし': '踏み倒し', 'めいめつ': '明滅', 'ついか': '追加',
+  'すてる': '捨てる', 'もどす': '戻す', 'さがす': '探す', 'となえる': '唱える', 'うしなう': '失う', 'くわえる': '加える', 'あたえる': '与える',
+  'ささげる': '捧げる', 'しはらう': '支払う', 'ひく': '引く', 'たいしょう': '対象', 'じゅもん': '呪文', 'とち': '土地', 'こうげき': '攻撃',
+  'せいせい': '生成', 'しぼう': '死亡', 'かいふく': '回復', 'いちばんうえ': '一番上', 'しゅうりょう': '終了', 'かいし': '開始',
+  'のうりょく': '能力', 'きどう': '起動', 'ゆうはつ': '誘発', 'でんせつ': '伝説', 'いけにえ': '生け贄', 'じぶん': '自分', 'あいて': '相手',
+  'たいせんあいて': '対戦相手', 'たからもの': '宝物', 'まいたーん': '毎ターン', 'しろ': '白', 'あお': '青', 'くろ': '黒', 'あか': '赤', 'みどり': '緑',
+  'まい': '枚', 'をえる': 'を得る', 'むしょく': '無色', 'たしょく': '多色', 'けいりょう': '軽量', 'ふくせい': '複製', 'やまふだ': '山札', 'ぼうぎょ': '防御',
+}, ...['クリーチャー', 'トークン', 'カード', 'ライフ', 'マナ', 'パーマネント', 'アーティファクト', 'エンチャント', 'プレイヤー', 'プレインズウォーカー',
+  'ライブラリー', 'ターン', 'ダメージ', 'ブロック', 'タップ', 'アンタップ', 'コピー', 'コントロール', 'カウンター', 'インスタント', 'ソーサリー',
+  'トランプル', 'ドロー', 'サーチ', 'ランプ', 'クローン', 'バウンス', 'リアニ', 'ハンデス', 'ランデス', 'ブリンク', 'トップ', 'デッキ', 'フライヤー',
+  'エンド', 'コスト', 'プロテクション', 'フラッシュバック', 'キッカー', 'ストーム', 'ロード', 'ドラゴン', 'ゾンビ', 'エルフ', 'ゴブリン', 'エンジェル',
+  'ウィザード', 'ヴァンパイア', 'ゴーレム', 'スピリット', 'ヒューマン', 'マーフォーク'].map(k => ({ [KATA_TO_HIRA(k)]: k })));
+const JA_READING_KEYS = Object.keys(JA_READINGS).filter(k => /^[\u3041-\u3096ー]+$/.test(k)).sort((a, b) => b.length - a.length);
+function jaFromReading(s) {
+  s = String(s || '').normalize('NFKC');
+  if (!/^[\u3041-\u3096ー0-9x]+$/.test(s) || !/[\u3041-\u3096].*[\u3041-\u3096]/.test(s)) return null;   // 2まいひく too
+  let out = '', i = 0, hit = false;
+  while (i < s.length) {
+    const k = JA_READING_KEYS.find(w => s.startsWith(w, i));
+    if (k) { out += JA_READINGS[k]; i += k.length; hit = true; } else out += s[i++];
+  }
+  return hit ? out : null;
+}
+// English words for Japanese parts, for the cards with no Japanese text: 墓地から手札 -> graveyard, hand
+const JA_WORD_EN = {
+  '墓地': 'graveyard', '手札': 'hand', '戦場': 'battlefield', 'ライブラリー': 'library', 'クリーチャー': 'creature', '破壊': 'destroy',
+  '追放': 'exile', '生け贄': 'sacrifice', '捧げ': 'sacrifice', '捧': 'sacrifice', '引': 'draw', '捨て': 'discard', '捨': 'discard', '戻': 'return',
+  '探': 'search', '唱え': 'cast', '唱': 'cast', '対象': 'target', '土地': 'land', 'アーティファクト': 'artifact', 'エンチャント': 'enchantment',
+  'トークン': 'token', 'ライフ': 'life', 'ダメージ': 'damage', 'カード': 'card', '呪文': 'spell', 'タップ': 'tap', 'アンタップ': 'untap',
+  '攻撃': 'attack', 'ブロック': 'block', '生成': 'create', '得': 'gain', '失': 'lose', 'パーマネント': 'permanent', 'プレイヤー': 'player',
+  '対戦相手': 'opponent', '相手': 'opponent', 'あなた': 'you', 'コントロール': 'control', 'コピー': 'copy', 'マナ': 'mana', '加え': 'add', '加': 'add',
+  '与え': 'deal', '与': 'deal', 'インスタント': 'instant', 'ソーサリー': 'sorcery', '一番上': 'top', '一番下': 'bottom', '死亡': 'dies',
+  'ターン': 'turn', '終了': 'end', 'アップキープ': 'upkeep', '置': 'put', 'カウンター': 'counter', '打ち消': 'counter', '支払': 'pay',
+};
 function jaForm(n) {
   // a lone kana left by the split (と in とき) says nothing
   let chunks = n.split(JA_SPLIT_RE).filter(c => c && !/^[\u3041-\u3096]$/.test(c));
@@ -3979,28 +4032,41 @@ function prepareJapanese(tokens) {
   return tokens.map(raw => {
     const n = normJaSearch(raw);
     const eq = englishEquivalents(raw);
-    const slang = jaSlangForm(n);
-    const alts = slang ? slang.forms.map(jaForm) : [];
+    const read = jaFromReading(n);
+    const rn = read ? normJaSearch(read) : null;
+    const slang = jaSlangForm(rn || n);
+    const alts = (rn ? [jaForm(rn)] : []).concat(slang ? slang.forms.map(jaForm) : []);
+    const eqR = rn ? englishEquivalents(rn) : {};
     const altEq = alts.length ? englishEquivalents(alts[0].n) : {};
-    const kw = eq.kw || altEq.kw || null, enText = eq.text || altEq.text;
-    return Object.assign(jaForm(n), {
+    const kw = eq.kw || eqR.kw || altEq.kw || null, enText = eq.text || eqR.text || altEq.text;
+    const form = jaForm(n);
+    // all hiragana (はかい): no particles to drop, or は would go and かい would match おせっかい
+    if (/^[\u3041-\u3096ー0-9x]+$/.test(n)) form.bare = n;
+    // the parts in English, when every part has one (for cards with no Japanese text)
+    const parts = [form].concat(alts).map(f => f.chunks).find(cs => cs.length > 1 && cs.every(c => JA_WORD_EN[c] || JA_PHRASES[c]));
+    const shown = rn && slang && slang.noted ? slang.shown : rn ? rn : slang && slang.noted ? slang.shown : null;
+    return Object.assign(form, {
       raw, fold: HIRAGANA_RE.test(n) ? kanaFold(n) : null, key: nameKey(raw),
       kw, en: enText ? enTokens(enText) : null,
-      alts, alias: slang && slang.noted ? { from: raw, to: slang.shown } : null,
+      enParts: parts ? parts.map(c => enTokens(JA_WORD_EN[c] || JA_PHRASES[c])[0]) : null,
+      alts, alias: shown ? { from: raw, to: shown } : null,
     });
   });
 }
 // Where on the card a Japanese search word is: keyword, lines ('j2' = Japanese
 // line 2, 'e3' = English line 3 via the English equivalent), name/type line.
-function locateJa(row, u) {
+// quick: only whether the word is there and whether it's in the name (one search word),
+// so the English lines are not read when a Japanese line already has it
+function locateJa(row, u, quick) {
   const out = { kw: !!(u.kw && row._kw.has(u.kw)), lines: new Set(), head: false };
   const lines = rowJaLines(row), bare = row._jaBare;
-  const forms = [u].concat(u.alts || []);
+  const forms = u._forms || (u._forms = [u].concat(u.alts || []));
   lines.forEach((line, i) => {
     if (forms.some(f => (f.n && line.includes(f.n)) || (f.bare && bare[i].includes(f.bare)))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
   });
   if (u.fold && !out.lines.has('j0') && rowNameFold(row).includes(u.fold)) { out.lines.add('j0'); out.head = true; }
   if (u.key && u.key.length >= 3 && !out.lines.has('j0') && rowNameKey(row).includes(u.key)) { out.lines.add('j0'); out.head = true; }
+  if (quick && (out.kw || out.lines.size)) return out;
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
     rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
   }
@@ -4008,8 +4074,10 @@ function locateJa(row, u) {
 }
 function japaneseWordTier(row, u) {
   if (!jaMayHave(row, u)) return null;
-  const loc = locateJa(row, u);
+  const loc = locateJa(row, u, true);
   if (loc.kw || loc.lines.size) return { tier: 1, score: loc.lines.has('j0') ? 0.5 : 1 };
+  // after the cards whose Japanese text has the words in the typed order
+  if (u.enParts && !row.oracle_ja && enPartsLine(row, u.enParts)) return { tier: 2, score: 2.5 };
   const split = [u].concat(u.alts || []).filter(f => f.chunks.length > 1);
   if (split.length) {
     const lines = rowJaLines(row);
@@ -4053,7 +4121,7 @@ function buildSearchPlanFresh(query) {
   if (parsed.ja.length) plan.ja = prepareJapanese(parsed.ja);
   plan.free = !!(plan.en || plan.ja.length);
   plan.enWord = !!(plan.en && plan.en.content.length <= 1 && !plan.ja.length);
-  plan.graded = !!((plan.en && !plan.enWord) || plan.ja.length > 1 || (plan.ja.length === 1 && (plan.en || plan.ja[0].chunks.length > 1 || plan.ja[0].alts.some(f => f.chunks.length > 1))));
+  plan.graded = !!((plan.en && !plan.enWord) || plan.ja.length > 1 || (plan.ja.length === 1 && (plan.en || plan.ja[0].chunks.length > 1 || plan.ja[0].alts.some(f => f.chunks.length > 1) || plan.ja[0].enParts)));
   plan.aliases = parsed.aliases.concat(plan.ja.map(u => u.alias).filter(Boolean));
   if (!plan.en && plan.ja.length === 1) plan.tier2 = 'tier.2.ja';
   return plan;

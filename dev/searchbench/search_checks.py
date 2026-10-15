@@ -114,6 +114,7 @@ with sync_playwright() as p:
         "ティム", "カウンター", "青のカウンター", "2マナのカウンター", "ロード", "部族ロード", "lord", "赤のロード", "トークン倍増", "バニラ", "ETBクリーチャー", "ETB持ち",
         "コスト踏み倒し", "タダで唱える", "墓地から手札", "置物", "ライフロス", "ダブルストライク", "ラス", "sac", "マナコスト"])}
     has = lambda q, *names: all(n in S[q]["en"] for n in names)
+    has_h = lambda q, *names: all(n in H[q]["en"] for n in names)
     hasnt = lambda q, *names: not any(n in S[q]["en"] for n in names)
     check("slang: no search throws", not any("err" in r for r in S.values()), [r for r in S.values() if "err" in r])
     check("場に出た時 / 戦場に出た時 (時 for とき) = the same cards as とき",
@@ -178,6 +179,21 @@ with sync_playwright() as p:
     A2 = {r["q"]: r for r in page.evaluate(ALL, ["攻撃したとき", "攻撃するたび"])}
     check("攻撃したとき also finds 攻撃するたび (the cards' wording), with a note", A2["攻撃したとき"]["n"] >= A2["攻撃するたび"]["n"] > 1000
           and "攻撃したとき>攻撃するたび" in A2["攻撃したとき"]["aliases"], (A2["攻撃したとき"]["n"], A2["攻撃したとき"]["aliases"]))
+    # ---- round 20: hiragana game words; Japanese searches reach cards with no Japanese text
+    H = {r["q"]: r for r in page.evaluate(ALL, ["はかい", "破壊", "ついほう", "追放", "ひこう", "とらんぷる", "くりーちゃーをはかい", "クリーチャーを破壊", "じょきょ", "ぜんたいじょきょ",
+        "あかのかりょく", "かーどを2まいひく", "らいふをえる", "ぼちからてふだ", "墓地から手札", "らがばん", "ライブラリーから土地"])}
+    check("hiragana: はかい = 破壊, ついほう = 追放, ひこう = 飛行, とらんぷる = トランプル",
+          H["はかい"]["n"] >= H["破壊"]["n"] * 0.9 and H["ついほう"]["n"] >= H["追放"]["n"] * 0.9 and has_h("ひこう", "Serra Angel") and H["とらんぷる"]["n"] > 1000
+          and "はかい>破壊" in H["はかい"]["aliases"], [(q, H[q]["n"]) for q in ("はかい", "破壊", "ついほう", "追放", "ひこう", "とらんぷる")])
+    check("hiragana: はかい no longer matches おせっかい (は is not dropped as a particle)", "Ertai's Meddling" not in H["はかい"]["en"], H["はかい"]["en"][:5])
+    check("hiragana phrases: くりーちゃーをはかい = クリーチャーを破壊", H["くりーちゃーをはかい"]["n"] == H["クリーチャーを破壊"]["n"] > 1000, (H["くりーちゃーをはかい"]["n"], H["クリーチャーを破壊"]["n"]))
+    check("hiragana roles: じょきょ, ぜんたいじょきょ, あかのかりょく", H["じょきょ"]["roles"] == ["removal"] and H["ぜんたいじょきょ"]["roles"] == ["boardwipe"]
+          and H["あかのかりょく"]["roles"] == ["burn"] and H["あかのかりょく"]["derived"], (H["じょきょ"]["roles"], H["ぜんたいじょきょ"]["roles"], H["あかのかりょく"]))
+    check("hiragana: かーどを2まいひく (Divination), らいふをえる, ぼちからてふだ = 墓地から手札",
+          has_h("かーどを2まいひく", "Divination") and H["らいふをえる"]["n"] > 1000 and H["ぼちからてふだ"]["n"] == H["墓地から手札"]["n"], (H["かーどを2まいひく"]["n"], H["らいふをえる"]["n"], H["ぼちからてふだ"]["n"]))
+    check("hiragana names still work: らがばん -> ラガバン", H["らがばん"]["n"] == 2, H["らがばん"]["en"])
+    check("cards with no Japanese text: 墓地から手札 finds Argivian Find, くりーちゃーをはかい finds Urborg Panther, ライブラリーから土地 finds Untamed Wilds",
+          has_h("墓地から手札", "Argivian Find") and has_h("くりーちゃーをはかい", "Urborg Panther") and has_h("ライブラリーから土地", "Untamed Wilds"), H["墓地から手札"]["n"])
     check("ラス: names first, the board wipe role offered", any(a.startswith("boardwipe>") for a in S["ラス"]["asRole"]), S["ラス"]["asRole"])
     check("sac = sacrifice (not Sacred...)", has("sac", "Viscera Seer") and hasnt("sac", "Sacred Foundry"), S["sac"]["n"])
 

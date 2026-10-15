@@ -2864,6 +2864,17 @@ with sync_playwright() as p:
     PRICE_SITE["dir"] = None
     check("deck page: the price box is just 価格 and the value, on one line", "いちばん安い版" not in box.inner_text() and box.bounding_box()["height"] < 48, (box.inner_text(), box.bounding_box()))
 
+    # ---- 36. round 24: hiragana game words; English-only cards for Japanese phrases ----
+    hr = page.evaluate("""(() => ({
+      read: ['はかい', 'くりーちゃーをはかい', 'ぜんたいじょきょ', 'かーどを2まいひく', 'らがばん', '破壊', 'かえる'].map(jaFromReading),
+      parts: prepareJapanese(['墓地から手札'])[0].enParts, none: prepareJapanese(['墓地から謎'])[0].enParts,
+      bare: prepareJapanese(['はかい'])[0].bare, role: splitRoleToken('じょきょ'),
+    }))()""")
+    check("hiragana game words read as kanji, unknown words left alone",
+          hr["read"] == ["破壊", "クリーチャーを破壊", "全体除去", "カードを2枚引く", None, None, None], hr["read"])
+    check("hiragana: nothing dropped as a particle (はかい stays はかい), じょきょ is the removal role", hr["bare"] == "はかい" and hr["role"]["role"] == "removal", (hr["bare"], hr["role"]))
+    check("墓地から手札 in English for cards with no Japanese text (graveyard, hand); not when a part has no English", hr["parts"] == ["graveyard", "hand"] and hr["none"] is None, (hr["parts"], hr["none"]))
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 

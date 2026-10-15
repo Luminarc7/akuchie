@@ -161,6 +161,12 @@ never shown or searched).
   above the results says what a word was read as. Words that are slang only sometimes
   (カウンター, ロード, ラス, ティム) stay text and the note offers the role
   (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role.
+- **Hiragana game words** (typed before converting, on phones) are read as kanji/katakana
+  (`JA_READINGS`, longest word first): はかい → 破壊, くりーちゃーをはかい, じょきょ (the role).
+  Names in hiragana still match by kana folding.
+- **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
+  `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
+  the Japanese matches in the same group.
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -176,9 +182,9 @@ never shown or searched).
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
    Update the matching doc in `docs/` (see "Documentation" above).
-3. **Test** with `python3 dev/tests/e2e.py` (about 600 offline checks; needs a warujie-prices
+3. **Test** with `python3 dev/tests/e2e.py` (about 650 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (93 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
+   (100 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
