@@ -899,7 +899,7 @@ with sync_playwright() as p:
     check("metagame: back from the card returns to the metagame tab", "view=meta" in page.url and page.locator("#metaView").is_visible(), page.url)
     # Japanese
     page.click("#langBtn")
-    page.wait_for_function("document.querySelector('#metaFormats .seg-btn').textContent === 'スタンダード'")
+    page.wait_for_function("document.querySelector('#metaFormats .seg-btn .sh-full').textContent === 'スタンダード'")
     r0 = page.locator("#metaBody .meta-row").nth(0).inner_text()
     check("metagame in Japanese: labels and Japanese card names", all(x in r0 for x in ["Gruul Dragons", "100デッキ", "400試合", "シヴ山のドラゴン", "稲妻", "ラノワールのエルフ", "サンプルリスト"])
           and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["直近30日", "直近90日"] and "未分類" in page.locator("#metaBody").inner_text()
@@ -2729,8 +2729,10 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
     page.wait_for_function("document.querySelector('#metaBody .meta-cost')")
     gr = page.locator("#metaBody .meta-row").first
-    check("metagame: each deck with a priced list shows its price (Orzhov's only card has no price: none shown)", gr.locator(".meta-cost").inner_text() == want_txt and page.locator("#metaBody .meta-cost").count() == 1,
-          (gr.locator(".meta-cost").inner_text(), want_txt))
+    col_txt = want_txt.replace("約", "").replace("〜", "+")
+    check("metagame: each deck with a priced list shows its price in the price column (Orzhov's only card has no price: none shown)",
+          gr.locator(".meta-price .meta-cost").inner_text() == col_txt and page.locator("#metaBody .meta-cost").count() == 1,
+          (gr.locator(".meta-cost").inner_text(), col_txt))
     page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
     order = page.locator("#metaBody .meta-name-text").all_inner_texts()
     costs_shown = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => { const c = r.querySelector('.meta-cost'); return c ? Number(c.textContent.replace(/[^0-9]/g, '')) : null; })")
@@ -2796,6 +2798,33 @@ with sync_playwright() as p:
     check("phone, metagame: …and in full when it is opened", row.locator(".meta-name-text").inner_text() == "グルール・ドラゴン", row.locator(".meta-name-text").inner_text())
     check("phone, metagame: rank arrows fit, no sideways scroll", row.locator(".rank-mv").is_visible() and no_hscroll())
     page.set_viewport_size({"width": 1280, "height": 900})
+
+    # ---- 35. round 23: phone metagame - short format and period buttons, ⓘ only, price column; one-line price box ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    check("metagame: desktop keeps the full format names and a 価格 column", page.locator("#metaFormats .seg-btn").first.inner_text() == "スタンダード"
+          and "価格" in page.locator(".meta-cols").inner_text() and page.locator("#metaHelpBtn").inner_text() == "ⓘ 見方")
+    page.wait_for_function("document.querySelector('#metaBody .meta-price .meta-cost')")
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    check("phone, metagame: formats as ST PI MO LE VI PA, periods as 30日 90日",
+          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["ST", "PI", "MO", "LE", "VI", "PA"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
+          (page.locator("#metaFormats .seg-btn").all_inner_texts(), page.locator("#metaWindows .seg-btn").all_inner_texts()))
+    fr = page.evaluate("[...document.querySelectorAll('#metaFormats .seg-btn')].map(b => Math.round(b.getBoundingClientRect().right))")
+    check("phone, metagame: all six formats fit on screen", max(fr) <= 390 - 16, fr)
+    check("phone, metagame: the help button is just ⓘ (named for screen readers) and fits", page.locator("#metaHelpBtn").inner_text() == "ⓘ"
+          and page.get_attribute("#metaHelpBtn", "aria-label") == "見方" and page.evaluate("document.querySelector('#metaHelpBtn').getBoundingClientRect().right") <= 390 - 16)
+    row = page.locator("#metaBody .meta-row").first
+    pr, sh = row.locator(".meta-price").bounding_box(), row.locator(".meta-share").bounding_box()
+    check("phone, metagame: the price sits in its own column left of the share", row.locator(".meta-price").inner_text().startswith("¥") and pr["x"] + pr["width"] <= sh["x"] + 1, (pr, sh))
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("setLang('en')"); page.wait_for_timeout(200)
+    check("metagame in English: the column says Share, not Share of field", "Share of field" not in page.locator(".meta-cols").inner_text() and "Share" in page.locator(".meta-cols").inner_text())
+    page.evaluate("setLang('ja')"); page.wait_for_timeout(200)
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('.deck-cost .dcst-v')")
+    box = page.locator(".deck-cost .dcst-price")
+    PRICE_SITE["dir"] = None
+    check("deck page: the price box is just 価格 and the value, on one line", "いちばん安い版" not in box.inner_text() and box.bounding_box()["height"] < 48, (box.inner_text(), box.bounding_box()))
 
     check("no JavaScript errors", not errors, errors)
     browser.close()
