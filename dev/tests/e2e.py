@@ -2875,6 +2875,44 @@ with sync_playwright() as p:
     check("hiragana: nothing dropped as a particle (はかい stays はかい), じょきょ is the removal role", hr["bare"] == "はかい" and hr["role"]["role"] == "removal", (hr["bare"], hr["role"]))
     check("墓地から手札 in English for cards with no Japanese text (graveyard, hand); not when a part has no English", hr["parts"] == ["graveyard", "hand"] and hr["none"] is None, (hr["parts"], hr["none"]))
 
+    # ---- 37. round 25: reliability - punctuation, colons and minus signs, own names, English names, card shapes, colors ----
+    rl = page.evaluate("""(() => {
+      const row = { name_ja: '石の雨', type_ja: 'ソーサリー', oracle_ja: '土地１つを対象とし、それを破壊する。', alt_names_ja: '' };
+      const crit = { name_ja: '灰色熊', type_ja: 'クリーチャー — 熊', oracle_ja: '灰色熊が死亡したとき、カード１枚を引く。', alt_names_ja: '古い熊' };
+      const dfc = { name_ja: '甲冑 // 乙女', type_ja: 'クリーチャー — 人間 // 土地', oracle_ja: '甲冑が攻撃するたび、甲冑を変身させる。 // 乙女はタップ状態で戦場に出る。', alt_names_ja: '' };
+      const p = q => { const r = parseSearch(q); return { f: r.filters.length, ja: r.ja, words: r.words, neg: r.filters.some(f => f.negate), al: r.aliases.map(a => a.from + '>' + a.to) }; };
+      return {
+        norm: [normJaSearch('対象とし、それを「破壊」する。'), normJaSearch('対象とし、それ', true), normText('−1/−0')],
+        chunks: prepareJapanese(['土地1つを対象とし、それを破壊する'])[0].chunks, n: prepareJapanese(['土地1つを対象とし、それを破壊する'])[0].n,
+        self: [rowJaText(row), rowJaText(crit), rowJaText(Object.assign({}, crit, { oracle_ja: '古い熊が死亡したとき' })), rowJaText(dfc)],
+        tap: p('{T}:アーティファクト1つを対象とする'), loy: p('-2:カード2枚を引く'), minus: p('-1/-0の修整を受ける'), neg: p('-飛行'), op: p('t:クリーチャー'),
+        mana: p('{2}{B}, クリーチャー1体を生け贄に捧げる'),
+        key: [nameKey('Lim-Dûl'), nameKey('Mjölnir')],
+        shapes: ['分割カード', '両面', 'MDFC', 'split card', 'double faced cards', 'is:transform', 'split second'].map(p),
+        narrow: ['白 天使', '白の天使', '3マナのクリーチャー', '黒のクリーチャー', '"白" 天使', '-白の天使', '白のクリーチャーを破壊'].map(p),
+      };
+    })()""")
+    check("punctuation (、。「」) is left out of the searched text; a typed 、 still splits the parts",
+          rl["norm"] == ["対象としそれを破壊する", "対象とし、それ", "-1/-0"] and rl["chunks"] == ["土地1つ", "対象", "それ", "破壊"] and rl["n"] == "土地1つを対象としそれを破壊する", (rl["norm"], rl["chunks"], rl["n"]))
+    check("a card's own name in its text reads as このクリーチャー / この土地 (also its older name); instants and sorceries keep it",
+          rl["self"] == ["土地１つを対象とし、それを破壊する。", "このクリーチャーが死亡したとき、カード１枚を引く。", "このクリーチャーが死亡したとき",
+                         "このクリーチャーが攻撃するたび、このクリーチャーを変身させる。 // この土地はタップ状態で戦場に出る。"], rl["self"])
+    check("{T}:... and -2:... and -1/-0... are card text; -飛行 and t:クリーチャー still work",
+          rl["tap"]["f"] == 0 and rl["tap"]["ja"] and rl["loy"]["f"] == 0 and not rl["loy"]["neg"] and rl["minus"]["f"] == 0 and rl["minus"]["ja"]
+          and rl["neg"]["neg"] and rl["op"]["f"] == 1, (rl["tap"], rl["loy"], rl["minus"], rl["neg"], rl["op"]))
+    check("mana symbols beside Japanese words are part of the Japanese text", rl["mana"]["ja"] == ["{2}{B},", "クリーチャー1体を生け贄に捧げる"] and not rl["mana"]["words"], rl["mana"])
+    check("names: accents and hyphens left out (lim dul finds Lim-Dûl, mjolnir finds Mjölnir)", rl["key"] == ["limdul", "mjolnir"], rl["key"])
+    check("card shapes: 分割カード, 両面, MDFC, split card, double faced cards, is:transform are filters; split second is not",
+          all(x["f"] == 1 and not x["ja"] and not x["words"] for x in rl["shapes"][:6]) and rl["shapes"][1]["al"] == ["両面>両面カード"]
+          and rl["shapes"][3]["al"] == ["split card>分割カード"] and rl["shapes"][6]["f"] == 0, rl["shapes"])
+    nw = rl["narrow"]
+    check("colors and mana values narrow: 白 天使, 3マナのクリーチャー, 黒のクリーチャー; not in quotes, not -白の天使, not inside a sentence",
+          nw[0]["f"] == 1 and nw[0]["ja"] == ["天使"] and nw[0]["al"] == ["白>白のカード"]
+          and nw[2]["f"] == 1 and nw[2]["ja"] == [] and nw[3]["f"] == 1 and nw[3]["ja"] == [] and nw[3]["al"] == ["黒のクリーチャー>黒のクリーチャー・カード"]
+          and nw[4]["f"] == 0 and nw[5]["f"] == 1 and nw[5]["neg"] and nw[6]["f"] == 0, nw)
+    search("白")
+    check("the note says what a color word did: 「白」で白のカードに絞り込みました。", "「白」で白のカードに絞り込みました。" in page.locator("#matchNote").inner_text(), page.locator("#matchNote").inner_text())
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 

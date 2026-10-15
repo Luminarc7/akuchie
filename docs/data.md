@@ -31,6 +31,7 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `released_at` | First release of the card |
 | `alt_names_ja` | Older Japanese names, `|`-separated (they still match in search) |
 | `legal` | One letter per format where legal: `s` standard, `p` pioneer, `m` modern, `l` legacy, `v` vintage, `a` pauper, `c` commander (`FORMAT_CODE` in `index.html`) |
+| `layout` | The card's shape from Scryfall when it isn't an ordinary one-faced card: `split`, `transform`, `modal_dfc`, `meld`, `flip`, `adventure` (Omens too), `prepare`, `saga`, `class`, `case`, `leveler`, `mutate`, `prototype`, `host`, `augment` (`SHAPE_LAYOUTS` in the builder); empty otherwise. Searched by 分割カード, 両面カード… (`CARD_SHAPES`) |
 | `name_kana` | Reading of the Japanese name in hiragana, only for the あいうえお order; never shown or searched |
 
 When the page loads it, `indexRow()` adds computed fields starting with `_` (lowercased names,

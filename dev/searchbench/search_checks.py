@@ -103,7 +103,7 @@ with sync_playwright() as p:
       return qs.map(q => { try { const r = searchRows(q, st);
         return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), roles: r.info.roles.map(x => x.id || x.tag || '?'), aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to),
                  asRole: (r.info.asRole || []).map(a => a.id + '>' + a.query), derived: r.info.derived, cmc: r.rows.map(x => x._cmc),
-                 types: r.rows.map(x => x._typeEn), ja: r.rows.slice(0, 40).map(x => x.oracle_ja || '') };
+                 types: r.rows.map(x => x._typeEn), colors: r.rows.map(x => x._colors || ''), fixes: (r.info.fixes || []).map(f => f.from + '>' + f.to), ja: r.rows.slice(0, 40).map(x => x.oracle_ja || '') };
       } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });
     }"""
     S = {r["q"]: r for r in page.evaluate(ALL, [
@@ -196,6 +196,62 @@ with sync_playwright() as p:
           has_h("墓地から手札", "Argivian Find") and has_h("くりーちゃーをはかい", "Urborg Panther") and has_h("ライブラリーから土地", "Untamed Wilds"), H["墓地から手札"]["n"])
     check("ラス: names first, the board wipe role offered", any(a.startswith("boardwipe>") for a in S["ラス"]["asRole"]), S["ラス"]["asRole"])
     check("sac = sacrifice (not Sacred...)", has("sac", "Viscera Seer") and hasnt("sac", "Sacred Foundry"), S["sac"]["n"])
+
+    # ---- round 21: reliability - what is typed from a card finds that card; card shapes; colors and mana values
+    R = {r["q"]: r for r in page.evaluate(ALL, ["土地1つを対象としそれを破壊する", "土地１つを対象とし、それを破壊する", "{T}:アーティファクト・クリーチャー1体を対象とする",
+        "−1/−0の修整を受ける", "-2:カード2枚を引く", "このクリーチャーが戦場に出たとき", "このオーラが戦場に出たとき", "この土地はタップ状態で戦場に出る",
+        "分割カード", "両面カード", "両面", "MDFC", "変身カード", "反転カード", "出来事カード", "split card", "double-faced card", "is:mdfc", "-is:dfc 変身",
+        "白 天使", "白の天使", "3マナ ゴブリン", "黒のクリーチャー", "青 カウンター", "black lotus", "white knight", "黒 騎士", '"白" 天使',
+        "wrenchrigger", "lim dul", "mjolnir", "snow covered island", "su-chi", "suchi"])}
+    has_r = lambda q, *names: all(n in R[q]["en"] for n in names)
+    check("reliability: no search throws", not any("err" in r for r in R.values()), [r for r in R.values() if "err" in r])
+    check("a sentence typed without 、 or with half-width numbers finds the card (Stone Rain)",
+          has_r("土地1つを対象としそれを破壊する", "Stone Rain") and has_r("土地１つを対象とし、それを破壊する", "Stone Rain"), R["土地1つを対象としそれを破壊する"]["n"])
+    check("{T}: and -2: and −1/−0 in card text are words, not filters", R["{T}:アーティファクト・クリーチャー1体を対象とする"]["n"] > 0
+          and 0 < R["−1/−0の修整を受ける"]["n"] < 1000 and 0 < R["-2:カード2枚を引く"]["n"] < 1000,
+          [R[q]["n"] for q in ("{T}:アーティファクト・クリーチャー1体を対象とする", "−1/−0の修整を受ける", "-2:カード2枚を引く")])
+    check("このクリーチャー / この土地 / このオーラ also find older cards that say their own name",
+          has_r("このクリーチャーが戦場に出たとき", "Mulldrifter") and has_r("この土地はタップ状態で戦場に出る", "Akoum Refuge")
+          and has_r("このオーラが戦場に出たとき", "Shielding Plax"), R["このクリーチャーが戦場に出たとき"]["n"])
+    check("card shapes: 分割カード (Fire // Ice), 両面カード (Delver), MDFC (Emeria's Call), 変身カード, 反転カード, 出来事カード (Bonecrusher)",
+          has_r("分割カード", "Fire // Ice") and not has_r("分割カード", "Delver of Secrets // Insectile Aberration")
+          and has_r("両面カード", "Delver of Secrets // Insectile Aberration", "Emeria's Call // Emeria, Shattered Skyclave") and not has_r("両面カード", "Fire // Ice")
+          and R["両面"]["n"] == R["両面カード"]["n"] and has_r("MDFC", "Emeria's Call // Emeria, Shattered Skyclave") and not has_r("MDFC", "Delver of Secrets // Insectile Aberration")
+          and has_r("変身カード", "Delver of Secrets // Insectile Aberration") and has_r("反転カード", "Akki Lavarunner // Tok-Tok, Volcano Born")
+          and has_r("出来事カード", "Bonecrusher Giant // Stomp") and R["split card"]["n"] == R["分割カード"]["n"] and R["double-faced card"]["n"] == R["両面カード"]["n"]
+          and R["is:mdfc"]["n"] == R["MDFC"]["n"] and 100 < R["分割カード"]["n"] < 200 and 400 < R["両面カード"]["n"] < 700,
+          [(q, R[q]["n"]) for q in ("分割カード", "両面カード", "MDFC", "変身カード", "反転カード", "出来事カード")])
+    check("-is:dfc 変身: cards about transforming that are not double-faced", R["-is:dfc 変身"]["n"] > 0 and not has_r("-is:dfc 変身", "Delver of Secrets // Insectile Aberration"), R["-is:dfc 変身"]["en"][:5])
+    check("colors and mana values narrow: 白 天使 / 白の天使 (Serra Angel, white only), 3マナ ゴブリン (mana value 3), 黒のクリーチャー (black creatures)",
+          has_r("白 天使", "Serra Angel") and R["白 天使"]["n"] == R["白の天使"]["n"] and "W" in "".join(set(R["白 天使"]["colors"])) and all("W" in c for c in R["白 天使"]["colors"])
+          and set(R["3マナ ゴブリン"]["cmc"]) == {3} and R["3マナ ゴブリン"]["n"] > 50
+          and all("B" in c for c in R["黒のクリーチャー"]["colors"]) and all("creature" in t.lower() for t in R["黒のクリーチャー"]["types"]) and "白>白のカード" in R["白 天使"]["aliases"],
+          [(q, R[q]["n"]) for q in ("白 天使", "白の天使", "3マナ ゴブリン", "黒のクリーチャー")])
+    check("青 カウンター is the counterspell role in blue; quoted \"白\" stays text", R["青 カウンター"]["roles"] == ["counterspell"] and has_r("青 カウンター", "Counterspell")
+          and not has_r('"白" 天使', "Serra Angel"), (R["青 カウンター"]["roles"], R['"白" 天使']["n"]))
+    check("color words inside card names are names: black lotus, white knight, 黒 騎士", has_r("black lotus", "Black Lotus") and has_r("white knight", "White Knight")
+          and has_r("黒 騎士", "Black Knight"), [R[q]["en"][:3] for q in ("black lotus", "white knight", "黒 騎士")])
+    check("English names without hyphens or accents: wrenchrigger, lim dul, mjolnir, snow covered island, suchi",
+          has_r("wrenchrigger", "Wrench-Rigger") and has_r("lim dul", "Lim-Dûl the Necromancer") and has_r("mjolnir", "Mjölnir, Storm Hammer")
+          and has_r("snow covered island", "Snow-Covered Island") and has_r("suchi", "Su-Chi") and not R["suchi"]["fixes"],
+          [(q, R[q]["en"][:2], R[q]["fixes"]) for q in ("wrenchrigger", "lim dul", "mjolnir", "snow covered island", "suchi")])
+    # every card found by its own words: one sentence of its Japanese text typed plainly (no 、, half-width numbers),
+    # and its English name in lower case without punctuation (a fixed sample of 300 cards)
+    import random, re as _re
+    rnd = random.Random(21)
+    rows = [r for r in harness.ROWS.values() if r["oracle_ja"] and r["name_ja"]]
+    FW = str.maketrans("０１２３４５６７８９", "0123456789")
+    tests = []
+    for r in rnd.sample(rows, 300):
+        nm = r["name_ja"].split(" // ")[0]
+        ss = [x.strip() for x in _re.split(r"[。\n]| // ", _re.sub(r"（[^）]*）", "", r["oracle_ja"])) if 6 <= len(x.strip()) <= 60 and nm not in x]
+        if ss: tests.append({"q": _re.sub(r"[、「」]", "", rnd.choice(ss).translate(FW)), "id": r["oracle_id"]})
+        tests.append({"q": _re.sub(r"[^a-z0-9 ]", "", r["name_en"].split(" // ")[0].lower()), "id": r["oracle_id"]})
+    FIND = """(ts) => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      return ts.filter(x => !searchRows(x.q, st).rows.some(r => r.oracle_id === x.id)).map(x => x.q); }"""
+    missed = page.evaluate(FIND, tests)
+    check(f"each card is found by its own words: a sentence of its text typed plainly, its English name ({len(tests)} searches, at most 1% missed)",
+          len(missed) <= len(tests) // 100, missed[:10])
 
     # the same search twice: the second asks Scryfall nothing
     def search(q):

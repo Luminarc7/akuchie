@@ -35,15 +35,17 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 |---|---|---|
 | A role word (when the tag file loaded) | `roles` | 除去, ドロー, ramp, `role:tutor`, `役割:除去` |
 | `op:value`, `op>=value`… | `filters` (or `roles`/`sim`) | `o:draw`, `t:ゴブリン`, `色:赤`, `mv<=2`, `似:稲妻` |
-| `-something` | a negative filter | `-t:creature`, `-飛行` |
+| `-something` | a negative filter (not before a number: `-2:` is a loyalty ability, `-1/-0` a number) | `-t:creature`, `-飛行` |
 | `"two words"` | `phrases` (exact phrase) | `"draw a card"` |
 | A word in `WORD_FILTERS` | a type test | PW, 置物 |
+| A card shape (`CARD_SHAPES`; English names of several words are read first, `SHAPE_PHRASE_RE`) | a layout test, also `is:<id>` | 分割カード, 両面, MDFC, 変身カード, 反転カード, 出来事カード, split card, `is:mdfc` |
+| A color or mana value alone, or before a type word (`narrowingWord()`) | a color / mana value filter; not inside a card name (`rolesLookLikeAName()`) or in quotes | 白 天使, 白の天使, 3マナ ゴブリン, 黒のクリーチャー, red goblin |
 | A word in `EN_WORD_ALIAS` | the card's own wording | unblockable → can't be blocked, sac → sacrifice |
-| Japanese text | `ja` | 墓地から手札, 飛行 |
+| Japanese text (mana symbols beside it too; `{T}:…` with an unknown "operator" is text) | `ja` | 墓地から手札, 飛行, `{T}:土地1つを対象とする` |
 | Symbols only | a literal text filter | `%`, `🔥` |
 | Anything else | `words` (English) | lightning, bolt |
 
-**Operators** are `KNOWN_OPS` plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
+**Operators** are `KNOWN_OPS` (including `is:` for card shapes) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
 色→c, マナ総量→cmc, セット→e…). They are matched against a row in `localOperatorMatch()`;
 an unknown operator returns `null` and the token is searched as text. To add an operator: add
 its names to `KNOWN_OPS`/`JA_OPERATORS`, a `case` in `localOperatorMatch()`, a line in the search
@@ -54,6 +56,11 @@ tips (`GUIDE_ROWS`), and checks in `dev/searchbench/search_checks.py`.
 The plan says how to test each row. English words go through `prepareEnglish()` (stop words
 dropped, stems, spelling correction against words that exist on cards: `correctEnglish()`);
 Japanese words through `prepareJapanese()` (split at particles, slang and spelling variants).
+Punctuation (、。「」, `JA_PUNCT_RE`) is left out of both the search and the cards' text
+(`normJaSearch()`), so a sentence typed with or without it matches; a typed 、 still separates
+the parts of a word. A run-together English search that is part of a card name (`isNamePart()`)
+also matches that name (`plan.en.nameKey`: "wrenchrigger", "snow covered island"), and such words
+are not spelling-corrected.
 `plan.graded` is true when the query has several words, so results are grouped by how closely
 they matched.
 
@@ -97,8 +104,17 @@ rows before the slower line-by-line tests. Keep any new test behind such a pre-c
 
 `nameKey()` lowercases, folds hiragana to katakana and removes punctuation and spaces
 (`NAME_PUNCT_RE`), so "yawgmoth thran" finds "Yawgmoth, Thran Physician" and らがばん finds
-ラガバン. `relevance()` and the name suggestions (`nameSuggestions()`) use it. Older Japanese
-names (`alt_names_ja`) match too.
+ラガバン. It also drops accents, so "lim dul" finds Lim-Dûl. `relevance()` and the name
+suggestions (`nameSuggestions()`) use it. Older Japanese names (`alt_names_ja`) match too.
+
+## A card's own name in its text
+
+Older Japanese text names the card itself (石の雨…、灰色熊が死亡したとき) where newer cards say
+このクリーチャー, この土地. For the search, `rowJaText()` reads the card's own name (and its older
+names) in its text the newer way (`jaSelfWord()` picks the word from the type line), so
+このクリーチャーが戦場に出たとき finds both. Instants and sorceries keep their names. The
+slang step also tries このオーラ for このエンチャント and この装備品 / この機体 for
+このアーティファクト.
 
 ## Players' words (slang)
 
@@ -154,7 +170,9 @@ card page's toggles (same colours, no higher mana value, same type: `simPasses()
 
 - `dev/searchbench/search_checks.py` runs real searches against the real database and role
   tags. **Add a check for every search change**, including one that proves a wrong card is
-  *not* found.
+  *not* found. One check types a sentence of 300 random cards' own text plainly (no 、,
+  half-width numbers) and their English names in lower case without punctuation, and expects
+  each card to be found (at most 1% missed).
 - `dev/tests/e2e.py` covers the search interface with fixture cards (`dev/tests/search_rows.py`).
 - `dev/searchbench/harness.py` opens the site with the real data for screenshots or
   reproducing a bug.
