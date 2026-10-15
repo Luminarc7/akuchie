@@ -2805,12 +2805,20 @@ with sync_playwright() as p:
     page.evaluate("""metaState.data.trends = metaState.data.trends || {};
         metaState.data.trends.standard = { weeks: ['a','b','c','d','e','f','g','h'], decks: [1,1,1,1,1,1,1,1], share: {
           'Gruul Dragons': [1,1,1,1,10,10,10,10], 'Selesnya Cats': [5,5,5,5,5,5,5,5], 'Mono Red Burn': [8,8,8,8,2,2,2,2], 'Orzhov|u': [0,0,0,0,1,1,1,1] } };
+        metaRankCache.clear(); renderMeta();
         metaRankCache.clear(); renderMeta();""")
     mv = page.evaluate("[...document.querySelectorAll('#metaBody .meta-row')].map(r => [r.querySelector('.meta-name-text').innerText, (r.querySelector('.rank-mv') || {}).className || '', r.querySelector('.rank-n').innerText])")
     want_mv = {"グルール・ドラゴン": "rank-mv up", "Selesnya Cats": "rank-mv same", "赤単バーン": "rank-mv down", "オルゾフ（未分類）": "rank-mv up"}
     check("metagame: an arrow by each rank: ▲ moved up, ▼ down, grey — same (4 weeks against the 4 before)",
           all(want_mv.get(n) == c for n, c, _ in mv) and [r for _, _, r in mv] == ["1", "2", "3", "4"], mv)
-    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("使用率の順位は変わっていません"))
+    check("metagame: …the — is grey and says the rank is the same", page.locator(".rank-mv.same").first.get_attribute("title").startswith("順位は同じで"))
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,7,7,7,7.5]; metaRankCache.clear(); renderMeta();")
+    sel = page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv")
+    check("metagame: same rank but the share rose 2pt or more -> ▲", sel.get_attribute("class") == "rank-mv up" and "2.1pt上がりました" in sel.get_attribute("title"), sel.get_attribute("title"))
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,2.9,2.9,2.9,2.9]; metaRankCache.clear(); renderMeta();")
+    check("metagame: same rank but the share fell 2pt or more -> ▼", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv down")
+    page.evaluate("metaState.data.trends.standard.share['Selesnya Cats'] = [5,5,5,5,6.9,6.9,6.9,6.9]; metaRankCache.clear(); renderMeta();")
+    check("metagame: same rank and under 2pt -> grey —", page.locator("#metaBody .meta-row").nth(1).locator(".rank-mv").get_attribute("class") == "rank-mv same")
     page.select_option("#metaSort", "cost"); page.wait_for_timeout(200)
     check("metagame: no rank arrows when sorted by something other than share", page.locator("#metaBody .rank-mv").count() == 0)
     page.select_option("#metaSort", "share"); page.wait_for_timeout(200)
