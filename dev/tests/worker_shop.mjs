@@ -54,11 +54,14 @@ reply = { status: 200, body: { items: [
   item('マジック：ザ・ギャザリング ローウィンの昏明 プレイ・ブースター 日本語版 1パック', 650),
   item('マジック：ザ・ギャザリング ローウィンの昏明 バンドル', 9000),
   item('マジック：ザ・ギャザリング ローウィンの昏明 コレクター・ブースター 日本語版 BOX', 36000),
+  // a real Rakuten Books title (books.rakuten.co.jp/rb/18155696/), 30 packs: a box, not "1パック"
+  item('『マジック：ザ・ギャザリングーーFINAL FANTASY』 プレイ・ブースター 日本語版 【30パック入りBOX】【クレジットカード決済限定】', 21421),
+  item('マジック：ザ・ギャザリング プレイ・ブースター 【１パック】', 650),
 ] } };
 r = await ask('?kind=box&set=' + encodeURIComponent('ローウィンの昏明<script>'));
 check('boxes of one set: searched by its name (odd characters dropped), formatVersion 1 or 2 both read',
-  sent[0].url.searchParams.get('keyword') === 'ギャザリング ローウィンの昏明script ブースター' && r.body.items.length === 2, [sent[0].url.searchParams.get('keyword'), r.body]);
-check('a single pack and a bundle are not boxes', r.body.items.every(i => i.price >= 8000));
+  sent[0].url.searchParams.get('keyword') === 'ギャザリング ローウィンの昏明script ブースター' && r.body.items.length === 3, [sent[0].url.searchParams.get('keyword'), r.body]);
+check('a single pack and a bundle are not boxes; a 30-pack box is', r.body.items.every(i => i.price >= 8000) && r.body.items.some(i => i.title.includes('30パック入りBOX')), r.body.items.map(i => i.title));
 sent.length = 0;
 await ask('?kind=box&aff=' + encodeURIComponent('bad id!'));
 check('a malformed affiliate ID is not passed on', !sent[0].url.searchParams.has('affiliateId'));

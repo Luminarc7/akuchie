@@ -110,7 +110,7 @@ async function rakutenItems(env, url) {
     const link = String(it.affiliateUrl || it.itemUrl || '');
     if (!/ギャザリング|magic/i.test(title) || !price || !RAKUTEN_HOSTS.test(link)) continue;
     // a box, not one pack, a bundle or a deck (box titles often don't say "BOX")
-    if (kind === 'box' && (!/ブースター|BOX|ボックス/i.test(title) || /バンドル|デッキ|1パック|単品/.test(title) || price < 8000)) continue;
+    if (kind === 'box' && (!/ブースター|BOX|ボックス/i.test(title) || /バンドル|デッキ|(^|[^0-9０-９])[1１]パック|単品/.test(title) || price < 8000)) continue;
     if (kind === 'sl' && !/secret\s*lair|シークレット・?レイヤー/i.test(title)) continue;
     const image = String(it.largeImageUrl || it.mediumImageUrl || '');
     items.push({ title, price, url: link, image: RAKUTEN_HOSTS.test(image) ? image : '',
