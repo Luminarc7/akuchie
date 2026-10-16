@@ -106,6 +106,8 @@
   :root {
     --mana-w: #e8dfc0; --mana-u: #3d8bd6; --mana-b: #8d7a9e;
     --mana-r: #cf5647; --mana-g: #5a9c6a; --mana-c: #9b95ac;
+    /* rarity colours: the dots on cards and the rarity filter buttons */
+    --rar-common: #8e8a99; --rar-uncommon: #9fb4c4; --rar-rare: #d1a93f; --rar-mythic: #d1622f;
     --bar-h: 62px;
     /* mana symbols: one size beside list text and deck names, one beside page titles;
        symbols inside card text are 1em (see "mana and other card symbols") */
@@ -311,8 +313,8 @@
   }
   .rarity-dot { display: inline-flex; align-items: center; gap: 5px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mana-c); flex: none; }
-  .dot.common { background: #8e8a99; } .dot.uncommon { background: #9fb4c4; }
-  .dot.rare { background: #d1a93f; }   .dot.mythic { background: #d1622f; }
+  .dot.common { background: var(--rar-common); } .dot.uncommon { background: var(--rar-uncommon); }
+  .dot.rare { background: var(--rar-rare); }   .dot.mythic { background: var(--rar-mythic); }
   .tile-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
   .tile-price .yen { color: var(--text); font-weight: 500; margin-left: 4px; }
 
@@ -1523,6 +1525,24 @@
     #sideAdvSlot .filter-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
     #sideAdvSlot .filter-fields .filter-section + .filter-section { margin-top: 0; }
     #sideAdvSlot .list-filter, #sideAdvSlot .filter-panel select { height: 32px; }
+  }
+  /* rarity buttons carry the same coloured dot as the cards; the chosen one fills with its colour */
+  .opt-chip[data-group="rarity"][data-value="common"] { --rc: var(--rar-common); }
+  .opt-chip[data-group="rarity"][data-value="uncommon"] { --rc: var(--rar-uncommon); }
+  .opt-chip[data-group="rarity"][data-value="rare"] { --rc: var(--rar-rare); }
+  .opt-chip[data-group="rarity"][data-value="mythic"] { --rc: var(--rar-mythic); }
+  .opt-chip[data-group="rarity"]::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rc); margin-right: 6px; vertical-align: 1px; }
+  .opt-chip[data-group="rarity"]:hover { border-color: var(--rc); }
+  .opt-chip[data-group="rarity"][aria-pressed="true"] { background: var(--rc); border-color: var(--rc); color: #17151d; }
+  .opt-chip[data-group="rarity"][aria-pressed="true"]::before { background: #17151d; }
+  /* the sidebar and phones don't fit four dotted buttons on a line: a tidy two-by-two grid */
+  @media (min-width: 1000px) {
+    #sideAdvSlot .filter-section:has([data-group="rarity"]) .chip-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #sideAdvSlot .opt-chip[data-group="rarity"] { text-align: left; }
+  }
+  @media (max-width: 820px) {
+    .filter-section:has([data-group="rarity"]) .chip-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .opt-chip[data-group="rarity"] { text-align: left; }
   }
   /* phones: one column; the nine mana values fit on one line; text fields at 16px so
      iPhones don't zoom in when one is tapped */

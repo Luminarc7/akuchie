@@ -70,6 +70,9 @@ end of `<style>`:
   the fields so iPhones don't zoom in when one is tapped. Up to 900px the panel fills the page
   column (it used to keep the old slide-in drawer's 360px width).
 - Suggestion lists under the text fields may be wider than their field (up to 340px).
+- **Rarity buttons** carry the same coloured dot as the cards (`--rar-common`, `--rar-uncommon`,
+  `--rar-rare`, `--rar-mythic` in `:root`, also used by `.dot`); the chosen one fills with its
+  colour. In the sidebar and on phones the four sit two by two.
 
 ## Lightweight mode (軽量)
 

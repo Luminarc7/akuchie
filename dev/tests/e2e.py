@@ -3000,12 +3000,21 @@ with sync_playwright() as p:
     if a["w"] >= 900:
         check("advanced search, home: colour, mana value and rarity share the first line; the four text fields the last",
               len(set(a["titleTops"][:3])) == 1 and len(set(a["titleTops"][4:])) == 1 and a["h"] <= 300, a)
+    rar = page.evaluate("""[...document.querySelectorAll('#filterPanel .opt-chip[data-group=rarity]')].map(b => {
+      const d = document.createElement('span'); d.className = 'dot ' + b.dataset.value; document.body.appendChild(d);
+      const want = getComputedStyle(d).backgroundColor; d.remove(); return [getComputedStyle(b, '::before').backgroundColor, want]; })""")
+    check("advanced search: each rarity button has the cards' rarity dot colour", len(rar) == 4 and all(a == b for a, b in rar) and len({a for a, _ in rar}) == 4, rar)
     page.focus("#roleFilter"); page.keyboard.type("r"); page.wait_for_timeout(150)
     dw, iw = page.evaluate("[document.getElementById('roleList').getBoundingClientRect().width, document.getElementById('roleFilter').getBoundingClientRect().width]")
     check("advanced search, home: the role suggestions are at least as wide as their field", page.locator("#roleList").is_visible() and dw >= iw - 1, (dw, iw))
     page.fill("#roleFilter", ""); page.press("#roleFilter", "Escape")
     top_search("テスト"); page.wait_for_timeout(300)
     a = page.evaluate(ADV)
+    page.click('#sideAdvSlot .opt-chip[data-value="rare"]'); page.wait_for_timeout(200)
+    bg, dot = page.evaluate("[getComputedStyle(document.querySelector('#sideAdvSlot .opt-chip[data-value=rare]')).backgroundColor, getComputedStyle(document.querySelector('#sideAdvSlot .opt-chip[data-value=mythic]'), '::before').backgroundColor]")
+    rows = page.evaluate("new Set([...document.querySelectorAll('#sideAdvSlot .opt-chip[data-group=rarity]')].map(b => Math.round(b.getBoundingClientRect().top))).size")
+    check("advanced search, sidebar: the chosen rarity fills with its colour; rarities sit two by two", bg == "rgb(209, 169, 63)" and dot == "rgb(209, 98, 47)" and rows == 2, (bg, dot, rows))
+    page.click('#sideAdvSlot .opt-chip[data-value="rare"]'); page.wait_for_timeout(200)
     check("advanced search, sidebar: mana values on one line, lined up with the colours, nothing to scroll inside",
           a["w"] == 262 and a["mvTops"] == 1 and a["colorLeft"] == a["mvLeft"] and a["colorW"] == a["mvW"] and a["inner"] <= 1 and not a["cut"], a)
     page.set_viewport_size({"width": 880, "height": 900}); page.wait_for_timeout(250); open_adv(); page.wait_for_timeout(150)
