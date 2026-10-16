@@ -1,15 +1,22 @@
 + bash tools/live_check.sh
-+ U=https://staging-warujie.warujie-mtg.workers.dev
-+ sleep 150
-+ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/staging_index.html https://staging-warujie.warujie-mtg.workers.dev/
-+ grep -c 'function wantedRarities' probe_out/staging_index.html
++ U=https://warujie.warujie-mtg.workers.dev
++ sleep 170
++ for i in 1 2 3 4
++ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/live_index.html 'https://warujie.warujie-mtg.workers.dev/?v=131303'
++ cmp -s probe_out/live_index.html probe_out/expected_index.html
++ echo LIVE_MATCH
+LIVE_MATCH
++ break
++ sha256sum probe_out/live_index.html probe_out/expected_index.html
+dbe96e4f67b599854f01e054f5e6c955ed5f347828808afd03ded88ed20e7651  probe_out/live_index.html
+dbe96e4f67b599854f01e054f5e6c955ed5f347828808afd03ded88ed20e7651  probe_out/expected_index.html
++ grep -c 'function wantedRarities' probe_out/live_index.html
 1
-+ grep -c shift-icon probe_out/staging_index.html
-5
-+ grep -c 'rarity: new Set(), format' probe_out/staging_index.html
-3
-+ grep -c 'rarity.also'\''' probe_out/staging_index.html
-0
-+ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/staging_preview.html https://staging-warujie.warujie-mtg.workers.dev/preview.html
-+ grep -c 'function wantedRarities' probe_out/staging_preview.html
-0
++ curl -sS --compressed -A warujie.jp-probe/1.0 -o /tmp/db.json https://warujie.warujie-mtg.workers.dev/ja_cards.json
++ python3 -c '
+import json; d = json.load(open('\''/tmp/db.json'\'')); F = d['\''fields'\'']; print(F[-3:], len(d['\''cards'\'']))
+i = F.index('\''rarities'\''); r = F.index('\''rarity'\''); n = F.index('\''name_en'\'')
+print('\''mythic rows'\'', sum('\''m'\'' in c[i] for c in d['\''cards'\'']), '\''Amnesia'\'', [c[r] for c in d['\''cards'\''] if c[n] == '\''Amnesia'\''])
+'
+['name_kana', 'layout', 'rarities'] 33821
+mythic rows 2775 Amnesia ['uncommon']
