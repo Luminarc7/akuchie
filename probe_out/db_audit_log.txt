@@ -1,0 +1,37 @@
++ python tools/rarity_audit.py /tmp/current_db.json.gz /tmp/builder probe_out/db_audit
+r:common 11364
+r:common game:paper 11162
+r:common -is:digital 11162
+r:common include:extras 15455
+r:uncommon 11157
+r:uncommon game:paper 10691
+r:uncommon -is:digital 10691
+r:uncommon include:extras 11315
+r:rare 11846
+r:rare game:paper 11427
+r:rare -is:digital 11427
+r:rare include:extras 12613
+r:mythic 2853
+r:mythic game:paper 2713
+r:mythic -is:digital 2713
+r:mythic include:extras 2946
+r:special 347
+r:special game:paper 347
+r:special -is:digital 347
+r:special include:extras 371
+r:bonus 9
+r:bonus game:paper 0
+r:bonus -is:digital 0
+r:bonus include:extras 9
+game:paper 33001
+cmc>=0 33689
+cmc>=0 -is:digital 33001
+listed r:common 11364
+listed r:uncommon 11157
+listed r:rare 11846
+listed r:mythic 2853
+listed r:special 347
+listed r:bonus 9
+bulk https://data.scryfall.io/all-cards/all-cards-20261016091845.jsonl.gz
+scanned 546256 cards 38751
+fresh rows 33821
