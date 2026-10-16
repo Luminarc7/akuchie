@@ -41,13 +41,35 @@ themes work.
   page title (the card page's mana cost, a deck page's title), and 1em inside card text
   (`.sym`). The one exception is the metagame on phones, where closed rows use 11px (the owner's
   choice). The colour and mana value buttons of the filters use one image size per place
-  (sidebar 24px, panel 28px). Use the variables instead of new pixel sizes.
+  (sidebar 21px, panel and phones 28px). Use the variables instead of new pixel sizes.
 - **Buttons side by side share one height:** the results toolbar (詳しい条件, 画像/テキスト, sort
   menu: 34px, 36px on phones), a deck page's 書き出す and 画像/リスト (34px), and the metagame
   header's buttons and sort menu (30px, 28px on phones). These rules are the "round 10" block at
   the end of `<style>`.
 - **Metagame rows read along one line:** rank, deck name, price, share and win rate sit on the
   row's first line (the rows are top-aligned), with the colours, deltas and details below.
+
+## The advanced search panel (詳しい条件)
+
+One panel, `#filterPanel`, opened and closed by `setFilterDrawer()`. `placeFilterPanel()` moves
+it between three places: under the home search box (`#heroAdvSlot`), the results sidebar on
+screens 1000px and wider (`#sideAdvSlot`), and above the results on narrower screens
+(`#resultsAdvSlot`). Its sections run colour, mana
+value, rarity, card type, then the four text fields (role, creature type, keyword, format) in
+one `.filter-fields` group; that is also the tab order. The layout is the "round 11" block at the
+end of `<style>`:
+
+- **Wide panels** wrap the sections in a line: colour, mana value and rarity share the first
+  line, card types take the next, the text fields the last. How many fields fit across (4, 2 or
+  1) follows the panel's own width (`@container`), because the home page puts the panel either
+  full width or beside the effect examples; placeholders must never be cut off.
+- **The sidebar** puts colours and mana values on one nine-column grid, so all nine mana values
+  fit on one line and the colours line up above them; with smaller chips everything fits a
+  900px-tall screen without scrolling inside the panel.
+- **Phones** use the same nine-column grid at 40px tall, one column of fields, and 16px text in
+  the fields so iPhones don't zoom in when one is tapped. Up to 900px the panel fills the page
+  column (it used to keep the old slide-in drawer's 360px width).
+- Suggestion lists under the text fields may be wider than their field (up to 340px).
 
 ## Lightweight mode (軽量)
 
@@ -65,7 +87,8 @@ click there.
 ## Phones
 
 Breakpoints are plain `@media (max-width: …)` rules next to the styles they change; the main
-ones are 820px (phone layout: filter panel becomes a drawer, `setFilterDrawer()`) and 480px.
+ones are 820px (phone layout: the advanced search opens in the page above the results,
+`setFilterDrawer()`) and 480px.
 On phones the theme and lightweight switches sit in a small menu (`#menuBtn`, `setMenu()`),
 and the Japanese shop list shows `JP_DIR_PHONE` shops before "load more". Always look at a
 change at 390px wide as well as 1280px, and in English too: English words are longer and only

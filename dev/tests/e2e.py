@@ -756,7 +756,7 @@ with sync_playwright() as p:
     leftovers = [(k, v) for k, v in ui.items() if JP.search(v)] + [x for x in titles + chips if JP.search(x)]
     check("English mode: no Japanese left in the interface text", not leftovers, leftovers)
     check("English mode: labels", ui[".top-tabs"].split() == ["Cards", "Sets", "Metagame", "Prices"] and "found" in ui[".toolbar"]
-          and titles == ["Color", "Card type", "Mana value", "Rarity", "Role", "Creature type", "Keyword ability", "Format"]
+          and titles == ["Color", "Mana value", "Rarity", "Card type", "Role", "Creature type", "Keyword ability", "Format"]
           and "7 cards in the database (6 with a Japanese printing)" in ui["#dbCount"], (ui[".top-tabs"], titles, ui["#dbCount"]))
     check("English mode: search box placeholder", page.get_attribute("#searchInput", "placeholder").startswith("Card name or rules text"))
     page.focus("#creatureTypeFilter")
@@ -2979,6 +2979,43 @@ with sync_playwright() as p:
           "match wins" in page.locator(".deck-meta").inner_text() and no_hscroll(), (page.locator(".deck-meta").inner_text(), page.evaluate("document.documentElement.scrollWidth")))
     page.evaluate("setLang('ja', true)")
     PRICE_SITE["dir"] = None
+    page.set_viewport_size({"width": 1280, "height": 900})
+
+    # ---- 40. a compact advanced search: same filters, fewer lines ----
+    ADV = """(() => { const q = s => [...document.querySelectorAll(s)].filter(e => e.offsetParent);
+      const box = e => e.getBoundingClientRect(); const p = document.getElementById('filterPanel');
+      const c = document.createElement('canvas').getContext('2d');
+      return { w: box(p).width, h: box(p).height, inner: p.scrollHeight - p.clientHeight,
+        mvTops: [...new Set(q('#filterPanel .mv-chip').map(e => Math.round(box(e).top)))].length,
+        colorLeft: Math.round(box(q('#filterPanel .chip')[0]).left), mvLeft: Math.round(box(q('#filterPanel .mv-chip')[0]).left),
+        colorW: Math.round(box(q('#filterPanel .chip')[0]).width), mvW: Math.round(box(q('#filterPanel .mv-chip')[0]).width),
+        titleTops: q('#filterPanel .filter-title').map(e => Math.round(box(e).top)),
+        fieldFont: q('#filterPanel .list-filter, #formatSelect').map(e => parseFloat(getComputedStyle(e).fontSize)),
+        cut: q('#filterPanel .list-filter').filter(i => { const cs = getComputedStyle(i); c.font = cs.fontSize + ' ' + cs.fontFamily;
+          return c.measureText(i.placeholder).width > i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) + 1; }).map(i => i.id) }; })()"""
+    page.set_viewport_size({"width": 1280, "height": 900})
+    home(); open_adv(); page.wait_for_timeout(150)
+    a = page.evaluate(ADV)
+    check("advanced search, home: all nine mana values on one line, no hint cut off", a["mvTops"] == 1 and not a["cut"], a)
+    if a["w"] >= 900:
+        check("advanced search, home: colour, mana value and rarity share the first line; the four text fields the last",
+              len(set(a["titleTops"][:3])) == 1 and len(set(a["titleTops"][4:])) == 1 and a["h"] <= 300, a)
+    page.focus("#roleFilter"); page.keyboard.type("r"); page.wait_for_timeout(150)
+    dw, iw = page.evaluate("[document.getElementById('roleList').getBoundingClientRect().width, document.getElementById('roleFilter').getBoundingClientRect().width]")
+    check("advanced search, home: the role suggestions are at least as wide as their field", page.locator("#roleList").is_visible() and dw >= iw - 1, (dw, iw))
+    page.fill("#roleFilter", ""); page.press("#roleFilter", "Escape")
+    top_search("テスト"); page.wait_for_timeout(300)
+    a = page.evaluate(ADV)
+    check("advanced search, sidebar: mana values on one line, lined up with the colours, nothing to scroll inside",
+          a["w"] == 262 and a["mvTops"] == 1 and a["colorLeft"] == a["mvLeft"] and a["colorW"] == a["mvW"] and a["inner"] <= 1 and not a["cut"], a)
+    page.set_viewport_size({"width": 880, "height": 900}); page.wait_for_timeout(250); open_adv(); page.wait_for_timeout(150)
+    a = page.evaluate(ADV)
+    check("advanced search, 880px: the panel fills the column instead of the old 360px drawer", a["w"] > 800 and a["mvTops"] == 1 and not a["cut"] and no_hscroll(), a)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(250); open_adv(); page.wait_for_timeout(150)
+    a = page.evaluate(ADV)
+    col = page.evaluate("document.querySelector('#resultsAdvSlot').getBoundingClientRect().width")
+    check("phone, advanced search: as wide as the page column, mana values on one line, colours lined up, 16px fields, no sideways scroll",
+          abs(a["w"] - col) <= 1 and a["mvTops"] == 1 and a["colorLeft"] == a["mvLeft"] and set(a["fieldFont"]) == {16} and not a["cut"] and no_hscroll(), (a, col))
     page.set_viewport_size({"width": 1280, "height": 900})
 
     check("no JavaScript errors", not errors, errors)

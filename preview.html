@@ -1480,6 +1480,61 @@
     .meta-share .meta-num, .meta-wr .meta-num { line-height: 18.2px; }
     .meta-row:not(.open) .meta-art { align-self: center; }
   }
+  /* ========================== round 11: a compact advanced search ========================== */
+  /* wide panels (home, and results below 1000px): colour, mana value and rarity share a line,
+     card types take the next, then the four text fields side by side */
+  .filter-panel.open { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 22px; padding: 14px 18px 16px; }
+  .filter-panel .opt-chip:not(.mv-chip) { padding-left: 10px; padding-right: 10px; }
+  .filter-panel .filter-head { flex: 1 1 100%; }
+  .filter-panel .filter-section { flex: 0 1 auto; min-width: 0; }
+  .filter-panel .filter-section.wide, .filter-fields { flex: 1 1 100%; }
+  .filter-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 20px; }
+  .filter-title { display: block; margin: 0 0 6px; line-height: 1.4; }
+  .chip-row { gap: 6px; }
+  .filter-panel .list-filter, .filter-panel select { height: 34px; margin: 0; padding-top: 0; padding-bottom: 0; font-size: 13px; }
+  .filter-panel select { padding-left: 10px; }
+  @media (min-width: 821px) {   /* rarity chips centred on the symbols beside them */
+    #heroAdvSlot .filter-section:not(.wide) .chip-row, #resultsAdvSlot .filter-section:not(.wide) .chip-row { min-height: 38px; align-items: center; }
+  }
+  /* the panel's own width decides how many text fields fit across (the home page puts it
+     beside the examples or full width), so placeholders are never cut off */
+  .filter-panel { container-type: inline-size; }
+  @container (max-width: 919px) { .filter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @container (max-width: 459px) { .filter-fields { grid-template-columns: minmax(0, 1fr); } }
+  /* up to 900px the panel kept the old slide-in drawer's 360px width and right-hand border;
+     it now fills the column like everything around it */
+  @media (max-width: 900px) {
+    .filter-panel { width: auto; border: 1px solid var(--line); border-radius: 10px; padding-bottom: 14px; }
+  }
+  /* suggestion lists can be wider than their four-across field */
+  @media (min-width: 821px) {
+    #heroAdvSlot .check-list.dropdown, #resultsAdvSlot .check-list.dropdown { right: auto; min-width: 100%; width: max-content; max-width: 340px; }
+  }
+  /* the colour and mana value symbols sit on one grid of nine, so the rows line up */
+  @media (min-width: 1000px) {
+    #sideAdvSlot .filter-panel .filter-section + .filter-section, #sideAdvSlot .filter-fields { margin-top: 12px; padding-top: 0; border-top: 0; }
+    #sideAdvSlot .filter-head { margin-bottom: 10px; }
+    html[data-home="false"] #sideAdvSlot .filter-panel { padding: 12px 14px 14px; }
+    #sideAdvSlot .chip-row.syms, #sideAdvSlot .chip-row.syms:has(.mv-chip) { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 1px; }
+    #sideAdvSlot .chip, #sideAdvSlot .opt-chip.mv-chip { width: auto; height: auto; aspect-ratio: 1; }
+    #sideAdvSlot .chip img, #sideAdvSlot .opt-chip.mv-chip img, #sideAdvSlot .opt-chip.mv-chip .mv-txt { width: 21px; height: 21px; }
+    #sideAdvSlot .opt-chip.mv-chip .mv-txt { font-size: 9.5px; }
+    #sideAdvSlot .chip-row { gap: 4px; }
+    #sideAdvSlot .opt-chip:not(.mv-chip) { padding: 2px 6px; font-size: 11.5px; }
+    #sideAdvSlot .filter-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    #sideAdvSlot .filter-fields .filter-section + .filter-section { margin-top: 0; }
+    #sideAdvSlot .list-filter, #sideAdvSlot .filter-panel select { height: 32px; }
+  }
+  /* phones: one column; the nine mana values fit on one line; text fields at 16px so
+     iPhones don't zoom in when one is tapped */
+  @media (max-width: 820px) {
+    .filter-panel.open { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; padding: 12px 14px 14px; }
+    .filter-panel .filter-section { flex: none; }
+    .filter-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .chip-row.syms, .chip-row.syms:has(.chip) { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px; }
+    .chip, .opt-chip.mv-chip { width: auto; height: 40px; }
+    .filter-panel .list-filter, .filter-panel select { height: 40px; font-size: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -1587,20 +1642,6 @@
         </div>
       </div>
 
-      <div class="filter-section wide">
-        <p class="filter-title" data-i18n="filter.type">カード・タイプ</p>
-        <div class="chip-row">
-          <button type="button" class="opt-chip" data-group="types" data-value="creature" data-i18n="type.creature">クリーチャー</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="instant" data-i18n="type.instant">インスタント</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="sorcery" data-i18n="type.sorcery">ソーサリー</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="artifact" data-i18n="type.artifact">アーティファクト</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="enchantment" data-i18n="type.enchantment">エンチャント</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="land" data-i18n="type.land">土地</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="planeswalker" data-i18n="type.planeswalker">プレインズウォーカー</button>
-          <button type="button" class="opt-chip" data-group="types" data-value="battle" data-i18n="type.battle">バトル</button>
-        </div>
-      </div>
-
       <div class="filter-section">
         <p class="filter-title" data-i18n="filter.mv">マナ総量</p>
         <div class="chip-row syms">
@@ -1626,33 +1667,49 @@
         </div>
       </div>
 
-      <div class="filter-section">
-        <p class="filter-title" data-i18n="filter.role">役割</p>
-        <div class="combo-input">
-          <input type="text" class="list-filter" id="roleFilter" placeholder="役割を入力（例：除去、ドロー）" data-i18n-ph="role.ph" autocomplete="off" aria-label="役割を探す" data-i18n-aria="role.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="roleList">
-          <div class="check-list dropdown" id="roleList" data-group="roles" hidden></div>
+      <div class="filter-section wide">
+        <p class="filter-title" data-i18n="filter.type">カード・タイプ</p>
+        <div class="chip-row">
+          <button type="button" class="opt-chip" data-group="types" data-value="creature" data-i18n="type.creature">クリーチャー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="instant" data-i18n="type.instant">インスタント</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="sorcery" data-i18n="type.sorcery">ソーサリー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="artifact" data-i18n="type.artifact">アーティファクト</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="enchantment" data-i18n="type.enchantment">エンチャント</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="land" data-i18n="type.land">土地</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="planeswalker" data-i18n="type.planeswalker">プレインズウォーカー</button>
+          <button type="button" class="opt-chip" data-group="types" data-value="battle" data-i18n="type.battle">バトル</button>
         </div>
       </div>
 
-      <div class="filter-section">
-        <p class="filter-title" data-i18n="filter.ctype">クリーチャー・タイプ</p>
-        <div class="combo-input">
-          <input type="text" class="list-filter" id="creatureTypeFilter" placeholder="タイプを入力（例：エルフ）" data-i18n-ph="ctype.ph" autocomplete="off" aria-label="クリーチャー・タイプを探す" data-i18n-aria="ctype.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="creatureTypeList">
-          <div class="check-list dropdown" id="creatureTypeList" data-group="creatureTypes" hidden></div>
+      <div class="filter-fields">
+        <div class="filter-section">
+          <p class="filter-title" data-i18n="filter.role">役割</p>
+          <div class="combo-input">
+            <input type="text" class="list-filter" id="roleFilter" placeholder="役割を入力（例：除去、ドロー）" data-i18n-ph="role.ph" autocomplete="off" aria-label="役割を探す" data-i18n-aria="role.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="roleList">
+            <div class="check-list dropdown" id="roleList" data-group="roles" hidden></div>
+          </div>
         </div>
-      </div>
 
-      <div class="filter-section">
-        <p class="filter-title" data-i18n="filter.kw">キーワード能力</p>
-        <div class="combo-input">
-          <input type="text" class="list-filter" id="keywordFilter" placeholder="能力名を入力（例：飛行）" data-i18n-ph="kw.ph" autocomplete="off" aria-label="キーワード能力を探す" data-i18n-aria="kw.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="keywordList">
-          <div class="check-list dropdown" id="keywordList" data-group="keywords" hidden></div>
+        <div class="filter-section">
+          <p class="filter-title" data-i18n="filter.ctype">クリーチャー・タイプ</p>
+          <div class="combo-input">
+            <input type="text" class="list-filter" id="creatureTypeFilter" placeholder="タイプを入力（例：エルフ）" data-i18n-ph="ctype.ph" autocomplete="off" aria-label="クリーチャー・タイプを探す" data-i18n-aria="ctype.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="creatureTypeList">
+            <div class="check-list dropdown" id="creatureTypeList" data-group="creatureTypes" hidden></div>
+          </div>
         </div>
-      </div>
 
-      <div class="filter-section">
-        <label class="filter-title" for="formatSelect" data-i18n="filter.format">フォーマット</label>
-        <select id="formatSelect"></select>
+        <div class="filter-section">
+          <p class="filter-title" data-i18n="filter.kw">キーワード能力</p>
+          <div class="combo-input">
+            <input type="text" class="list-filter" id="keywordFilter" placeholder="能力名を入力（例：飛行）" data-i18n-ph="kw.ph" autocomplete="off" aria-label="キーワード能力を探す" data-i18n-aria="kw.aria" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="keywordList">
+            <div class="check-list dropdown" id="keywordList" data-group="keywords" hidden></div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <label class="filter-title" for="formatSelect" data-i18n="filter.format">フォーマット</label>
+          <select id="formatSelect"></select>
+        </div>
       </div>
     </aside>
     <div class="filter-backdrop" id="filterBackdrop"></div>
