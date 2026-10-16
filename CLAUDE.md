@@ -105,7 +105,7 @@ results, a Japanese one where possible), `oracle_id`, `name_en`, `name_ja`, `typ
 `keywords`, `released_at` (first release), `alt_names_ja` (older Japanese names, `|`-separated),
 `legal` (letters s p m l v a c), `layout` (the card's shape from Scryfall when not an ordinary
 one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード), and
-`name_kana` (the reading, used only for the あいうえお sort; never shown or searched).
+`name_kana` (the reading: the あいうえお sort, and names typed in hiragana; never shown).
 
 - **Built by `tools/build_ja_database.py`** from Scryfall's `all_cards` bulk file. Scryfall
   serves bulk files as gzipped JSON Lines (`jsonl_download_uri`) since September 2026; the builder
@@ -177,6 +177,15 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
 - **Card shapes:** 分割カード, 両面カード/両面/DFC, MDFC, 変身カード, 反転カード, 合体カード,
   出来事カード, 前兆カード, split card, double-faced card, and `is:split`/`is:dfc`/`is:mdfc`
   (`CARD_SHAPES`, from the `layout` field).
+- **Names as players type them:** a name in hiragana matches by its reading (いなずま → 稲妻,
+  `yomiQuery()`); nicknames and the katakana of English-only cards (ボルト, ブレスト, JTMS,
+  ブラックロータス, アンダーグラウンドシー) show the card first (`CARD_NICKNAMES`); a Japanese name
+  typed slightly wrong that finds nothing is searched as the closest name, with a note
+  (渦巻く知識 → 渦まく知識, ジェース → ジェイス: `closestJaName()`).
+- **More narrowing words:** guilds/shards/wedges (ボロス 除去), formats (モダン 除去), rarities
+  (神話レア ドラゴン), パワー3以上; a card type beside them is the type (白 クリーチャー). Land
+  nicknames are roles (ペインランド, チェックランド, ファストランド, スローランド, ミシュラランド,
+  トライランド, パスウェイ).
 - **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
   `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
   the Japanese matches in the same group.
@@ -197,7 +206,8 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
    Update the matching doc in `docs/` (see "Documentation" above).
 3. **Test** with `python3 dev/tests/e2e.py` (about 660 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (110 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
+   (about 210 real-data search checks, including the 100 common Japanese searches in
+   `dev/searchbench/common_searches.py`), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.

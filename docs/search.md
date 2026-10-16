@@ -37,9 +37,12 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | `op:value`, `op>=value`… | `filters` (or `roles`/`sim`) | `o:draw`, `t:ゴブリン`, `色:赤`, `mv<=2`, `似:稲妻` |
 | `-something` | a negative filter (not before a number: `-2:` is a loyalty ability, `-1/-0` a number) | `-t:creature`, `-飛行` |
 | `"two words"` | `phrases` (exact phrase) | `"draw a card"` |
-| A word in `WORD_FILTERS` | a type test | PW, 置物 |
+| A word in `WORD_FILTERS` | a type test | PW, 置物, X呪文 |
 | A card shape (`CARD_SHAPES`; English names of several words are read first, `SHAPE_PHRASE_RE`) | a layout test, also `is:<id>` | 分割カード, 両面, MDFC, 変身カード, 反転カード, 出来事カード, split card, `is:mdfc` |
 | A color or mana value alone, or before a type word (`narrowingWord()`) | a color / mana value filter; not inside a card name (`rolesLookLikeAName()`) or in quotes | 白 天使, 白の天使, 3マナ ゴブリン, 黒のクリーチャー, red goblin |
+| A guild, shard or wedge (`COLOR_GROUP_WORDS`), a format (`FORMAT_WORDS`) or a rarity (`RARITY_WORDS`) beside other words | the same kind of filter (a guild = the cards a deck of its colors can play, a format = legal in it). These words are often part of names, so they narrow only beside other words that aren't one card's name (`wordsInOneName()`), or alone when no name starts with them (`nameStartsWith()`) | ボロス 除去, ゴルガリ 墓地, モダン 除去, パウパー 火力, 神話レア ドラゴン, レア 土地, boros removal |
+| パワーN, タフネスN (以上/以下) | a power / toughness filter (`derivedFromWord()`; パワー 5以上 is joined first) | パワー3以上 クリーチャー |
+| A card type beside a color, mana value, format or rarity, with nothing else but keyword abilities | a type filter, not text (`typeAsFilter` in `parseSearch()`); 土地 stays text beside a color, as lands have none | 白 クリーチャー, 1マナ クリーチャー, 青 インスタント, 白 飛行 クリーチャー, レア 土地 |
 | A word in `EN_WORD_ALIAS` | the card's own wording | unblockable → can't be blocked, sac → sacrifice |
 | Japanese text (mana symbols beside it too; `{T}:…` with an unknown "operator" is text) | `ja` | 墓地から手札, 飛行, `{T}:土地1つを対象とする` |
 | Symbols only | a literal text filter | `%`, `🔥` |
@@ -98,7 +101,46 @@ rows before the slower line-by-line tests. Keep any new test behind such a pre-c
 | `似:<card>` | similarity score |
 
 **A→Z** in Japanese mode sorts by the reading of the Japanese name (`jaSortKey()`, from
-`name_kana`), so 稲妻 sorts under い. Readings are never shown or searched.
+`name_kana`), so 稲妻 sorts under い. Japanese names that start with a letter or a number
+(A.I.M.の科学者, 500年日記, mostly Universes Beyond) come after the kana names, and cards with only
+an English name after those, so a text search doesn't open on them. Readings are never shown;
+they are searched only as described under "Names typed in hiragana".
+
+A **nickname** (`CARD_NICKNAMES`) puts the card it names before everything else in the
+default and "most played" orders.
+
+## Names typed in hiragana (readings)
+
+A search word all in hiragana, three letters or more (`yomiQuery()`), also matches the reading
+of the card names (`rowYomi()`, from `name_kana`): いなずま finds 稲妻, いしのちから 意志の力,
+しこうかこい 思考囲い. The readings write long vowels out (えむらくうる), so a typed ー is read
+as the vowel before it, and ゔ as ぶ (`yomiKey()`). A whole reading is an exact name for
+`relevance()`, the start of one counts as the name starting with the word. Game words typed in
+hiragana (はかい, ひこう: the whole word reads as `JA_READINGS` words) are not matched this
+way, or はかい would bring up 墓石 (はかいし).
+
+## Nicknames and cards never printed in Japanese
+
+`CARD_NICKNAMES` maps players' names for cards to the cards: ボルト → 稲妻, ブレスト →
+渦まく知識, フォース/FoW → 意志の力, JTMS/神ジェイス, ボブ, トロン (the three Urza lands), and the
+katakana names of cards with no Japanese printing (ブラックロータス, モックス, アンダーグラウンドシー
+and the other original dual lands, タイムウォーク…). The whole search must be the nickname
+(compared with `nameKey()`, so ブラック・ロータス and ぼると count). `nicknameRows()` finds the
+cards; `searchRows()` shows them first, then what the word finds as usual (other ボルト names),
+with the note 「ボルト」は「稲妻」としても検索しました. Letter nicknames (FoW, JTMS) show only the
+card, so they are not spelling-corrected into other words. To add one: a line in
+`CARD_NICKNAMES` (English name, as on Scryfall) and an entry in
+`dev/searchbench/common_searches.py`.
+
+## Japanese names typed slightly wrong
+
+When a Japanese search finds nothing, or only loose matches, `closestJaName()` looks for the
+card name or name part (the part after 、 or //) closest to it: one letter different for up
+to five letters, two for longer words, compared with ヴァ as バ, small kana as large and ー left
+out (`looseKana()`). The most played card wins a tie. That name is searched instead and the
+note says so (「渦巻く知識」は「渦まく知識」として検索しました). Examples: 渦巻く知識, 意思の力,
+ジェース, エムラクル, ラガヴァン, じぇーす. The list of name parts (`NAME_PARTS`) is built the
+first time it is needed.
 
 ## Names without punctuation
 
@@ -120,11 +162,11 @@ slang step also tries このオーラ for このエンチャント and この装
 
 | Table | What it does | Examples |
 |---|---|---|
-| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ |
+| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ, キャストする→唱える (キャストしたとき→唱えたとき・唱えるたび), ハンド→手札, トークンを作る/出す→トークンを生成, 兵士トークン→兵士・クリーチャー・トークン, ギルドゲート→ギルド門 |
 | `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻 |
-| `JA_ORTHO` | Spelling variants | 全て→すべて, 時→とき |
+| `JA_ORTHO` | Spelling variants | 全て→すべて, 時→とき, 飛行をもつ→飛行を持つ |
 | `EN_WORD_ALIAS` | English slang to card wording | unblockable, flyer, sac, lifeloss |
-| `WORD_FILTERS` | A word that means a kind of card | PW, 置物 |
+| `WORD_FILTERS` | A word that means a kind of card | PW, 置物, X呪文 (X in the mana cost) |
 | `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム |
 
 When a word is read as something else, the note above the results says so (`plan.aliases`).
@@ -139,6 +181,13 @@ English words]`. Most roles come from **Scryfall Tagger** oracle tags, published
 warujie-prices as `t/tags.json.gz` (`loadTags()`, `TAG_MAP`); a few are read from the English
 text with regular expressions (`ROLE_TEXT`, `ROLE_TESTS`). A role word counts only as a whole,
 unquoted word, so トランプル is still trample text and `"ランプ"` searches the text.
+
+Land nicknames are roles too: フェッチランド, ショックランド, バウンスランド, デュアルランド,
+タップイン, and from the rules text ペインランド (`painland`), チェックランド (`checkland`),
+ファストランド (`fastland`), スローランド (`slowland`), ミシュラランド/マンランド (`manland`); from the
+card's type and layout トライランド (three colors, Triomes too: `ROLE_TESTS.triland`) and
+パスウェイ (`ROLE_TESTS.pathway`). A Japanese role word typed with a space in it (ライフ 回復,
+全体 除去) is read as the role, as English phrases are (`findRoleWords()`).
 
 To add a role: a `ROLE_LIST` line; if it uses a tag the site doesn't fetch yet, add the tag to
 `TAGS` in warujie-prices `build_tags.py` (the next weekly build picks it up, or run it with
@@ -169,7 +218,10 @@ card page's toggles (same colours, no higher mana value, same type: `simPasses()
 ## Tests for search
 
 - `dev/searchbench/search_checks.py` runs real searches against the real database and role
-  tags. **Add a check for every search change**, including one that proves a wrong card is
+  tags. `dev/searchbench/common_searches.py` lists the 100 searches Japanese players type most
+  (names, readings, typos, nicknames, rules text, slang, land nicknames, colors/guilds/formats/
+  rarities) with what each must find; each is one check. A search that should work and doesn't
+  belongs on that list. **Add a check for every search change**, including one that proves a wrong card is
   *not* found. One check types a sentence of 300 random cards' own text plainly (no 、,
   half-width numbers) and their English names in lower case without punctuation, and expects
   each card to be found (at most 1% missed).

@@ -3039,7 +3039,36 @@ with sync_playwright() as p:
           abs(a["w"] - col) <= 1 and a["mvTops"] == 1 and a["colorLeft"] == a["mvLeft"] and set(a["fieldFont"]) == {16} and not a["cut"] and no_hscroll(), (a, col))
     page.set_viewport_size({"width": 1280, "height": 900})
 
-    # ---- 41. the deck price page: paste a list (Arena, MTGO, typed; Japanese or English names), see what it costs ----
+    # ---- 41. search tuning: names by reading, nicknames, names typed slightly wrong, a type beside a color, the order ----
+    DB_MODE["variant"] = "roles"
+    home()
+    names = lambda: page.locator("#cardGrid .card-name-main, #cardGrid .tr-name").all_inner_texts()
+    note = lambda: page.locator("#matchNote").inner_text()
+    run("いなずま")
+    check("search tuning: a name typed in hiragana by its reading (いなずま) finds 稲妻 first", names()[:1] == ["稲妻"], names())
+    run("ボルト")
+    check("search tuning: a nickname (ボルト) shows the card first, with a note", names()[:1] == ["稲妻"] and "「ボルト」は「稲妻」としても検索しました。" in note(), (names(), note()))
+    run("ラガヴァン")
+    check("search tuning: a name typed slightly wrong (ラガヴァン) finds the card, and the note says what was searched",
+          "敏捷なこそ泥、ラガバン" in names() and "「ラガヴァン」は「ラガバン」として検索しました。" in note(), (names(), note()))
+    run("赤 インスタント")
+    check("search tuning: 赤 インスタント = red instants only, with a note for each word",
+          names() and set(names()) <= {"稲妻", "ショック", "大きな稲妻テスト", "加速"} and "インスタント・カードに絞り込みました" in note(), (names(), note()))
+    tu = page.evaluate("""(() => ({
+      yomi: [yomiKey('えむらくーる'), yomiKey('らがゔぁん'), yomiQuery('はかい'), yomiQuery('いなずま'), yomiQuery('いな')],
+      loose: looseKana('ラガヴァン') === looseKana('ラガバン') && looseKana('ジェース') !== looseKana('ジェイス'),
+      order: [{ name_ja: '稲妻', name_kana: 'いなずま', _nameJa: '稲妻', _nameEn: 'lightning bolt' }, { name_ja: 'A.I.M.の科学者', name_kana: 'AIMのかがくしゃ', _nameJa: 'a.i.m.の科学者', _nameEn: 'a.i.m. scientists' },
+              { name_ja: '', name_kana: '', _nameJa: '', _nameEn: 'black lotus' }].map(jaSortKey).map(k => k[0]),
+      none: closestJaName('ああああああああ'),
+    }))()""")
+    check("search tuning: readings with ー and ゔ (えむらくうる, らがばん); game words in hiragana are not read as names; two letters are too few",
+          tu["yomi"] == ["えむらくうる", "らがばん", None, "いなずま", None], tu["yomi"])
+    check("search tuning: ヴァ is read as バ when a name is compared loosely", tu["loose"], tu)
+    check("search tuning: あいうえお order - kana names, then names that start with a letter (A.I.M.の科学者), then English-only cards", tu["order"] == ["0", "1", "2"], tu["order"])
+    check("search tuning: no close name for nonsense", tu["none"] is None, tu)
+    DB_MODE["variant"] = None
+
+    # ---- 42. the deck price page: paste a list (Arena, MTGO, typed; Japanese or English names), see what it costs ----
     PRICE_SITE["dir"] = PRICES_FULL
     DECKS_MODE["mode"] = "fixture"
     page.set_viewport_size({"width": 1280, "height": 900})
