@@ -3276,15 +3276,26 @@ with sync_playwright() as p:
           and page.locator("#wantToast button").inner_text() == "元に戻す" and page.locator("#cpWant .want-trash").count() == 0)
     page.click("#wantToast button"); page.wait_for_selector("#cpWant .want-trash")
     check("want list: undo brings back all 3 copies", page.locator("#cpWant .want-c").inner_text() == "3枚")
-    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-other")
-    check("want list: another printing's page says which printing is in the list", "MH2 #138" in page.locator("#cpWant .want-other").inner_text())
-    page.click("#cpWant [data-want-act=pick]"); page.wait_for_timeout(200)
+    sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
+        l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 28]; })()""")
+    check("want list: on the card page it is one row, as wide as the picture and as tall as the language buttons",
+          abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5 and page.locator("#cpWant .want-box-head, #cpWant .want-other").count() == 0, sz)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(250)
+    sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
+        l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 26]; })()""")
+    check("phone, card page: the want row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-step")
+    check("want list: another printing's page shows the same count, with no note", page.locator("#cpWant .want-c").inner_text() == "3枚" and "リスト" not in page.locator("#cpWant").inner_text(), page.locator("#cpWant").inner_text())
+    # put this printing (#345) in the list: take the card out and add it again from here
+    page.click("#cpWant .want-trash"); page.wait_for_selector("#cpWant .want-add")
+    page.click("#cpWant .want-add"); page.wait_for_selector("#cpWant .want-step")
+    page.click("#cpWant [data-want-act=more]"); page.click("#cpWant [data-want-act=more]"); page.wait_for_timeout(150)
     rag = [x for x in page.evaluate("JSON.parse(localStorage.getItem('warujie-want'))") if x["o"] == RAG][0]
-    check("want list: この版にする switches the list to this printing, keeping the count", rag["id"] == "rag-en-mh2-bl" and rag["cn"] == "345" and rag["c"] == 3
-          and page.locator("#cpWant .want-other").count() == 0, rag)
+    check("want list: adding from another printing's page keeps that printing", rag["id"] == "rag-en-mh2-bl" and rag["cn"] == "345" and rag["c"] == 3, rag)
 
     page.click("#wantBtn"); page.wait_for_selector("#wantBody .wl-row")
-    page.wait_for_function("document.querySelector('#wantBody .deck-cost') && document.querySelectorAll('#wantBody .deck-cost .dcst-v').length === 2")
+    page.wait_for_function("document.querySelectorAll('#wantBody .want-bar .dcst-v').length === 1")
     check("want list page: the button opens it; its title, both cards, 4 copies of 2 cards",
           "view=want" in page.url and page.title().startswith("ウォントリスト") and page.locator("#wantBody .wl-row").count() == 2
           and "4枚" in page.locator("#wantBody .deck-meta").inner_text() and "2種類" in page.locator("#wantBody .deck-meta").inner_text()
@@ -3292,11 +3303,18 @@ with sync_playwright() as p:
     row = page.locator("#wantBody .wl-row[data-want-row='rag-oracle']")
     check("want list page: each card shows its printing and that printing's price in yen (55 USD at 150)",
           "MH2 #345" in row.locator(".wl-print").inner_text() and "この版 ¥8,250" in row.locator(".wl-prices").inner_text(), row.inner_text())
-    cheap_box = page.locator("#wantBody .deck-cost .dcst").nth(0).inner_text()
-    picked_box = page.locator("#wantBody .deck-cost .dcst").nth(1).inner_text()
-    want_cheap = page.evaluate("costText(deckCost([[1,'Lightning Bolt'],[3,'Ragavan, Nimble Pilferer']]))")
-    check("want list page: what it costs in the cheapest printings and in the printings picked",
-          want_cheap in cheap_box and "いちばん安い版で" in cheap_box and "選んだ版で" in picked_box and "¥" in picked_box, (cheap_box, picked_box, want_cheap))
+    picked_box = page.locator("#wantBody .want-bar .dcst").inner_text()
+    check("want list page: one total, for the printings picked (no cheapest-printing total)",
+          page.locator("#wantBody .dcst").count() == 1 and "選んだ版で" in picked_box and "¥" in picked_box and "いちばん安い版で" not in page.locator("#wantBody").inner_text(), picked_box)
+    order = page.evaluate("[...document.querySelector('#wantBody .want-bar').querySelectorAll('.dcst, .view-toggle, [data-whareruya], #wantExport')].map(e => [e.className || e.id, Math.round(e.getBoundingClientRect().left)])")
+    check("want list page: the total and リスト/画像 on the left, 晴れる屋で買う and 書き出す on the right, all in one bar",
+          len(order) == 4 and [o[1] for o in order] == sorted(o[1] for o in order) and order[2][1] > 640, order)
+    page.set_viewport_size({"width": 1280, "height": 420}); page.wait_for_timeout(200)
+    page.evaluate("window.scrollTo(0, document.querySelector('#wantBody .want-list').getBoundingClientRect().top + scrollY - 40)"); page.wait_for_timeout(200)
+    bar = page.evaluate("[document.querySelector('#wantBody .want-bar').getBoundingClientRect().top, document.querySelector('.topbar').getBoundingClientRect().bottom, scrollY]")
+    check("want list page: the bar stays under the top bar while scrolling", bar[2] > 50 and abs(bar[0] - bar[1]) < 2, bar)
+    page.evaluate("window.scrollTo(0, 0)")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
     page.click("#wantExport summary"); page.click("#wantExport [data-wexport=arena]")
     page.wait_for_function("document.querySelector('#wantExport [data-wexport=arena]').textContent === 'コピーしました'")
     clip = page.evaluate("navigator.clipboard.readText()")
@@ -3338,7 +3356,7 @@ with sync_playwright() as p:
     order = page.evaluate("JSON.parse(localStorage.getItem('warujie-want')).map(x => x.n)")
     check("want list page: undo puts it back where it was", page.locator("#wantBody .wl-row").count() == 2 and order == ["Lightning Bolt", "Ragavan, Nimble Pilferer"], order)
     check("want list page: a リスト / 画像 switch, on リスト at first",
-          page.locator("#wantBody .deck-tools [data-wview=list]").get_attribute("aria-selected") == "true" and page.locator("#wantBody [data-wview=image]").inner_text() == "画像")
+          page.locator("#wantBody .want-bar [data-wview=list]").get_attribute("aria-selected") == "true" and page.locator("#wantBody [data-wview=image]").inner_text() == "画像")
     page.click("#wantBody [data-wview=image]"); page.wait_for_selector("#wantBody .want-grid .wl-card")
     tile = page.locator("#wantBody .wl-card[data-want-row='rag-oracle']")
     check("want list page, pictures: each card's picture with its name, printing and price, and − n ＋ under it",
@@ -3370,7 +3388,7 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=want"); page.wait_for_selector("#wantBody .wl-row")
     page.click("#langBtn"); page.wait_for_timeout(400)
     check("want list in English", page.locator("#wantBody .deck-title").inner_text() == "Want list" and page.title().startswith("Want list")
-          and "Cheapest printings" in page.locator("#wantBody").inner_text() and page.locator("#wantBtn").get_attribute("aria-label") == "Want list", page.locator("#wantBody").inner_text()[:200])
+          and "Printings you picked" in page.locator("#wantBody").inner_text() and page.locator("#wantBtn").get_attribute("aria-label") == "Want list", page.locator("#wantBody").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says the want list stays in the browser", "ウォントリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
