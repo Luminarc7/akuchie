@@ -2997,9 +2997,10 @@ with sync_playwright() as p:
     home(); open_adv(); page.wait_for_timeout(150)
     a = page.evaluate(ADV)
     check("advanced search, home: all nine mana values on one line, no hint cut off", a["mvTops"] == 1 and not a["cut"], a)
-    if a["w"] >= 900:
-        check("advanced search, home: colour, mana value and rarity share the first line; the four text fields the last",
-              len(set(a["titleTops"][:3])) == 1 and len(set(a["titleTops"][4:])) == 1 and a["h"] <= 300, a)
+    if a["w"] >= 740:   # titles: colour, mana value, rarity, card type, role, creature type, keyword, format
+        tt = a["titleTops"]
+        check("advanced search, home: format sits on the rarity line, the other three fields share the last line, five lines at most",
+              tt[7] == tt[2] and len(set(tt[4:7])) == 1 and len(set(tt)) <= 4 and a["h"] <= 360, a)
     rar = page.evaluate("""[...document.querySelectorAll('#filterPanel .opt-chip[data-group=rarity]')].map(b => {
       const d = document.createElement('span'); d.className = 'dot ' + b.dataset.value; document.body.appendChild(d);
       const want = getComputedStyle(d).backgroundColor; d.remove(); return [getComputedStyle(b, '::before').backgroundColor, want]; })""")

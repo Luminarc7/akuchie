@@ -1503,6 +1503,14 @@
   .filter-panel { container-type: inline-size; }
   @container (max-width: 919px) { .filter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @container (max-width: 459px) { .filter-fields { grid-template-columns: minmax(0, 1fr); } }
+  /* a panel 700px or wider (the home page beside the examples is about 830px inside) flows
+     the fields too: フォーマット joins the rarity line, the other three share the last line */
+  @container (min-width: 700px) {
+    .filter-fields { display: contents; }
+    .filter-fields .filter-section { flex: 1 1 220px; order: 3; }
+    .filter-fields .filter-section:has(#formatSelect) { flex: 1 1 160px; order: 1; }
+    .filter-panel .filter-section.wide { order: 2; }
+  }
   /* up to 900px the panel kept the old slide-in drawer's 360px width and right-hand border;
      it now fills the column like everything around it */
   @media (max-width: 900px) {

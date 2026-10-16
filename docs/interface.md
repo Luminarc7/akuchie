@@ -59,10 +59,13 @@ value, rarity, card type, then the four text fields (role, creature type, keywor
 one `.filter-fields` group; that is also the tab order. The layout is the "round 11" block at the
 end of `<style>`:
 
-- **Wide panels** wrap the sections in a line: colour, mana value and rarity share the first
-  line, card types take the next, the text fields the last. How many fields fit across (4, 2 or
-  1) follows the panel's own width (`@container`), because the home page puts the panel either
-  full width or beside the effect examples; placeholders must never be cut off.
+- **Wide panels** wrap the sections in lines. How they wrap follows the panel's own width
+  (`@container`), because the home page puts the panel beside the effect examples (about 830px
+  inside on desktops) once they load, and full width before. From 700px the text fields leave
+  their group (`display: contents`): フォーマット joins the rarity line (CSS `order`, so it is
+  still last in tab order) and the other three share the last line. On desktops that gives
+  colour + mana value / rarity + format / card types / the three fields. Below 700px the fields
+  stay a grid of 2 (or 1) across. Placeholders must never be cut off.
 - **The sidebar** puts colours and mana values on one nine-column grid, so all nine mana values
   fit on one line and the colours line up above them; with smaller chips everything fits a
   900px-tall screen without scrolling inside the panel.
