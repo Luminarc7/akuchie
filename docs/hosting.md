@@ -75,7 +75,7 @@ stored database.
 
 - **Network first, always.** It only answers from its cache when the network fails, so nobody
   is kept on an old version, and a rollback reaches visitors on their next visit.
-- **Stored:** the page (any URL of it, stored under its path), `/ja_cards.json`, `/meta.json`,
+- **Stored:** the page (any URL of it, stored under its path), `/ja_cards.json`, `/printings.json.gz`, `/meta.json`,
   `/meta_decks.json`, `/combo_ja.js`, `/manifest.webmanifest`, `/meta_lists/*`, `/icons/*`
   (`KEEP`). Other origins (Scryfall, fonts, price data) are left to the browser.
 - The database (about 22 MB unpacked) is stored again only when its ETag changed.

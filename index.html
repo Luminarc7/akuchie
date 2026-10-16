@@ -372,6 +372,7 @@
   .print-lang:hover { border-color: var(--accent); color: var(--accent); }
   .print-lang[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); cursor: default; }
   .print-lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .print-lang.loading { opacity: .55; cursor: progress; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 2px; }
   .pip {
@@ -2651,6 +2652,9 @@ const STR = {
   'tr.stamped': ['スタンプ', 'Stamped'],
   'tr.regular': ['通常', 'Regular'],
   'tr.foilonly': ['フォイルのみ', 'Foil only'],
+  'tr.find': ['{t}版のあるカード', 'cards with {a} {t} printing'],
+  'tr.find.ja': ['日本語の{t}版のあるカード', 'cards with a Japanese {t} printing'],
+  'print.ja.find': ['日本語版のあるカード', 'cards printed in Japanese'],
   'sets.loading': ['セット一覧を読み込み中…', 'Loading sets…'],
   'sets.fail': ['セット一覧を読み込めませんでした', 'The set list could not be loaded'],
   'retry.later': ['時間をおいて再度お試しください。', 'Please try again in a little while.'],
@@ -3044,7 +3048,7 @@ function indexRow(arr, fields) {
   const o = {};
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout','rarities'].forEach(f => { if (o[f] == null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout','rarities','sets','treatments'].forEach(f => { if (o[f] == null) o[f] = ''; });
   ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
@@ -3060,6 +3064,8 @@ function indexRow(arr, fields) {
   o._cmc = Number(o.cmc) || 0;
   o._hasX = /\{X\}/i.test(o.mana_cost || '');
   o._rarities = o.rarities || RARITY_CODE[o.rarity] || '';
+  o._sets = ' ' + String(o.sets || o.set).toLowerCase() + ' ';
+  o._tr = o.treatments;
   return o;
 }
 
@@ -3075,6 +3081,45 @@ function rarityName(val) {
   return RARITY_ALIASES[v] || RARITY_ALIASES[String(val).trim()] || v;
 }
 function hasRarity(row, rarity) { return !!RARITY_CODE[rarity] && row._rarities.includes(RARITY_CODE[rarity]); }
+
+// Printings: the database's "sets" (every set the card was printed in) and "treatments"
+// (one letter per treatment any printing has, upper case where a Japanese printing has it).
+// e:mh3 finds every card printed in the set, as Scryfall does; ボーダーレス, 旧枠, is:showcase find
+// the cards with such a printing, and beside 日本語版 (or lang:ja) a Japanese one. A file without
+// the fields knows only the shown printing's set, and no treatments.
+const TREATMENTS = [
+  { letter: 'b', key: 'borderless', is: ['borderless'], words: ['ボーダーレス', 'borderless'] },
+  { letter: 's', key: 'showcase', is: ['showcase'], words: ['ショーケース', 'showcase'] },
+  { letter: 'x', key: 'extended', is: ['extendedart', 'extended'], words: ['拡張アート', 'extendedart'] },
+  { letter: 'f', key: 'fullart', is: ['fullart', 'full'], words: ['フルアート', 'fullart'] },
+  { letter: 'o', key: 'oldframe', is: ['oldframe', 'old'], words: ['旧枠', 'oldframe'] },
+  { letter: 'u', key: 'future', is: ['futureframe', 'future'], words: ['未来予知枠'] },
+  { letter: 't', key: 'textless', is: ['textless'], words: ['テキストレス', 'textless'] },
+  { letter: 'e', key: 'etched', is: ['etched'], words: ['エッチング', 'エッチング・フォイル', 'エッチングフォイル'] },
+  { letter: 'n', key: 'serialized', is: ['serialized'], words: ['シリアルナンバー', 'シリアル', 'serialized'] },
+];
+const TREATMENT_BY_IS = new Map(TREATMENTS.flatMap(tr => tr.is.map(w => [w, tr])));
+const TREATMENT_BY_WORD = new Map(TREATMENTS.flatMap(tr => tr.words.map(w => [normText(w), tr])));
+const TREATMENT_PHRASE_RE = /(^|\s)(extended|full|old)[-\s](art|frame)(?=\s|$)/gi;   // "extended art" is one word
+const JA_PRINT_WORDS = new Set(['日本語版', '日本語版あり', '日本語のカード'].map(normText));
+const JA_LANG_VALUES = new Set(['ja', 'jp', 'japanese', '日本語']);
+const EN_LANG_VALUES = new Set(['en', 'english', '英語']);   // every card has an English printing (near enough)
+function hasJaPrinting(row) { return !!row.name_ja; }
+function treatmentTest(tr, ja) { const ch = ja ? tr.letter.toUpperCase() : tr.letter; return row => row._tr.includes(ch); }
+function treatmentFindLabel(tr, ja) {
+  const name = t('tr.' + tr.key);
+  return t(ja ? 'tr.find.ja' : 'tr.find', { t: LANG === 'en' ? name.toLowerCase() : name, a: /^[aeiou]/i.test(name) ? 'an' : 'a' });
+}
+// e:mh3, e:MH3, セット:モダンホライゾン3: a set code, or the Japanese name of a set
+function setCodeOf(val) {
+  const v = normText(val).trim();
+  if (typeof SET_NAME_JA !== 'undefined') {
+    const key = nameKey(v);
+    const hit = Object.keys(SET_NAME_JA).find(code => nameKey(SET_NAME_JA[code]) === key);
+    if (hit) return hit;
+  }
+  return v;
+}
 
 // Fetches a JSON file that may be gzip-compressed. GitHub Pages serves .gz
 // files as raw bytes, so they're decompressed here in the browser; if a host
@@ -3424,6 +3469,8 @@ function localOperatorMatch(row, op, sep, val) {
   const v = info.v;
   switch (op) {
     case 'is': {
+      const tr = TREATMENT_BY_IS.get(v);
+      if (tr) return row._tr.includes(tr.letter);
       const sh = SHAPE_BY_ID.get(v === 'modal_dfc' ? 'mdfc' : v);
       return sh ? shapeTest(sh)(row) : (CARD_SHAPES.some(x => x.layouts.includes(v)) ? row.layout === v : null);
     }
@@ -3456,7 +3503,9 @@ function localOperatorMatch(row, op, sep, val) {
     case 'r':
       return hasRarity(row, rarityName(val));
     case 'e': case 'set': case 's':
-      return String(row.set).toLowerCase() === v;
+      return row._sets.includes(' ' + setCodeOf(val) + ' ');   // any printing in the set
+    case 'lang': case 'in':
+      return JA_LANG_VALUES.has(v) ? hasJaPrinting(row) : EN_LANG_VALUES.has(v) ? true : null;
     case 'kw': {
       const ja = JA_KEYWORDS[String(val).normalize('NFKC').trim()];
       return row._kw.has(ja || v);
@@ -4336,7 +4385,7 @@ function roleFromOperator(op, val, negate, i) {
 }
 // Operators the search knows. One with nothing after it (o:, t:, 色:) is being typed:
 // it is left out instead of being searched as the letter o.
-const KNOWN_OPS = new Set(['is', 'o', 't', 'c', 'r', 'e', 's', 'set', 'kw', 'cmc', 'mv', 'pow', 'power', 'tou', 'toughness', 'name', 'n', '名前', 'カード名']
+const KNOWN_OPS = new Set(['is', 'o', 't', 'c', 'r', 'e', 's', 'set', 'lang', 'in', 'kw', 'cmc', 'mv', 'pow', 'power', 'tou', 'toughness', 'name', 'n', '名前', 'カード名']
   .concat(Object.keys(JA_OPERATORS)));
 function emptyOperator(body) {
   const m = String(body).match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)("?"?)$/);
@@ -4450,13 +4499,16 @@ function parseSearch(raw) {
     if (!p) return m;
     shapeWords.push({ from: w, to: LANG === 'en' ? p.sh.en : p.sh.ja });
     return sp + 'is:' + p.sh.id;
-  });
+  }).replace(TREATMENT_PHRASE_RE, '$1$2$3');
   // パワー 3以上: one word, as パワー3以上
   const tokens = tokenizeQuery(text.replace(/(^|\s)(パワー|タフネス)\s+(\d{1,2}(?:以上|以下)?)(?=\s|$)/g, '$1$2$3')
     // エルフロード, エルフのロード: the type and the role word, as エルフ ロード
     .replace(/(^|\s)([\u30a1-\u30fc\u3400-\u9fff]+?)の?ロード(?=\s|$)/g, (m, sp, w) => (isCreatureTypeWord(w) ? sp + w + ' ロード' : m)));
   out.tokens = tokens;
   shapeWords.forEach(a => out.aliases.push(Object.assign(a, { replaced: true })));
+  // 日本語版 or lang:ja beside a treatment: a Japanese printing with it (日本語版 ショーケース)
+  const jaPrint = tokens.some(tok => !tok.startsWith('-') && (JA_PRINT_WORDS.has(normText(tok.replace(/^"|"$/g, '')))
+    || /^(?:lang|in):(.+)$/i.test(tok) && JA_LANG_VALUES.has(normText(tok.replace(/^[^:]+:/, '')))));
   let found = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: [] };
   if (tagsState !== 'absent') {
     found = findRoleWords(tokens);
@@ -4496,6 +4548,8 @@ function parseSearch(raw) {
       const val = m[3].replace(/^"|"$/g, '');
       if (ROLE_OPS.has(op) && m[2] === ':') { out.roles.push(roleFromOperator(op, val, negate, i)); return; }
       if (SIM_OPS.has(op) && m[2] === ':') { if (!negate) out.sim = { val, idx: i }; return; }
+      const tr = op === 'is' && TREATMENT_BY_IS.get(normText(val));
+      if (tr) { out.filters.push({ negate, test: treatmentTest(tr, jaPrint && !negate), text: body }); return; }
       out.filters.push({ negate, op, sep: m[2], val, text: body.replace(/^"|"$/g, '') });
       return;
     }
@@ -4507,6 +4561,18 @@ function parseSearch(raw) {
       if (ty && !negate) {
         out.filters.push({ negate: false, test: ty.test });
         out.aliases.push({ from: bare, to: t('narrow.type', { t: ty.label }), narrow: true });
+        return;
+      }
+      // ボーダーレス, 旧枠: cards with such a printing; 日本語版: cards printed in Japanese
+      const tr = TREATMENT_BY_WORD.get(normText(bare));
+      if (tr) {
+        out.filters.push({ negate, test: treatmentTest(tr, jaPrint && !negate) });
+        out.aliases.push({ from: bare, to: treatmentFindLabel(tr, jaPrint && !negate), narrow: true });
+        return;
+      }
+      if (JA_PRINT_WORDS.has(normText(bare))) {
+        out.filters.push({ negate, test: hasJaPrinting });
+        out.aliases.push({ from: bare, to: t('print.ja.find'), narrow: true });
         return;
       }
       // PW, 置物: a kind of card; unblockable, flyer, sac: the card's own wording
@@ -6562,8 +6628,11 @@ function cardPageText(card, pl) {
   if (pl) return getText(card, 'printed_text', 'printed_text') || getText(card, 'oracle_text', 'oracle_text');
   return displayText(card);
 }
-// Every language this exact printing exists in (the same set and collector number):
-// one Scryfall search with include_multilingual, remembered for the visit.
+// Every language this exact printing exists in (the same set and collector number): from the
+// printings file (printings.json.gz, built with the card database) without asking Scryfall,
+// or, for a printing the file doesn't have yet, one Scryfall search with include_multilingual,
+// remembered for the visit. From the file, a language other than the one shown is only its
+// set and number; the button fetches that printing when it is pressed (openPrinting()).
 const PRINT_LANGS = ['ja', 'en', 'zhs', 'zht', 'ko', 'fr', 'de', 'it', 'es', 'pt', 'ru', 'ph', 'he', 'la', 'grc', 'ar', 'sa', 'qya'];
 const PRINT_LABEL = { ja: 'JP', en: 'EN', zhs: 'CS', zht: 'CT', ko: 'KO', fr: 'FR', de: 'DE', it: 'IT', es: 'ES', pt: 'PT', ru: 'RU', ph: 'PH', he: 'HE', la: 'LA', grc: 'GR', ar: 'AR', sa: 'SA', qya: 'QY' };
 const PRINT_NAME = {
@@ -6576,9 +6645,27 @@ const PRINTINGS = new Map();   // '<set>|<number>' -> { <lang>: card }
 // Sets whose other-language printings Scryfall files under a set code of their own,
 // with the same collector numbers: the Japanese 4th Edition (4bb) is the English 4ed's.
 const SET_TWIN = { '4bb': '4ed', '4ed': '4bb', bchr: 'chr', chr: 'bchr', fbb: '3ed', '3ed': 'fbb' };
+// The printings file, fetched the first time a card page needs it: { sets: { <set>: { <number>:
+// ["<langs>", "<rarity letter>", "<treatment letters>"] } } }, a language written ja@4bb when
+// Scryfall files it under the twin set. null when it can't be loaded.
+let printingsFile = null;
+function loadPrintingsFile() {
+  if (!printingsFile) printingsFile = fetchFirstData(['printings.json.gz']).then(d => (d && d.sets ? d : null)).catch(() => null);
+  return printingsFile;
+}
 async function printingLanguages(card) {
   if (!card.set || !card.collector_number) return { [card.lang || 'en']: card };
   const key = card.set + '|' + card.collector_number;
+  const file = await loadPrintingsFile();
+  const entry = file && file.sets[card.set] && file.sets[card.set][card.collector_number];
+  if (entry && !PRINTINGS.has(key)) {
+    const out = {};
+    String(entry[0]).split(' ').filter(Boolean).forEach(code => {
+      const [lang, set] = code.split('@');
+      out[lang] = { lang, set: set || card.set, collector_number: card.collector_number, _stub: true };
+    });
+    if (Object.keys(out).length) return Object.assign(out, { [card.lang || 'en']: card });
+  }
   if (!PRINTINGS.has(key)) {
     PRINTINGS.set(key, (async () => {
       const out = {};
@@ -6612,7 +6699,7 @@ function printButtonsHtml(langs, card) {
   const order = PRINT_LANGS.filter(l => langs[l]).concat(Object.keys(langs).filter(l => !PRINT_LANGS.includes(l)));
   return `<div class="print-langs" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${order.map(l => {
     const name = (PRINT_NAME[l] || [l, l])[LANG === 'en' ? 1 : 0];
-    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id)}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
+    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id || '')}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
   }).join('')}</div>`;
 }
 let shownLangs = null;   // the languages of the printing on the card page
@@ -6627,11 +6714,30 @@ async function fillPrintToggle(card) {
 }
 document.getElementById('cardViewCard').addEventListener('click', (e) => {
   const b = e.target.closest('#printToggle [data-print]');
-  if (!b || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id || !shownCard) return;
+  if (!b || b.getAttribute('aria-pressed') === 'true' || !shownCard) return;
   const c = shownLangs && shownLangs[b.dataset.print];
+  if (c && c._stub) { openPrinting(b, c); return; }
+  if (!b.dataset.id) return;
   if (c && c.id === b.dataset.id) currentCardsExtra.set(c.id, c);
   goTo(`?card=${encodeURIComponent(b.dataset.id)}&print=${b.dataset.print}`);
 });
+// A language known only from the printings file: Scryfall's card for that set, number and
+// language, then the page for it.
+async function openPrinting(button, stub) {
+  if (button.classList.contains('loading')) return;
+  const from = shownCard;
+  button.classList.add('loading');
+  try {
+    await scryfallTurn();
+    const res = await fetch(`https://api.scryfall.com/cards/${encodeURIComponent(stub.set)}/${encodeURIComponent(stub.collector_number)}/${encodeURIComponent(stub.lang)}`,
+      { headers: { Accept: 'application/json' } });
+    const c = res.ok ? await res.json() : null;
+    if (!c || !c.id || shownCard !== from) return;
+    currentCardsExtra.set(c.id, c);
+    goTo(`?card=${encodeURIComponent(c.id)}&print=${stub.lang}`);
+  } catch (err) { /* stays on this printing */ }
+  finally { button.classList.remove('loading'); }
+}
 const currentCardsExtra = new Map();   // printings opened with the switch: shown at once
 function showView(name) {
   document.documentElement.dataset.view = name;
@@ -8025,6 +8131,8 @@ const GUIDE_ROWS = {
     ['タイプ:ドラゴン', 'タイプ（<code>t:</code> も可）'],
     ['マナ総量>=4', 'マナ総量の比較（<code>cmc</code> も可）'],
     ['パワー>3', 'パワー・タフネスの比較（<code>タフネス&lt;=2</code>）'],
+    ['セット:モダンホライゾン3', 'そのセットで印刷されたカード（再録も。<code>e:mh3</code> も可）'],
+    ['ボーダーレス', 'その版のあるカード（ショーケース・旧枠・拡張アート・フルアート・シリアルナンバーも。<code>日本語版 ボーダーレス</code> で日本語の版）'],
     ['-飛行', '先頭に <code>-</code> を付けると除外'],
   ],
   en: [
@@ -8039,6 +8147,8 @@ const GUIDE_ROWS = {
     ['t:dragon', 'Type'],
     ['cmc>=4', 'Compare mana value (<code>mv</code> also works)'],
     ['pow>3', 'Compare power or toughness (<code>tou&lt;=2</code>)'],
+    ['e:mh3', 'Cards printed in the set (reprints too)'],
+    ['borderless', 'Cards with such a printing (also showcase, old frame, extended art, full art, serialized; <code>lang:ja borderless</code> for a Japanese one)'],
     ['-flying', 'Put <code>-</code> in front to exclude'],
   ],
 };

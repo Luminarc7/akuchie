@@ -233,6 +233,16 @@ DB_LEGAL_GZ = gzip.compress(json.dumps(dict(DB, fields=FIELDS + ["legal"], cards
 # every rarity each card was printed at: Shivan Dragon (shown rare) also as a mythic, Llanowar Elves also rare
 RARITIES = {"rag-ja-mh2": "m", "bolt-ja-m10": "cu", "saga-ja": "r", "drag-ja": "rm", "eo-1": "c", "elf-ja": "cr", "qp-ja": "u"}
 DB_RAR_GZ = gzip.compress(json.dumps(dict(DB, fields=FIELDS + ["rarities"], cards=[r + [RARITIES[r[0]]] for r in DB["cards"]]), ensure_ascii=False).encode("utf-8"))
+# every set each card was printed in, and its treatments (upper case: a Japanese printing has it)
+PRINTS = {"rag-ja-mh2": ("mh2 mul", "bs"), "bolt-ja-m10": ("lea 4bb m10", "oO"), "saga-ja": ("mh2", "x"), "drag-ja": ("lea m10", "obB"),
+          "eo-1": ("xyz", "b"), "elf-ja": ("lea m10", "o"), "qp-ja": ("m10", "")}
+DB_PRINTS_GZ = gzip.compress(json.dumps(dict(DB, fields=FIELDS + ["sets", "treatments"], cards=[r + list(PRINTS[r[0]]) for r in DB["cards"]]), ensure_ascii=False).encode("utf-8"))
+# the printings file (printings.json.gz): languages of each set and number
+PRINTINGS_MODE = {"file": False}
+PRINTINGS_FILE = {"version": 1, "generated": "2026-10-16", "fields": ["langs", "rarity", "treatments"], "sets": {
+    "mh2": {"138": ["en ja fr de", "m", ""], "345": ["en", "m", "bs"]},
+    "m10": {"146": ["en ja it", "c", ""]},
+    "4bb": {"4": ["ja de en@4ed", "r", ""]}, "4ed": {"4": ["en ja@4bb de@4bb", "r", ""]}}}
 DB_ABJ_GZ = gzip.compress(json.dumps(dict(DB, cards=DB["cards"] + [
     ["abj-ja", "abj-oracle", "Abjure", "拒絶", "Instant", "", "As an additional cost to cast this spell, sacrifice a blue permanent.\nCounter target spell.", "",
      "{U}", "U", 1, None, None, "common", "wth", "", "1997-06-09", ""]]), ensure_ascii=False).encode("utf-8"))
@@ -438,7 +448,9 @@ def handle(route):
                                  body=REAL_META if META_MODE["mode"] == "real" else json.dumps(META_FIXTURE))
         if path == "ja_cards.json.gz" and DB_MODE["present"]:
             return route.fulfill(status=200, content_type="application/gzip",
-                                 body={"legal": DB_LEGAL_GZ, "rar": DB_RAR_GZ, "many": DB_MANY_GZ, "abj": DB_ABJ_GZ, "roles": DB_ROLES_GZ}.get(DB_MODE["variant"]) or (DB_SEARCH_GZ if DB_MODE["search"] else DB_EXTRA_GZ if DB_MODE["extra"] else DB_GZ))
+                                 body={"legal": DB_LEGAL_GZ, "rar": DB_RAR_GZ, "many": DB_MANY_GZ, "abj": DB_ABJ_GZ, "roles": DB_ROLES_GZ, "prints": DB_PRINTS_GZ}.get(DB_MODE["variant"]) or (DB_SEARCH_GZ if DB_MODE["search"] else DB_EXTRA_GZ if DB_MODE["extra"] else DB_GZ))
+        if path == "printings.json.gz" and PRINTINGS_MODE["file"]:
+            return route.fulfill(status=200, content_type="application/gzip", body=gzip.compress(json.dumps(PRINTINGS_FILE).encode("utf-8")))
         return route.fulfill(status=404, body="not found")
     if u.netloc == "api.frankfurter.dev":
         eur = "EUR" in url
@@ -476,6 +488,11 @@ def handle(route):
             return J(YAWG)
         if u.path == "/catalog/creature-types":
             return J({"object": "catalog", "data": ["Bird", "Dragon", "Elf", "Monkey", "Pirate", "Zombie", "Brushwagg", "Shapeshifter"]})
+        m = re.match(r"^/cards/(\w+)/(\w+)/(\w+)$", u.path)
+        if m and PRINTINGS_MODE["file"]:   # one printing in one language, as a language button from the printings file asks
+            hit = [c for c in CARDS + MULTI if (c["set"], c["collector_number"], c["lang"]) == m.groups()]
+            calls.append("LANG-LOOKUP " + u.path)
+            return J(hit[0]) if hit else J({"object": "error"}, 404)
         m = re.match(r"^/cards/(\w+)/(\w+)/ja$", u.path)
         if m:
             hit = [c for c in CARDS if c["set"] == m.group(1) and c["collector_number"] == m.group(2) and c["lang"] == "ja"]
@@ -527,6 +544,47 @@ check("builder: rarities lists every paper rarity, Secret Lair and a German-only
 _b = built(card("cc-400", "cc", "en", "tdm", "400", "Clarion Conqueror", rarity="mythic", border_color="borderless"),
             card("cc-5", "cc", "en", "tdm", "5", "Clarion Conqueror", rarity="rare", border_color="black"))
 check("builder: on a tie, the ordinary frame is shown, not the borderless variant", _b["id"] == "cc-5" and _b["rarities"] == "rm", _b)
+# 2.4: every set the card was printed in, its treatments (upper case: a Japanese printing has it)
+_b = built(card("t-m10", "t", "en", "m10", "1", "Test", released_at="2009-07-17", frame="2003"),
+           card("t-2xm", "t", "en", "2xm", "300", "Test", released_at="2020-08-07", border_color="borderless"),
+           card("t-neo", "t", "ja", "neo", "400", "Test", released_at="2022-02-18", frame_effects=["showcase"], printed_name="テスト"),
+           card("t-lea", "t", "en", "lea", "5", "Test", released_at="1993-08-05", frame="1993"),
+           card("t-sld", "t", "en", "sld", "7", "Test", released_at="2023-01-01", promo_types=["serialized"], finishes=["etched"]))
+check("builder: sets lists every set, oldest first; treatments one letter each, upper case for a Japanese printing (showcase)",
+      _b["sets"] == "lea m10 2xm neo sld" and _b["treatments"] == "bsoenS", _b)
+_b = built(card("y-ja1", "y", "ja", "m10", "1", "Y", released_at="2009-07-17", printed_name="ワイ", printed_text="飛行", printed_type_line="Creature — Bird"),
+           card("y-ja2", "y", "ja", "m11", "2", "Y", released_at="2008-01-01", printed_name="ワイ", printed_type_line="クリーチャー — 鳥"))
+check("builder: a Japanese type line from another Japanese printing when the one with the text has an English one",
+      _b["type_ja"] == "クリーチャー — 鳥" and _b["oracle_ja"] == "飛行", _b)
+_pic = [card("p-ja1", "p", "ja", "m10", "1", "P", rarity="rare", printed_name="ピー", image_status="lowres"),
+        card("p-ja2", "p", "ja", "m10", "301", "P", rarity="rare", printed_name="ピー", variation=True, set_type="core")]
+_b1 = built(*_pic)
+_b2 = built(_pic[0], dict(_pic[1], promo=True))
+check("builder: no sharp scan of the chosen Japanese printing -> one with a scan at the same rarity in a regular set (not a promo)",
+      _b1["id"] == "p-ja2" and _b2["id"] == "p-ja1", (_b1["id"], _b2["id"]))
+_P = BJ.Printings()
+for _c, _o in ((card("a-ja", "a", "ja", "4bb", "4", "A", rarity="rare"), "a"), (card("a-de", "a", "de", "4bb", "4", "A", rarity="rare"), "a"),
+               (card("a-en", "a", "en", "4ed", "4", "A", rarity="rare"), "a"), (card("z-en", "z", "en", "4ed", "5", "Z", rarity="common"), "z"),
+               (card("q-ja", "q", "ja", "4bb", "5", "Q", rarity="uncommon"), "q"), (card("bl-en", "a", "en", "a25", "300", "A", border_color="borderless"), "a")):
+    _P.add(_c, _o)
+_pl = _P.payload()["sets"]
+check("printings file: languages per set and number, the twin set's own (4bb/4ed) written lang@set, another card at the same number not mixed in",
+      _pl["4bb"]["4"] == ["ja de en@4ed", "r", ""] and _pl["4ed"]["4"] == ["en ja@4bb de@4bb", "r", ""] and _pl["4ed"]["5"] == ["en", "c", ""]
+      and _pl["4bb"]["5"] == ["ja", "u", ""] and _pl["a25"]["300"] == ["en", "m", "b"], _pl)
+# the check that refuses a rebuild which lost cards
+import check_database as CD
+def _db_file(rows, name):
+    f = os.path.join(PRICE_TMP, name)
+    with gzip.open(f, "wt", encoding="utf-8") as g:
+        json.dump({"version": 2, "generated": "2026-10-16", "fields": ["id", "oracle_id", "name_en", "name_ja", "oracle_ja", "rarity", "rarities"],
+                   "cards": rows}, g, ensure_ascii=False)
+    return f
+_old = [[f"i{n}", f"o{n}", f"Card {n}", f"カード{n}", "テキスト", "common", "c"] for n in range(200)]
+_ok = CD.check(_db_file(_old, "old.json.gz"), _db_file(_old[:198] + [["inew", "onew", "New Card", "新しいカード", "", "rare", "r"]], "ok.json.gz"))
+_bad = CD.check(_db_file(_old, "old.json.gz"), _db_file(_old[:160], "bad.json.gz"))
+check("database check: a rebuild that lost 2 cards passes, with a note naming the new card; one that lost 40 is refused",
+      not _ok[0] and any("新しいカード / New Card" in l for l in _ok[1]) and any("40 cards would disappear" in p for p in _bad[0])
+      and "**Refused:**" in _bad[1], (_ok[0], _bad[0]))
 
 Q = urllib.parse.quote
 with sync_playwright() as p:
@@ -3622,6 +3680,69 @@ with sync_playwright() as p:
                           "トランプルを得る", "飛行を得る", "コストが{1}少なくなる", "{2}少なく", "引くことができない"] and ev["kw"] == "partner", ev["words"])
     check("ロード beside a creature type is the lord role (エルフ ロード, エルフロード, elf lord); alone it stays a word",
           ev["roles"] == ["lord", "lord", "lord", "", "lord", ""], ev["roles"])
+
+    # ---- 45. the printings in the database: e: finds every card printed in a set; ボーダーレス, 旧枠, 日本語版 ----
+    DB_MODE["variant"] = "prints"
+    home()
+    names_on = lambda: sorted(page.locator("#cardGrid .card-name-main").all_inner_texts())
+    def found(q, n):
+        top_search(q)
+        page.wait_for_function("document.querySelector('#resultCount').textContent.includes('件見つかりました')")
+        page.wait_for_function(f"document.querySelectorAll('#cardGrid .card-tile').length === {n}")
+        return names_on()
+    for q, want in (("e:mul", ["敏捷なこそ泥、ラガバン"]), ("e:mh2", ["ウルザの物語", "敏捷なこそ泥、ラガバン"]),
+                    ("e:lea", ["シヴ山のドラゴン", "ラノワールのエルフ", "稲妻"]), ("セット:モダンホライゾン2", ["ウルザの物語", "敏捷なこそ泥、ラガバン"]),
+                    ("ボーダーレス", ["English Only Thing", "シヴ山のドラゴン", "敏捷なこそ泥、ラガバン"]), ("日本語版 ボーダーレス", ["シヴ山のドラゴン"]),
+                    ("is:showcase", ["敏捷なこそ泥、ラガバン"]), ("旧枠", ["シヴ山のドラゴン", "ラノワールのエルフ", "稲妻"]),
+                    ("日本語版 旧枠", ["稲妻"]), ("lang:ja is:oldframe", ["稲妻"]), ("extended art", ["ウルザの物語"]), ("拡張アート", ["ウルザの物語"]),
+                    ("-日本語版", ["English Only Thing"]), ("旧枠 ドラゴン", ["シヴ山のドラゴン"])):
+        check(f"printings: {q} finds the cards with such a printing", found(q, len(want)) == sorted(want), names_on())
+    found("lang:ja", 6)
+    check("printings: lang:ja finds every card printed in Japanese", "English Only Thing" not in names_on(), names_on())
+    found("ボーダーレス", 3)
+    check("printings: the note says what ボーダーレス did", "「ボーダーレス」でボーダーレス版のあるカードに絞り込みました。" in page.locator("#matchNote").inner_text(),
+          page.locator("#matchNote").inner_text())
+    found("日本語版 ボーダーレス", 1)
+    check("printings: beside 日本語版 the note says a Japanese borderless printing", "日本語のボーダーレス版のあるカード" in page.locator("#matchNote").inner_text(),
+          page.locator("#matchNote").inner_text())
+    DB_MODE["variant"] = None
+    home()
+    found("e:m10", 4)
+    check("printings: an older database without the fields still finds e:m10 by the shown printing's set",
+          names_on() == sorted(["クァーサルの群れ魔道士", "シヴ山のドラゴン", "ラノワールのエルフ", "稲妻"]), names_on())
+
+    # the card page's language buttons from the printings file: no Scryfall search, the other language fetched when pressed
+    PRINTINGS_MODE["file"] = True
+    n0 = len(calls)
+    page.goto(SITE + "?card=rag-ja-mh2"); page.wait_for_selector("#printSlot .print-lang")
+    labels = page.locator("#printSlot .print-lang").all_inner_texts()
+    check("printings file: the language buttons come from the file (JP EN FR DE), without a Scryfall search",
+          labels == ["JP", "EN", "FR", "DE"] and not any("include_multilingual" in c for c in calls[n0:]), (labels, [c for c in calls[n0:] if "scryfall" in c]))
+    page.click("#printSlot [data-print=fr]")
+    page.wait_for_function("location.search.includes('card=rag-fr-mh2') && location.search.includes('print=fr')")
+    page.wait_for_selector("#printSlot [data-print=fr][aria-pressed=true]")
+    check("printings file: FR fetches that one printing and shows it in French", "LANG-LOOKUP /cards/mh2/138/fr" in calls[n0:]
+          and page.locator(".cp-name").inner_text() == "Ragavan, chapardeur agile" and page.locator("#printSlot .print-lang").all_inner_texts() == ["JP", "EN", "FR", "DE"],
+          (page.locator(".cp-name").inner_text(), [c for c in calls[n0:] if "LOOKUP" in c]))
+    page.click("#printSlot [data-print=ja]")
+    page.wait_for_function("location.search.includes('card=rag-ja-mh2') && location.search.includes('print=ja')")
+    page.wait_for_selector("#printSlot [data-print=ja][aria-pressed=true]")
+    check("printings file: JP goes back to the Japanese printing", page.locator(".cp-name").inner_text() == "敏捷なこそ泥、ラガバン")
+    page.goto(SITE + "?card=arma-ja-4bb"); page.wait_for_selector("#printSlot .print-lang")
+    check("printings file: Japanese 4th Edition (4bb) lists the English 4th Edition", page.locator("#printSlot .print-lang").all_inner_texts() == ["JP", "EN", "DE"],
+          page.locator("#printSlot .print-lang").all_inner_texts())
+    page.click("#printSlot [data-print=en]")
+    page.wait_for_function("location.search.includes('card=arma-en-4ed')"); page.wait_for_selector("#printSlot [data-print=en][aria-pressed=true]")
+    check("printings file: EN there opens the English 4th Edition (4ed), never Masters 25", "LANG-LOOKUP /cards/4ed/4/en" in calls[n0:]
+          and page.locator("#printSlot .print-lang").all_inner_texts() == ["JP", "EN", "DE"])
+    n1 = len(calls)
+    page.goto(SITE + "?card=rag-ja-mul"); page.wait_for_selector("#printSlot .print-lang")
+    ids = page.evaluate("Object.fromEntries([...document.querySelectorAll('#printSlot .print-lang')].map(b => [b.dataset.print, b.dataset.id]))")
+    check("printings file: a printing the file doesn't have yet asks Scryfall as before", ids == {"ja": "rag-ja-mul", "en": "rag-en-mul", "fr": "rag-fr-mul"}
+          and any("include_multilingual" in c for c in calls[n1:]), ids)
+    check("printings file: fetched at most once per page load", sum(1 for c in calls[n0:] if c.endswith("/printings.json.gz")) <= 3,
+          sum(1 for c in calls[n0:] if c.endswith("/printings.json.gz")))
+    PRINTINGS_MODE["file"] = False
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

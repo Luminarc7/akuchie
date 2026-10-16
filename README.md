@@ -18,6 +18,12 @@ where to change things.
   the Japanese cards), then adds the reading of every Japanese card name (`name_kana`, for the あいうえお order; never shown) using
   `tools/name_readings.py`. At each deploy `tools/brotli_db.mjs` makes `ja_cards.json.br`, which
   `worker.js` sends as `/ja_cards.json` (half the download of the .gz).
+- `ja_cards.json.gz` and `printings.json.gz` (every printing's languages, for the card page's language
+  buttons) are rebuilt from Scryfall every Monday by **Update card database**
+  (`tools/update_database.py`). It checks that no cards, Japanese names or texts went missing and
+  refuses the update if they did; otherwise it puts the new files on the test site (`staging`) with a
+  what's-new note in the commit. They go live with the next publish. "Run workflow" on GitHub's
+  Actions tab starts it by hand.
 - `meta.json`, `meta_decks.json`, `meta_lists/` – the metagame tab, deck pages, weekly trends and the
   sample lists per deck. Rebuilt every day by **Update metagame data** (`build_meta.py`).
 - `manifest.webmanifest`, `sw.js`, `icons/`, `og.png` – the installable app, its offline copy and the

@@ -39,6 +39,8 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | `"two words"` | `phrases` (exact phrase) | `"draw a card"` |
 | A word in `WORD_FILTERS` | a type test | PW, 置物, X呪文 |
 | A card shape (`CARD_SHAPES`; English names of several words are read first, `SHAPE_PHRASE_RE`) | a layout test, also `is:<id>` | 分割カード, 両面, MDFC, 変身カード, 反転カード, 出来事カード, split card, `is:mdfc` |
+| A treatment (`TREATMENTS`; extended art, full art, old frame are joined into one word first, `TREATMENT_PHRASE_RE`) | a test of the database's `treatments` (`treatmentTest()`), also `is:<treatment>`; beside 日本語版 or `lang:ja`, a Japanese printing with it. A note says so (`treatmentFindLabel()`) | ボーダーレス, ショーケース, 旧枠, 拡張アート, フルアート, 未来予知枠, テキストレス, エッチング, シリアルナンバー, borderless, extended art, `is:showcase`, 日本語版 ボーダーレス |
+| 日本語版 (`JA_PRINT_WORDS`), `lang:ja` / `in:ja` (`JA_LANG_VALUES`) | cards printed in Japanese (`hasJaPrinting()`: the card has a Japanese name); `-日本語版` the rest; `lang:en` every card | 日本語版 ドラゴン, `lang:ja` |
 | A color or mana value alone, or before a type word (`narrowingWord()`) | a color / mana value filter; not inside a card name (`rolesLookLikeAName()`) or in quotes | 白 天使, 白の天使, 3マナ ゴブリン, 黒のクリーチャー, red goblin |
 | A guild, shard or wedge (`COLOR_GROUP_WORDS`), a format (`FORMAT_WORDS`) or a rarity (`RARITY_WORDS`) beside other words | the same kind of filter (a guild = the cards a deck of its colors can play, a format = legal in it). These words are often part of names, so they narrow only beside other words that aren't one card's name (`wordsInOneName()`), or alone when no name starts with them (`nameStartsWith()`) | ボロス 除去, ゴルガリ 墓地, モダン 除去, パウパー 火力, 神話レア ドラゴン, レア 土地, boros removal |
 | パワーN, タフネスN (以上/以下) | a power / toughness filter (`derivedFromWord()`; パワー 5以上 is joined first) | パワー3以上 クリーチャー |
@@ -58,7 +60,12 @@ rarity that was asked for (神話レア), with a small arrow beside it in the pi
 rarity (`tileRarityHtml()`, `wantedRarities()`, `RARITY_ORDER`; with several rarities asked
 for, the rarest one the card has).
 
-**Operators** are `KNOWN_OPS` (including `is:` for card shapes) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
+**Sets** (`e:mh3`, `set:`, `セット:モダンホライゾン3`: a code, or a Japanese set name from `SET_NAME_JA`
+read by `setCodeOf()`) match every set the card was printed in, as Scryfall does, so reprints
+are found too (the database's `sets`, kept as `_sets` by `indexRow()`). The tile keeps the
+card's usual picture. An older database without `sets` matches the shown printing's set.
+
+**Operators** are `KNOWN_OPS` (including `is:` for card shapes and treatments, and `lang:`/`in:`) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
 色→c, マナ総量→cmc, セット→e…). They are matched against a row in `localOperatorMatch()`;
 an unknown operator returns `null` and the token is searched as text. To add an operator: add
 its names to `KNOWN_OPS`/`JA_OPERATORS`, a `case` in `localOperatorMatch()`, a line in the search
