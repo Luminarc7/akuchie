@@ -7,7 +7,7 @@
 | `meta.json`, `meta_decks.json`, `meta_lists/*.json` | Metagame tab, deck pages, sample lists | `build_meta.py` via `update-meta.yml` | Daily 18:40 UTC, committed to `main` |
 | `combo_ja.js` | Japanese wording for combo results | by hand | When combo wording needs fixing |
 | `tools/name_fixes_ja.json` | Japanese names Scryfall has wrong or missing | by hand (read off real cards) | When a wrong name is found |
-| warujie-prices files (`h/`, `q/`, `c/`, `t/`, `movers.json`, `cheap.json.gz`, `index.json`) | Prices, listings, combos, role tags | warujie-prices builders | Daily 12:17 UTC |
+| warujie-prices files (`h/`, `q/`, `c/`, `t/`, `movers.json`, `cheap.json.gz`, `cheap_prints.json.gz`, `index.json`) | Prices, listings, combos, role tags | warujie-prices builders | Daily 12:17 UTC |
 | `dev/tests/fixtures/*`, `dev/searchbench/*.json*` | Test data | by hand / scripts in `dev/` | When tests need it |
 
 ## The card database (`ja_cards.json.gz`)
@@ -109,6 +109,7 @@ documented in the warujie-prices repository
 | `c/index.json`, `c/<xx>.json.gz` | `loadComboIndex()`, `loadComboShard()` | Commander combos by oracle id |
 | `t/tags.json.gz` | `loadTags()` | Role tags and EDHREC rank by oracle id (first 12 characters) |
 | `cheap.json.gz` | `loadCheapest()` | Per card name, the cheapest paper printing's USD and EUR price in cents and its lowest Arena rarity (`m r u c`), for deck prices and wildcards |
+| `cheap_prints.json.gz` | `loadCheapPrints()` | Per card name, which printing (`set/number`) those two cheapest prices are, for the deck price page |
 
 The `h/` and `q/` requests carry `?d=<date>` so a new day's file is never served from the
 browser's cache.

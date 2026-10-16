@@ -28,9 +28,10 @@ grep -n -- '// ---- ' index.html
 | `#metaView` | The metagame tab |
 | `#pricesView` | Price movers |
 | `#deckView` | One deck's page |
+| `#importView` | The deck price page: the paste box (`#importForm`, `#importText`, `#importClear`) and the result (`#importBody`) |
 | `footer.attribution` | Data credits, the Fan Content Policy notice, the privacy promise and the contact link (address assembled in JS) |
 
-`showView(name)` shows one of the six views and marks the right tab.
+`showView(name)` shows one of the seven views and marks the right tab.
 
 ## The script, section by section
 
@@ -101,6 +102,7 @@ In file order. "Key names" are what to search for.
 | `phones: the theme buttons sit in a small menu` | The phone menu. | `setMenu()` |
 | `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
 | `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
+| `deck price page…` | Paste a deck list, see what it costs. | `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()` |
 | `the search box follows the page` | Sticky search bar when the hero scrolls away. | `updateHeroOut()`, `updateBarTop()` |
 | `start…` | Applies the saved language, then the route. | |
 
@@ -117,4 +119,4 @@ In file order. "Key names" are what to search for.
 - **Row fields starting with `_`** (`_nameEn`, `_typeEn`, `_colors`, `_cmc`…) are computed in
   `indexRow()` when the database loads; they are not in the file.
 - **Browser storage keys start with `akuchie-`** for historical reasons. Don't rename them
-  (visitors would lose their settings).
+  (visitors would lose their settings). New keys start with `warujie-` (`IMPORT_SAVE_KEY`).
