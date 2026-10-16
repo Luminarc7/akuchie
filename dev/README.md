@@ -39,6 +39,14 @@ find (one check each); add a search there when one should work and doesn't.
 `harness.py` opens the site with the real database and stubs Scryfall; use it for
 screenshots or to reproduce a bug with real data.
 
+## `dev/tests/worker_shop.mjs` — the Worker's Rakuten Books list
+
+    node dev/tests/worker_shop.mjs
+
+Checks `rakutenItems()` in `worker.js` (`/shop/rakuten`) with Rakuten's API answered from a
+fixture: the keys stay secret, only the fixed searches are allowed, packs and other products are
+dropped, errors are kept only briefly. Run it whenever `worker.js` changes.
+
 ## `check_docs.py` — the docs still match the code
 
     python3 dev/check_docs.py

@@ -6,7 +6,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "warujie",
   "compatibility_date": "2026-10-01",
-  // only the HTML pages and the card database run through worker.js (see there);
+  // only the HTML pages, the card database and the Rakuten Books list (/shop/rakuten)
+  // run through worker.js (see there);
   // every other file is served straight from the static assets
   "main": "worker.js",
   // before each deploy: the card database brotli-compressed (ja_cards.json.br)
@@ -14,7 +15,7 @@
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/index.html", "/preview", "/preview.html", "/preview/", "/ja_cards.json"]
+    "run_worker_first": ["/", "/index.html", "/preview", "/preview.html", "/preview/", "/ja_cards.json", "/shop/rakuten"]
   },
   // settings for the branch test sites; empty = same as production
   "previews": {}

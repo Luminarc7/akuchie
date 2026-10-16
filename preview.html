@@ -799,6 +799,7 @@
     .meta-bar .meta-head > .seg::-webkit-scrollbar { display: none; }
     .meta-bar .meta-head > .seg .seg-btn { flex: none; }
     .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+    #pricesView .meta-controls { flex-wrap: wrap; } /* the deck price button drops below the periods on narrow phones */
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
     .meta-decklink { order: 4; }
     .meta-price .meta-cost { font-size: 11px; }
@@ -1247,9 +1248,10 @@
   .deck-foot { margin: 20px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   .deck-cost-note { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   /* the deck price page: paste a list, see what it costs */
-  .imp-cta { margin: 10px 2px; font-size: 13px; }
-  .imp-cta a { color: var(--accent); font-weight: 700; text-decoration: none; }
-  .imp-cta a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* the price tab's way in to the deck price page */
+  .imp-open { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+    font-size: 12.5px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .imp-open:hover { filter: brightness(1.07); }
   .deck-edit, .imp-buy { text-decoration: none; }
   .imp-buy-note { margin: 2px 0 0; font-size: 12.5px; color: var(--ok); font-weight: 700; }
   .deck-export-menu { max-width: calc(100vw - 16px); }
@@ -1317,6 +1319,36 @@
   html[data-home="true"] .search-layout { display: none; }
   #homeMoversTabs { align-self: flex-start; }
   .hb-src { margin: 4px 0 0; font-size: 11.5px; color: var(--muted); }
+  /* home and set pages: things to buy at Rakuten Books / Amazon (affiliate links say PR) */
+  .home-shop { flex-basis: 100%; }
+  #homeShopTabs { align-self: flex-start; }
+  .pr-badge { display: inline-block; margin-left: 8px; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 4px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10.5px; font-weight: 700; color: var(--muted); line-height: 1.6; vertical-align: 3px; }
+  .pr-badge[hidden] { display: none; }
+  .hs-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 18px; }
+  .hs-item a { display: flex; align-items: center; gap: 12px; padding: 6px 0; color: inherit; text-decoration: none; min-width: 0; }
+  .hs-img { width: 56px; height: 56px; flex: none; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid var(--line); }
+  .hs-noimg { width: 56px; height: 56px; flex: none; border-radius: 6px; background: var(--field); border: 1px solid var(--line); }
+  .hs-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .hs-title { font-size: 13px; font-weight: 700; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+  .hs-item a:hover .hs-title { color: var(--accent); }
+  .hs-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; font-size: 11.5px; color: var(--muted); }
+  .hs-price { font-size: 14px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .hs-badge { display: inline-block; border-radius: 999px; padding: 0 7px; font-size: 10.5px; font-weight: 700; background: var(--accent); color: var(--accent-ink); line-height: 1.6; }
+  .hs-badge.soft { background: transparent; color: var(--text-2); border: 1px solid var(--line-strong); }
+  .hs-foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+  .hs-foot .hb-src { margin: 0; }
+  .hs-credit { font-size: 11px; color: var(--muted); }
+  .hs-credit a { color: var(--muted); }
+  .hs-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; color: var(--text-2); }
+  .hs-empty .external-link-btn, .set-shop .external-link-btn { border-radius: 999px; padding: 3px 12px; font-size: 12.5px; }
+  .set-shop { margin: 4px 0 16px; display: flex; flex-wrap: wrap; gap: 10px 14px; }
+  .set-shop[hidden] { display: none; }
+  .set-shop-title { flex-basis: 100%; margin: 0; font-size: 13px; font-weight: 700; color: var(--text-2); }
+  .set-shop-part { flex: 1 1 320px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .set-shop-part.amazon { flex: 0 1 260px; }
+  .set-shop-part h3 { margin: 0; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .set-shop .hs-list { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  @media (max-width: 820px) { .set-shop-part.amazon { flex: 1 1 100%; } }
   #homeMoversMore[hidden] { display: none; }
   .mover-yen { display: block; margin-top: 1px; font-size: 11px; color: var(--muted); }
 
@@ -1678,6 +1710,11 @@
       <div class="seg seg-sm" id="homeMetaTabs" role="tablist" aria-label="フォーマット" data-i18n-aria="meta.formats.aria"></div>
       <div id="homeMetaBody"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
     </div>
+    <div class="home-box home-shop" id="homeShop">
+      <div class="hb-head"><h2><span data-i18n="shop.home.title">楽天ブックスで予約・販売中</span><span class="pr-badge" hidden>PR</span></h2><a href="https://books.rakuten.co.jp/" id="homeShopMore" target="_blank" rel="sponsored noopener" data-i18n="shop.more">楽天ブックスでもっと見る</a></div>
+      <div class="seg seg-sm" id="homeShopTabs" role="tablist" aria-label="商品" data-i18n-aria="shop.tabs.aria"></div>
+      <div id="homeShopBody"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
+    </div>
   </section>
 
   <div class="search-layout">
@@ -1839,6 +1876,7 @@
   <div id="setDetailPanel" style="display:none;">
     <button id="backToSetsBtn" class="back-link" type="button" data-i18n="back.sets">← セット一覧に戻る</button>
     <div id="setHeader" class="set-header"></div>
+    <div id="setShop" class="set-shop" hidden></div>
     <p class="result-count" id="setResultCount"></p>
     <div class="grid" id="setGrid"></div>
     <div class="load-more-row" id="setLoadMoreRow" style="display:none;">
@@ -1865,7 +1903,6 @@
     </div>
     <p class="result-count" id="metaSummary"></p>
   </div>
-  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta">自分のデッキリストを貼り付けて価格を調べる →</a></p>
   <div class="meta-help" id="metaHelp" hidden data-i18n-html="meta.help"></div>
   <div id="metaBody"></div>
   <p class="meta-note" id="metaNote"></p>
@@ -1899,11 +1936,11 @@
       <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
       <div class="meta-controls">
         <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
+        <a class="imp-open" href="?view=import" data-import="1" data-i18n="imp.open">デッキの価格を調べる</a>
       </div>
     </div>
     <p class="result-count" id="moverSummary"></p>
   </div>
-  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta.prices">デッキリストを貼り付けて、まとめて価格を調べる →</a></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -1915,7 +1952,8 @@
     <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・役割 <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a>・採用数 <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a>・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a></p>
     <p class="combos-only" data-i18n-html="footer.combos"></p>
     <p data-i18n="footer.disclaimer">価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。</p>
-    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p data-i18n="footer.privacy" id="footPrivacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）、楽天ブックスの商品画像などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p data-i18n="footer.amazon" id="footAmazon" hidden>Amazonのアソシエイトとして、悪知恵は適格販売により収入を得ています。</p>
     <p class="app-install" id="appInstall" hidden><button type="button" class="adv-btn" id="appInstallBtn" data-i18n="app.install">アプリとして使う（ホーム画面に追加）</button><span class="app-ios" id="appIos" hidden data-i18n="app.ios"></span></p>
     <p><span data-i18n="footer.contact">お問い合わせ</span>：<a id="contactLink" href="#">…</a></p>
     <p><span id="dbCount"></span>
@@ -2163,8 +2201,7 @@ const STR = {
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
-  'imp.cta': ['自分のデッキリストを貼り付けて価格を調べる →', 'Paste your own deck list and price it →'],
-  'imp.cta.prices': ['デッキリストを貼り付けて、まとめて価格を調べる →', 'Paste a deck list and price it all at once →'],
+  'imp.open': ['デッキの価格を調べる', 'Price a deck list'],
   'deck.edit': ['編集して計算', 'Edit & price'],
   'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
   'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
@@ -2202,7 +2239,31 @@ const STR = {
   'footer.fcp': ['悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。', ''],
   'footer.combos': ['統率者戦のコンボ：<a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>', 'Commander combos: <a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>'],
   'footer.disclaimer': ['価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。', 'Prices are for reference only. Yen amounts are converted at the exchange rate shown and may differ from what shops actually charge or pay. We can’t guarantee the information here is accurate, so please check with the shop before buying or selling.'],
-  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode), recent searches and pasted deck lists are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
+  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）、楽天ブックスの商品画像などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode), recent searches and pasted deck lists are saved only in your own browser. Fonts (Google Fonts, not used in lite mode), card pictures (Scryfall) and Rakuten Books product pictures are loaded from those services, which receive your IP address and similar details.'],
+  'footer.privacy.aff': ['このサイトには会員登録・Cookie・アクセス解析はありません。「PR」の印がある楽天ブックス・Amazonへのリンクはアフィリエイト広告で、そこから買い物をすると悪知恵に紹介料が入ることがあります（お支払いの金額は変わりません）。リンク先では各サイトのCookieが使われます。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）、楽天ブックスの商品画像などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies or analytics. Links to Rakuten Books and Amazon marked “PR” are affiliate ads: if you buy something through them, 悪知恵 may earn a referral fee (you pay the same). Those sites use their own cookies. Your display settings (theme, language, lite mode), recent searches and pasted deck lists are saved only in your own browser. Fonts (Google Fonts, not used in lite mode), card pictures (Scryfall) and Rakuten Books product pictures are loaded from those services, which receive your IP address and similar details.'],
+  'footer.amazon': ['Amazonのアソシエイトとして、悪知恵は適格販売により収入を得ています。', 'As an Amazon Associate, 悪知恵 earns from qualifying purchases.'],
+  'shop.home.title': ['楽天ブックスで予約・販売中', 'On sale at Rakuten Books'],
+  'shop.tabs.aria': ['商品', 'Products'],
+  'shop.tab.sl': ['Secret Lair', 'Secret Lair'],
+  'shop.tab.box': ['ブースターBOX', 'Booster boxes'],
+  'shop.more': ['楽天ブックスでもっと見る', 'More at Rakuten Books'],
+  'shop.src': ['楽天ブックスの販売価格（税込）。1時間ごとに更新しています。最新の価格と在庫は楽天ブックスでご確認ください。', 'Rakuten Books prices (tax included), updated hourly. Check Rakuten Books for the latest price and stock.'],
+  'shop.none.sl': ['楽天ブックスで販売中のSecret Lairは、楽天ブックスのサイトで探せます。', 'Look for Secret Lair drops on the Rakuten Books site.'],
+  'shop.none.box': ['ブースターBOXは、楽天ブックスのサイトで探せます。', 'Look for booster boxes on the Rakuten Books site.'],
+  'shop.search': ['楽天ブックスで探す', 'Search Rakuten Books'],
+  'shop.release': ['発売 {d}', 'Release {d}'],
+  'shop.new': ['NEW', 'NEW'],
+  'shop.avail.1': ['在庫あり', 'In stock'],
+  'shop.avail.2': ['3〜7日で発送', 'Ships in 3–7 days'],
+  'shop.avail.3': ['3〜9日で発送', 'Ships in 3–9 days'],
+  'shop.avail.4': ['メーカー取り寄せ', 'Ordered from the maker'],
+  'shop.avail.5': ['予約受付中', 'Pre-order'],
+  'shop.avail.6': ['メーカーに在庫確認', 'Stock checked with the maker'],
+  'shop.yen': ['{v}円', '¥{v}'],
+  'shop.set.title': ['このセットのBOXを買う', 'Buy a box of this set'],
+  'shop.set.rakuten': ['楽天ブックス', 'Rakuten Books'],
+  'shop.set.amazon': ['Amazon', 'Amazon'],
+  'shop.set.amazon.link': ['Amazonで探す', 'Search Amazon'],
   'footer.contact': ['お問い合わせ', 'Contact'],
   'meta.illus': ['イラスト：{a}', 'Art: {a}'],
   'art.title': ['{name}（イラスト：{a}　© Wizards of the Coast）', '{name} (art by {a} © Wizards of the Coast)'],
@@ -6348,8 +6409,8 @@ function showView(name) {
   if (name !== 'card') {
     document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
     document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
-    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck' || name === 'import'));
-    document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices'));
+    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck'));
+    document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices' || name === 'import'));
   }
 }
 function showSearchView() { showView('search'); }
@@ -6377,6 +6438,7 @@ function startHome() {
   homeStarted = true;
   renderHomeMovers();
   renderHomeMeta();
+  renderHomeShop();
   renderHeroExample(0);
 }
 function setHomeMode(on) {
@@ -6432,6 +6494,9 @@ const SET_NAME_JA = {
   thb: 'テーロス還魂記', eld: 'エルドレインの王権', m20: '基本セット2020', war: '灯争大戦',
   rna: 'ラヴニカの献身', grn: 'ラヴニカのギルド', dom: 'ドミナリア', mh2: 'モダンホライゾン2',
   mh1: 'モダンホライゾン', '2xm': 'ダブルマスターズ', '2x2': 'ダブルマスターズ2022',
+  fin: 'FINAL FANTASY', eoe: '久遠の終端', spm: 'マーベル スパイダーマン', tla: 'アバター 伝説の少年アン',
+  tmt: 'ミュータント タートルズ', ecl: 'ローウィンの昏明', sos: 'ストリクスヘイヴンの秘密',
+  msh: 'マーベル スーパー・ヒーローズ', hob: 'ホビット', fra: 'リアリティ・フラクチャー', trk: 'スター・トレック',
 };
 function setName(set) { return (LANG !== 'en' && SET_NAME_JA[set.code]) || set.name; }
 
@@ -6502,6 +6567,7 @@ async function openSet(code, lang) {
   document.getElementById('setLoadMoreRow').style.display = 'none';
   document.getElementById('setResultCount').textContent = '';
   setGrid.innerHTML = `<div class="status-line" style="grid-column:1/-1;"><div class="spinner"></div><span class="serif">${t('cards.loading')}</span></div>`;
+  renderSetShop(null);
   window.scrollTo(0, 0);
 
   let set = null;
@@ -6529,6 +6595,7 @@ async function openSet(code, lang) {
     setView.cards = cards;
     setView.next = data.has_more ? data.next_page : null;
     renderSetHeader(setView.set);
+    renderSetShop(set);
     renderSetCount();
     setGrid.innerHTML = cards.map(cardTileHtml).join('');
     attachTileHandlersIn(setGrid, () => setView.cards);
@@ -7802,6 +7869,7 @@ function relocalizeHome() {
   if (!homeStarted) return;
   renderHomeMovers();
   renderHomeMeta();
+  renderHomeShop();
   if (heroFx.entries.length) renderHeroExample(0);
 }
 function relocalizeSearchResults() {
@@ -7845,6 +7913,7 @@ function setLang(lang, save) {
   } else if (route.view === 'set') {
     if (setView.set) {
       renderSetHeader(setView.set);
+      renderSetShop(setView.set);
       renderSetCount();
       setGrid.innerHTML = setView.cards.map(cardTileHtml).join('');
       attachTileHandlersIn(setGrid, () => setView.cards);
@@ -9671,6 +9740,120 @@ document.getElementById('homeBoxes').addEventListener('click', (e) => {
   else goTo(link.getAttribute('href'));
 });
 
+// ---- shops: Secret Lairs and booster boxes at Rakuten Books, boxes at Amazon -------------------
+// The site's affiliate IDs. Both are public (they are part of every link they make), so they live
+// here and not in a secret. Empty = plain links with no "PR" mark. Rakuten: the affiliate ID from
+// Rakuten Affiliate (楽天アフィリエイト), like "1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c".
+// Amazon: the Associates tracking ID (トラッキングID), like "warujie-22".
+const AFFILIATE = { rakuten: '', amazon: '' };
+const SHOP_API = '/shop/rakuten';   // worker.js asks Rakuten's API (its keys are Cloudflare secrets)
+const RAKUTEN_CREDIT = '<!-- Rakuten Web Services Attribution Snippet FROM HERE --><a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a><!-- Rakuten Web Services Attribution Snippet TO HERE -->';
+const SHOP_KINDS = ['sl', 'box'];
+const shopCache = new Map();
+const affOn = (shop) => /^[\w.-]{4,80}$/.test(AFFILIATE[shop] || '');
+const shopRel = (shop) => affOn(shop) ? 'sponsored noopener' : 'noopener';
+// a Rakuten Books page as a Rakuten Affiliate link (a link the API made already stays as it is)
+function rakutenLink(url) {
+  if (!affOn('rakuten') || url.startsWith('https://hb.afl.rakuten.co.jp/')) return url;
+  return `https://hb.afl.rakuten.co.jp/hgc/${AFFILIATE.rakuten}/?pc=${encodeURIComponent(url)}&m=${encodeURIComponent(url)}`;
+}
+function rakutenSearchUrl(words) {
+  return rakutenLink(`https://books.rakuten.co.jp/search?sitem=${encodeURIComponent(words)}&g=006`);
+}
+function amazonSearchUrl(words) {
+  return `https://www.amazon.co.jp/s?k=${encodeURIComponent(words)}&i=toys` + (affOn('amazon') ? `&tag=${encodeURIComponent(AFFILIATE.amazon)}` : '');
+}
+// what Rakuten Books has for one search, from worker.js; { ok:false } when it can't say
+function loadShopItems(kind, set) {
+  const key = kind + '|' + (set || '');
+  if (!shopCache.has(key)) {
+    const q = new URLSearchParams({ kind });
+    if (set) q.set('set', set);
+    if (affOn('rakuten')) q.set('aff', AFFILIATE.rakuten);
+    shopCache.set(key, fetch(`${SHOP_API}?${q}`, { headers: { Accept: 'application/json' } })
+      .then(r => r.ok ? r.json() : { ok: false, items: [] })
+      .then(d => ({ ok: !!d.ok, items: Array.isArray(d.items) ? d.items : [] }))
+      .catch(() => { shopCache.delete(key); return { ok: false, items: [] }; }));
+  }
+  return shopCache.get(key);
+}
+// "2026年02月中旬" / "2026年06月03日" -> a Date when the day is known
+function shopDate(s) {
+  const m = /(\d{4})年(\d{1,2})月(\d{1,2})日/.exec(s || '');
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+const SHOP_LINK_OK = /^https:\/\/(books\.rakuten\.co\.jp|hb\.afl\.rakuten\.co\.jp)\//;
+function shopItemsHtml(items, n) {
+  const now = Date.now();
+  return `<ul class="hs-list">${items.filter(it => SHOP_LINK_OK.test(it.url || '')).slice(0, n).map(it => {
+    const d = shopDate(it.date);
+    const fresh = d && d.getTime() <= now && now - d.getTime() < 14 * 864e5;
+    const avail = /^[1-6]$/.test(it.avail) ? t('shop.avail.' + it.avail) : '';
+    const img = /^https:\/\/thumbnail\.image\.rakuten\.co\.jp\//.test(it.image || '')
+      ? `<img class="hs-img" src="${esc(it.image)}" alt="" loading="lazy">` : '<span class="hs-noimg"></span>';
+    return `<li class="hs-item"><a href="${esc(rakutenLink(it.url))}" target="_blank" rel="${shopRel('rakuten')}">${img}
+      <span class="hs-body"><span class="hs-title">${esc(it.title)}</span>
+        <span class="hs-meta">${fresh ? `<span class="hs-badge">${esc(t('shop.new'))}</span>` : ''}${avail ? `<span class="hs-badge${it.avail === '5' ? '' : ' soft'}">${esc(avail)}</span>` : ''}${it.date ? `<span>${esc(t('shop.release', { d: it.date }))}</span>` : ''}</span>
+        <span class="hs-price">${esc(t('shop.yen', { v: Math.round(it.price).toLocaleString('ja-JP') }))}</span></span></a></li>`;
+  }).join('')}</ul>`;
+}
+const SHOP_WORDS = { sl: 'マジック ザ ギャザリング Secret Lair', box: 'マジック ザ ギャザリング ブースター' };
+let homeShopKind = 'sl';
+async function renderHomeShop() {
+  const body = document.getElementById('homeShopBody');
+  const more = document.getElementById('homeShopMore');
+  document.querySelectorAll('#homeShop .pr-badge').forEach(b => { b.hidden = !affOn('rakuten'); });
+  document.getElementById('homeShopTabs').innerHTML = SHOP_KINDS.map(k =>
+    `<button type="button" class="seg-btn" role="tab" data-kind="${k}" aria-pressed="${k === homeShopKind}" aria-selected="${k === homeShopKind}">${esc(t('shop.tab.' + k))}</button>`).join('');
+  const kind = homeShopKind;
+  const search = rakutenSearchUrl(SHOP_WORDS[kind]);
+  more.href = search; more.rel = shopRel('rakuten');
+  const data = await loadShopItems(kind);
+  if (homeShopKind !== kind) return;
+  if (!data.ok || !data.items.length) {
+    more.hidden = true;
+    body.innerHTML = `<p class="hs-empty">${esc(t('shop.none.' + kind))} <a class="external-link-btn" href="${esc(search)}" target="_blank" rel="${shopRel('rakuten')}">${esc(t('shop.search'))} ↗</a></p>`;
+    return;
+  }
+  more.hidden = false;
+  body.innerHTML = `${shopItemsHtml(data.items, 4)}<div class="hs-foot"><p class="hb-src">${esc(t('shop.src'))}</p><span class="hs-credit">${RAKUTEN_CREDIT}</span></div>`;
+}
+document.getElementById('homeShopTabs').addEventListener('click', (e) => {
+  const b = e.target.closest('.seg-btn');
+  if (!b || b.dataset.kind === homeShopKind) return;
+  homeShopKind = b.dataset.kind;
+  renderHomeShop();
+});
+// set pages: boxes of the set, for sets sold in boxes (main and masters sets of the last
+// three years, and upcoming ones). Rakuten's own part shows only Rakuten links (its rules);
+// Amazon gets a part of its own.
+const SHOP_SET_TYPES = ['expansion', 'core', 'masters', 'draft_innovation'];
+let setShopToken = 0;
+async function renderSetShop(set) {
+  const el = document.getElementById('setShop');
+  const token = ++setShopToken;
+  const recent = set && set.released_at && Date.parse(set.released_at) > Date.now() - 3 * 365 * 864e5;
+  if (LITE || !set || !SHOP_SET_TYPES.includes(set.set_type) || !recent) { el.hidden = true; el.innerHTML = ''; return; }
+  const name = SET_NAME_JA[set.code] || set.name;
+  const words = `マジック ザ ギャザリング ${name} ブースター`;
+  const pr = (shop) => affOn(shop) ? '<span class="pr-badge">PR</span>' : '';
+  const amazon = `<div class="set-shop-part amazon"><h3>${esc(t('shop.set.amazon'))}${pr('amazon')}</h3>
+      <p class="hs-empty"><a class="external-link-btn" href="${esc(amazonSearchUrl(words))}" target="_blank" rel="${shopRel('amazon')}">${esc(t('shop.set.amazon.link'))} ↗</a></p></div>`;
+  const rakutenPart = (inner) => `<p class="set-shop-title">${esc(t('shop.set.title'))}</p>
+    <div class="set-shop-part rakuten"><h3>${esc(t('shop.set.rakuten'))}${pr('rakuten')}</h3>${inner}</div>${amazon}`;
+  const searchBtn = `<p class="hs-empty"><a class="external-link-btn" href="${esc(rakutenSearchUrl(words))}" target="_blank" rel="${shopRel('rakuten')}">${esc(t('shop.search'))} ↗</a></p>`;
+  el.innerHTML = rakutenPart(`<p class="hb-empty">${esc(t('loading'))}</p>`);
+  el.hidden = false;
+  const data = await loadShopItems('box', name);
+  if (token !== setShopToken) return;
+  el.innerHTML = rakutenPart(data.ok && data.items.length
+    ? `${shopItemsHtml(data.items, 3)}<div class="hs-foot"><p class="hb-src">${esc(t('shop.src'))}</p><span class="hs-credit">${RAKUTEN_CREDIT}</span></div>`
+    : searchBtn);
+}
+// the footer says so once any affiliate link is on
+if (affOn('rakuten') || affOn('amazon')) document.getElementById('footPrivacy').dataset.i18n = 'footer.privacy.aff';
+document.getElementById('footAmazon').hidden = !affOn('amazon');
+
 // ---- phones: the theme buttons sit in a small menu ---------------------------------------
 const menuBtn = document.getElementById('menuBtn');
 const themeSwitchEl = document.getElementById('themeSwitch');
@@ -10656,7 +10839,7 @@ document.getElementById('importBody').addEventListener('mouseover', (e) => {
   deckPeek.style.display = 'block';
 });
 document.getElementById('importBody').addEventListener('mouseout', (e) => { if (e.target.closest('[data-peek]')) hideDeckPeek(); });
-// links to this page: the metagame and price tabs, and "edit and price" on a deck page
+// links to this page: the price tab's button, and "edit and price" on a deck page
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[data-import]');
   if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
