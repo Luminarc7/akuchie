@@ -55,7 +55,7 @@ with sync_playwright() as p:
     check("most played order: draw a card -> Rhystic Study, Mind Stone near the top", "リスティックの研究" in ptop("draw a card", 5) and "精神石" in ptop("draw a card", 5), ptop("draw a card"))
     # the default order: best match, then あいうえお by the name's reading (English-only cards after them)
     prop = page.evaluate("""(qs) => {
-      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       return qs.map(q => {
         const r = searchRows(q, st), rows = r.rows;
         const grp = row => [r.info.grades.has(row) ? r.info.grades.get(row).tier : 1, relevance(row, q), r.info.grades.has(row) ? Math.floor(r.info.grades.get(row).score * 2) / 2 : 0].join('|');
@@ -70,10 +70,10 @@ with sync_playwright() as p:
     }""", ["飛行", "破壊する", "ドラゴン", "トークン"])
     for r in prop:
         check(f"default order: {r['q']} - equal matches in あいうえお order, English-only cards last", r["bad"] == 0 and not r["jaAfter"], r)
-    ro = page.evaluate("""() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+    ro = page.evaluate("""() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       const rows = searchRows('除去', st).rows.filter(x => x.name_ja).slice(0, 40); return rows.map(x => gojuonKey(x.name_kana) + ' ' + x.name_kana); }""")
     check("default order: role search 除去 runs あいうえお, ゛ and small kana only breaking ties (first 40 by reading)", ro == sorted(ro), ro[:10])
-    en = page.evaluate("""() => { LANG = 'en'; const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+    en = page.evaluate("""() => { LANG = 'en'; const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       const rows = searchRows('removal', st).rows.slice(0, 30).map(x => x._nameEn); LANG = 'ja'; return rows; }""")
     check("default order in English: A→Z", en == sorted(en), en[:8])
     kana = page.evaluate("(() => { const by = n => LOCAL_DB.find(r => r.name_ja === n); return ['稲妻','思考囲い','意志の力','ウルザの物語'].map(n => by(n) && by(n).name_kana); })()")
@@ -99,7 +99,7 @@ with sync_playwright() as p:
 
     # ---- round 19: slang and loosely worded effects (each of these found nothing, or the wrong cards, before)
     ALL = """(qs) => {
-      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       return qs.map(q => { try { const r = searchRows(q, st);
         return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), roles: r.info.roles.map(x => x.id || x.tag || '?'), aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to),
                  asRole: (r.info.asRole || []).map(a => a.id + '>' + a.query), derived: r.info.derived, cmc: r.rows.map(x => x._cmc),
@@ -241,12 +241,19 @@ with sync_playwright() as p:
     check("rarity counts every printing: about as many cards per rarity as Scryfall (paper)",
           11100 <= rc[0] <= 11400 and 10600 <= rc[1] <= 10900 and 11400 <= rc[2] <= 12100 and 2700 <= rc[3] <= 2800 and 340 <= rc[4] <= 360, rc)
     rr = page.evaluate("""(() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
-      manaCosts: new Set(), roles: new Set(), rarity: 'mythic', format: '', sort: '', showLoose: false });
+      manaCosts: new Set(), roles: new Set(), rarity: new Set(['mythic']), format: '', sort: '', showLoose: false });
       const names = q => searchRows(q, st).rows.map(r => r.name_en);
       const row = n => LOCAL_DB.find(r => r.name_en === n);
       return { bolt: names('稲妻'), sol: names('sol ring'), amnesia: [row('Amnesia').rarity, row('Amnesia').set], acid: row('Acid Rain').rarity }; })()""")
     check("rarity: 神話レア + 稲妻 / sol ring finds them (mythic printings exist); Amnesia shows its English uncommon printing",
           "Lightning Bolt" in rr["bolt"] and "Sol Ring" in rr["sol"] and rr["amnesia"] == ["uncommon", "drk"] and rr["acid"] == "rare", rr)
+    mr = page.evaluate("""(() => { const base = { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+      manaCosts: new Set(), roles: new Set(), format: '', sort: '', showLoose: false };
+      const n = rs => searchRows('ドラゴン', Object.assign({}, state, base, { rarity: new Set(rs) })).rows.length;
+      const all = searchRows('ドラゴン', Object.assign({}, state, base, { rarity: new Set() })).rows;
+      return { both: n(['mythic', 'rare']), m: n(['mythic']), r: n(['rare']), want: all.filter(x => hasRarity(x, 'mythic') || hasRarity(x, 'rare')).length, all: all.length }; })()""")
+    check("rarity buttons combine: R + M with ドラゴン finds every dragon with a rare or a mythic printing, more than either alone",
+          mr["both"] == mr["want"] and mr["both"] > max(mr["m"], mr["r"]) and mr["both"] < mr["all"], mr)
     # every card found by its own words: one sentence of its Japanese text typed plainly (no 、, half-width numbers),
     # and its English name in lower case without punctuation (a fixed sample of 300 cards)
     import random, re as _re
@@ -259,7 +266,7 @@ with sync_playwright() as p:
         ss = [x.strip() for x in _re.split(r"[。\n]| // ", _re.sub(r"（[^）]*）", "", r["oracle_ja"])) if 6 <= len(x.strip()) <= 60 and nm not in x]
         if ss: tests.append({"q": _re.sub(r"[、「」]", "", rnd.choice(ss).translate(FW)), "id": r["oracle_id"]})
         tests.append({"q": _re.sub(r"[^a-z0-9 ]", "", r["name_en"].split(" // ")[0].lower()), "id": r["oracle_id"]})
-    FIND = """(ts) => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+    FIND = """(ts) => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       return ts.filter(x => !searchRows(x.q, st).rows.some(r => r.oracle_id === x.id)).map(x => x.q); }"""
     missed = page.evaluate(FIND, tests)
     check(f"each card is found by its own words: a sentence of its text typed plainly, its English name ({len(tests)} searches, at most 1% missed)",
@@ -268,7 +275,7 @@ with sync_playwright() as p:
     # ---- round 22: the 100 searches Japanese players type most (common_searches.py), one check each
     from common_searches import COMMON_SEARCHES
     CS_JS = """(qs) => {
-      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       return qs.map(q => { try { const r = searchRows(q, st);
         return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), ja: r.rows.map(x => x.name_ja || ''), roles: r.info.roles.map(x => x.id || x.tag || '?'),
                  aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to), colors: r.rows.map(x => x._colors || ''), cmc: r.rows.map(x => x._cmc),

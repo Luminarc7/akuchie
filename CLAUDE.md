@@ -198,8 +198,9 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
 - **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
   `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
   the Japanese matches in the same group.
-- **Rarity** (the C U R M buttons, `r:m`, 神話レア ドラゴン) finds a card by any rarity it was
-  printed at, as Scryfall does; a tile whose shown printing is another rarity says 神話レア版あり.
+- **Rarity** (the C U R M buttons, several at once, `r:m`, 神話レア ドラゴン) finds a card by any
+  rarity it was printed at, as Scryfall does; a tile whose shown printing is another rarity still
+  says the rarity asked for (神話レア), with a ↓/↑ arrow beside it (owner's choice over 神話レア版あり).
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
