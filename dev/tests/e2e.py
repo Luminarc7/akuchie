@@ -3328,6 +3328,26 @@ with sync_playwright() as p:
     page.fill("#importText", ""); page.wait_for_timeout(500)
     PRICE_SITE["dir"] = PRICES_FULL
 
+    # ---- 44. everyday words: slang inside a sentence, words the cards say differently, a creature type beside ロード ----
+    ev = page.evaluate("""(() => {
+      const f = q => { const u = prepareJapanese([q])[0]; return { chunks: u.chunks, alts: u.alts.map(a => a.n), to: u.alias && u.alias.to }; };
+      const keep = [CREATURE_TYPE_WORDS, tagsState]; CREATURE_TYPE_WORDS = new Set(['エルフ', 'elf', 'ロード']); tagsState = 'ready';
+      const roles = ['エルフ ロード', 'エルフロード', 'エルフのロード', 'ロード', 'elf lord', '騎士ロード'].map(q => parseSearch(q).roles.map(r => r.id).join(','));
+      [CREATURE_TYPE_WORDS, tagsState] = keep;
+      return { etb: f('ETBでカードを引く'), dies: f('死亡時にカードを引く'), when: f('戦場に出たときトークン'), drain: f('クリーチャーが死ぬたびにドレイン'),
+        words: ['シャッフル', 'ディスカード', 'ミル', 'ミルコ', '3枚ミル', 'レジェンド', '奪う', 'パクる', 'インスタントタイミング', 'パートナー', 'トランプル付与', '飛行を与える',
+                'コストが1少なくなる', '2マナ安く', 'ドローを禁止'].map(q => f(q).to), roles, kw: JA_KEYWORDS['共闘'] };
+    })()""")
+    check("slang inside a sentence: ETBでカードを引く, 死亡時に, ドレイン read as the cards' words",
+          ev["etb"]["to"] == "戦場に出たときカードを引く" and ev["dies"]["alts"][:2] == ["死亡したときカードを引く", "死亡するたびカードを引く"]
+          and ev["drain"]["to"] == "クリーチャーが死亡するたびにライフを失", (ev["etb"], ev["dies"], ev["drain"]))
+    check("とき and たび end a part: 戦場に出たときトークン is 戦場・出・トークン", ev["when"]["chunks"] == ["戦場", "出", "トークン"], ev["when"])
+    check("words the cards say differently: シャッフル, ディスカード, ミル (not ミルコ), レジェンド, 奪う, パートナー, X付与, 1マナ安く, ドローを禁止",
+          ev["words"] == ["ライブラリーを切り直す", "捨てる", "切削", None, "3つ切削", "伝説の", "コントロールを得る", "コントロールを得る", "瞬速", "共闘",
+                          "トランプルを得る", "飛行を得る", "コストが{1}少なくなる", "{2}少なく", "引くことができない"] and ev["kw"] == "partner", ev["words"])
+    check("ロード beside a creature type is the lord role (エルフ ロード, エルフロード, elf lord); alone it stays a word",
+          ev["roles"] == ["lord", "lord", "lord", "", "lord", ""], ev["roles"])
+
     check("no JavaScript errors", not errors, errors)
     browser.close()
 

@@ -31,11 +31,12 @@ the app install, link previews, English mode, lightweight mode (軽量), phones.
 
     cd dev/searchbench && python3 search_checks.py ../../index.html
 
-About 210 checks of real searches (Japanese and English names, rules text, readings, typos,
+About 240 checks of real searches (Japanese and English names, rules text, readings, typos,
 punctuation-free names, role words, players' slang, everyday wording, hiragana, card shapes,
 colors and mana values, and 600 searches typed from random cards' own text and names) against the real `ja_cards.json.gz` and role tags.
 `common_searches.py` holds the 100 searches Japanese players type most, each with what it must
-find (one check each); add a search there when one should work and doesn't.
+find (one check each), and `EVERYDAY_SEARCHES`, everyday words that once found nothing (シャッフル,
+ETBでカードを引く, エルフ ロード…); add a search there when one should work and doesn't.
 `harness.py` opens the site with the real database and stubs Scryfall; use it for
 screenshots or to reproduce a bug with real data.
 

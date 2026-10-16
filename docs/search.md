@@ -174,14 +174,16 @@ slang step also tries このオーラ for このエンチャント and この装
 
 | Table | What it does | Examples |
 |---|---|---|
-| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ, キャストする→唱える (キャストしたとき→唱えたとき・唱えるたび), ハンド→手札, トークンを作る/出す→トークンを生成, 兵士トークン→兵士・クリーチャー・トークン, ギルドゲート→ギルド門 |
-| `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻 |
+| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ, キャストする→唱える (キャストしたとき→唱えたとき・唱えるたび), ハンド→手札, トークンを作る/出す→トークンを生成, 兵士トークン→兵士・クリーチャー・トークン, ギルドゲート→ギルド門; inside a phrase ETB/CIP→戦場に出たとき, LTB→戦場を離れたとき, 死亡時に→死亡したとき, ドレイン→ライフを失 (on their own these are roles); シャッフル→ライブラリーを切り直す, ディスカード→捨てる, ミル→切削 (not ミルコ), レジェンド→伝説の, 奪う/パクる→コントロールを得る, 1マナ安く/コストが1少なくなる→{1}少なく, ドローを禁止→引くことができない |
+| `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻, パートナー→共闘, インスタントタイミング→瞬速; a keyword with 付与/を与える reads as the cards' を得る (トランプル付与→トランプルを得る, in `jaSlangForm()`) |
 | `JA_ORTHO` | Spelling variants | 全て→すべて, 時→とき, 飛行をもつ→飛行を持つ |
 | `EN_WORD_ALIAS` | English slang to card wording | unblockable, flyer, sac, lifeloss |
 | `WORD_FILTERS` | A word that means a kind of card | PW, 置物, X呪文 (X in the mana cost) |
-| `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム |
+| `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム; with a color or mana value beside them they are the role, and ロード also with a creature type (エルフ ロード, エルフロード, elf lord: `isCreatureTypeWord()`) |
 
 When a word is read as something else, the note above the results says so (`plan.aliases`).
+A phrase is also searched in parts (`jaForm()`); とき and たび end a part, so
+戦場に出たときトークン is 戦場・出・トークン rather than 戦場・出・きトークン.
 To add slang: add the entry, then a check in `dev/searchbench/search_checks.py` with a real card
 that should (and one that should not) be found.
 
@@ -232,7 +234,8 @@ card page's toggles (same colours, no higher mana value, same type: `simPasses()
 - `dev/searchbench/search_checks.py` runs real searches against the real database and role
   tags. `dev/searchbench/common_searches.py` lists the 100 searches Japanese players type most
   (names, readings, typos, nicknames, rules text, slang, land nicknames, colors/guilds/formats/
-  rarities) with what each must find; each is one check. A search that should work and doesn't
+  rarities) with what each must find, and `EVERYDAY_SEARCHES` the everyday words that once found
+  nothing (slang inside a sentence, シャッフル, パートナー, エルフ ロード…); each is one check. A search that should work and doesn't
   belongs on that list. **Add a check for every search change**, including one that proves a wrong card is
   *not* found. One check types a sentence of 300 random cards' own text plainly (no 、,
   half-width numbers) and their English names in lower case without punctuation, and expects

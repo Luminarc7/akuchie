@@ -172,7 +172,11 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
   ignored. 墓地から手札 matches the two words in one ability, in that order first. A note
   above the results says what a word was read as. Words that are slang only sometimes
   (カウンター, ロード, ラス, ティム) stay text and the note offers the role
-  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role.
+  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role, and ロード
+  with a creature type too (エルフ ロード). Slang works inside a sentence (ETBでカードを引く,
+  死亡時にカードを引く), and words the cards say differently are read their way: シャッフル →
+  切り直す, ディスカード → 捨てる, ミル → 切削, パートナー → 共闘, トランプル付与 → トランプルを得る,
+  1マナ安く → {1}少なく, 奪う → コントロールを得る.
 - **Hiragana game words** (typed before converting, on phones) are read as kanji/katakana
   (`JA_READINGS`, longest word first): はかい → 破壊, くりーちゃーをはかい, じょきょ (the role).
   Names in hiragana still match by kana folding.
@@ -218,8 +222,8 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
    Update the matching doc in `docs/` (see "Documentation" above).
 3. **Test** with `python3 dev/tests/e2e.py` (about 660 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (about 210 real-data search checks, including the 100 common Japanese searches in
-   `dev/searchbench/common_searches.py`), and `python3 dev/check_docs.py` (the docs still match the code).
+   (about 240 real-data search checks, including the 100 common Japanese searches and the
+   everyday words in `dev/searchbench/common_searches.py`), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.

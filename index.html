@@ -2716,7 +2716,7 @@ const JA_KEYWORDS = {
   '警戒':'vigilance', 'トランプル':'trample', '先制攻撃':'first strike',
   '二段攻撃':'double strike', '到達':'reach', '防衛':'defender',
   '呪禁':'hexproof', '護法':'ward', '破壊不能':'indestructible',
-  '果敢':'prowess', '威迫':'menace', '瞬速':'flash', '被覆':'shroud',
+  '果敢':'prowess', '威迫':'menace', '瞬速':'flash', '被覆':'shroud', '共闘':'partner',
   '畏怖':'fear', '側面攻撃':'flanking', 'プロテクション':'protection',
   '再生':'regenerate', '沼渡り':'swampwalk', '島渡り':'islandwalk',
   '山渡り':'mountainwalk', '森渡り':'forestwalk', '平地渡り':'plainswalk',
@@ -3447,7 +3447,7 @@ const ROLE_LIST = [
   ['exile-removal', '追放除去', 'Exile removal', ['removal'], { also: 'exileRemoval', sub: true }, '', 'exile removal'],
   ['pw-removal', 'プレインズウォーカー除去', 'Planeswalker removal', ['removal'], { also: 'pwRemoval', sub: true }, 'PW除去|PW対策', 'planeswalker removal|pw removal'],
   ['pseudo-removal', '疑似除去', 'Pseudo-removal', [], { rule: 'pseudo' }, '擬似除去', 'pseudo removal|pseudoremoval'],
-  ['boardwipe', '全体除去', 'Board wipe', ['boardwipe'], null, '全除去|全体破壊|ワイプ|ボードワイプ|リセット', 'board wipe|boardwipe|boardwipes|wrath|wraths|sweeper|sweepers|mass removal'],
+  ['boardwipe', '全体除去', 'Board wipe', ['boardwipe'], null, '全除去|全体破壊|ワイプ|ボードワイプ|リセット', 'board wipe|boardwipe|boardwipes|wipe|wipes|wrath|wraths|sweeper|sweepers|mass removal'],
   ['damage-sweeper', '全体火力', 'Damage sweeper', [], { rule: 'sweeperDamage' }, '', 'damage sweeper|damage sweepers'],
   ['bounce', 'バウンス', 'Bounce', ['bounce'], { minus: ['bounce-land'] }, '', 'bounce'],
   ['edict', '生け贄要求', 'Edict', ['edict'], null, 'エディクト|生贄要求', 'edict|edicts'],
@@ -3831,11 +3831,13 @@ function findRoleWords(tokens) {
   // with a color or mana value beside it (青 カウンター) the slang word is the role, as in 青のカウンター
   const narrowed = plain.some((q, j) => !out.used.has(j) && !q.isOp && !q.quoted && !q.negate && q.bare
     && (d => !!d && d.kind !== 'role.d.type')(derivedFromWord(q.bare)));
+  // エルフ ロード, goblin lord: with a creature type beside it ロード is the role (the type stays a word)
+  const tribal = i => plain.some((q, j) => j !== i && !out.used.has(j) && !q.isOp && !q.quoted && !q.negate && isCreatureTypeWord(q.bare));
   plain.forEach((p, i) => {
     if (out.used.has(i) || p.isOp || p.negate || /\s/.test(p.bare)) return;
     const k = roleKey(p.bare);
     const id = p.quoted ? ROLE_BY_WORD.get(k) : AMBIG_ROLE_WORDS.get(k);
-    if (id && !p.quoted && narrowed) {
+    if (id && !p.quoted && (narrowed || (id === 'lord' && tribal(i)))) {
       out.used.add(i); out.roleIdx.add(i);
       out.roles.push({ id, negate: false, word: p.bare, idx: [i] });
       return;
@@ -4202,6 +4204,20 @@ function wordsInOneName(tokens) {
   return LOCAL_DB.some(row => words.every((w, k) => (JA_CHARS.test(w) ? (row._nameJa.includes(ja[k]) || row._altJa.some(n => n.includes(ja[k]))) : row._nameEn.includes(en[k]))));
 }
 const EN_WORD_ALIAS = { unblockable: "can't be blocked", flyer: 'flying', flyers: 'flying', sac: 'sacrifice', sacs: 'sacrifice', lifeloss: 'lose life' };
+// creature types (エルフ, ゴブリン, elf, goblin), from the database's type lines
+let CREATURE_TYPE_WORDS = null;
+function isCreatureTypeWord(w) {
+  if (!CREATURE_TYPE_WORDS) {
+    if (!LOCAL_DB) return false;
+    CREATURE_TYPE_WORDS = new Set();
+    LOCAL_DB.forEach(row => [[row.type_en, /Creature|Kindred|Tribal/], [row.type_ja, /クリーチャー|部族/]].forEach(([line, re]) =>
+      String(line || '').split(' // ').forEach(face => {
+        const [main, sub] = face.split(/\s*[—―]\s*/);
+        if (sub && re.test(main)) sub.split(/[\s・]+/).forEach(x => { if (x) CREATURE_TYPE_WORDS.add(x.toLowerCase()); });
+      })));
+  }
+  return CREATURE_TYPE_WORDS.has(String(w || '').normalize('NFKC').toLowerCase());
+}
 function parseSearch(raw) {
   const out = { filters: [], words: [], ja: [], phrases: [], roles: [], derived: [], sim: null, quotedRoles: [], tokens: [], rolesOff: false, aliases: [] };
   // split card, double-faced card...: one word (is:split) before the search is split into words
@@ -4214,7 +4230,9 @@ function parseSearch(raw) {
     return sp + 'is:' + p.sh.id;
   });
   // パワー 3以上: one word, as パワー3以上
-  const tokens = tokenizeQuery(text.replace(/(^|\s)(パワー|タフネス)\s+(\d{1,2}(?:以上|以下)?)(?=\s|$)/g, '$1$2$3'));
+  const tokens = tokenizeQuery(text.replace(/(^|\s)(パワー|タフネス)\s+(\d{1,2}(?:以上|以下)?)(?=\s|$)/g, '$1$2$3')
+    // エルフロード, エルフのロード: the type and the role word, as エルフ ロード
+    .replace(/(^|\s)([\u30a1-\u30fc\u3400-\u9fff]+?)の?ロード(?=\s|$)/g, (m, sp, w) => (isCreatureTypeWord(w) ? sp + w + ' ロード' : m)));
   out.tokens = tokens;
   shapeWords.forEach(a => out.aliases.push(Object.assign(a, { replaced: true })));
   let found = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: [] };
@@ -4476,14 +4494,27 @@ const JA_KW_SLANG = {
   'フライヤー': '飛行', 'ダブルストライク': '二段攻撃', 'ファーストストライク': '先制攻撃', 'ライフリンク': '絆魂', 'デスタッチ': '接死',
   'ヘイスト': '速攻', 'ヴィジランス': '警戒', 'ビジランス': '警戒', 'リーチ': '到達', 'フラッシュ': '瞬速', 'インデストラクティブル': '破壊不能',
   'ヘクスプルーフ': '呪禁', 'ヘックスプルーフ': '呪禁', 'メナス': '威迫', 'プロウェス': '果敢', 'ディフェンダー': '防衛', 'シュラウド': '被覆',
-  'アンブロッカブル': 'ブロックされない',
+  'アンブロッカブル': 'ブロックされない', 'パートナー': '共闘', 'インスタントタイミング': '瞬速', 'インスタンスタイミング': '瞬速',
 };
 const JA_PERMS = '(クリーチャー|パーマネント|アーティファクト|エンチャント|土地|プレインズウォーカー|トークン)';
 const JA_SLANG = [
   [/山札|デッキ/g, 'ライブラリー'],
   [/^トップ$|ライブラリー(?:の)?(?:トップ|上)/g, 'ライブラリーの一番上'],
   [/^ボトム$|ライブラリー(?:の)?ボトム/g, 'ライブラリーの一番下'],
-  [/死んだ/g, '死亡した'], [/死ぬ/g, '死亡する'],
+  [/死んだ/g, '死亡した'], [/死ぬ/g, '死亡する'], [/死亡したら|死亡時に?/g, '死亡したとき'],
+  // ETBでカードを引く, LTBで…: on their own ETB and LTB are roles; in a phrase, the cards' words
+  [/etb(?:したとき|したら|した時|で|時に?|のとき)?|cip(?:で|時に?)?/g, '戦場に出たとき'], [/ltb(?:したとき|したら|した時|で|時に?|のとき)?/g, '戦場を離れたとき'],
+  [/(?<![\u30a1-\u30fc])ドレイン(?:する|して)?(?![\u30a1-\u30fc])/g, 'ライフを失'],
+  [/^シャッフル(?:する)?$/, 'ライブラリーを切り直す'], [/シャッフル(?:して|し)?/g, '切り直'],
+  [/ディスカード(?:する)?$/, '捨てる'], [/ディスカード(?:させ|して|し)?/g, '捨て'],
+  // ミル, 3枚ミル: 切削 (not ミルコ, ヴァドミル)
+  [/(?<![\u30a1-\u30fc])ミル(?:する|させる)?(?![\u30a1-\u30fc])/g, '切削'],
+  // レジェンド: 伝説の (not the レジェンド・ルール)
+  [/(?<![\u30a1-\u30fc])レジェンド(?![\u30a1-\u30fc])/g, '伝説の'],
+  [/(?:奪|パク)(?:う|る|って|った|われる|られる)$/, 'コントロールを得る'], [/(?:奪|パク)(?:って|った|い|り)/g, 'コントロールを得'],
+  // コストが1少なくなる, 1マナ安く, 2軽く: the cards say {1}少なくなる
+  [/(\d+|x)(?:マナ)?(?:少なく|安く|軽く)/g, '{$1}少なく'],
+  [/ドロー(?:を)?禁止|ドロー(?:でき|させ)ない/g, '引くことができない'],
   [/サク(?:る|り|って|った|れる)/g, '生け贄に捧げ'],
   [/^(\d+|x)ドロー$/, 'カードを$1枚引く'],
   [/^(\d+|x)点?火力$/, '$1点のダメージ'],
@@ -4508,6 +4539,9 @@ function jaSlangForm(n) {
   let out = n;
   const base = n.replace(/持ち$/, ''), kw = JA_KW_SLANG[base] || base;
   if (JA_KW_SLANG[base] || JA_KEYWORDS[kw]) out = kw;   // フライヤー, 飛行持ち, 接死持ち
+  // トランプル付与, 飛行を与える: the cards say トランプルを得る
+  const grant = n.match(/^(.+?)を?(?:付与|与え)(?:する|る)?$/), gk = grant && (JA_KW_SLANG[grant[1]] || grant[1]);
+  if (gk && JA_KEYWORDS[gk]) out = gk + 'を得る';
   JA_SLANG.forEach(([re, to]) => { out = out.replace(re, to); });
   let spelled = out;
   JA_ORTHO.forEach(([re, to]) => { spelled = spelled.replace(re, to); });
@@ -4572,8 +4606,9 @@ const JA_WORD_EN = {
   'ターン': 'turn', '終了': 'end', 'アップキープ': 'upkeep', '置': 'put', 'カウンター': 'counter', '打ち消': 'counter', '支払': 'pay',
 };
 function jaForm(n) {
-  // a lone kana left by the split (と in とき) says nothing
-  let chunks = n.split(JA_SPLIT_RE).filter(c => c && !/^[\u3041-\u3096]$/.test(c));
+  // a lone kana left by the split (と in とき) says nothing; とき and たび end a part, so
+  // 戦場に出たときトークン is 戦場・出・トークン, not 戦場・出・きトークン
+  let chunks = n.replace(/(とき|たび)(?=[^\s、,])/g, '$1、').split(JA_SPLIT_RE).filter(c => c && !/^[\u3041-\u3096]$/.test(c));
   n = n.replace(JA_PUNCT_RE, '');   // the parts keep the typed 、 as a break; the whole word drops it
   if (chunks.length > 1) chunks = chunks.map(c => { const m = c.match(JA_VERB_END_RE); return m ? (m[1] || m[2]) : c; });
   // 墓地から手札 has a direction (Japanese word order is free otherwise: 2つのパーマネント = パーマネント2つ)
