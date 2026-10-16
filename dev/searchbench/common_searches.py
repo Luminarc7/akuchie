@@ -16,7 +16,7 @@ Each entry: q (the search) and any of
   alias      a "from>to" note that must be shown
   min, max   bounds on the number of results
   only       a test (or a list of tests) every result must pass: 'colors:RW' (within these
-             colors), 'type:<word>' (English type line), 'cmc:<n>', 'rarity:<r>',
+             colors), 'type:<word>' (English type line), 'cmc:<n>', 'rarity:<r>' (printed at it),
              'legal:<code>', 'name:<text>' (Japanese name contains), 'cost:X' (X in the cost)
   same       another search that must find exactly as many cards
   atleast    another search that must find no more cards

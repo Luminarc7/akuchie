@@ -77,7 +77,8 @@ end of `<style>`:
   the full name as tooltip and in the filter pill (`chipLabel()`). While off they are all one
   plain colour; the chosen one fills with the cards' rarity colour (`--rar-common`,
   `--rar-uncommon`, `--rar-rare`, `--rar-mythic` in `:root`, also used by `.dot`). The owner
-  asked for this look.
+  asked for this look. A rarity finds a card by any printing at it; a tile whose own printing is
+  another rarity says 神話レア版あり (`rarity.also`, tooltip `rarity.alsoTip`).
 
 ## Lightweight mode (軽量)
 
