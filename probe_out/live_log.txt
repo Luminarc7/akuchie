@@ -1,6 +1,17 @@
 + bash tools/live_check.sh
-+ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/live_index.html https://warujie.warujie-mtg.workers.dev/
-+ sha256sum probe_out/live_index.html
-4cb46b7bacbb26184b730e99d89a21968d18bdb5517f44d11fa53b98121eb188  probe_out/live_index.html
-+ grep -c -- gojuonKey probe_out/live_index.html
-2
++ U=https://staging-warujie.warujie-mtg.workers.dev
++ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/staging_index.html https://staging-warujie.warujie-mtg.workers.dev/
++ grep -c rarity.alsoTip probe_out/staging_index.html
+0
++ grep -c 'function hasRarity' probe_out/staging_index.html
+0
++ curl -sS --compressed -A warujie.jp-probe/1.0 -o /tmp/db.json https://staging-warujie.warujie-mtg.workers.dev/ja_cards.json
++ python3 -c '
+import json; d = json.load(open('\''/tmp/db.json'\'')); F = d['\''fields'\'']; print(F[-3:], len(d['\''cards'\'']))
+i = F.index('\''rarities'\''); r = F.index('\''rarity'\''); n = F.index('\''name_en'\'')
+print('\''mythic rows'\'', sum('\''m'\'' in c[i] for c in d['\''cards'\'']), '\''Amnesia'\'', [c[r] for c in d['\''cards'\''] if c[n] == '\''Amnesia'\''])
+'
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+ValueError: 'rarities' is not in list
+['legal', 'name_kana', 'layout'] 33821
