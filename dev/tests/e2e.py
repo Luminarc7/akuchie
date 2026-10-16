@@ -1294,8 +1294,9 @@ with sync_playwright() as p:
     check("phone: price movers fit, losers below winners", no_hscroll() and page.locator("#tabPrices").is_visible() and down_box["y"] > up_box["y"] + up_box["height"] - 1, (up_box, down_box))
     for w in (390, 360):
         page.set_viewport_size({"width": w, "height": 800}); page.wait_for_timeout(200)
-        ob = page.locator("#pricesView .imp-open").bounding_box(); bar = page.locator("#pricesView .meta-head").bounding_box()
-        check(f"phone {w}px: the deck price button sits inside the price tab's bar", no_hscroll() and ob["x"] >= bar["x"] and ob["x"] + ob["width"] <= bar["x"] + bar["width"] + 0.5, (ob, bar))
+        ob = page.locator("#pricesView .imp-open").bounding_box(); bar = page.locator("#pricesView .meta-bar").bounding_box(); up = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box()
+        check(f"phone {w}px: the deck price button sits between the bar and the winners, full width and thin", no_hscroll() and ob["y"] >= bar["y"] + bar["height"] and ob["y"] + ob["height"] <= up["y"]
+              and abs(ob["x"] - bar["x"]) < 1 and abs(ob["width"] - bar["width"]) < 1 and ob["height"] <= 52, (ob, bar, up))
     if SHOTS: page.screenshot(path="prices_phone.png", full_page=True)
     page.set_viewport_size({"width": 1280, "height": 900})
     PRICE_SITE["dir"] = PRICES_NOEU
@@ -2403,10 +2404,15 @@ with sync_playwright() as p:
     for url, label in ((SITE + "?view=meta", "metagame"), (SITE + "?view=prices", "prices")):
         page.goto(url)
         view = "#metaView" if label == "metagame" else "#pricesView"
-        page.wait_for_selector(f"{view} .meta-bar .result-count:not(:empty)")
         bar = page.locator(f"{view} .meta-bar")
-        check(f"{label}: the header and its numbers in one box", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 1
-              and page.locator(f"{view} > .result-count").count() == 0)
+        if label == "metagame":
+            page.wait_for_selector(f"{view} .meta-bar .result-count:not(:empty)")
+            check(f"{label}: the header and its numbers in one box", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 1
+                  and page.locator(f"{view} > .result-count").count() == 0)
+        else:   # the owner moved the price movers' dates out of the box, so it is one row as tall as the deck price button
+            page.wait_for_selector("#moverSummary:not(:empty)")
+            check(f"{label}: the header box holds the toggles, the dates sit under it", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 0
+                  and page.locator(f"{view} > #moverSummary").count() == 1)
         page.evaluate(f"document.querySelector('{view}').insertAdjacentHTML('beforeend', '<div class=test-spacer style=height:2400px></div>')")   # a long list, like the real data
         page.evaluate("window.scrollTo(0, 600)"); page.wait_for_timeout(250)
         tb = page.evaluate("document.querySelector('.topbar').getBoundingClientRect().bottom")
@@ -3175,7 +3181,19 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
     check("metagame tab: no link to the deck price page (it moved to the price tab)", page.locator("#metaView a[data-import]").count() == 0)
     page.goto(SITE + "?view=prices"); page.wait_for_selector("#pricesView .imp-open")
-    check("price tab: a デッキの価格を調べる button", page.locator("#pricesView .imp-open").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import")
+    ob = page.locator("#pricesView .imp-open").bounding_box(); toggle = page.locator("#moverWindows .seg-btn").first.bounding_box(); up = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box()
+    check("price tab: a デッキの価格を調べる button of its own, out of the bar, above the winners, bigger than the toggles",
+          page.locator("#pricesView .imp-open b").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import"
+          and page.locator("#pricesView .meta-bar .imp-open").count() == 0 and ob["y"] + ob["height"] <= up["y"] and ob["height"] >= toggle["height"] * 1.5, (ob, toggle, up))
+    bar = page.locator("#pricesView .meta-bar").bounding_box()
+    summ = page.locator("#moverSummary").bounding_box()
+    check("price tab, desktop: the deck price button sits right of a shorter price movers bar, the same height, the dates below both",
+          ob["x"] >= bar["x"] + bar["width"] and abs(ob["y"] - bar["y"]) < 1 and abs(ob["height"] - bar["height"]) < 1 and ob["height"] <= 62
+          and page.locator("#pricesView .meta-bar #moverSummary").count() == 0 and summ["y"] >= bar["y"] + bar["height"] and no_hscroll(), (ob, bar, summ))
+    page.mouse.wheel(0, 400); page.wait_for_timeout(300)
+    ob2 = page.locator("#pricesView .imp-open").bounding_box(); bar2 = page.locator("#pricesView .meta-bar").bounding_box()
+    check("price tab, desktop: the bar and the deck price button stay under the top bar together when scrolling", abs((ob2["y"] - bar2["y"]) - (ob["y"] - bar["y"])) < 1 and bar2["y"] < bar["y"], (ob2, bar2, bar))
+    page.mouse.wheel(0, -400); page.wait_for_timeout(200)
     if SHOTS: page.screenshot(path="prices_deck_button.png", full_page=False)
     page.click("#pricesView .imp-open"); page.wait_for_selector("#importView .imp-empty")
     check("price tab: the button opens the deck price page, and the tab bar marks 価格",
