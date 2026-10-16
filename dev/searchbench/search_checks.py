@@ -71,8 +71,8 @@ with sync_playwright() as p:
     for r in prop:
         check(f"default order: {r['q']} - equal matches in あいうえお order, English-only cards last", r["bad"] == 0 and not r["jaAfter"], r)
     ro = page.evaluate("""() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
-      const rows = searchRows('除去', st).rows.filter(x => x.name_ja).slice(0, 40); return rows.map(x => x.name_kana); }""")
-    check("default order: role search 除去 runs あいうえお (first 40 by reading)", ro == sorted(ro), ro[:10])
+      const rows = searchRows('除去', st).rows.filter(x => x.name_ja).slice(0, 40); return rows.map(x => gojuonKey(x.name_kana) + ' ' + x.name_kana); }""")
+    check("default order: role search 除去 runs あいうえお, ゛ and small kana only breaking ties (first 40 by reading)", ro == sorted(ro), ro[:10])
     en = page.evaluate("""() => { LANG = 'en'; const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
       const rows = searchRows('removal', st).rows.slice(0, 30).map(x => x._nameEn); LANG = 'ja'; return rows; }""")
     check("default order in English: A→Z", en == sorted(en), en[:8])
@@ -252,6 +252,62 @@ with sync_playwright() as p:
     missed = page.evaluate(FIND, tests)
     check(f"each card is found by its own words: a sentence of its text typed plainly, its English name ({len(tests)} searches, at most 1% missed)",
           len(missed) <= len(tests) // 100, missed[:10])
+
+    # ---- round 22: the 100 searches Japanese players type most (common_searches.py), one check each
+    from common_searches import COMMON_SEARCHES
+    CS_JS = """(qs) => {
+      const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+      return qs.map(q => { try { const r = searchRows(q, st);
+        return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), ja: r.rows.map(x => x.name_ja || ''), roles: r.info.roles.map(x => x.id || x.tag || '?'),
+                 aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to), colors: r.rows.map(x => x._colors || ''), cmc: r.rows.map(x => x._cmc),
+                 types: r.rows.map(x => x.type_en), rarity: r.rows.map(x => x.rarity), legal: r.rows.map(x => x.legal == null ? null : String(x.legal)),
+                 cost: r.rows.map(x => x.mana_cost || '') };
+      } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });
+    }"""
+    cs_qs = sorted({c["q"] for c in COMMON_SEARCHES} | {c[k] for c in COMMON_SEARCHES for k in ("same", "atleast") if k in c})
+    CS = {r["q"]: r for r in page.evaluate(CS_JS, cs_qs)}
+
+    def only_ok(r, test):
+        kind, _, val = test.partition(":")
+        rows = range(r["n"])
+        if kind == "colors": return all(r["colors"][i] and set(r["colors"][i]) <= set(val) for i in rows)
+        if kind == "type": return all(val in r["types"][i].lower() for i in rows)
+        if kind == "cmc": return all(r["cmc"][i] == float(val) for i in rows)
+        if kind == "rarity": return all(r["rarity"][i] == val for i in rows)
+        if kind == "legal": return all(r["legal"][i] is None or val in r["legal"][i] for i in rows)
+        if kind == "name": return all(val in r["ja"][i] for i in rows)
+        if kind == "cost": return all("{" + val + "}" in r["cost"][i] for i in rows)
+        raise ValueError(test)
+
+    def judge(c):
+        r = CS[c["q"]]
+        if "err" in r: return [r["err"]]
+        bad = []
+        if r["n"] == 0: bad.append("nothing found")
+        if "first" in c and r["en"][:1] != [c["first"]]: bad.append(f"first {r['en'][:3]}")
+        k = c.get("k", 5)
+        if "top" in c and not all(n in r["en"][:k] for n in c["top"]): bad.append(f"top {r['en'][:k]}")
+        missing = [n for n in c.get("has", []) if n not in r["en"]]
+        if missing: bad.append(f"missing {missing}")
+        wrong = [n for n in c.get("hasnt", []) if n in r["en"]]
+        if wrong: bad.append(f"should not find {wrong}")
+        early = [n for n in c.get("nottop", []) if n in r["en"][:k]]
+        if early: bad.append(f"too early {early}")
+        if "role" in c and r["roles"] != [c["role"]]: bad.append(f"roles {r['roles']}")
+        if "alias" in c and c["alias"] not in r["aliases"]: bad.append(f"notes {r['aliases']}")
+        if "min" in c and r["n"] < c["min"]: bad.append(f"only {r['n']}")
+        if "max" in c and r["n"] > c["max"]: bad.append(f"{r['n']} found")
+        for test in ([c["only"]] if isinstance(c.get("only"), str) else c.get("only", [])):
+            if not only_ok(r, test): bad.append(f"not all {test}")
+        if "same" in c and r["n"] != CS[c["same"]]["n"]: bad.append(f"{r['n']} vs {c['same']} {CS[c['same']]['n']}")
+        if "atleast" in c and r["n"] < CS[c["atleast"]]["n"]: bad.append(f"{r['n']} vs {c['atleast']} {CS[c['atleast']]['n']}")
+        return bad
+
+    for c in COMMON_SEARCHES:
+        want = ", ".join(x for x in [f"{c['first']} first" if "first" in c else "", f"role {c['role']}" if "role" in c else "",
+                                    f"finds {', '.join(c['has'])}" if "has" in c else "", f"note {c['alias']}" if "alias" in c else ""] if x)
+        bad = judge(c)
+        check(f"common search {c['q']}: {want or 'finds the right cards'}", not bad, bad)
 
     # the same search twice: the second asks Scryfall nothing
     def search(q):

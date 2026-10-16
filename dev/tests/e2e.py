@@ -2449,7 +2449,7 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 1280, "height": 900})
     home(); page.evaluate("localStorage.clear()"); home()
     check("search: the default order is called 'best match, A–Z', with 'most played' as a choice",
-          page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])")[:2] == [["name", "一致順・名前順"], ["popular", "よく使われている順"]],
+          page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])")[:2] == [["name", "一致・五十音順"], ["popular", "よく使われている順"]],
           page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])"))
     # recent searches
     for q in ("稲妻", "飛行", "稲妻"):
@@ -3038,6 +3038,39 @@ with sync_playwright() as p:
     check("phone, advanced search: as wide as the page column, mana values on one line, colours lined up, 16px fields, no sideways scroll",
           abs(a["w"] - col) <= 1 and a["mvTops"] == 1 and a["colorLeft"] == a["mvLeft"] and set(a["fieldFont"]) == {16} and not a["cut"] and no_hscroll(), (a, col))
     page.set_viewport_size({"width": 1280, "height": 900})
+
+    # ---- 41. search tuning: names by reading, nicknames, names typed slightly wrong, a type beside a color, the order ----
+    DB_MODE["variant"] = "roles"
+    home()
+    names = lambda: page.locator("#cardGrid .card-name-main, #cardGrid .tr-name").all_inner_texts()
+    note = lambda: page.locator("#matchNote").inner_text()
+    run("いなずま")
+    check("search tuning: a name typed in hiragana by its reading (いなずま) finds 稲妻 first", names()[:1] == ["稲妻"], names())
+    run("ボルト")
+    check("search tuning: a nickname (ボルト) shows the card first, with a note", names()[:1] == ["稲妻"] and "「ボルト」は「稲妻」としても検索しました。" in note(), (names(), note()))
+    run("ラガヴァン")
+    check("search tuning: a name typed slightly wrong (ラガヴァン) finds the card, and the note says what was searched",
+          "敏捷なこそ泥、ラガバン" in names() and "「ラガヴァン」は「ラガバン」として検索しました。" in note(), (names(), note()))
+    run("赤 インスタント")
+    check("search tuning: 赤 インスタント = red instants only, with a note for each word",
+          names() and set(names()) <= {"稲妻", "ショック", "大きな稲妻テスト", "加速"} and "インスタント・カードに絞り込みました" in note(), (names(), note()))
+    tu = page.evaluate("""(() => ({
+      yomi: [yomiKey('えむらくーる'), yomiKey('らがゔぁん'), yomiQuery('はかい'), yomiQuery('いなずま'), yomiQuery('いな')],
+      loose: looseKana('ラガヴァン') === looseKana('ラガバン') && looseKana('ジェース') !== looseKana('ジェイス'),
+      order: [{ name_ja: '稲妻', name_kana: 'いなずま', _nameJa: '稲妻', _nameEn: 'lightning bolt' }, { name_ja: 'A.I.M.の科学者', name_kana: 'AIMのかがくしゃ', _nameJa: 'a.i.m.の科学者', _nameEn: 'a.i.m. scientists' },
+              { name_ja: '', name_kana: '', _nameJa: '', _nameEn: 'black lotus' }].map(jaSortKey).map(k => k[0]),
+      none: closestJaName('ああああああああ'),
+      gojuon: [['ごぶりんしょっこうだん', 'ゴブリン職工団'], ['ごぶりんじゅんしぶたい', 'ゴブリン巡視部隊'], ['ごぶりんしゅうぜんや', 'ゴブリン修繕屋'], ['はいぼく', '敗北'], ['ばいぼく', '倍ぼく']]
+        .map(([k, n]) => ({ name_ja: n, name_kana: k, _nameJa: n, _nameEn: n })).sort((a, b) => jaSortKey(a) < jaSortKey(b) ? -1 : 1).map(r => r.name_ja),
+    }))()""")
+    check("search tuning: readings with ー and ゔ (えむらくうる, らがばん); game words in hiragana are not read as names; two letters are too few",
+          tu["yomi"] == ["えむらくうる", "らがばん", None, "いなずま", None], tu["yomi"])
+    check("search tuning: ヴァ is read as バ when a name is compared loosely", tu["loose"], tu)
+    check("search tuning: あいうえお order - kana names, then names that start with a letter (A.I.M.の科学者), then English-only cards", tu["order"] == ["0", "1", "2"], tu["order"])
+    check("search tuning: no close name for nonsense", tu["none"] is None, tu)
+    check("search tuning: あいうえお order as in a dictionary - ゛ and small kana only break ties (しゅう, じゅん, しょっ; は before ば)",
+          tu["gojuon"] == ["ゴブリン修繕屋", "ゴブリン巡視部隊", "ゴブリン職工団", "敗北", "倍ぼく"], tu["gojuon"])
+    DB_MODE["variant"] = None
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

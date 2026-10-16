@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install -q sudachipy sudachidict_full
+      - run: pip install -q sudachipy sudachidict_full pykakasi
       - run: python3 tools/fix_names.py ja_cards.json.gz
       - run: python3 tools/name_readings.py ja_cards.json.gz
       - name: Commit the readings

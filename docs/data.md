@@ -32,7 +32,7 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `alt_names_ja` | Older Japanese names, `|`-separated (they still match in search) |
 | `legal` | One letter per format where legal: `s` standard, `p` pioneer, `m` modern, `l` legacy, `v` vintage, `a` pauper, `c` commander (`FORMAT_CODE` in `index.html`) |
 | `layout` | The card's shape from Scryfall when it isn't an ordinary one-faced card: `split`, `transform`, `modal_dfc`, `meld`, `flip`, `adventure` (Omens too), `prepare`, `saga`, `class`, `case`, `leveler`, `mutate`, `prototype`, `host`, `augment` (`SHAPE_LAYOUTS` in the builder); empty otherwise. Searched by 分割カード, 両面カード… (`CARD_SHAPES`) |
-| `name_kana` | Reading of the Japanese name in hiragana, only for the あいうえお order; never shown or searched |
+| `name_kana` | Reading of the Japanese name in hiragana: the あいうえお order, and names typed in hiragana (いなずま finds 稲妻); never shown. Made by `tools/name_readings.py`: printed furigana, else SudachiDict, else pykakasi for kanji Sudachi doesn't know, so no reading keeps a kanji |
 
 When the page loads it, `indexRow()` adds computed fields starting with `_` (lowercased names,
 type and text, colour string, keyword set…). To add a database field: add it in
