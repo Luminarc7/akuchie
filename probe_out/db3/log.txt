@@ -1,0 +1,29 @@
++ mkdir -p probe_out/db3
++ cd dbprobe
++ python3 b23/build_ja_database.py
++ ls -la . ../probe_out/db3
+.:
+total 6924
+drwxr-xr-x 3 runner runner    4096 Oct 16 16:43 .
+drwxr-xr-x 7 runner runner    4096 Oct 16 16:43 ..
+drwxr-xr-x 2 runner runner    4096 Oct 16 16:43 b23
+-rw-r--r-- 1 runner runner   25251 Oct 16 16:43 build_ja_database.py
+-rw-r--r-- 1 runner runner    8384 Oct 16 16:43 check_database.py
+-rw-r--r-- 1 runner runner    2040 Oct 16 16:43 db_diff.py
+-rw-r--r-- 1 runner runner    1626 Oct 16 16:43 fix_names.py
+-rw-r--r-- 1 runner runner    1606 Oct 16 16:43 ids.py
+-rw-r--r-- 1 runner runner   25852 Oct 16 16:43 name_fixes_ja.json
+-rw-r--r-- 1 runner runner    5641 Oct 16 16:43 name_readings.py
+-rw-r--r-- 1 runner runner 6978102 Oct 16 16:43 old_ja_cards.json.gz
+-rw-r--r-- 1 runner runner     160 Oct 16 16:43 run.sh
+-rw-r--r-- 1 runner runner    3111 Oct 16 16:43 update_database.py
+
+../probe_out/db3:
+total 6424
+drwxr-xr-x  2 runner runner    4096 Oct 16 16:43 .
+drwxr-xr-x 10 runner runner    4096 Oct 16 16:43 ..
+-rw-r--r--  1 runner runner 6559657 Oct 16 16:43 b23.json.gz
+-rw-r--r--  1 runner runner    1463 Oct 16 16:43 b23_log.txt
+-rw-r--r--  1 runner runner     101 Oct 16 16:43 log.txt
++ python3 ids.py
+933 changed; 933 by data/2.3, 0 by 2.4

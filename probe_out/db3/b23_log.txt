@@ -1,0 +1,32 @@
+Fetching Scryfall bulk-data manifest...
+Downloading Scryfall's full multi-language export (large, one-time):
+  https://data.scryfall.io/all-cards/all-cards-20261016091845.jsonl.gz
+
+  ...scanned 100,000 printings, 28,371 cards so far
+  ...scanned 200,000 printings, 31,971 cards so far
+  ...scanned 300,000 printings, 32,869 cards so far
+  ...scanned 400,000 printings, 33,343 cards so far
+  ...scanned 500,000 printings, 33,699 cards so far
+
+Scanned 546,256 printings (19,814 tokens/art cards/digital-only skipped).
+Wrote ../probe_out/db3/b23.json.gz  (6.3 MB)
+  33,821 cards total
+    30,839 with a Japanese name
+    26,837 with Japanese rules text
+    2,982 English only (never printed in Japanese)
+
+Spot check:
+  ok        Lightning Bolt  ->  稲妻
+  ok        Counterspell  ->  対抗呪文
+  ok        Slippery Bogle  ->  ぬめるボーグル
+  ok        Ragavan, Nimble Pilferer  ->  敏捷なこそ泥、ラガバン
+  ok        Sheoldred, the Apocalypse  ->  黙示録、シェオルドレッド
+  ok        The One Ring  ->  一つの指輪
+  ok        Orcish Bowmasters  ->  オークの弓使い
+  ok        Fable of the Mirror-Breaker // Reflection of Kiki-Jiki  ->  鏡割りの寓話 // キキジキの鏡像
+  ok        Solitude  ->  孤独
+  ok        Thoughtseize  ->  思考囲い
+  ok        Llanowar Elves  ->  ラノワールのエルフ
+  ok        Black Lotus  ->  (English only)
+
+Upload ja_cards.json.gz next to index.html in your repo.
