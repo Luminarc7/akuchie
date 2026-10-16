@@ -71,8 +71,8 @@ with sync_playwright() as p:
     for r in prop:
         check(f"default order: {r['q']} - equal matches in あいうえお order, English-only cards last", r["bad"] == 0 and not r["jaAfter"], r)
     ro = page.evaluate("""() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
-      const rows = searchRows('除去', st).rows.filter(x => x.name_ja).slice(0, 40); return rows.map(x => x.name_kana); }""")
-    check("default order: role search 除去 runs あいうえお (first 40 by reading)", ro == sorted(ro), ro[:10])
+      const rows = searchRows('除去', st).rows.filter(x => x.name_ja).slice(0, 40); return rows.map(x => gojuonKey(x.name_kana) + ' ' + x.name_kana); }""")
+    check("default order: role search 除去 runs あいうえお, ゛ and small kana only breaking ties (first 40 by reading)", ro == sorted(ro), ro[:10])
     en = page.evaluate("""() => { LANG = 'en'; const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
       const rows = searchRows('removal', st).rows.slice(0, 30).map(x => x._nameEn); LANG = 'ja'; return rows; }""")
     check("default order in English: A→Z", en == sorted(en), en[:8])

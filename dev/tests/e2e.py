@@ -2449,7 +2449,7 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 1280, "height": 900})
     home(); page.evaluate("localStorage.clear()"); home()
     check("search: the default order is called 'best match, A–Z', with 'most played' as a choice",
-          page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])")[:2] == [["name", "一致順・名前順"], ["popular", "よく使われている順"]],
+          page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])")[:2] == [["name", "一致・五十音順"], ["popular", "よく使われている順"]],
           page.evaluate("[...document.querySelectorAll('#sortSelect option')].map(o => [o.value, o.textContent])"))
     # recent searches
     for q in ("稲妻", "飛行", "稲妻"):
@@ -3060,12 +3060,16 @@ with sync_playwright() as p:
       order: [{ name_ja: '稲妻', name_kana: 'いなずま', _nameJa: '稲妻', _nameEn: 'lightning bolt' }, { name_ja: 'A.I.M.の科学者', name_kana: 'AIMのかがくしゃ', _nameJa: 'a.i.m.の科学者', _nameEn: 'a.i.m. scientists' },
               { name_ja: '', name_kana: '', _nameJa: '', _nameEn: 'black lotus' }].map(jaSortKey).map(k => k[0]),
       none: closestJaName('ああああああああ'),
+      gojuon: [['ごぶりんしょっこうだん', 'ゴブリン職工団'], ['ごぶりんじゅんしぶたい', 'ゴブリン巡視部隊'], ['ごぶりんしゅうぜんや', 'ゴブリン修繕屋'], ['はいぼく', '敗北'], ['ばいぼく', '倍ぼく']]
+        .map(([k, n]) => ({ name_ja: n, name_kana: k, _nameJa: n, _nameEn: n })).sort((a, b) => jaSortKey(a) < jaSortKey(b) ? -1 : 1).map(r => r.name_ja),
     }))()""")
     check("search tuning: readings with ー and ゔ (えむらくうる, らがばん); game words in hiragana are not read as names; two letters are too few",
           tu["yomi"] == ["えむらくうる", "らがばん", None, "いなずま", None], tu["yomi"])
     check("search tuning: ヴァ is read as バ when a name is compared loosely", tu["loose"], tu)
     check("search tuning: あいうえお order - kana names, then names that start with a letter (A.I.M.の科学者), then English-only cards", tu["order"] == ["0", "1", "2"], tu["order"])
     check("search tuning: no close name for nonsense", tu["none"] is None, tu)
+    check("search tuning: あいうえお order as in a dictionary - ゛ and small kana only break ties (しゅう, じゅん, しょっ; は before ば)",
+          tu["gojuon"] == ["ゴブリン修繕屋", "ゴブリン巡視部隊", "ゴブリン職工団", "敗北", "倍ぼく"], tu["gojuon"])
     DB_MODE["variant"] = None
 
     check("no JavaScript errors", not errors, errors)

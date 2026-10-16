@@ -1745,7 +1745,7 @@
             <button type="button" class="view-btn" role="tab" data-view="text" data-i18n="view.text">テキスト</button>
           </div>
           <select id="sortSelect" aria-label="並び替え" data-i18n-aria="sort.aria">
-            <option value="name" data-i18n="sort.name">一致順・名前順</option>
+            <option value="name" data-i18n="sort.name">一致・五十音順</option>
             <option value="popular" data-i18n="sort.popular">よく使われている順</option>
             <option value="cmc_asc" data-i18n="sort.cmc_asc">マナ総量が低い順</option>
             <option value="cmc_desc" data-i18n="sort.cmc_desc">マナ総量が高い順</option>
@@ -2033,7 +2033,7 @@ const STR = {
   'pill.mv': ['マナ総量 {v}', 'Mana value {v}'],
   'pill.remove': ['この条件を外す', 'Remove this filter'],
   'sort.aria': ['並び替え', 'Sort'],
-  'sort.name': ['一致順・名前順', 'Best match, A–Z'],
+  'sort.name': ['一致・五十音順', 'Best match, A–Z'],
   'sort.popular': ['よく使われている順', 'Most played'],
   'recent.head': ['最近の検索', 'Recent searches'],
   'recent.clear': ['履歴を消す', 'Clear'],
@@ -3209,11 +3209,18 @@ function relevance(row, query) {
 // The あいうえお order: the reading of the Japanese name (name_kana, in the
 // database; never shown), then the Japanese names that start with a letter or a
 // number (A.I.M.の科学者, 500年日記), then the cards with only an English name.
+// As in a dictionary, ゛ ゜ and small kana count only when two readings are
+// otherwise the same (じゅんし before しょっこう; し before じ only as a tie-break).
 const KATA_TO_HIRA = s => String(s || '').replace(/[\u30a1-\u30f6]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+const GOJUON_PLAIN = {};
+['がか', 'ぎき', 'ぐく', 'げけ', 'ごこ', 'ざさ', 'じし', 'ずす', 'ぜせ', 'ぞそ', 'だた', 'ぢち', 'づつ', 'でて', 'どと',
+ 'ばは', 'びひ', 'ぶふ', 'べへ', 'ぼほ', 'ぱは', 'ぴひ', 'ぷふ', 'ぺへ', 'ぽほ', 'ゔう',
+ 'ぁあ', 'ぃい', 'ぅう', 'ぇえ', 'ぉお', 'っつ', 'ゃや', 'ゅゆ', 'ょよ', 'ゎわ', 'ゕか', 'ゖけ'].forEach(([k, v]) => { GOJUON_PLAIN[k] = v; });
+const gojuonKey = yomi => yomi.replace(/[\u3041-\u3096]/g, c => GOJUON_PLAIN[c] || c);
 function jaSortKey(row) {
   if (row._jaKey === undefined) {
     const yomi = row.name_kana || KATA_TO_HIRA(row._nameJa);
-    row._jaKey = row.name_ja ? (/^[\u3041-\u309f]/.test(yomi) ? '0' : '1') + yomi + '\u0000' + row._nameEn : '2' + row._nameEn;
+    row._jaKey = row.name_ja ? (/^[\u3041-\u309f]/.test(yomi) ? '0' : '1') + gojuonKey(yomi) + '\u0001' + yomi + '\u0000' + row._nameEn : '2' + row._nameEn;
   }
   return row._jaKey;
 }

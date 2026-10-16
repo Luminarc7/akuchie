@@ -15,7 +15,7 @@ here.
 | A card's name doesn't match without punctuation | `NAME_PUNCT_RE` lacks that character | Add it; check `nameKey()` |
 | Rules text typed without its particles (カード2枚引く) finds nothing, though カードを2枚引く works | `jaMayHave()`, the quick pre-check, compared the text without particles only when the search itself had some | Fixed: it compares without particles for any search that isn't all hiragana |
 | A typed name finds nothing | Not the printed name: a nickname, the katakana of an English-only card, or a typo | Add the nickname to `CARD_NICKNAMES`; typos go through `closestJaName()` (check its distance limits) |
-| Japanese results are in an odd order | Missing or wrong `name_kana` for those cards | `tools/name_readings.py`; the Name readings workflow run; printed furigana in Scryfall wins over Sudachi |
+| Japanese results are in an odd order | Missing or wrong `name_kana` for those cards (a kanji left in a reading sorts after ん) | `tools/name_readings.py`; the Name readings workflow run; printed furigana in Scryfall wins over Sudachi; kanji Sudachi doesn't know (滅殺) and numbers (三) are read with pykakasi / the number's reading |
 | A name typed in hiragana doesn't find the card | Its `name_kana` is wrong, or the word reads as game words (`yomiQuery()` skips those) | Check the reading in the database; `yomiKey()` for ー and ゔ |
 | A search worked yesterday and doesn't now | A recent change in the search sections | `git log -p staging -- index.html`; run the searchbench on the previous commit to compare |
 

@@ -100,8 +100,10 @@ rows before the slower line-by-line tests. Keep any new test behind such a pre-c
 | a role search | the card the word names, cards that mainly do this (`roleDemoted()`), then A→Z or popularity |
 | `似:<card>` | similarity score |
 
-**A→Z** in Japanese mode sorts by the reading of the Japanese name (`jaSortKey()`, from
-`name_kana`), so 稲妻 sorts under い. Japanese names that start with a letter or a number
+**A→Z** in Japanese mode is あいうえお順 (the label says 一致・五十音順; あいうえお順 doesn't fit a phone): it sorts by the reading
+of the Japanese name (`jaSortKey()`, from `name_kana`), so 稲妻 sorts under い. As in a
+dictionary, ゛ ゜ and small kana only break ties (`gojuonKey()`): ゴブリン巡視部隊 (じゅんし)
+comes before ゴブリン職工団 (しょっこう). Japanese names that start with a letter or a number
 (A.I.M.の科学者, 500年日記, mostly Universes Beyond) come after the kana names, and cards with only
 an English name after those, so a text search doesn't open on them. Readings are never shown;
 they are searched only as described under "Names typed in hiragana".

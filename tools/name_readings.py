@@ -5,9 +5,11 @@ It is never shown and never searched; the card names stay as they are.
 
 Where Scryfall has the name printed with furigana (吹（ふ）きさらしの要（よう）塞（さい）),
 that printed reading is used. Every other name is read with the Sudachi
-dictionary (SudachiDict full), which gets almost all card names right.
+dictionary (SudachiDict full), which gets almost all card names right. The few
+kanji it doesn't know (滅殺, 眷者, 闘車) are read one by one with pykakasi, so no
+reading is left with a kanji in it (a kanji would sort after ん).
 
-usage: pip install sudachipy sudachidict_full
+usage: pip install sudachipy sudachidict_full pykakasi
        python3 tools/name_readings.py ja_cards.json.gz [out.json.gz]
 
 It runs by itself on GitHub (.github/workflows/name-readings.yml) whenever
@@ -63,7 +65,13 @@ def main():
                 r.append('')
 
     from sudachipy import Dictionary, SplitMode
+    import pykakasi
     tok = Dictionary(dict='full').tokenizer()
+    kakasi = pykakasi.kakasi()
+
+    def kanji_reading(s):
+        """kanji the dictionary doesn't know, read with pykakasi; anything else as it is"""
+        return ''.join(x['hira'] if HAS_KANJI.search(x['orig']) else x['orig'] for x in kakasi.convert(s))
 
     def dictionary_reading(name):
         parts = []
@@ -71,7 +79,13 @@ def main():
             surface = m.surface()
             r = m.reading_form()
             # symbols (/ ・ ！) keep their surface: the dictionary reads them as キゴウ
-            parts.append(surface if (m.is_oov() or not r or r == '*' or not HAS_WORD.search(surface)) else r)
+            if not HAS_WORD.search(surface):
+                parts.append(surface)
+            # numbers (三, 千) are "unknown" to the dictionary but still have their reading (サン, セン)
+            elif r and r != '*' and r != surface and not HAS_KANJI.search(r):
+                parts.append(r)
+            else:
+                parts.append(kanji_reading(surface) if HAS_KANJI.search(surface) else surface)
         return ''.join(parts)
 
     done = printed = read = 0
@@ -91,9 +105,9 @@ def main():
         reading = ''
         if with_ruby:
             r = RUBY.sub(r'\2', with_ruby)
-            if not HAS_KANJI.search(r):
-                reading = r
-                printed += 1
+            # furigana usually skips the easy kanji (三度（ど）): those are read by the dictionary
+            reading = r if not HAS_KANJI.search(r) else dictionary_reading(r)
+            printed += 1
         if not reading:
             reading = dictionary_reading(plain) if HAS_KANJI.search(plain) else plain
             read += 1
@@ -110,7 +124,7 @@ def main():
         with gzip.GzipFile(fileobj=raw, mode='wb', compresslevel=9, mtime=0) as f:   # mtime 0: same input, same bytes
             f.write(out)
     left = sum(1 for r in data['cards'] if r[i_kana] and HAS_KANJI.search(r[i_kana]))
-    print(f'{done} names: {printed} from printed furigana, {read} from the dictionary; {left} still have a kanji the dictionary did not know')
+    print(f'{done} names: {printed} from printed furigana, {read} from the dictionary; {left} still have a kanji in the reading')
 
 
 if __name__ == '__main__':
