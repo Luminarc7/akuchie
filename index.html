@@ -1332,34 +1332,25 @@
   .want-btn .want-n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800;
     display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
   .want-btn .want-n[hidden] { display: none; }
-  /* the card page's want list box, under the picture */
-  .cp-want { margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head head" "step trash" "other other"; gap: 8px; align-items: center; }
-  .cp-want > .want-add { grid-column: 1 / -1; }
-  .cp-want > .want-box-head { grid-area: head; }
-  .cp-want > .want-step { grid-area: step; justify-content: space-between; }
-  .cp-want > .want-trash { grid-area: trash; }
-  .cp-want > .want-other { grid-area: other; }
+  /* the card page's want list row, under the picture: as wide as the picture, as tall as the language buttons */
+  .cp-want { --want-h: 28px; margin-top: 6px; display: flex; gap: 5px; height: var(--want-h); }
   .cp-want:empty { display: none; }
-  .cp-want svg { width: 16px; height: 16px; flex: none; }
-  .want-add { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 40px; border: 1px solid var(--accent); border-radius: 8px;
-    background: none; color: var(--accent); font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .cp-want svg { width: 14px; height: 14px; flex: none; }
+  .want-add { flex: 1; min-width: 0; height: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 8px;
+    border: 1px solid var(--accent); border-radius: 6px; background: none; color: var(--accent); font: inherit; font-size: 12px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; cursor: pointer; }
   .want-add:hover { background: var(--accent); color: var(--accent-ink); }
-  .want-box-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .cp-want .want-on { color: var(--accent); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; }
-  .cp-want .want-on svg path { fill: currentColor; }
-  .cp-want .want-on-short { display: none; }
-  .cp-want a { color: var(--accent); font-size: 12.5px; }
-  .want-trash { flex: none; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line);
-    border-radius: 8px; background: var(--surface); color: var(--text-2); cursor: pointer; }
-  .want-trash svg { width: 18px; height: 18px; }
+  .want-add .want-add-short { display: none; }
+  .want-trash { flex: none; width: var(--want-h, 28px); height: var(--want-h, 28px); display: inline-flex; align-items: center; justify-content: center; padding: 0;
+    border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: var(--text-2); cursor: pointer; }
   .want-trash:hover, .want-trash:focus-visible { border-color: var(--bad); color: var(--bad); }
-  .want-other { font-size: 12px; line-height: 1.6; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
-  .want-other .try-pill { padding: 3px 11px; font-size: 12.5px; cursor: pointer; }
   .want-step { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; flex: none; }
   .want-step button { width: 36px; height: 36px; border: 0; background: none; color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; padding: 0; }
   .want-step button:hover { background: var(--surface-2); color: var(--accent); }
   .want-step .want-c { min-width: 38px; text-align: center; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .cp-want .want-step { flex: 1; min-width: 0; height: 100%; justify-content: space-between; border-color: var(--line-strong); border-radius: 6px; }
+  .cp-want .want-step button { width: 32px; height: 100%; font-size: 16px; }
+  .cp-want .want-step .want-c { min-width: 0; font-size: 12.5px; }
   .want-toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 80;
     display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 24px); padding: 10px 12px 10px 16px; border-radius: 10px;
     background: var(--text); color: var(--field); font-size: 13.5px; box-shadow: var(--shadow); }
@@ -1390,6 +1381,13 @@
   .wl-card .wl-prices { flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 0 8px; }
   .wl-card .wl-prices b { font-size: 12.5px; }
   .wl-card .want-step { margin-top: auto; width: 100%; justify-content: space-between; }
+  /* the total, the リスト/画像 switch, Hareruya and export: one bar that stays in view while scrolling */
+  .want-bar { position: sticky; top: var(--stick-top, 0px); z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 8px 12px; margin: 8px -6px 0; padding: 8px 6px; background: var(--page); border-bottom: 1px solid var(--line); }
+  .want-bar-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .want-bar .dcst { flex-direction: row; align-items: center; gap: 2px 8px; min-height: 34px; padding: 3px 10px; white-space: nowrap; }
+  .want-bar .deck-tools { margin-left: auto; }
+  .want-bar .view-toggle { height: 34px; }
   .want-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; }
   .want-foot .adv-btn { cursor: pointer; text-decoration: none; min-height: 36px; }
   .want-foot .want-clear[data-armed="1"] { border-color: var(--bad); color: var(--bad); }
@@ -1410,18 +1408,14 @@
     .wl-prices { grid-column: 2; grid-row: 2; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 2px 10px; }
     .wl-row .want-step { grid-column: 3; grid-row: 1 / span 2; }
     .want-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
-    /* the card page's narrow picture column: the trash can moves up beside the heading */
-    .cp-want { margin-top: 8px; padding: 8px; gap: 6px; grid-template-areas: "head trash" "step step" "other other"; }
-    .cp-want .want-box-head a, .cp-want .want-on-full { display: none; }
-    .cp-want .want-on-short { display: inline; }
-    .cp-want .want-on { font-size: 11.5px; gap: 4px; }
-    .cp-want .want-on svg { width: 13px; height: 13px; }
-    .cp-want .want-trash { width: 30px; height: 30px; }
-    .cp-want .want-trash svg { width: 15px; height: 15px; }
-    .cp-want .want-step button { width: 30px; height: 32px; font-size: 16px; }
-    .cp-want .want-step .want-c { min-width: 0; font-size: 13px; }
-    .want-add { font-size: 12px; min-height: 36px; padding: 4px 6px; gap: 4px; }
-    .cp-want .want-other { font-size: 11px; }
+    /* the card page's narrow picture column: the language buttons are 26px tall there */
+    .cp-want { --want-h: 26px; gap: 4px; }
+    .cp-want svg { width: 13px; height: 13px; }
+    .want-add { font-size: 11px; gap: 3px; padding: 0 4px; }
+    .want-add .want-add-full { display: none; }
+    .want-add .want-add-short { display: inline; }
+    .cp-want .want-step button { width: 28px; font-size: 15px; }
+    .cp-want .want-step .want-c { font-size: 12px; }
   }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
   @media (max-width: 820px) {
@@ -2376,8 +2370,8 @@ const STR = {
   'want.short': ['ウォント', 'Want list'],
   'title.want': ['ウォントリスト — 悪知恵', 'Want list — 悪知恵'],
   'want.add': ['ウォントリストに追加', 'Add to want list'],
+  'want.add.short': ['ウォントに追加', 'Add to list'],
   'want.remove': ['ウォントリストから外す', 'Remove from want list'],
-  'want.in': ['ウォントリスト', 'Want list'],
   'want.added': ['ウォントリストに追加しました', 'Added to your want list'],
   'want.removed': ['ウォントリストから外しました', 'Removed from your want list'],
   'want.cleared': ['ウォントリストを空にしました', 'Your want list is empty now'],
@@ -2387,13 +2381,9 @@ const STR = {
   'want.more': ['1枚増やす', 'One more'],
   'want.n': ['{n}枚', '{n}'],
   'want.n.aria': ['枚数', 'Copies'],
-  'want.other': ['リストには別の版（{p}）が入っています', 'Your list has another printing ({p})'],
-  'want.this': ['この版にする', 'Use this printing'],
   'want.f.cards': ['{n}枚', '{n} cards'],
   'want.f.cards.one': ['{n}枚', '1 card'],
   'want.f.kinds': ['{n}種類', '{n} different'],
-  'want.cost.cheap': ['いちばん安い版で', 'Cheapest printings'],
-  'want.cost.cheap.sub': ['それぞれのカードのいちばん安い版でそろえた場合', 'If you buy each card’s cheapest printing'],
   'want.cost.picked': ['選んだ版で', 'Printings you picked'],
   'want.cost.picked.sub': ['リストに入れた版のままそろえた場合', 'If you buy the printings in your list'],
   'want.p.this': ['この版 {y}', 'This printing {y}'],
@@ -11193,20 +11183,15 @@ function wantStepHtml(x) {
     + `<span class="want-c">${esc(t('want.n', { n: x.c }))}</span>`
     + `<button type="button" data-want-act="more"${attrs} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>`;
 }
-// the card page: a box under the picture. Add, or how many are in the list (− n ＋), a trash can
-// to take the card out, and which printing is in the list.
+// the card page: one row under the picture, as tall as the language buttons. Add, or how many
+// are in the list (− n ＋) and a trash can to take the card out.
 const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12.2A2 2 0 0 0 8.5 21h7a2 2 0 0 0 2-1.8l1-12.2M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></svg>';
 function wantCardHtml(card) {
   const e = wantEntryOf(card);
   if (!e) return '';
   const x = wantFind(wantKeyOf(e));
-  if (!x) return `<button type="button" class="want-add" data-want-act="add"${wantAttrs(e)}>${STAR_SVG}${esc(t('want.add'))}</button>`;
-  let html = `<div class="want-box-head"><span class="want-on">${STAR_SVG}<span class="want-on-full">${esc(t('want.in'))}</span><span class="want-on-short">${esc(t('want.short'))}</span></span><a href="?view=want" data-want-go="1">${esc(t('want.see'))}</a></div>`
-    + `${wantStepHtml(x)}<button type="button" class="want-trash" data-want-act="remove" data-want="${esc(wantKeyOf(x))}" aria-label="${esc(t('want.remove'))}" title="${esc(t('want.remove'))}">${TRASH_SVG}</button>`;
-  if (x.id && e.id && x.id !== e.id) {
-    html += `<div class="want-other">${esc(t('want.other', { p: wantPrintLabel(x) }))}<button type="button" class="try-pill" data-want-act="pick"${wantAttrs(e)}>${esc(t('want.this'))}</button></div>`;
-  }
-  return html;
+  if (!x) return `<button type="button" class="want-add" data-want-act="add"${wantAttrs(e)} aria-label="${esc(t('want.add'))}">${STAR_SVG}<span class="want-add-full">${esc(t('want.add'))}</span><span class="want-add-short">${esc(t('want.add.short'))}</span></button>`;
+  return `${wantStepHtml(x)}<button type="button" class="want-trash" data-want-act="remove" data-want="${esc(wantKeyOf(x))}" aria-label="${esc(t('want.remove'))}" title="${esc(t('want.remove'))}">${TRASH_SVG}</button>`;
 }
 // after any change: the count in the top bar, every ☆ on the page, the card page, the list page
 function refreshWant() {
@@ -11272,14 +11257,11 @@ document.addEventListener('click', (e) => {
     const c = act === 'remove' ? 0 : x.c - 1;
     const r = wantSetCount(k, c);
     if (c <= 0) wantRemoved(k, r);
-  } else if (act === 'pick' && x && entry) {
-    Object.assign(x, { id: entry.id, s: entry.s, cn: entry.cn, l: entry.l });
-    saveWant();
   }
 }, true);
-// the top bar's button and "see the list" links
+// the top bar's button
 document.addEventListener('click', (e) => {
-  const a = e.target.closest('#wantBtn, a[data-want-go]');
+  const a = e.target.closest('#wantBtn');
   if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   e.preventDefault();
   goTo('?view=want');
@@ -11380,19 +11362,18 @@ function wantTileHtml({ x, row, card, it, basic }) {
     + (x.s ? `<span class="wl-print">${esc(wantPrintLabel(x))}</span>` : '')
     + `<span class="wl-prices">${price}</span>${wantStepHtml(x)}</div>`;
 }
+// the total for the printings in the list (each card's 最安 stays on its own row)
 function wantCostHtml(items) {
-  const cheap = deckCost(wantList.map(x => [x.c, x.n]));
   let yen = 0, missing = 0;
   items.forEach(({ x, card, basic }) => {
     if (basic) return;
     const y = card ? printingYen(card) : null;
     if (y === null) missing += x.c; else yen += y * x.c;
   });
-  const picked = { priced: yen > 0, yen: Math.round(yen), missing };
-  const box = (label, sub, cost, ready) => `<div class="dcst dcst-price"><span class="dcst-l">${esc(label)}</span>${cost.priced
-      ? `<b class="dcst-v" title="${esc(sub)}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`
-      : `<span class="dcst-s">${esc(t(ready ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`}</div>`;
-  return `<div class="deck-cost">${box(t('want.cost.cheap'), t('want.cost.cheap.sub'), cheap, wantState.tried)}${box(t('want.cost.picked'), t('want.cost.picked.sub'), picked, wantState.printsTried)}</div>`;
+  const cost = { priced: yen > 0, yen: Math.round(yen), missing };
+  return `<div class="dcst dcst-price"><span class="dcst-l">${esc(t('want.cost.picked'))}</span>${cost.priced
+      ? `<b class="dcst-v" title="${esc(t('want.cost.picked.sub'))}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`
+      : `<span class="dcst-s">${esc(t(wantState.printsTried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`}</div>`;
 }
 function drawWant() {
   const body = document.getElementById('wantBody');
@@ -11424,12 +11405,13 @@ function drawWant() {
       <button type="button" class="view-btn" role="tab" data-wview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
     </div>`;
   body.innerHTML = `<div class="deck-head">
-      <div class="deck-title-row">${title}
-        <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-whareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${menu}${toggle}</div>
-      </div>
+      <div class="deck-title-row">${title}</div>
       <p class="deck-meta"><span class="fact">${esc(tn('want.f.cards', total))}</span> <span class="sep">·</span> <span class="fact">${esc(t('want.f.kinds', { n: fmtNum(wantList.length) }))}</span></p>
-      ${wantCostHtml(items)}
       ${note}
+    </div>
+    <div class="want-bar">
+      <div class="want-bar-l">${wantCostHtml(items)}${toggle}</div>
+      <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-whareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${menu}</div>
     </div>
     ${view === 'image' ? `<div class="want-grid">${items.map(wantTileHtml).join('')}</div>` : `<ul class="want-list">${items.map(wantRowHtml).join('')}</ul>`}
     <div class="want-foot">
