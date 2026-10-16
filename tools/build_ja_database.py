@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_ja_database.py  (version 2.2)
+build_ja_database.py  (version 2.3)
 
 Builds `ja_cards.json.gz` - the card database for the 悪知恵 site: one entry
 per real Magic card, with its Japanese name / type / rules text wherever a
@@ -43,6 +43,14 @@ WHAT VERSION 2 FIXES
    p=Pioneer, m=Modern, l=Legacy, v=Vintage, a=Pauper, c=Commander) so the
    site's advanced search can filter by format.
 
+8. (2.3) Every rarity a card was printed at: the "rarities" field (c u r m s b)
+   lists the rarities of its paper printings, promos and Secret Lair included,
+   so the rarity filter finds a card by any of them, as Scryfall's r: does.
+   Like Scryfall, it counts the English printing, or the printing's own
+   language where there is no English one at that set and number
+   (Renaissance, Japanese-only promos, Phyrexian). "rarity" stays the rarity
+   of the printing shown.
+
 USAGE
 -----
     python build_ja_database.py
@@ -77,7 +85,7 @@ FIELD_ORDER = [
     "id", "oracle_id", "name_en", "name_ja", "type_en", "type_ja",
     "oracle_en", "oracle_ja", "mana_cost", "colors", "cmc",
     "power", "toughness", "rarity", "set", "keywords", "released_at",
-    "alt_names_ja", "legal", "layout",
+    "alt_names_ja", "legal", "layout", "rarities",
 ]
 
 # Formats the site can filter by, one letter each in the row's "legal" field
@@ -91,6 +99,10 @@ EXCLUDED_LAYOUTS = {
     "vanguard", "planar", "scheme",
 }
 EXCLUDED_SET_TYPES = {"token", "memorabilia", "minigame", "alchemy"}
+
+# Rarities in the "rarities" field, one letter each, in this order.
+RARITY_LETTERS = [("common", "c"), ("uncommon", "u"), ("rare", "r"), ("mythic", "m"),
+                  ("special", "s"), ("bonus", "b")]
 
 # Spot checks printed at the end: English name -> expected to have Japanese.
 SPOT_CHECKS = [
@@ -219,18 +231,27 @@ def printing_rank(card):
 IMAGE_QUALITY = {"highres_scan": 3, "lowres": 2, "placeholder": 1, "missing": 0}
 
 
+# Frame treatments of a variant printing (showcase, borderless...).
+VARIANT_FRAMES = {"showcase", "extendedart", "inverted", "etched"}
+
+
 def picture_rank(card):
     """Sort key for choosing the printing whose picture is shown (higher is
     better): a real scan first, then the usual printing preferences, a sharp
-    scan over a low-resolution one, then newest."""
+    scan over a low-resolution one, then newest; when all that is level, the
+    ordinary frame over a showcase or borderless variant (Clarion Conqueror's
+    #5, not #400)."""
     quality = IMAGE_QUALITY.get(card.get("image_status"), 1)
     regular, normal, released = printing_rank(card)
-    return (1 if quality >= 2 else 0, regular, normal, quality, released)
+    plain = not (card.get("full_art") or card.get("border_color") == "borderless"
+                 or VARIANT_FRAMES & set(card.get("frame_effects") or []))
+    return (1 if quality >= 2 else 0, regular, normal, quality, released, plain)
 
 
 class CardEntry:
     """Everything collected for one oracle card across all its printings."""
-    __slots__ = ("en", "ja", "ja_pic", "ja_text", "ja_names", "first_released")
+    __slots__ = ("en", "ja", "ja_pic", "ja_text", "ja_names", "first_released",
+                 "rarities", "en_numbers", "other_rarities")
 
     def __init__(self):
         self.en = None          # best English printing
@@ -239,6 +260,9 @@ class CardEntry:
         self.ja_text = None     # best Japanese printing with Japanese rules text
         self.ja_names = set()   # every Japanese name seen
         self.first_released = None
+        self.rarities = set()        # rarities of its English printings
+        self.en_numbers = set()      # (set, number) of its English printings
+        self.other_rarities = {}     # (set, number) -> rarities of other languages' printings
 
     def add(self, card):
         released = card.get("released_at", "")
@@ -246,8 +270,19 @@ class CardEntry:
             self.first_released = released
 
         lang = card.get("lang")
+        # Scryfall's r: looks at the English printing, or the printing's own language
+        # where that set and number has no English one: some Italian and Portuguese
+        # printings carry a rarity their English one doesn't.
+        number = (card.get("set"), card.get("collector_number"))
+        if lang != "en":
+            self.other_rarities.setdefault(number, set()).add(card.get("rarity"))
         if lang == "en":
-            if self.en is None or picture_rank(card) > picture_rank(self.en):
+            self.en_numbers.add(number)
+            self.rarities.add(card.get("rarity"))
+            # an English printing always replaces another language's kept as a fallback
+            # (Italian Legends printings used to stay, ranked level with the English)
+            if (self.en is None or self.en.get("lang") != "en"
+                    or picture_rank(card) > picture_rank(self.en)):
                 self.en = card
         elif lang == "ja":
             name_ja = joined(card, "printed_name")
@@ -264,6 +299,14 @@ class CardEntry:
         elif self.en is None and self.ja is None:
             # card that only exists in some other language - keep as a fallback
             self.en = card
+
+    def all_rarities(self, shown):
+        """Letters of every rarity counted for the card, the shown printing's included."""
+        found = set(self.rarities) | {shown}
+        for number, rarities in self.other_rarities.items():
+            if number not in self.en_numbers:
+                found |= rarities
+        return "".join(letter for rarity, letter in RARITY_LETTERS if rarity in found)
 
     def to_row(self):
         base = self.ja or self.en
@@ -292,6 +335,7 @@ class CardEntry:
             "released_at": self.first_released or "",
             "alt_names_ja": "|".join(sorted(n for n in self.ja_names if n != name_ja)),
             "layout": layout_of(en),
+            "rarities": self.all_rarities(pic.get("rarity", "") or base.get("rarity", "")),
             "legal": "".join(code for fmt, code in LEGAL_CODES
                              if ((en.get("legalities") or base.get("legalities") or {}).get(fmt)) in ("legal", "restricted")),
         }

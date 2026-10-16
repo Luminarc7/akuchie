@@ -235,6 +235,18 @@ with sync_playwright() as p:
           has_r("wrenchrigger", "Wrench-Rigger") and has_r("lim dul", "Lim-Dûl the Necromancer") and has_r("mjolnir", "Mjölnir, Storm Hammer")
           and has_r("snow covered island", "Snow-Covered Island") and has_r("suchi", "Su-Chi") and not R["suchi"]["fixes"],
           [(q, R[q]["en"][:2], R[q]["fixes"]) for q in ("wrenchrigger", "lim dul", "mjolnir", "snow covered island", "suchi")])
+    # rarity counts every printing, as Scryfall's r: does (Scryfall 2026-10-16, paper printings: mythic 2,713,
+    # rare 11,427, uncommon 10,691, common 11,162; the database also has ~825 playtest and joke cards Scryfall hides)
+    rc = page.evaluate("['common', 'uncommon', 'rare', 'mythic', 'special'].map(r => LOCAL_DB.filter(x => hasRarity(x, r)).length)")
+    check("rarity counts every printing: about as many cards per rarity as Scryfall (paper)",
+          11100 <= rc[0] <= 11400 and 10600 <= rc[1] <= 10900 and 11400 <= rc[2] <= 12100 and 2700 <= rc[3] <= 2800 and 340 <= rc[4] <= 360, rc)
+    rr = page.evaluate("""(() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+      manaCosts: new Set(), roles: new Set(), rarity: 'mythic', format: '', sort: '', showLoose: false });
+      const names = q => searchRows(q, st).rows.map(r => r.name_en);
+      const row = n => LOCAL_DB.find(r => r.name_en === n);
+      return { bolt: names('稲妻'), sol: names('sol ring'), amnesia: [row('Amnesia').rarity, row('Amnesia').set], acid: row('Acid Rain').rarity }; })()""")
+    check("rarity: 神話レア + 稲妻 / sol ring finds them (mythic printings exist); Amnesia shows its English uncommon printing",
+          "Lightning Bolt" in rr["bolt"] and "Sol Ring" in rr["sol"] and rr["amnesia"] == ["uncommon", "drk"] and rr["acid"] == "rare", rr)
     # every card found by its own words: one sentence of its Japanese text typed plainly (no 、, half-width numbers),
     # and its English name in lower case without punctuation (a fixed sample of 300 cards)
     import random, re as _re
@@ -260,7 +272,7 @@ with sync_playwright() as p:
       return qs.map(q => { try { const r = searchRows(q, st);
         return { q, n: r.rows.length, en: r.rows.map(x => x.name_en), ja: r.rows.map(x => x.name_ja || ''), roles: r.info.roles.map(x => x.id || x.tag || '?'),
                  aliases: (r.info.aliases || []).map(a => a.from + '>' + a.to), colors: r.rows.map(x => x._colors || ''), cmc: r.rows.map(x => x._cmc),
-                 types: r.rows.map(x => x.type_en), rarity: r.rows.map(x => x.rarity), legal: r.rows.map(x => x.legal == null ? null : String(x.legal)),
+                 types: r.rows.map(x => x.type_en), rarity: r.rows.map(x => x._rarities), legal: r.rows.map(x => x.legal == null ? null : String(x.legal)),
                  cost: r.rows.map(x => x.mana_cost || '') };
       } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });
     }"""
@@ -273,7 +285,7 @@ with sync_playwright() as p:
         if kind == "colors": return all(r["colors"][i] and set(r["colors"][i]) <= set(val) for i in rows)
         if kind == "type": return all(val in r["types"][i].lower() for i in rows)
         if kind == "cmc": return all(r["cmc"][i] == float(val) for i in rows)
-        if kind == "rarity": return all(r["rarity"][i] == val for i in rows)
+        if kind == "rarity": return all({"common": "c", "uncommon": "u", "rare": "r", "mythic": "m"}[val] in r["rarity"][i] for i in rows)   # printed at it
         if kind == "legal": return all(r["legal"][i] is None or val in r["legal"][i] for i in rows)
         if kind == "name": return all(val in r["ja"][i] for i in rows)
         if kind == "cost": return all("{" + val + "}" in r["cost"][i] for i in rows)

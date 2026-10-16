@@ -48,6 +48,13 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | Symbols only | a literal text filter | `%`, `🔥` |
 | Anything else | `words` (English) | lightning, bolt |
 
+**Rarity** (`r:m`, `r:rare`, the rarity buttons, 神話レア/レア/コモン as narrowing words) matches
+every rarity the card was printed at, as Scryfall does (`hasRarity()` over the database's
+`rarities`; `rarityName()` reads c/u/r/m/s/b, the English names and the Japanese ones). A card
+found through another printing keeps its own picture; its tile says 神話レア版あり / "Mythic
+printing" instead of its printing's rarity, which is the tooltip (`tileRarityHtml()`,
+`wantedRarity()`).
+
 **Operators** are `KNOWN_OPS` (including `is:` for card shapes) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
 色→c, マナ総量→cmc, セット→e…). They are matched against a row in `localOperatorMatch()`;
 an unknown operator returns `null` and the token is searched as text. To add an operator: add

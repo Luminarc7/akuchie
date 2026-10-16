@@ -104,8 +104,9 @@ results, a Japanese one where possible), `oracle_id`, `name_en`, `name_ja`, `typ
 `oracle_en`, `oracle_ja`, `mana_cost`, `colors`, `cmc`, `power`, `toughness`, `rarity`, `set`,
 `keywords`, `released_at` (first release), `alt_names_ja` (older Japanese names, `|`-separated),
 `legal` (letters s p m l v a c), `layout` (the card's shape from Scryfall when not an ordinary
-one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード), and
-`name_kana` (the reading: the あいうえお sort, and names typed in hiragana; never shown).
+one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード),
+`name_kana` (the reading: the あいうえお sort, and names typed in hiragana; never shown) and
+`rarities` (every rarity the card was printed at, `c u r m s b`, for the rarity filters).
 
 - **Built by `tools/build_ja_database.py`** from Scryfall's `all_cards` bulk file. Scryfall
   serves bulk files as gzipped JSON Lines (`jsonl_download_uri`) since September 2026; the builder
@@ -135,6 +136,14 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
     Regent`); the builder drops the repeat (`english_name()`).
   - Many old Japanese printings have only a placeholder image. The page then shows the same
     printing's English picture with a note naming the language.
+  - Scryfall's `r:mythic` counts a card once for every rarity any of its printings has
+    (Sengir Vampire: uncommon, rare, mythic). The `rarities` field does the same. Checked
+    2026-10-16: the site matches Scryfall's paper counts within a handful. Scryfall's plain
+    counts are higher by Arena/MTGO-only cards (left out on purpose), and Scryfall hides about
+    825 playtest, joke-promo and withdrawn cards the site keeps (docs/data.md has the detail).
+  - Italian Legends/The Dark printings sometimes carry a rarity their English printing
+    doesn't. The builder used to keep such a printing as the card's picture when the English
+    one ranked level (116 cards showed an Italian picture, 10 a wrong rarity); fixed in 2.3.
 
 ## How the card page picks printings and languages
 
@@ -189,6 +198,8 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
 - **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
   `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
   the Japanese matches in the same group.
+- **Rarity** (the C U R M buttons, `r:m`, 神話レア ドラゴン) finds a card by any rarity it was
+  printed at, as Scryfall does; a tile whose shown printing is another rarity says 神話レア版あり.
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -241,6 +252,7 @@ commits the results back. The branch `probe-shops` was used for this;
 | `audit_text.py`, `db_updates.py` | Japanese type, text and picture gaps, and the fixes |
 | `missing_ja.py`, `set_langs.py` | languages each set has, and missing Japanese printings |
 | `face_sheets.py` | crops of Japanese card name bars, to read names Scryfall lacks |
+| `rarity_audit.py` | per-rarity counts against Scryfall's search, every printing's rarity, a fresh build to compare |
 
 Note: warujie.jp shows a Cloudflare challenge to unverified bots (including GitHub runners).
 Check the live site through the `*.workers.dev` address, which runs the same Worker.
