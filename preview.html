@@ -1486,7 +1486,7 @@
   /* wide panels (home, and results below 1000px): colour, mana value and rarity share a line,
      card types take the next, then the four text fields side by side */
   .filter-panel.open { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 22px; padding: 14px 18px 16px; }
-  .filter-panel .opt-chip:not(.mv-chip) { padding-left: 10px; padding-right: 10px; }
+  .filter-panel .opt-chip:not(.mv-chip):not(.rar-chip) { padding-left: 10px; padding-right: 10px; }
   .filter-panel .filter-head { flex: 1 1 100%; }
   .filter-panel .filter-section { flex: 0 1 auto; min-width: 0; }
   .filter-panel .filter-section.wide, .filter-fields { flex: 1 1 100%; }
@@ -1495,17 +1495,14 @@
   .chip-row { gap: 6px; }
   .filter-panel .list-filter, .filter-panel select { height: 34px; margin: 0; padding-top: 0; padding-bottom: 0; font-size: 13px; }
   .filter-panel select { padding-left: 10px; }
-  @media (min-width: 821px) {   /* rarity chips centred on the symbols beside them */
-    #heroAdvSlot .filter-section:not(.wide) .chip-row, #resultsAdvSlot .filter-section:not(.wide) .chip-row { min-height: 38px; align-items: center; }
-  }
   /* the panel's own width decides how many text fields fit across (the home page puts it
      beside the examples or full width), so placeholders are never cut off */
   .filter-panel { container-type: inline-size; }
   @container (max-width: 919px) { .filter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @container (max-width: 459px) { .filter-fields { grid-template-columns: minmax(0, 1fr); } }
-  /* a panel 700px or wider (the home page beside the examples is about 830px inside) flows
-     the fields too: フォーマット joins the rarity line, the other three share the last line */
-  @container (min-width: 700px) {
+  /* a full-width panel (920px or more inside) flows the fields too: フォーマット joins the
+     colour, mana value and rarity line, the other three share the last line */
+  @container (min-width: 920px) {
     .filter-fields { display: contents; }
     .filter-fields .filter-section { flex: 1 1 220px; order: 3; }
     .filter-fields .filter-section:has(#formatSelect) { flex: 1 1 160px; order: 1; }
@@ -1526,33 +1523,29 @@
     #sideAdvSlot .filter-head { margin-bottom: 10px; }
     html[data-home="false"] #sideAdvSlot .filter-panel { padding: 12px 14px 14px; }
     #sideAdvSlot .chip-row.syms, #sideAdvSlot .chip-row.syms:has(.mv-chip) { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 1px; }
-    #sideAdvSlot .chip, #sideAdvSlot .opt-chip.mv-chip { width: auto; height: auto; aspect-ratio: 1; }
-    #sideAdvSlot .chip img, #sideAdvSlot .opt-chip.mv-chip img, #sideAdvSlot .opt-chip.mv-chip .mv-txt { width: 21px; height: 21px; }
-    #sideAdvSlot .opt-chip.mv-chip .mv-txt { font-size: 9.5px; }
+    #sideAdvSlot .chip, #sideAdvSlot .opt-chip.mv-chip, #sideAdvSlot .opt-chip.rar-chip { width: auto; height: auto; aspect-ratio: 1; }
+    #sideAdvSlot .chip img, #sideAdvSlot .opt-chip.mv-chip img, #sideAdvSlot .opt-chip.mv-chip .mv-txt, #sideAdvSlot .rar-txt { width: 21px; height: 21px; }
+    #sideAdvSlot .opt-chip.mv-chip .mv-txt, #sideAdvSlot .rar-txt { font-size: 9.5px; }
     #sideAdvSlot .chip-row { gap: 4px; }
-    #sideAdvSlot .opt-chip:not(.mv-chip) { padding: 2px 6px; font-size: 11.5px; }
+    #sideAdvSlot .opt-chip:not(.mv-chip):not(.rar-chip) { padding: 2px 6px; font-size: 11.5px; }
     #sideAdvSlot .filter-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
     #sideAdvSlot .filter-fields .filter-section + .filter-section { margin-top: 0; }
     #sideAdvSlot .list-filter, #sideAdvSlot .filter-panel select { height: 32px; }
   }
-  /* rarity buttons carry the same coloured dot as the cards; the chosen one fills with its colour */
-  .opt-chip[data-group="rarity"][data-value="common"] { --rc: var(--rar-common); }
-  .opt-chip[data-group="rarity"][data-value="uncommon"] { --rc: var(--rar-uncommon); }
-  .opt-chip[data-group="rarity"][data-value="rare"] { --rc: var(--rar-rare); }
-  .opt-chip[data-group="rarity"][data-value="mythic"] { --rc: var(--rar-mythic); }
-  .opt-chip[data-group="rarity"]::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rc); margin-right: 6px; vertical-align: 1px; }
-  .opt-chip[data-group="rarity"]:hover { border-color: var(--rc); }
-  .opt-chip[data-group="rarity"][aria-pressed="true"] { background: var(--rc); border-color: var(--rc); color: #17151d; }
-  .opt-chip[data-group="rarity"][aria-pressed="true"]::before { background: #17151d; }
-  /* the sidebar and phones don't fit four dotted buttons on a line: a tidy two-by-two grid */
-  @media (min-width: 1000px) {
-    #sideAdvSlot .filter-section:has([data-group="rarity"]) .chip-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    #sideAdvSlot .opt-chip[data-group="rarity"] { text-align: left; }
-  }
-  @media (max-width: 820px) {
-    .filter-section:has([data-group="rarity"]) .chip-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .opt-chip[data-group="rarity"] { text-align: left; }
-  }
+  /* colour and mana value buttons one step smaller (34px, symbols 24px); rarity is four
+     C U R M discs the same size, and the chosen one fills with its rarity colour */
+  .chip, .opt-chip.mv-chip, .opt-chip.rar-chip { width: 34px; height: 34px; }
+  .chip img, .opt-chip.mv-chip img, .opt-chip.mv-chip .mv-txt, .rar-txt { width: 24px; height: 24px; }
+  .opt-chip.mv-chip .mv-txt { font-size: 10px; }
+  .opt-chip.rar-chip { padding: 0; border-radius: 50%; border: 2px solid transparent; background: none; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .rar-txt { border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--field); box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--text); font-size: 11.5px; font-weight: 700; line-height: 1; }
+  .opt-chip.rar-chip[data-value="common"] { --rc: var(--rar-common); }
+  .opt-chip.rar-chip[data-value="uncommon"] { --rc: var(--rar-uncommon); }
+  .opt-chip.rar-chip[data-value="rare"] { --rc: var(--rar-rare); }
+  .opt-chip.rar-chip[data-value="mythic"] { --rc: var(--rar-mythic); }
+  .opt-chip.rar-chip:hover { border-color: var(--rc); }
+  .opt-chip.rar-chip[aria-pressed="true"] { background: none; border-color: var(--rc); font-weight: 700; }
+  .opt-chip.rar-chip[aria-pressed="true"] .rar-txt { background: var(--rc); box-shadow: none; color: #17151d; }
   /* phones: one column; the nine mana values fit on one line; text fields at 16px so
      iPhones don't zoom in when one is tapped */
   @media (max-width: 820px) {
@@ -1560,7 +1553,7 @@
     .filter-panel .filter-section { flex: none; }
     .filter-fields { grid-template-columns: minmax(0, 1fr); gap: 12px; }
     .chip-row.syms, .chip-row.syms:has(.chip) { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 2px; }
-    .chip, .opt-chip.mv-chip { width: auto; height: 40px; }
+    .chip, .opt-chip.mv-chip, .opt-chip.rar-chip { width: auto; height: 36px; }
     .filter-panel .list-filter, .filter-panel select { height: 40px; font-size: 16px; }
   }
 </style>
@@ -1687,11 +1680,11 @@
 
       <div class="filter-section">
         <p class="filter-title" data-i18n="filter.rarity">レアリティ</p>
-        <div class="chip-row">
-          <button type="button" class="opt-chip" data-group="rarity" data-value="common" data-i18n="rarity.common">コモン</button>
-          <button type="button" class="opt-chip" data-group="rarity" data-value="uncommon" data-i18n="rarity.uncommon">アンコモン</button>
-          <button type="button" class="opt-chip" data-group="rarity" data-value="rare" data-i18n="rarity.rare">レア</button>
-          <button type="button" class="opt-chip" data-group="rarity" data-value="mythic" data-i18n="rarity.mythic">神話レア</button>
+        <div class="chip-row syms">
+          <button type="button" class="opt-chip rar-chip" data-group="rarity" data-value="common" aria-label="コモン" title="コモン" data-i18n-aria="rarity.common" data-i18n-title="rarity.common"><span class="rar-txt" aria-hidden="true">C</span></button>
+          <button type="button" class="opt-chip rar-chip" data-group="rarity" data-value="uncommon" aria-label="アンコモン" title="アンコモン" data-i18n-aria="rarity.uncommon" data-i18n-title="rarity.uncommon"><span class="rar-txt" aria-hidden="true">U</span></button>
+          <button type="button" class="opt-chip rar-chip" data-group="rarity" data-value="rare" aria-label="レア" title="レア" data-i18n-aria="rarity.rare" data-i18n-title="rarity.rare"><span class="rar-txt" aria-hidden="true">R</span></button>
+          <button type="button" class="opt-chip rar-chip" data-group="rarity" data-value="mythic" aria-label="神話レア" title="神話レア" data-i18n-aria="rarity.mythic" data-i18n-title="rarity.mythic"><span class="rar-txt" aria-hidden="true">M</span></button>
         </div>
       </div>
 
@@ -6675,6 +6668,7 @@ const chipLabel = (group, value) => {
   const el = [...document.querySelectorAll(`.opt-chip[data-group="${group}"]`)].find(b => b.dataset.value === value);
   if (!el) return value;
   if (el.classList.contains('mv-chip')) return /^\d$/.test(value) ? value : (el.title || value);
+  if (el.classList.contains('rar-chip')) return el.title || value;
   return el.textContent.trim() || el.getAttribute('aria-label') || value;
 };
 const titleCase = t => String(t).replace(/(^|[\s-])([a-z])/g, (m, a, b) => a + b.toUpperCase());

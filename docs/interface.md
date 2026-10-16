@@ -41,7 +41,7 @@ themes work.
   page title (the card page's mana cost, a deck page's title), and 1em inside card text
   (`.sym`). The one exception is the metagame on phones, where closed rows use 11px (the owner's
   choice). The colour and mana value buttons of the filters use one image size per place
-  (sidebar 21px, panel and phones 28px). Use the variables instead of new pixel sizes.
+  (sidebar 21px, panel and phones 24px in a 34px button). Use the variables instead of new pixel sizes.
 - **Buttons side by side share one height:** the results toolbar (詳しい条件, 画像/テキスト, sort
   menu: 34px, 36px on phones), a deck page's 書き出す and 画像/リスト (34px), and the metagame
   header's buttons and sort menu (30px, 28px on phones). These rules are the "round 10" block at
@@ -61,21 +61,23 @@ end of `<style>`:
 
 - **Wide panels** wrap the sections in lines. How they wrap follows the panel's own width
   (`@container`), because the home page puts the panel beside the effect examples (about 830px
-  inside on desktops) once they load, and full width before. From 700px the text fields leave
-  their group (`display: contents`): フォーマット joins the rarity line (CSS `order`, so it is
-  still last in tab order) and the other three share the last line. On desktops that gives
-  colour + mana value / rarity + format / card types / the three fields. Below 700px the fields
-  stay a grid of 2 (or 1) across. Placeholders must never be cut off.
-- **The sidebar** puts colours and mana values on one nine-column grid, so all nine mana values
+  inside on desktops) once they load, and full width before. On desktops that gives colour +
+  mana value + rarity / card types / the four fields two by two. From 920px the text fields
+  leave their group (`display: contents`): フォーマット joins the first line (CSS `order`, so it
+  is still last in tab order) and the other three share the last line. Placeholders must never
+  be cut off.
+- **The sidebar** puts colours, mana values and rarities on one nine-column grid, so all nine mana values
   fit on one line and the colours line up above them; with smaller chips everything fits a
   900px-tall screen without scrolling inside the panel.
-- **Phones** use the same nine-column grid at 40px tall, one column of fields, and 16px text in
+- **Phones** use the same nine-column grid at 36px tall, one column of fields, and 16px text in
   the fields so iPhones don't zoom in when one is tapped. Up to 900px the panel fills the page
   column (it used to keep the old slide-in drawer's 360px width).
 - Suggestion lists under the text fields may be wider than their field (up to 340px).
-- **Rarity buttons** carry the same coloured dot as the cards (`--rar-common`, `--rar-uncommon`,
-  `--rar-rare`, `--rar-mythic` in `:root`, also used by `.dot`); the chosen one fills with its
-  colour. In the sidebar and on phones the four sit two by two.
+- **Rarity buttons** (`.rar-chip`) are C U R M discs the size of the mana value buttons, with
+  the full name as tooltip and in the filter pill (`chipLabel()`). While off they are all one
+  plain colour; the chosen one fills with the cards' rarity colour (`--rar-common`,
+  `--rar-uncommon`, `--rar-rare`, `--rar-mythic` in `:root`, also used by `.dot`). The owner
+  asked for this look.
 
 ## Lightweight mode (軽量)
 
