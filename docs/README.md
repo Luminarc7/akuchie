@@ -29,7 +29,7 @@ code apart from a small Worker ([`worker.js`](../worker.js)) and no database ser
 | [index-html.md](index-html.md) | A map of `index.html`: its sections, the main functions and the page state |
 | [search.md](search.md) | How a search is read, matched and ordered; slang, roles, operators, spelling |
 | [card-page.md](card-page.md) | The card page: printings and language buttons, prices, listings, history, combos, links |
-| [other-pages.md](other-pages.md) | Home, sets, metagame and deck pages, price movers, export, the installable app |
+| [other-pages.md](other-pages.md) | Home, sets, metagame and deck pages, the deck price page, price movers, export, the installable app |
 | [interface.md](interface.md) | Interface text in two languages, themes, lightweight mode, saved settings, phones |
 | [data.md](data.md) | Every data file: its fields, who builds it, when, and how to rebuild or fix it |
 | [hosting.md](hosting.md) | `worker.js`, `sw.js`, Cloudflare, what is published, link previews, rolling back |
@@ -62,6 +62,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Change the app icon or name | `icons/`, `manifest.webmanifest`, `tools/make_icons.py` |
 | Change price-mover thresholds | warujie-prices `build_prices.py`: `MIN_PRICE_CENTS`, `MIN_CHANGE_CENTS`, `WINDOWS` |
 | Change the metagame numbers | `build_meta.py` (this repo); the tab itself is "metagame tab" in `index.html` |
+| Change how a pasted deck list is read | `parseDeckText()`, `IMPORT_PARTS`, `cleanImportName()`, `importRow()`. See [other-pages.md](other-pages.md#deck-price-page-paste-a-list) |
 | Translate a deck name into Japanese | `DECK_NAME_WHOLE` (whole names), `DECK_WORD_JA` (words), `DECK_GUILD_JA`, `DECK_MONO_JA` |
 
 ## Which doc covers which code
@@ -73,7 +74,7 @@ When you change code, update the doc that covers it in the same commit (see
 |---|---|
 | `index.html` search sections (database, tag file, role words, spelling, reading the search box, Japanese, highlighting, suggestions, recent searches, filters) | search.md, index-html.md |
 | `index.html` card page sections (pictures, prices, treatments, listings, notes, shop links, printing language, price history, combos, similar cards) | card-page.md |
-| `index.html` home, sets, metagame, price movers, deck pages, export, install | other-pages.md |
+| `index.html` home, sets, metagame, price movers, deck pages, deck price page, export, install | other-pages.md |
 | `STR`, themes, language switch, lightweight mode, phone menu, `localStorage` keys | interface.md |
 | any new or renamed `// ---- section ----` or top-level function that others call | index-html.md |
 | `worker.js`, `sw.js`, `wrangler.jsonc`, `.assetsignore`, `manifest.webmanifest` | hosting.md |

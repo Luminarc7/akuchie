@@ -1292,6 +1292,10 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     up_box = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box(); down_box = page.locator('#moverBody .mover-col[data-dir="down"]').bounding_box()
     check("phone: price movers fit, losers below winners", no_hscroll() and page.locator("#tabPrices").is_visible() and down_box["y"] > up_box["y"] + up_box["height"] - 1, (up_box, down_box))
+    for w in (390, 360):
+        page.set_viewport_size({"width": w, "height": 800}); page.wait_for_timeout(200)
+        ob = page.locator("#pricesView .imp-open").bounding_box(); bar = page.locator("#pricesView .meta-head").bounding_box()
+        check(f"phone {w}px: the deck price button sits inside the price tab's bar", no_hscroll() and ob["x"] >= bar["x"] and ob["x"] + ob["width"] <= bar["x"] + bar["width"] + 0.5, (ob, bar))
     if SHOTS: page.screenshot(path="prices_phone.png", full_page=True)
     page.set_viewport_size({"width": 1280, "height": 900})
     PRICE_SITE["dir"] = PRICES_NOEU
@@ -3071,6 +3075,164 @@ with sync_playwright() as p:
     check("search tuning: あいうえお order as in a dictionary - ゛ and small kana only break ties (しゅう, じゅん, しょっ; は before ば)",
           tu["gojuon"] == ["ゴブリン修繕屋", "ゴブリン巡視部隊", "ゴブリン職工団", "敗北", "倍ぼく"], tu["gojuon"])
     DB_MODE["variant"] = None
+
+    # ---- 42. the deck price page: paste a list (Arena, MTGO, typed; Japanese or English names), see what it costs ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    DECKS_MODE["mode"] = "fixture"
+    page.set_viewport_size({"width": 1280, "height": 900})
+    cheap = json.loads(gzip.decompress(open(os.path.join(PRICES_FULL, "cheap.json.gz"), "rb").read()))["cards"]
+    page.goto(SITE + "?view=import"); page.wait_for_selector("#importText")
+    page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
+    check("deck price page: opens with an empty box and help on what it reads", page.locator(".imp-empty").count() == 1 and page.locator("#importSample").count() == 1
+          and page.title().startswith("デッキの価格を調べる") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
+    parsed = page.evaluate("""(() => { const P = s => parseDeckText(s).lines.map(l => [l.count, l.name, l.part]);
+      return {
+        arena: (() => { const r = parseDeckText('About\\nName Gruul Smash\\n\\nCommander\\n1 Ragavan, Nimble Pilferer\\n\\nCompanion\\n1 Qasali Pridemage\\n\\nDeck\\n4 Lightning Bolt (M10) 146\\n2 Shivan Dragon (M10) 156 *F*\\n\\nSideboard\\n1 Qasali Pridemage\\n3 Llanowar Elves'); return [r.title, r.lines.map(l => [l.count, l.name, l.part])]; })(),
+        mtgo: P('4 Lightning Bolt\\n20 Mountain\\n\\n2 Shivan Dragon\\nSB: 1 Urza\\'s Saga'),
+        typed: P('４ 稲妻\\n稲妻 x2\\n3x Llanowar Elves\\n2枚 ウルザの物語\\nシヴ山のドラゴン\\n// a comment\\n火/氷'),
+        jaArena: P('デッキ\\n4 稲妻 (M10) 146\\n\\nサイドボード\\n2 ラノワールのエルフ'),
+        groups: P('Creatures (4)\\n4 Shivan Dragon\\n\\nInstants (4)\\n4 Lightning Bolt\\n\\nSideboard (2)\\n2 Llanowar Elves'),
+      }; })()""")
+    check("deck import: an MTG Arena export - deck name, Commander, Companion, Deck, Sideboard; set codes and foil marks left off",
+          parsed["arena"] == ["Gruul Smash", [[1, "Ragavan, Nimble Pilferer", "commander"], [1, "Qasali Pridemage", "companion"], [4, "Lightning Bolt", "main"],
+                                             [2, "Shivan Dragon", "main"], [1, "Qasali Pridemage", "side"], [3, "Llanowar Elves", "side"]]], parsed["arena"])
+    check("deck import: Magic Online text - the sideboard after a blank line, SB: lines", parsed["mtgo"] == [[4, "Lightning Bolt", "main"], [20, "Mountain", "main"], [2, "Shivan Dragon", "side"], [1, "Urza's Saga", "side"]], parsed["mtgo"])
+    check("deck import: typed lines - full-width numbers, x2 after the name, 3x, 2枚, no number (one copy), comments, Fire/Ice",
+          parsed["typed"] == [[4, "稲妻", "main"], [2, "稲妻", "main"], [3, "Llanowar Elves", "main"], [2, "ウルザの物語", "main"], [1, "シヴ山のドラゴン", "main"], [1, "火 // 氷", "main"]], parsed["typed"])
+    check("deck import: the Japanese MTG Arena's デッキ / サイドボード", parsed["jaArena"] == [[4, "稲妻", "main"], [2, "ラノワールのエルフ", "side"]], parsed["jaArena"])
+    check("deck import: card-type headings from deck sites are skipped, and their blank lines don't start the sideboard",
+          parsed["groups"] == [[4, "Shivan Dragon", "main"], [4, "Lightning Bolt", "main"], [2, "Llanowar Elves", "side"]], parsed["groups"])
+    found = page.evaluate("""['稲妻', 'lightning bolt', 'ragavan nimble pilferer', '敏捷なこそ泥 ラガバン', 'らのわーるのえるふ', 'Urzas Saga', 'Nothing Like This']
+      .map(n => { const r = importRow(n); return r ? r.name_en : null; })""")
+    check("deck import: cards by Japanese or English name, any case, without punctuation, in hiragana",
+          found == ["Lightning Bolt", "Lightning Bolt", "Ragavan, Nimble Pilferer", "Ragavan, Nimble Pilferer", "Llanowar Elves", "Urza's Saga", None], found)
+    merged = page.evaluate("""(() => { const r = readImport('Companion\\n1 Qasali Pridemage\\nDeck\\n4 稲妻\\n2 Lightning Bolt\\nSideboard\\n1 Qasali Pridemage'); return [r.main.map(x => [x.count, x.name]), r.side.map(x => [x.count, x.name])]; })()""")
+    check("deck import: the same card on two lines is added up; Arena's companion isn't counted twice", merged == [[[6, "Lightning Bolt"]], [[1, "Qasali Pridemage"]]], merged)
+
+    newcard = page.evaluate("""loadCheapest().then(() => { const r = readImport('2 deathrite shaman'); return [r.main.map(x => [x.count, x.name, !!x.row]), r.missing.length]; })""")
+    check("deck import: a card too new for the card database is still found by its English name in the price file",
+          newcard == [[[2, "Deathrite Shaman", False]], 0], newcard)
+    LIST = "Deck\n4 稲妻\n4 Shivan Dragon (M10) 156\n3 ラノワールのエルフ\n4 Lightnig Bolt\n20 Mountain\n\nSideboard\n2 Qasali Pridemage"
+    page.fill("#importText", LIST)
+    page.wait_for_function("document.querySelector('#importBody .deck-cost .dcst-v') && document.querySelector('#importBody [data-iview=list]')")
+    page.click("#importBody [data-iview=list]"); page.wait_for_selector("#importBody .dl-yen:not(:empty)")
+    def yen1(name):
+        r = cheap.get(name)
+        opts = [x for x in ((r[0] / 100 * 150.0) if r and r[0] else None, (r[1] / 100 * 160.0) if r and r[1] else None) if x is not None]
+        return min(opts) if opts else None
+    parts = [(4, "Lightning Bolt"), (4, "Shivan Dragon"), (3, "Llanowar Elves"), (2, "Qasali Pridemage")]
+    want = sum(n * yen1(nm) for n, nm in parts if yen1(nm) is not None)
+    gone = 4 + sum(n for n, nm in parts if yen1(nm) is None)   # the line not found, and cards with no price
+    want_txt = "約¥{:,}〜".format(int(round(round(want) / 100) * 100))
+    body = page.locator("#importBody").inner_text()
+    check("deck price page: the total in yen, each card's cheapest printing, basic lands left out (the same sum as the deck pages); the card not found makes it 〜",
+          page.locator("#importBody .deck-cost .dcst-v").inner_text() == want_txt
+          and "価格のないカード{}枚を除く".format(gone) in page.locator("#importBody .deck-cost").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), want_txt))
+    check("deck price page: main deck and sideboard counted, the deck's facts line says so", "メイン 31枚" in body and "サイドボード 2枚" in body, body[:200])
+    check("deck price page: no breakdown of the cheapest printings (the owner didn't want it)", page.locator(".imp-breakdown, .ib-row").count() == 0)
+    miss = page.locator(".imp-miss")
+    check("deck price page: a card it can't find is listed with what it may be", miss.count() == 1 and "4 Lightnig Bolt" in miss.inner_text()
+          and "見つからなかったカード 4枚" in miss.inner_text() and page.locator(".imp-fix").first.inner_text() == "Lightning Bolt", miss.inner_text() if miss.count() else "")
+    page.locator(".imp-fix").first.click()
+    page.wait_for_function("!document.querySelector('.imp-miss')")
+    check("deck price page: picking the suggestion fixes that line (count kept) and the price follows",
+          "4 Lightning Bolt" in page.input_value("#importText").split("\n") and page.locator(".imp-miss").count() == 0
+          and page.locator("#importBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first.locator(".dl-count").inner_text() == "8", page.input_value("#importText"))
+    page.click("#importExport summary"); page.click("#importExport [data-iexport=arena]")
+    page.wait_for_function("document.querySelector('#importExport [data-iexport=arena]').textContent === 'コピーしました'")
+    clip = page.evaluate("navigator.clipboard.readText()")
+    check("deck price page: export for MTG Arena in English names, whatever language was pasted",
+          clip == "Deck\n8 Lightning Bolt\n4 Shivan Dragon\n3 Llanowar Elves\n20 Mountain\n\nSideboard\n2 Qasali Pridemage\n", clip)
+    page.wait_for_timeout(1300)
+    page.click("#importExport summary"); page.click("#importExport [data-iexport=link]")
+    page.wait_for_function("document.querySelector('#importExport [data-iexport=link]').textContent === 'コピーしました'")
+    link = page.evaluate("navigator.clipboard.readText()")
+    check("deck price page: the link to the list carries it", "?view=import&list=" in link and "Lightning%20Bolt" in link, link[:120])
+    page.wait_for_timeout(1300)
+    page.reload(); page.wait_for_selector("#importBody .deck-cost")
+    check("deck price page: the pasted list is still there after a reload (kept in this browser only)", "4 Lightning Bolt" in page.input_value("#importText")
+          and page.evaluate("localStorage.getItem('warujie-deck-import')") == page.input_value("#importText"))
+    page.goto(SITE + "?view=import"); page.fill("#importText", "")
+    page.goto(link.replace("https://warujie.jp/", SITE).replace(link.split("?")[0], SITE)); page.wait_for_selector("#importBody .deck-cost .dcst-v")
+    check("deck price page: opening the link shows that list and its price, then the address is plain again",
+          page.locator("#importBody .deck-cost .dcst-v").inner_text() == page.evaluate("costText(deckCost([[8,'Lightning Bolt'],[4,'Shivan Dragon'],[3,'Llanowar Elves'],[2,'Qasali Pridemage']]))")
+          and page.url.endswith("?view=import"), page.url)
+    page.click("[data-iview=image]"); page.wait_for_selector("#importBody .deck-card")
+    check("deck price page: the picture view shows the cards with their counts", page.locator("#importBody .deck-card .dc-count").count() >= 4)
+    page.click("[data-iview=list]")
+    page.locator("#importBody .dl-name", has_text="稲妻").first.click(); page.wait_for_selector("#cardView .card-name, #cardView h1")
+    check("deck price page: a card's name opens its card page", "card=" in page.url, page.url)
+    page.go_back(); page.wait_for_selector("#importBody .deck-cost")
+    check("deck price page: no price button, the list prices itself", page.locator("#importForm button[type=submit], .imp-go").count() == 0 and page.locator("#importClear").is_visible())
+    page.press("#importText", "Enter")
+    check("deck price page: Enter in the box doesn't reload the page", "view=import" in page.url and page.locator("#importBody .deck-cost").count() == 1, page.url)
+    page.click("#importClear")
+    check("deck price page: 消す empties the box and the saved list", page.input_value("#importText") == "" and page.evaluate("localStorage.getItem('warujie-deck-import')") is None and page.locator(".imp-empty").count() == 1)
+    page.fill("#importText", "hello\nworld"); page.wait_for_timeout(600)
+    check("deck price page: text with no card in it says nothing was found", "見つからなかったカード" in page.locator("#importBody").inner_text(), page.locator("#importBody").inner_text()[:200])
+    page.fill("#importText", "")
+    # the ways in: the price tab's button, and a deck page's 編集して計算
+    page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
+    check("metagame tab: no link to the deck price page (it moved to the price tab)", page.locator("#metaView a[data-import]").count() == 0)
+    page.goto(SITE + "?view=prices"); page.wait_for_selector("#pricesView .imp-open")
+    check("price tab: a デッキの価格を調べる button", page.locator("#pricesView .imp-open").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import")
+    if SHOTS: page.screenshot(path="prices_deck_button.png", full_page=False)
+    page.click("#pricesView .imp-open"); page.wait_for_selector("#importView .imp-empty")
+    check("price tab: the button opens the deck price page, and the tab bar marks 価格",
+          "view=import" in page.url and page.locator("#importView").is_visible() and page.locator("#tabPrices").get_attribute("aria-selected") == "true"
+          and page.locator("#tabMeta").get_attribute("aria-selected") == "false")
+    page.click("#tabPrices"); page.wait_for_selector("#pricesView .imp-open")
+    check("deck price page: the 価格 tab goes back to the price movers", "view=prices" in page.url and page.locator("#pricesView").is_visible())
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.wait_for_function("document.querySelector('#deckBody .deck-cost .dcst-v')")
+    deck_cost = page.locator("#deckBody .deck-cost .dcst-v").inner_text()
+    page.click("#deckBody .deck-edit"); page.wait_for_selector("#importBody .deck-cost .dcst-v")
+    check("deck page: 編集して計算 opens the shown list on the deck price page, with the deck's name and the same price",
+          page.locator("#importBody .deck-cost .dcst-v").inner_text() == deck_cost and page.locator(".imp-deck-title").inner_text().strip().startswith("グルール・ドラゴン")
+          and "Unknown New Card" in page.locator(".imp-miss").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), deck_cost))
+    page.goto(SITE + "?view=import"); page.fill("#importText", "4 稲妻\n2 Shivan Dragon\n\nSideboard\n2 Lightning Bolt\n1 Qasali Pridemage"); page.wait_for_selector("#importBody .imp-buy")
+    buy = page.locator("#importBody .imp-buy")
+    check("deck price page: 晴れる屋で買う links to Hareruya's buy-from-a-list page, in a new tab",
+          buy.inner_text().startswith("晴れる屋で買う") and buy.get_attribute("href") == "https://www.hareruyamtg.com/ja/deck/bulk" and buy.get_attribute("target") == "_blank"
+          and "noopener" in buy.get_attribute("rel"), buy.evaluate("e => e.outerHTML"))
+    with page.context.expect_page() as newtab:
+        buy.click()
+    newtab.value.close()
+    page.wait_for_selector(".imp-buy-note")
+    clip = page.evaluate("navigator.clipboard.readText()")
+    check("deck price page: the tap copies the whole list (sideboard too, same card added up) in English names and says to paste it there",
+          clip == "6 Lightning Bolt\n2 Shivan Dragon\n1 Qasali Pridemage\n" and "貼り付けてください" in page.locator(".imp-buy-note").inner_text(), clip)
+    for w in (390, 360):
+        page.set_viewport_size({"width": w, "height": 844}); page.wait_for_timeout(250)
+        page.click("#importExport summary"); page.wait_for_timeout(250)
+        r = page.evaluate("(() => { const b = document.querySelector('#importExport .deck-export-menu').getBoundingClientRect(); return [b.left, b.right, document.documentElement.clientWidth]; })()")
+        check(f"phone ({w}px), deck price page: the export menu stays on the screen", r[0] >= 0 and r[1] <= r[2], r)
+        page.click("#importExport summary"); page.wait_for_timeout(150)
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.click("#deckExport summary"); page.wait_for_timeout(250)
+    r = page.evaluate("(() => { const b = document.querySelector('#deckExport .deck-export-menu').getBoundingClientRect(); return [b.left, b.right, document.documentElement.clientWidth]; })()")
+    check("phone, deck page: the export menu stays on the screen too", r[0] >= 0 and r[1] <= r[2], r)
+    page.click("#deckExport summary")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.click("#deckExport summary"); page.wait_for_timeout(250)
+    r = page.evaluate("(() => { const m = document.querySelector('#deckExport .deck-export-menu').getBoundingClientRect(), b = document.querySelector('#deckExport summary').getBoundingClientRect(); return [m.right, b.right]; })()")
+    check("desktop, deck page: the export menu still opens right-aligned under its button", abs(r[0] - r[1]) < 1, r)
+    page.click("#deckExport summary")
+    page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-cost")
+    page.click("#langBtn"); page.wait_for_timeout(400)
+    check("deck price page in English", page.locator(".imp-title").inner_text() == "Price a deck list" and "Main deck" in page.locator("#importBody").inner_text()
+          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list"), page.locator("#importBody").inner_text()[:200])
+    page.click("#langBtn"); page.wait_for_timeout(300)
+    check("footer: the privacy note says pasted deck lists stay in the browser", "貼り付けたデッキリスト" in page.locator(".attribution").inner_text())
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+    fs = page.evaluate("parseFloat(getComputedStyle(document.getElementById('importText')).fontSize)")
+    check("phone, deck price page: no sideways scroll, a 16px box (no zoom on iPhone)", no_hscroll() and fs == 16, fs)
+    page.set_viewport_size({"width": 1280, "height": 900})
+    PRICE_SITE["dir"] = None
+    page.goto(SITE + "?view=import"); page.wait_for_function("document.querySelector('#importBody .deck-cost') && document.querySelector('#importBody .deck-cost').textContent.includes('読み込めませんでした')")
+    check("deck price page: without the price files it says so, and still lists the cards", page.locator("#importBody .dl-row, #importBody .deck-card").count() >= 4)
+    page.fill("#importText", ""); page.wait_for_timeout(500)
+    PRICE_SITE["dir"] = PRICES_FULL
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

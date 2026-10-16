@@ -120,6 +120,9 @@ async function shareTags(url, env) {
   if (view === 'meta') {
     return { title: `メタゲーム — ${FORMAT_JA[format] || 'スタンダード'} | ${SITE}`, description: '大会結果から集計した、フォーマットごとのデッキの使用率・勝率・推移とサンプルリスト。', url: pageUrl };
   }
+  if (view === 'import') {
+    return { title: `デッキの価格を調べる | ${SITE}`, description: 'デッキリストを貼り付けると、いちばん安い版でそろえた金額を円で計算。MTGアリーナ・MTGOのリスト、日本語名・英語名どちらでも。', url: pageUrl };
+  }
   if (view === 'prices') {
     return { title: `価格の動き | ${SITE}`, description: '値上がり・値下がりしたカード（米国・欧州の相場、円換算つき）。', url: pageUrl };
   }

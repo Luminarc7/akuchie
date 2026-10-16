@@ -1,4 +1,4 @@
-# Home, sets, metagame, decks, price movers, export, app
+# Home, sets, metagame, decks, deck price page, price movers, export, app
 
 All pages are views of the same `index.html`. The URL decides which one shows
 (`routeFromUrl()` → `applyRoute()`); tabs and links change the URL with `goTo()` so the back
@@ -13,6 +13,7 @@ button works.
 | `?view=meta[&format=modern][&days=30]` | Metagame tab | `renderMeta()` |
 | `?view=deck&format=…&days=…&deck=<name>[&u=1][&list=N]` | One deck | `renderDeck()`, `drawDeck()` |
 | `?view=prices[&market=us\|eu][&win=1\|7\|30][&dir=up\|down]` | Price movers | `renderMovers()` |
+| `?view=import[&list=<a deck list>]` | Deck price page (paste a list) | `renderImport()`, `priceImport()`, `drawImport()` |
 
 Adding a view: a branch in `routeFromUrl()` and `applyRoute()`, a `<div id="…View">` in the
 HTML, a line in `showView()`, a tab or link, share tags in `worker.js` `shareTags()`, and checks
@@ -100,10 +101,53 @@ and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-lan
 6+). Each card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list
 view).
 
+## Deck price page (paste a list)
+
+`?view=import` (`#importView`): people paste a deck list and see what it costs. It belongs to the
+price tab (the tab bar marks 価格 while it is open; the owner moved it there from the metagame tab,
+2026-10-16). Ways in: the デッキの価格を調べる button in the price tab's bar (`.imp-open`,
+`a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the shown list there
+(with the deck's name) so cards can be swapped and the price follows.
+
+- **Reading the list** (`parseDeckText()`): one card per line. Section headings as MTG Arena
+  (English and Japanese client), Magic Online and deck sites write them (`IMPORT_PARTS`:
+  Deck/デッキ, Sideboard/サイドボード, Commander/統率者, Companion/相棒, About + `Name …` for the
+  deck's name; maybeboard and tokens are skipped). Without headings, a blank line after cards
+  starts the sideboard (Magic Online), unless the list has card-type headings
+  (`IMPORT_TYPE_HEAD`, "Creatures (16)"), and `SB:` lines are sideboard too. Counts as `4`,
+  `4x`, `x4` after the name, `4枚`, full-width digits, or none (one copy). `cleanImportName()`
+  drops the set and number (`(M10) 146`), foil marks, `[tags]`, and reads `Fire/Ice` as
+  `Fire // Ice`. At most `IMPORT_MAX_LINES` lines.
+- **Finding the cards** (`importRow()`): English name (`rowByEnglishName()`), Japanese name
+  (also older names and front faces), or either without punctuation or in the other kana
+  (`nameKey()`). Basic lands always count (`IMPORT_BASICS`), and a card too new for the database
+  is found by its English name in the price file (`importCheapName()`). `readImport()` adds up
+  the same card on several lines and doesn't count Arena's companion twice. Lines not found are
+  listed with up to three guesses (`importGuesses()`: the name suggestions, else names a few
+  letters away with `editDistance()`); picking one rewrites that line, keeping its count.
+- **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
+  worked out" above), with lines not found counted as missing (so the total reads 「〜」).
+  Arena wildcards show when every card is on Arena. Each card shows the price of one copy, as
+  on the deck pages; then the mana curve (`deckCurveHtml()`). (A breakdown naming each card's
+  cheapest printing was tried and left out at the owner's request, 2026-10-16.)
+- **晴れる屋で買う** (`.imp-buy`): a plain link to Hareruya's "buy from a card list" page
+  (`HARERUYA_BULK`; Hareruya allows links only, CLAUDE.md rule 3). The same tap copies the whole
+  deck as "4 Card Name" lines in English names, sideboard included, the same card added up
+  (`hareruyaText()`, copied at once inside the tap by `copyTextNow()` so the link still opens),
+  and a line says to paste it there.
+- **Export** (`importListText()`): Arena or MTGO text and the .txt file in English names, and a
+  link that carries the list (`importShareUrl()`, `?view=import&list=`); opening such a link
+  puts the list in the box and makes the address plain again.
+- The box is priced as people type (`priceImport()`, 350 ms after the last key), first from the
+  database, then with prices, then with pictures (`importState`, cached per language and name).
+  There is no "price it" button (the owner found it pointless, 2026-10-16). The text is kept in
+  the browser only (`IMPORT_SAVE_KEY`); 消す clears it.
+
 ## Export (MTG Arena / Magic Online)
 
 `deckExportText(list, kind)` writes the shown list in Arena format (`Deck` / `Sideboard`
-headings) or MTGO format (main deck, blank line, sideboard). `exportName()` shortens two-part
+headings) or MTGO format (main deck, blank line, sideboard). The menu opens right-aligned under
+its button; `fitExportMenu()` moves it over where that would run off the screen (phones). `exportName()` shortens two-part
 names to the front face, except split cards and Rooms, which keep `A // B`. It can be copied
 (`copyText()`) or saved as a file (`saveTextFile()`).
 
