@@ -44,9 +44,12 @@ WHAT VERSION 2 FIXES
    site's advanced search can filter by format.
 
 8. (2.3) Every rarity a card was printed at: the "rarities" field (c u r m s b)
-   lists the rarities of its English and Japanese paper printings, promos and
-   Secret Lair included, so the rarity filter finds a card by any of them, as
-   Scryfall's r: does. "rarity" stays the rarity of the printing shown.
+   lists the rarities of its paper printings, promos and Secret Lair included,
+   so the rarity filter finds a card by any of them, as Scryfall's r: does.
+   Like Scryfall, it counts the English printing, or the printing's own
+   language where there is no English one at that set and number
+   (Renaissance, Japanese-only promos, Phyrexian). "rarity" stays the rarity
+   of the printing shown.
 
 USAGE
 -----
@@ -240,7 +243,7 @@ def picture_rank(card):
 class CardEntry:
     """Everything collected for one oracle card across all its printings."""
     __slots__ = ("en", "ja", "ja_pic", "ja_text", "ja_names", "first_released",
-                 "rarities", "other_rarities")
+                 "rarities", "en_numbers", "other_rarities")
 
     def __init__(self):
         self.en = None          # best English printing
@@ -249,8 +252,9 @@ class CardEntry:
         self.ja_text = None     # best Japanese printing with Japanese rules text
         self.ja_names = set()   # every Japanese name seen
         self.first_released = None
-        self.rarities = set()        # rarities of its English and Japanese printings
-        self.other_rarities = set()  # of other languages' printings, used when there are none
+        self.rarities = set()        # rarities of its English printings
+        self.en_numbers = set()      # (set, number) of its English printings
+        self.other_rarities = {}     # (set, number) -> rarities of other languages' printings
 
     def add(self, card):
         released = card.get("released_at", "")
@@ -258,13 +262,19 @@ class CardEntry:
             self.first_released = released
 
         lang = card.get("lang")
-        # Scryfall's r: counts English printings; some old Italian and Portuguese
-        # printings carry a rarity no English one has, so other languages count only
-        # for cards printed in neither English nor Japanese.
-        if card.get("rarity"):
-            (self.rarities if lang in ("en", "ja") else self.other_rarities).add(card["rarity"])
+        # Scryfall's r: looks at the English printing, or the printing's own language
+        # where that set and number has no English one: some Italian and Portuguese
+        # printings carry a rarity their English one doesn't.
+        number = (card.get("set"), card.get("collector_number"))
+        if lang != "en":
+            self.other_rarities.setdefault(number, set()).add(card.get("rarity"))
         if lang == "en":
-            if self.en is None or picture_rank(card) > picture_rank(self.en):
+            self.en_numbers.add(number)
+            self.rarities.add(card.get("rarity"))
+            # an English printing always replaces another language's kept as a fallback
+            # (Italian Legends printings used to stay, ranked level with the English)
+            if (self.en is None or self.en.get("lang") != "en"
+                    or picture_rank(card) > picture_rank(self.en)):
                 self.en = card
         elif lang == "ja":
             name_ja = joined(card, "printed_name")
@@ -281,6 +291,14 @@ class CardEntry:
         elif self.en is None and self.ja is None:
             # card that only exists in some other language - keep as a fallback
             self.en = card
+
+    def all_rarities(self, shown):
+        """Letters of every rarity counted for the card, the shown printing's included."""
+        found = set(self.rarities) | {shown}
+        for number, rarities in self.other_rarities.items():
+            if number not in self.en_numbers:
+                found |= rarities
+        return "".join(letter for rarity, letter in RARITY_LETTERS if rarity in found)
 
     def to_row(self):
         base = self.ja or self.en
@@ -309,9 +327,7 @@ class CardEntry:
             "released_at": self.first_released or "",
             "alt_names_ja": "|".join(sorted(n for n in self.ja_names if n != name_ja)),
             "layout": layout_of(en),
-            "rarities": "".join(letter for rarity, letter in RARITY_LETTERS
-                                if rarity in (self.rarities or self.other_rarities)
-                                or rarity == (pic.get("rarity", "") or base.get("rarity", ""))),
+            "rarities": self.all_rarities(pic.get("rarity", "") or base.get("rarity", "")),
             "legal": "".join(code for fmt, code in LEGAL_CODES
                              if ((en.get("legalities") or base.get("legalities") or {}).get(fmt)) in ("legal", "restricted")),
         }

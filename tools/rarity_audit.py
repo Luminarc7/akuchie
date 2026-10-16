@@ -87,6 +87,8 @@ shown = {}                                # printing id shown by the DB -> facts
 what = collections.defaultdict(set)       # oid -> set types, promo types, stamps of kept printings
 entries = {}
 scanned = 0
+debug = []
+DEBUG_NAMES = set(json.load(open(os.path.join(os.path.dirname(__file__), 'debug_names.json'))))
 for card in B.iter_cards(url, is_jsonl):
     scanned += 1
     oid = B.oracle_id_of(card)
@@ -102,6 +104,9 @@ for card in B.iter_cards(url, is_jsonl):
         kind = 'kept_special' if special else 'kept'
     r = card.get('rarity') or ''
     rar[oid].setdefault(r, {}).setdefault(kind, f"{card.get('set')}/{card.get('collector_number')}/{card.get('lang')}")
+    if card.get('name') in DEBUG_NAMES or (card.get('name') or '').split(' // ')[0] in DEBUG_NAMES:
+        debug.append({k: card.get(k) for k in ('name', 'set', 'set_type', 'collector_number', 'lang', 'rarity', 'promo',
+                                                'image_status', 'released_at', 'digital', 'printed_name', 'id')})
     if card.get('id') in db_ids:
         shown[card['id']] = {'rarity': r, 'set': card.get('set'), 'set_type': card.get('set_type'),
                              'lang': card.get('lang'), 'promo': bool(card.get('promo')), 'oid': oid}
@@ -112,6 +117,7 @@ for card in B.iter_cards(url, is_jsonl):
         entries.setdefault(oid, B.CardEntry()).add(card)
 print('scanned', scanned, 'cards', len(rar), flush=True)
 
+json.dump(debug, open(os.path.join(out, 'debug.json'), 'w'), ensure_ascii=False, indent=0)
 with gzip.open(os.path.join(out, 'rarities.json.gz'), 'wt', encoding='utf-8') as f:
     json.dump({'rar': rar, 'names': names, 'shown': shown, 'what': {o: sorted(v) for o, v in what.items()}}, f, ensure_ascii=False)
 
