@@ -1260,8 +1260,11 @@
   /* wide screens: its own box right of the price movers bar, the two staying under the top bar together;
      narrower, the wrapper steps aside so the bar sticks alone and the button sits below it */
   .mv-top { display: contents; }
+  /* the dates and count sit under the price movers box, so the box is one row as tall as the button */
+  #moverSummary { margin: -2px 4px 10px; font-size: 12.5px; }
+  #moverSummary:empty { display: none; }
   @media (min-width: 761px) {
-    .mv-top { position: sticky; top: var(--stick-top, 0px); z-index: 30; display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .mv-top { position: sticky; top: var(--stick-top, 0px); z-index: 30; display: flex; gap: 12px; align-items: stretch; margin-bottom: 12px; }
     .mv-top > .meta-bar { position: relative; top: auto; flex: 1 1 auto; min-width: 0; margin: 0; }
     .mv-top > .imp-open { flex: 0 0 auto; margin: 0; gap: 10px; }
     .mv-top > .imp-open .imp-open-go { margin-left: auto; }
@@ -1917,7 +1920,6 @@
         <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
       </div>
     </div>
-    <p class="result-count" id="moverSummary"></p>
   </div>
   <a class="imp-open" href="?view=import" data-import="1">
     <svg class="imp-open-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
@@ -1925,6 +1927,7 @@
     <span class="imp-open-go" aria-hidden="true">→</span>
   </a>
   </div>
+  <p class="result-count" id="moverSummary"></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>

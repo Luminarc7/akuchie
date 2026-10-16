@@ -2404,10 +2404,15 @@ with sync_playwright() as p:
     for url, label in ((SITE + "?view=meta", "metagame"), (SITE + "?view=prices", "prices")):
         page.goto(url)
         view = "#metaView" if label == "metagame" else "#pricesView"
-        page.wait_for_selector(f"{view} .meta-bar .result-count:not(:empty)")
         bar = page.locator(f"{view} .meta-bar")
-        check(f"{label}: the header and its numbers in one box", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 1
-              and page.locator(f"{view} > .result-count").count() == 0)
+        if label == "metagame":
+            page.wait_for_selector(f"{view} .meta-bar .result-count:not(:empty)")
+            check(f"{label}: the header and its numbers in one box", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 1
+                  and page.locator(f"{view} > .result-count").count() == 0)
+        else:   # the owner moved the price movers' dates out of the box, so it is one row as tall as the deck price button
+            page.wait_for_selector("#moverSummary:not(:empty)")
+            check(f"{label}: the header box holds the toggles, the dates sit under it", bar.count() == 1 and bar.locator(".meta-head").count() == 1 and bar.locator(".result-count").count() == 0
+                  and page.locator(f"{view} > #moverSummary").count() == 1)
         page.evaluate(f"document.querySelector('{view}').insertAdjacentHTML('beforeend', '<div class=test-spacer style=height:2400px></div>')")   # a long list, like the real data
         page.evaluate("window.scrollTo(0, 600)"); page.wait_for_timeout(250)
         tb = page.evaluate("document.querySelector('.topbar').getBoundingClientRect().bottom")
@@ -3181,8 +3186,10 @@ with sync_playwright() as p:
           page.locator("#pricesView .imp-open b").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import"
           and page.locator("#pricesView .meta-bar .imp-open").count() == 0 and ob["y"] + ob["height"] <= up["y"] and ob["height"] >= toggle["height"] * 1.5, (ob, toggle, up))
     bar = page.locator("#pricesView .meta-bar").bounding_box()
-    check("price tab, desktop: the deck price button sits right of a shorter price movers bar, not taller than it",
-          ob["x"] >= bar["x"] + bar["width"] and ob["y"] >= bar["y"] and ob["y"] + ob["height"] <= bar["y"] + bar["height"] and ob["height"] <= 52 and no_hscroll(), (ob, bar))
+    summ = page.locator("#moverSummary").bounding_box()
+    check("price tab, desktop: the deck price button sits right of a shorter price movers bar, the same height, the dates below both",
+          ob["x"] >= bar["x"] + bar["width"] and abs(ob["y"] - bar["y"]) < 1 and abs(ob["height"] - bar["height"]) < 1 and ob["height"] <= 62
+          and page.locator("#pricesView .meta-bar #moverSummary").count() == 0 and summ["y"] >= bar["y"] + bar["height"] and no_hscroll(), (ob, bar, summ))
     page.mouse.wheel(0, 400); page.wait_for_timeout(300)
     ob2 = page.locator("#pricesView .imp-open").bounding_box(); bar2 = page.locator("#pricesView .meta-bar").bounding_box()
     check("price tab, desktop: the bar and the deck price button stay under the top bar together when scrolling", abs((ob2["y"] - bar2["y"]) - (ob["y"] - bar["y"])) < 1 and bar2["y"] < bar["y"], (ob2, bar2, bar))
