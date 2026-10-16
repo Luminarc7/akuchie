@@ -231,13 +231,21 @@ def printing_rank(card):
 IMAGE_QUALITY = {"highres_scan": 3, "lowres": 2, "placeholder": 1, "missing": 0}
 
 
+# Frame treatments of a variant printing (showcase, borderless...).
+VARIANT_FRAMES = {"showcase", "extendedart", "inverted", "etched"}
+
+
 def picture_rank(card):
     """Sort key for choosing the printing whose picture is shown (higher is
     better): a real scan first, then the usual printing preferences, a sharp
-    scan over a low-resolution one, then newest."""
+    scan over a low-resolution one, then newest; when all that is level, the
+    ordinary frame over a showcase or borderless variant (Clarion Conqueror's
+    #5, not #400)."""
     quality = IMAGE_QUALITY.get(card.get("image_status"), 1)
     regular, normal, released = printing_rank(card)
-    return (1 if quality >= 2 else 0, regular, normal, quality, released)
+    plain = not (card.get("full_art") or card.get("border_color") == "borderless"
+                 or VARIANT_FRAMES & set(card.get("frame_effects") or []))
+    return (1 if quality >= 2 else 0, regular, normal, quality, released, plain)
 
 
 class CardEntry:
