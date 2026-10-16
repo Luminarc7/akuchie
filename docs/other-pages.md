@@ -30,14 +30,42 @@ in `dev/tests/e2e.py`.
 | Three effects, each with a card that has it, and slang examples | `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHeroExample()` |
 | Price risers box | `renderHomeMovers()` (from `movers.json`) |
 | Top decks box | `renderHomeMeta()`, `HOME_META_FORMATS` (from `meta.json`) |
+| Rakuten Books box (Secret Lair / ブースターBOX tabs) | `renderHomeShop()`, `#homeShop` (from `worker.js` `/shop/rakuten`; see [Shops](#shops-rakuten-books-and-amazon)) |
 | Random cards below | `loadRandomCards()` (`RANDOM_COUNT`), from the local database, or Scryfall's `/cards/random` without it |
 
 ## Sets
 
 The set list comes from Scryfall's `/sets` (paper sets with cards, newest first), grouped by
 type (`SET_GROUPS`) and filterable. Japanese set names are in `SET_NAME_JA`, a hand-made list:
-add new sets there when they come out. One set's cards come from a Scryfall search
+add new sets there when they come out (the Rakuten box search on set pages uses it too). One set's cards come from a Scryfall search
 (`setSearchUrl()`), Japanese printings when `lang=ja`.
+
+### Shops: Rakuten Books and Amazon
+
+Things to buy, with affiliate links once the owner has the IDs ("shops" section of
+`index.html`).
+
+- **Where:** the home page's Rakuten Books box (`renderHomeShop()`: four Secret Lair products or
+  booster boxes, newest first, with price, 予約受付中 / 在庫あり, release date, NEW for the last
+  two weeks), and a "このセットのBOXを買う" strip on set pages (`renderSetShop()`, `#setShop`)
+  for sets in `SHOP_SET_TYPES` released in the last three years or upcoming. Not in
+  lightweight mode.
+- **Products come from Rakuten's API**, asked by `worker.js` (`/shop/rakuten`, see
+  [hosting.md](hosting.md#workerjs)) and read by `loadShopItems()`. A set's boxes are searched by
+  its `SET_NAME_JA` name (Rakuten's titles are Japanese), so a set missing from that list finds
+  nothing and falls back to a search link. Without the worker (GitHub Pages, local tests) or
+  before Rakuten's keys are set, each place shows a Rakuten Books search link instead
+  (`rakutenSearchUrl()`).
+- **Amazon** has no product list (its API needs sales first): set pages get an Amazon search link
+  for the set's boxes (`amazonSearchUrl()`).
+- **Rakuten's rules:** the parts made from Rakuten's API link only to Rakuten and carry the
+  credit `RAKUTEN_CREDIT` unchanged; Amazon sits in a separate part (`.set-shop-part.amazon`).
+- **Affiliate IDs:** `AFFILIATE` (`rakuten`, `amazon`). Both are public by nature, so they are
+  in the page, not secrets. Empty = plain links. Set, links get `rel="sponsored"` and a "PR" mark
+  (Japan's stealth-marketing rules), Rakuten links become Rakuten Affiliate links
+  (`rakutenLink()`, or the API's own `affiliateUrl`), Amazon links get `&tag=`, and the footer
+  switches to `footer.privacy.aff` (says the PR links are affiliate ads) and shows Amazon's
+  required line `footer.amazon`.
 
 ## Metagame tab
 

@@ -59,6 +59,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Add a new page (`?view=…`) | `routeFromUrl()`, `applyRoute()`, `showView()`, a `<div id="…View">` in the HTML; link previews in `worker.js` `shareTags()` |
 | Change what link previews (LINE, X…) show | `worker.js`, `shareTags()` |
 | Change the footer | `<footer class="attribution">` in the HTML (keep the no-tracking promise true) |
+| Add the Rakuten / Amazon affiliate IDs, or change the shop box | `AFFILIATE`; `renderHomeShop()`, `renderSetShop()`; the Worker's `rakutenItems()`. See [other-pages.md](other-pages.md#shops-rakuten-books-and-amazon) |
 | Change the app icon or name | `icons/`, `manifest.webmanifest`, `tools/make_icons.py` |
 | Change price-mover thresholds | warujie-prices `build_prices.py`: `MIN_PRICE_CENTS`, `MIN_CHANGE_CENTS`, `WINDOWS` |
 | Change the metagame numbers | `build_meta.py` (this repo); the tab itself is "metagame tab" in `index.html` |

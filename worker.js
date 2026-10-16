@@ -11,10 +11,13 @@
 // - /ja_cards.json, the card database: sent brotli-compressed (ja_cards.json.br, made
 //   at deploy by tools/brotli_db.mjs, about half the size of the .gz), or as the .gz
 //   to a browser without brotli. The browser unpacks either one itself.
+// - /shop/rakuten: Secret Lairs and booster boxes on sale at Rakuten Books (楽天ブックス),
+//   asked from Rakuten's API here (the keys are Cloudflare secrets) and kept an hour.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/ja_cards.json') return cardDatabase(request, env, url);
+    if (url.pathname === '/shop/rakuten') return rakutenItems(env, url);
     let res = await env.ASSETS.fetch(request);
     const type = res.headers.get('Content-Type') || '';
     if (!type.startsWith('text/html')) return res;
@@ -58,6 +61,63 @@ async function cardDatabase(request, env, url) {
     return new Response(res.body, { status: res.status, statusText: res.statusText, headers, encodeBody: 'manual' });
   }
   return new Response('not found', { status: 404 });
+}
+
+// ---- Rakuten Books (楽天ブックス): Secret Lairs and booster boxes for sale ---------------------
+// GET /shop/rakuten?kind=sl                  Secret Lair products, newest first
+// GET /shop/rakuten?kind=box[&set=<name>]    booster boxes (of one set, by its Japanese name)
+//     [&aff=<Rakuten affiliate ID>]          links come back as Rakuten Affiliate links
+// Answers { ok, items: [{ title, price, url, image, date, avail }] }, or ok: false with a
+// reason ("not-configured" until the two secrets RAKUTEN_APP_ID and RAKUTEN_ACCESS_KEY are set
+// in Cloudflare). Only these fixed searches can be asked for, so nobody can use our API quota
+// for anything else, and each answer is kept an hour so Rakuten is asked rarely.
+const RAKUTEN_API = 'https://openapi.rakuten.co.jp/services/api/BooksTotal/Search/20170404';
+const RAKUTEN_SITE = 'https://warujie.jp/';   // the site registered with the app (its "allowed website")
+const RAKUTEN_HOSTS = /^https:\/\/(books\.rakuten\.co\.jp|hb\.afl\.rakuten\.co\.jp|thumbnail\.image\.rakuten\.co\.jp)\//;
+async function rakutenItems(env, url) {
+  const answer = (obj, status = 200, maxAge = 600) => new Response(JSON.stringify(obj), {
+    status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${maxAge}` },
+  });
+  const p = url.searchParams;
+  const kind = p.get('kind');
+  const set = clip(p.get('set'), 40).replace(/[^\p{L}\p{N}\s:：・'’&!-]/gu, '');
+  const aff = /^[0-9a-f.]{8,80}$/i.test(p.get('aff') || '') ? p.get('aff') : '';
+  if (kind !== 'sl' && kind !== 'box') return answer({ ok: false, reason: 'bad-request', items: [] }, 400);
+  if (!env.RAKUTEN_APP_ID || !env.RAKUTEN_ACCESS_KEY) return answer({ ok: false, reason: 'not-configured', items: [] }, 200, 300);
+  const api = new URL(RAKUTEN_API);
+  api.search = new URLSearchParams({
+    applicationId: env.RAKUTEN_APP_ID, accessKey: env.RAKUTEN_ACCESS_KEY, format: 'json', formatVersion: '2',
+    keyword: kind === 'sl' ? 'ギャザリング Secret Lair' : `ギャザリング ${set} ブースター`.replace(/\s+/g, ' '),
+    booksGenreId: '006', sort: '-releaseDate', hits: '30', ...(aff ? { affiliateId: aff } : {}),
+  });
+  let data;
+  try {
+    const res = await fetch(api, {
+      headers: { Referer: RAKUTEN_SITE, Origin: RAKUTEN_SITE.slice(0, -1), 'User-Agent': 'Warujie/1.0 (+https://warujie.jp)', Accept: 'application/json' },
+      cf: { cacheEverything: true, cacheTtlByStatus: { '200-299': 3600, '404': 3600 } },
+    });
+    if (res.status === 404) return answer({ ok: true, items: [] }, 200, 1800);
+    if (!res.ok) return answer({ ok: false, reason: `rakuten-${res.status}`, items: [] }, 200, 120);
+    data = await res.json();
+  } catch (err) {
+    return answer({ ok: false, reason: 'rakuten-unreachable', items: [] }, 200, 120);
+  }
+  const items = [];
+  for (const raw of data.Items || data.items || []) {
+    const it = raw.Item || raw.item || raw;
+    const title = String(it.title || '');
+    const price = Number(it.itemPrice) || 0;
+    const link = String(it.affiliateUrl || it.itemUrl || '');
+    if (!/ギャザリング|magic/i.test(title) || !price || !RAKUTEN_HOSTS.test(link)) continue;
+    // a box, not one pack, a bundle or a deck (box titles often don't say "BOX")
+    if (kind === 'box' && (!/ブースター|BOX|ボックス/i.test(title) || /バンドル|デッキ|1パック|単品/.test(title) || price < 8000)) continue;
+    if (kind === 'sl' && !/secret\s*lair|シークレット・?レイヤー/i.test(title)) continue;
+    const image = String(it.largeImageUrl || it.mediumImageUrl || '');
+    items.push({ title, price, url: link, image: RAKUTEN_HOSTS.test(image) ? image : '',
+                 date: String(it.salesDate || ''), avail: String(it.availability || '') });
+    if (items.length >= 12) break;
+  }
+  return answer({ ok: true, items }, 200, 1800);
 }
 
 // ---- link previews -------------------------------------------------------------------------

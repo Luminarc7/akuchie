@@ -22,7 +22,7 @@ grep -n -- '// ---- ' index.html
 | Element | What it is |
 |---|---|
 | `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), language (`#langBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
-| `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
+| `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`, Rakuten Books `#homeShop`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
 | `#cardView` | The card page; everything is drawn into `#cardViewCard` |
 | `#setsView` | Set list (`#setListPanel`) and one set (`#setDetailPanel`, `#setGrid`) |
 | `#metaView` | The metagame tab |
@@ -99,6 +99,7 @@ In file order. "Key names" are what to search for.
 | `card name suggestions under the search boxes…` | The dropdown of card names while typing. | `nameSuggestions()`, `attachNameSuggest()` |
 | `install as an app` | Registers `sw.js` (HTTPS only, not on github.io) and shows the install button in the footer. | `installButton`, `#appInstall` |
 | `home: …` (three sections) | Example searches, three effects to try, price risers and top decks on the home page. | `HERO_TRY`, `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHomeMovers()`, `renderHomeMeta()` |
+| `shops: …` | Rakuten Books products on the home page and set pages, Amazon search links, affiliate IDs, the footer's affiliate wording. | `AFFILIATE`, `loadShopItems()`, `renderHomeShop()`, `renderSetShop()`, `rakutenLink()`, `amazonSearchUrl()` |
 | `phones: the theme buttons sit in a small menu` | The phone menu. | `setMenu()` |
 | `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
 | `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
