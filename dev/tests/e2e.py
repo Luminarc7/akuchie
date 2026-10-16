@@ -1295,8 +1295,8 @@ with sync_playwright() as p:
     for w in (390, 360):
         page.set_viewport_size({"width": w, "height": 800}); page.wait_for_timeout(200)
         ob = page.locator("#pricesView .imp-open").bounding_box(); bar = page.locator("#pricesView .meta-bar").bounding_box(); up = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box()
-        check(f"phone {w}px: the deck price button sits between the bar and the winners, full width", no_hscroll() and ob["y"] >= bar["y"] + bar["height"] and ob["y"] + ob["height"] <= up["y"]
-              and abs(ob["x"] - bar["x"]) < 1 and abs(ob["width"] - bar["width"]) < 1, (ob, bar, up))
+        check(f"phone {w}px: the deck price button sits between the bar and the winners, full width and thin", no_hscroll() and ob["y"] >= bar["y"] + bar["height"] and ob["y"] + ob["height"] <= up["y"]
+              and abs(ob["x"] - bar["x"]) < 1 and abs(ob["width"] - bar["width"]) < 1 and ob["height"] <= 52, (ob, bar, up))
     if SHOTS: page.screenshot(path="prices_phone.png", full_page=True)
     page.set_viewport_size({"width": 1280, "height": 900})
     PRICE_SITE["dir"] = PRICES_NOEU
@@ -3180,6 +3180,13 @@ with sync_playwright() as p:
     check("price tab: a デッキの価格を調べる button of its own, out of the bar, above the winners, bigger than the toggles",
           page.locator("#pricesView .imp-open b").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import"
           and page.locator("#pricesView .meta-bar .imp-open").count() == 0 and ob["y"] + ob["height"] <= up["y"] and ob["height"] >= toggle["height"] * 1.5, (ob, toggle, up))
+    bar = page.locator("#pricesView .meta-bar").bounding_box()
+    check("price tab, desktop: the deck price button sits right of a shorter price movers bar, not taller than it",
+          ob["x"] >= bar["x"] + bar["width"] and ob["y"] >= bar["y"] and ob["y"] + ob["height"] <= bar["y"] + bar["height"] and ob["height"] <= 52 and no_hscroll(), (ob, bar))
+    page.mouse.wheel(0, 400); page.wait_for_timeout(300)
+    ob2 = page.locator("#pricesView .imp-open").bounding_box(); bar2 = page.locator("#pricesView .meta-bar").bounding_box()
+    check("price tab, desktop: the bar and the deck price button stay under the top bar together when scrolling", abs((ob2["y"] - bar2["y"]) - (ob["y"] - bar["y"])) < 1 and bar2["y"] < bar["y"], (ob2, bar2, bar))
+    page.mouse.wheel(0, -400); page.wait_for_timeout(200)
     if SHOTS: page.screenshot(path="prices_deck_button.png", full_page=False)
     page.click("#pricesView .imp-open"); page.wait_for_selector("#importView .imp-empty")
     check("price tab: the button opens the deck price page, and the tab bar marks 価格",

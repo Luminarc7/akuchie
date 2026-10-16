@@ -1249,15 +1249,24 @@
   /* the deck price page: paste a list, see what it costs */
   /* the price tab's way in to the deck price page */
   /* a button of its own between the price movers bar and the lists, bigger and squarer than the bar's toggles */
-  .imp-open { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 12px; padding: 11px 18px 11px 14px; border-radius: 10px;
+  .imp-open { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 12px; padding: 7px 16px 7px 12px; border-radius: 10px;
     background: var(--accent); color: var(--accent-ink); text-decoration: none; box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.6); }
   .imp-open:hover { filter: brightness(1.07); }
-  .imp-open-ic { flex: none; width: 26px; height: 26px; }
+  .imp-open-ic { flex: none; width: 24px; height: 24px; }
   .imp-open-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .imp-open-txt b { font-size: 15.5px; font-weight: 800; line-height: 1.35; }
-  .imp-open-txt small { font-size: 12px; font-weight: 500; line-height: 1.45; opacity: 0.85; }
+  .imp-open-txt b { font-size: 15px; font-weight: 800; line-height: 1.3; }
+  .imp-open-txt small { font-size: 11.5px; font-weight: 500; line-height: 1.35; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .imp-open-go { flex: none; margin-left: 6px; font-size: 18px; font-weight: 800; }
   @media (max-width: 640px) { .imp-open { display: flex; } .imp-open-go { margin-left: auto; } }
+  /* wide screens: its own box right of the price movers bar, the two staying under the top bar together;
+     narrower, the wrapper steps aside so the bar sticks alone and the button sits below it */
+  .mv-top { display: contents; }
+  @media (min-width: 761px) {
+    .mv-top { position: sticky; top: var(--stick-top, 0px); z-index: 30; display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .mv-top > .meta-bar { position: relative; top: auto; flex: 1 1 auto; min-width: 0; margin: 0; }
+    .mv-top > .imp-open { flex: 0 0 auto; margin: 0; gap: 10px; }
+    .mv-top > .imp-open .imp-open-go { margin-left: auto; }
+  }
   .deck-edit, .imp-buy { text-decoration: none; }
   .imp-buy-note { margin: 2px 0 0; font-size: 12.5px; color: var(--ok); font-weight: 700; }
   .deck-export-menu { max-width: calc(100vw - 16px); }
@@ -1900,6 +1909,7 @@
 </div>
 
 <div id="pricesView" class="wrap" style="display:none;">
+  <div class="mv-top">
   <div class="meta-bar">
     <div class="meta-head">
       <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
@@ -1912,9 +1922,10 @@
   </div>
   <a class="imp-open" href="?view=import" data-import="1">
     <svg class="imp-open-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-    <span class="imp-open-txt"><b data-i18n="imp.open">デッキの価格を調べる</b><small data-i18n="imp.open.sub">デッキリストを貼り付けると、合計金額を円で出します</small></span>
+    <span class="imp-open-txt"><b data-i18n="imp.open">デッキの価格を調べる</b><small data-i18n="imp.open.sub">リストを貼り付けて合計を円で</small></span>
     <span class="imp-open-go" aria-hidden="true">→</span>
   </a>
+  </div>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -2173,7 +2184,7 @@ const STR = {
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
   'imp.open': ['デッキの価格を調べる', 'Price a deck list'],
-  'imp.open.sub': ['デッキリストを貼り付けると、合計金額を円で出します', 'Paste a deck list and see what it costs in yen'],
+  'imp.open.sub': ['リストを貼り付けて合計を円で', 'Paste a list, see the total in yen'],
   'deck.edit': ['編集して計算', 'Edit & price'],
   'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
   'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
