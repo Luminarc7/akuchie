@@ -139,7 +139,8 @@ swapped and the price follows. The tab bar marks メタゲーム while it is ope
   puts the list in the box and makes the address plain again.
 - The box is priced as people type (`priceImport()`, 350 ms after the last key), first from the
   database, then with prices, then with pictures (`importState`, cached per language and name).
-  The text is kept in the browser only (`IMPORT_SAVE_KEY`); 消す clears it.
+  There is no "price it" button (the owner found it pointless, 2026-10-16). The text is kept in
+  the browser only (`IMPORT_SAVE_KEY`); 消す clears it.
 
 ## Export (MTG Arena / Magic Online)
 

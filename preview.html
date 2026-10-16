@@ -1262,8 +1262,6 @@
     background: var(--field); color: var(--text); font-family: inherit; font-size: 14px; line-height: 1.65; }
   #importText:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   .imp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
-  .imp-go { height: 40px; padding: 0 22px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 15px; cursor: pointer; }
-  .imp-go:hover { filter: brightness(1.07); }
   .imp-actions .adv-btn { height: 40px; cursor: pointer; }
   .imp-saved { font-size: 11.5px; color: var(--muted); }
   #importBody { min-width: 0; }
@@ -1886,7 +1884,6 @@
       <label class="imp-label" for="importText" data-i18n="imp.label">デッキリスト</label>
       <textarea id="importText" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="4 稲妻&#10;4 Ragavan, Nimble Pilferer&#10;20 山&#10;&#10;サイドボード&#10;2 Pyroblast" data-i18n-ph="imp.ph"></textarea>
       <div class="imp-actions">
-        <button type="submit" class="imp-go" data-i18n="imp.go">価格を見る</button>
         <button type="button" class="adv-btn" id="importClear" data-i18n="imp.clear">消す</button>
         <span class="imp-saved" data-i18n="imp.saved">このブラウザにだけ保存されます</span>
       </div>
@@ -2162,7 +2159,6 @@ const STR = {
     'Paste a deck list to see what it costs in yen with each card’s cheapest printing. Lists from MTG Arena or Magic Online work, and so do typed lines like “4 Lightning Bolt”, with English or Japanese names.'],
   'imp.label': ['デッキリスト', 'Deck list'],
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
-  'imp.go': ['価格を見る', 'Price it'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
   'imp.cta': ['自分のデッキリストを貼り付けて価格を調べる →', 'Paste your own deck list and price it →'],
@@ -10539,7 +10535,7 @@ document.getElementById('importText').addEventListener('input', (e) => {
   clearTimeout(importTimer);
   importTimer = setTimeout(priceImport, 350);
 });
-document.getElementById('importForm').addEventListener('submit', (e) => { e.preventDefault(); clearTimeout(importTimer); priceImport(); });
+document.getElementById('importForm').addEventListener('submit', (e) => e.preventDefault());
 document.getElementById('importClear').addEventListener('click', () => {
   const ta = document.getElementById('importText');
   ta.value = '';
