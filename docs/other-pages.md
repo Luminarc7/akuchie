@@ -133,7 +133,8 @@ view).
 
 `?view=import` (`#importView`): people paste a deck list and see what it costs. It belongs to the
 price tab (the tab bar marks 価格 while it is open; the owner moved it there from the metagame tab,
-2026-10-16). Ways in: the デッキの価格を調べる button in the price tab's bar (`.imp-open`,
+2026-10-16). Ways in: the デッキの価格を調べる button between the price tab's bar and its lists (`.imp-open`,
+  bigger than the bar's toggles at the owner's request;
 `a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the shown list there
 (with the deck's name) so cards can be swapped and the price follows.
 
