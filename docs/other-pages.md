@@ -31,7 +31,7 @@ in `dev/tests/e2e.py`.
 | Three effects, each with a card that has it, and slang examples | `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHeroExample()` |
 | Price risers box | `renderHomeMovers()` (from `movers.json`) |
 | Top decks box | `renderHomeMeta()`, `HOME_META_FORMATS` (from `meta.json`) |
-| Rakuten Books box (Secret Lair / ブースターBOX tabs) | `renderHomeShop()`, `#homeShop` (from `worker.js` `/shop/rakuten`; see [Shops](#shops-rakuten-books-and-amazon)) |
+| Secret Lair and booster box boxes (Rakuten Books, sliding strips) | `renderHomeShop()`, `renderShopBox()`, `#homeShop`, `#homeBoxShop` (from `worker.js` `/shop/rakuten`; see [Shops](#shops-rakuten-books-and-amazon)) |
 | Random cards below | `loadRandomCards()` (`RANDOM_COUNT`), from the local database, or Scryfall's `/cards/random` without it |
 
 ## Sets
@@ -46,9 +46,13 @@ add new sets there when they come out (the Rakuten box search on set pages uses 
 Things to buy, with affiliate links once the owner has the IDs ("shops" section of
 `index.html`).
 
-- **Where:** the home page's Rakuten Books box (`renderHomeShop()`: four Secret Lair products or
-  booster boxes, newest first, with price, 予約受付中 / 在庫あり, release date, NEW for the last
-  two weeks), and a "このセットのBOXを買う" strip on set pages (`renderSetShop()`, `#setShop`)
+- **Where:** two home-page boxes the size of the price movers box, Secret Lair (`#homeShop`) and
+  booster boxes (`#homeBoxShop`), each drawn by `renderShopBox()`. Each is a sideways strip of
+  products (`shopCardHtml()`: big picture, 予約受付中 / NEW / 在庫あり on it, title, release
+  date, price), newest first, with ‹ › buttons. Like Rakuten's motion widget it moves on by itself
+  every `SHOP_MOTION_MS` (`startStripMotion()`), back to the start at the end; it stops under the
+  pointer or a finger, with focus, off screen, in a background tab, and never moves when the
+  visitor's system asks for reduced motion. Also a "このセットのBOXを買う" strip on set pages (`renderSetShop()`, `#setShop`)
   for sets in `SHOP_SET_TYPES` released in the last three years or upcoming. Not in
   lightweight mode.
 - **Products come from Rakuten's API**, asked by `worker.js` (`/shop/rakuten`, see
@@ -185,11 +189,12 @@ card, that they can export or save to other deckbuilding sites").
 
 - **Adding.** Every search result has a ☆ over its picture (`wantTogHtml()`, called from
   `cardTileHtml()`; at the end of the row in the text view, `textRowHtml()`): one tap adds the
-  card, another takes it out. The card page has a box of its own under the picture and language
-  buttons (`#cpWant` inside `.cp-art`, `wantCardHtml()`; the owner chose that place,
-  2026-10-16): ウォントリストに追加, then a − n枚 ＋ stepper and a trash can (`TRASH_SVG`) that
-  takes the card out. On phones, where the picture column is narrow, the trash can sits beside
-  the heading (CSS grid areas on `.cp-want`). When the picture is swapped for the English one,
+  card, another takes it out. The card page has one row of its own under the picture and language
+  buttons (`#cpWant` inside `.cp-art`, `wantCardHtml()`; the owner chose that place and asked for
+  it compact, 2026-10-16): as wide as the picture and as tall as the language buttons (28px, 26px
+  on phones, `--want-h`). It holds ☆ ウォントリストに追加 (ウォントに追加 on phones), or once the
+  card is in the list a − n枚 ＋ stepper and a trash can (`TRASH_SVG`) that takes it out. There is
+  no "already in the list" text. When the picture is swapped for the English one,
   the box is put back with the language buttons. A note at the bottom of the screen
   (`wantToast()`, `#wantToast`) confirms, with リストを見る after adding and 元に戻す after taking
   a card out. The ☆ sits inside the result's link, so one click listener on `document` in the
@@ -198,21 +203,24 @@ card, that they can export or save to other deckbuilding sites").
   works on any page.
 - **What is kept** (`wantEntryOf()`): one entry per card (oracle id, `wantKeyOf()`) with its
   English name, the number of copies (1–`WANT_MAX_COPIES`) and the printing it was added from
-  (id, set, collector number, language), at most `WANT_MAX` cards. Opening another printing's
-  page says which printing is in the list and offers この版にする, which switches it.
+  (id, set, collector number, language), at most `WANT_MAX` cards. Another printing's page shows
+  the same count; to switch printings, take the card out there and add it again.
 - **The top bar** has a ☆ button (`#wantBtn`) with the number of copies (`#wantN`); the word
   ウォント shows only on screens 1400px and wider. `refreshWant()` updates it, every ☆ on the
   page, the card page and the list page after each change, and when another tab changes the list
   (the `storage` event).
-- **The page** (`drawWant()`) has a リスト / 画像 switch beside 書き出す (`wantState.view`,
-  remembered as `WANT_VIEW_KEY`; owner's request 2026-10-16). 画像 shows the cards as pictures
+- **The page** (`drawWant()`) has one bar under the title, `.want-bar`, that stays under the top
+  bar while the list scrolls (`position: sticky` at `--stick-top`; owner's request 2026-10-16):
+  the total and a リスト / 画像 switch on the left (`wantState.view`, remembered as
+  `WANT_VIEW_KEY`), 晴れる屋で買う and 書き出す on the right (two rows on phones). 画像 shows the cards as pictures
   (`wantTileHtml()`, `.want-grid`, two a row on phones) with the name, printing, price and the
   − n ＋ buttons under each. リスト (the default) shows each card in a row with a small picture, its printing (`wantPrintLabel()`),
   that printing's price for one copy (`printingYen()`: the cheaper of TCGplayer and Cardmarket in
   yen, non-foil, else foil; the printings come from Scryfall's `/cards/collection` by id,
   `wantFetchPrintings()`) and the card's cheapest price (`cardYen()`, from `cheap.json.gz`) when
-  that is cheaper; a − n ＋ stepper (− on the last copy takes the card out, with undo). Two totals
-  (`wantCostHtml()`): いちばん安い版で (`deckCost()`) and 選んだ版で (the printings in the list).
+  that is cheaper; a − n ＋ stepper (− on the last copy takes the card out, with undo). One total
+  (`wantCostHtml()`): 選んだ版で, the printings in the list (the owner had the いちばん安い版で
+  total removed, 2026-10-16; each row's 最安 stays).
   全部消す needs a second tap within 4 seconds, and can be undone.
 - **Taking it elsewhere** (`wantText()`): MTG Arena (`Deck` heading) or Magic Online text, text
   with printings (`4 Card Name (MH3) 123`, which Moxfield and Archidekt read as that printing),

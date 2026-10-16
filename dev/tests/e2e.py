@@ -3422,45 +3422,80 @@ with sync_playwright() as p:
 
     # ---- shops: Secret Lairs and booster boxes at Rakuten Books, box links on set pages
     page.set_viewport_size({"width": 1280, "height": 900})
-    check("home: without the shop list (no worker, as on GitHub Pages) the Rakuten box offers a Rakuten Books search, plain (no affiliate, no PR)",
-          page.goto(SITE) and page.wait_for_selector("#homeShopBody .hs-empty a") and
-          page.locator("#homeShopBody .hs-empty a").get_attribute("href").startswith("https://books.rakuten.co.jp/search?sitem=") and
-          "&g=006" in page.locator("#homeShopBody .hs-empty a").get_attribute("href") and not page.locator("#homeShop .pr-badge").is_visible()
-          and "sponsored" not in page.locator("#homeShopBody .hs-empty a").get_attribute("rel"))
+    check("home: without the shop list (no worker, as on GitHub Pages) the Secret Lair box offers a Rakuten Books search, plain (no affiliate, no PR)",
+          page.goto(SITE) and page.wait_for_selector("#homeShop .hs-empty a") and
+          page.locator("#homeShop .hs-empty a").get_attribute("href").startswith("https://books.rakuten.co.jp/search?sitem=") and
+          "&g=006" in page.locator("#homeShop .hs-empty a").get_attribute("href") and not page.locator("#homeShop .pr-badge").is_visible()
+          and "sponsored" not in page.locator("#homeShop .hs-empty a").get_attribute("rel"))
     check("footer: no affiliate IDs, so it still says no ads, and no Amazon associate line",
           "広告はありません" in page.locator("#footPrivacy").inner_text() and not page.locator("#footAmazon").is_visible())
     SHOP_MODE["mode"] = "off"
-    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-empty a")
-    check("home: Rakuten keys not set up yet (worker answers not-configured): the same search link", "Secret Lair" in page.locator("#homeShopBody").inner_text())
+    page.goto(SITE); page.wait_for_selector("#homeShop .hs-empty a"); page.wait_for_selector("#homeBoxShop .hs-empty a")
+    check("home: Rakuten keys not set up yet (worker answers not-configured): search links in both boxes",
+          "Secret Lair" in page.locator("#homeShop").inner_text() and "ブースターBOX" in page.locator("#homeBoxShop").inner_text())
     SHOP_MODE["mode"] = "fixture"; SHOP_CALLS.clear()
-    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
-    items = page.locator("#homeShopBody .hs-item")
-    check("home: the Secret Lair tab shows four Rakuten Books products, newest first, only Rakuten links",
-          items.count() == 4 and "Autumn Encore" in items.nth(0).inner_text() and
-          all(items.nth(i).locator("a").get_attribute("href").startswith("https://books.rakuten.co.jp/rb/") for i in range(4)), items.count())
-    check("home: asked the worker for Secret Lairs, without an affiliate ID", SHOP_CALLS and SHOP_CALLS[0].get("kind") == ["sl"] and "aff" not in SHOP_CALLS[0], SHOP_CALLS)
-    first = items.nth(0).inner_text()
-    check("home: a product shows its price in yen, 予約受付中 and its release date", "6,600円" in first and "予約受付中" in first and "発売" in first, first)
+    page.goto(SITE); page.wait_for_selector("#homeShop .hs-card"); page.wait_for_selector("#homeBoxShop .hs-card")
+    cards = page.locator("#homeShop .hs-card")
+    check("home: the Secret Lair box shows every Secret Lair on sale (five), newest first, only Rakuten links",
+          cards.count() == 5 and "Autumn Encore" in cards.nth(0).inner_text() and
+          all(cards.nth(i).locator("a").get_attribute("href").startswith("https://books.rakuten.co.jp/rb/") for i in range(5)), cards.count())
+    check("home: asked the worker for Secret Lairs and for boxes, without an affiliate ID",
+          sorted(c.get("kind", [""])[0] for c in SHOP_CALLS) == ["box", "sl"] and all("aff" not in c and "set" not in c for c in SHOP_CALLS), SHOP_CALLS)
+    first = cards.nth(0).inner_text()
+    check("home: a product shows its price in yen, 予約受付中 on its picture and its release date",
+          "6,600円" in first and cards.nth(0).locator(".hs-pic .hs-badge").inner_text() == "予約受付中" and "発売" in first, first)
     check("home: something released in the last two weeks says NEW, older ones don't",
-          "NEW" in items.nth(1).inner_text() and "NEW" not in items.nth(3).inner_text() and "NEW" not in first)
-    check("home: products open in a new tab", items.nth(0).locator("a").get_attribute("target") == "_blank")
-    check("home: the Rakuten credit (required by Rakuten's API rules) is under the products",
-          page.locator("#homeShop .hs-credit a").get_attribute("href") == "https://developers.rakuten.com/" and "Supported by Rakuten Developers" in page.locator("#homeShop .hs-credit").inner_text())
-    check("home: no Amazon link inside the Rakuten box (Rakuten's rules)", page.locator("#homeShop a[href*='amazon']").count() == 0)
-    check("home: a product without a picture keeps its place", page.locator("#homeShopBody .hs-item").nth(2).locator(".hs-noimg").count() == 1)
-    page.click("#homeShopTabs .seg-btn[data-kind='box']"); page.wait_for_function("document.querySelector('#homeShopBody').textContent.includes('ローウィン')")
-    check("home: the ブースターBOX tab shows boxes", "17,867円" in page.locator("#homeShopBody").inner_text() and SHOP_CALLS[-1].get("kind") == ["box"] and "set" not in SHOP_CALLS[-1])
-    page.click("#langBtn"); page.wait_for_timeout(400)
-    check("home in English: the box's title and tabs", "On sale at Rakuten Books" in page.locator("#homeShop").inner_text() and "Booster boxes" in page.locator("#homeShopTabs").inner_text()
-          and "¥17,867" in page.locator("#homeShopBody").inner_text(), page.locator("#homeShop").inner_text()[:200])
+          "NEW" in cards.nth(1).inner_text() and "NEW" not in cards.nth(3).inner_text() and "NEW" not in first)
+    check("home: products open in a new tab", cards.nth(0).locator("a").get_attribute("target") == "_blank")
+    check("home: a product without a picture keeps its place", cards.nth(2).locator(".hs-pic.none").count() == 1)
+    box = lambda sel: page.evaluate(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), Math.round(r.top)]; }})()")
+    mv, sl, bx = box("#homeMovers"), box("#homeShop"), box("#homeBoxShop")
+    check("home, desktop: the Secret Lair box is the same width as the price movers box, beside the booster box box",
+          abs(mv[0] - sl[0]) <= 2 and abs(sl[0] - bx[0]) <= 2 and sl[2] == bx[2] and sl[2] > mv[2], (mv, sl, bx))
+    strip = "#homeShop .hs-strip"
+    sw = page.evaluate(f"(() => {{ const s = document.querySelector('{strip}'); return [s.scrollWidth, s.clientWidth, getComputedStyle(s).overflowX]; }})()")
+    check("home: the products sit in one sideways-scrolling row", sw[0] > sw[1] and sw[2] == "auto" and
+          len(set(page.evaluate(f"[...document.querySelectorAll('{strip} .hs-card')].map(c => Math.round(c.getBoundingClientRect().top))"))) == 1, sw)
+    page.evaluate(f"document.querySelector('{strip}').style.scrollBehavior = 'auto'")
+    page.click("#homeShop .hs-nav button[data-dir='1']"); page.wait_for_timeout(300)
+    x1 = page.evaluate(f"document.querySelector('{strip}').scrollLeft")
+    page.click("#homeShop .hs-nav button[data-dir='-1']"); page.wait_for_timeout(300)
+    check("home: › and ‹ move the row one product", x1 > 100 and page.evaluate(f"document.querySelector('{strip}').scrollLeft") < 5, x1)
+    page.mouse.move(0, 0); page.evaluate(f"document.querySelector('{strip}').scrollLeft = 0"); page.evaluate("document.activeElement && document.activeElement.blur()")
+    page.locator(strip).scroll_into_view_if_needed(); page.mouse.move(0, 0)
+    try:
+        page.wait_for_function(f"document.querySelector('{strip}').scrollLeft > 100", timeout=10000); moved = True
+    except Exception:
+        moved = False
+    check("home: the row moves on by itself, like Rakuten's motion widget", moved)
+    page.wait_for_function(f"document.querySelector('{strip}').scrollLeft < 5", timeout=10000)
+    check("home: at the end it goes back to the first product", True)
+    page.hover(strip); x0 = page.evaluate(f"document.querySelector('{strip}').scrollLeft"); page.wait_for_timeout(4800)
+    check("home: it stops while the pointer is on it", page.evaluate(f"document.querySelector('{strip}').scrollLeft") == x0)
+    page.mouse.move(0, 0)
+    check("home: the Rakuten credit (required by Rakuten's API rules) is under the products, small",
+          page.locator("#homeShop .hs-credit a").get_attribute("href") == "https://developers.rakuten.com/" and "Supported by Rakuten Developers" in page.locator("#homeShop .hs-credit").inner_text()
+          and page.evaluate("parseFloat(getComputedStyle(document.querySelector('#homeShop .hs-credit')).fontSize)") <= 11)
+    check("home: no Amazon link inside the Rakuten boxes (Rakuten's rules)", page.locator("#homeBoxes .home-shop a[href*='amazon']").count() == 0)
+    check("home: the booster box box shows boxes", "17,867円" in page.locator("#homeBoxShop").inner_text())
+    for theme_name in ("light", "dark"):
+        page.evaluate(f"document.documentElement.setAttribute('data-theme', '{theme_name}')"); page.wait_for_timeout(150)
+        bg = page.evaluate("getComputedStyle(document.querySelector('#homeShop')).backgroundColor")
+        tc = page.evaluate("getComputedStyle(document.querySelector('#homeShop .hs-title')).color")
+        lum = lambda c: sum(int(v) for v in re.findall(r"\d+", c)[:3]) / 3
+        check(f"home ({theme_name} theme): the Secret Lair box follows the theme, titles readable", abs(lum(bg) - lum(tc)) > 100, (bg, tc))
+        if SHOTS:
+            page.locator("#homeBoxes").screenshot(path=f"/tmp/shop-home-desktop-{theme_name}.png")
+    page.reload(); page.wait_for_selector("#homeShop .hs-card")
+    page.click("#langBtn"); page.wait_for_timeout(400); page.wait_for_selector("#homeShop .hs-card")
+    check("home in English: the boxes' titles", "Secret Lair on sale" in page.locator("#homeShop").inner_text() and "Booster boxes on sale" in page.locator("#homeBoxShop").inner_text()
+          and "¥17,867" in page.locator("#homeBoxShop").inner_text(), page.locator("#homeShop").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
-    page.set_viewport_size({"width": 390, "height": 844}); page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
-    check("phone: the Rakuten box fits, no sideways scroll", no_hscroll())
+    page.set_viewport_size({"width": 390, "height": 844}); page.goto(SITE); page.wait_for_selector("#homeShop .hs-card")
+    check("phone: the boxes fit, only the product row scrolls sideways", no_hscroll() and box("#homeShop")[0] <= 390)
     if SHOTS:
         page.locator("#homeShop").screenshot(path="/tmp/shop-home-phone.png")
     page.set_viewport_size({"width": 1280, "height": 900})
-    if SHOTS:
-        page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item"); page.locator("#homeBoxes").screenshot(path="/tmp/shop-home-desktop.png")
     SHOP_CALLS.clear()
     page.goto(SITE + "?set=xyz"); page.wait_for_selector("#setShop .rakuten .hs-item")
     check("set page (an expansion from the last three years): boxes from Rakuten Books, asked by the set's name",
@@ -3474,13 +3509,13 @@ with sync_playwright() as p:
     page.goto(SITE + "?set=mul"); page.wait_for_selector("#setGrid .card-tile")
     check("set page: a set not sold in boxes gets none", not page.locator("#setShop").is_visible())
     SHOP_MODE["aff"] = True; SHOP_CALLS.clear()
-    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
-    a0 = page.locator("#homeShopBody .hs-item a").nth(0)
+    page.goto(SITE); page.wait_for_selector("#homeShop .hs-card")
+    a0 = page.locator("#homeShop .hs-card a").nth(0)
     check("affiliate IDs set: the worker is asked with the Rakuten ID and its affiliate links are used as they are, marked PR and rel=sponsored",
           SHOP_CALLS[0].get("aff") == ["1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c"] and a0.get_attribute("href").startswith("https://hb.afl.rakuten.co.jp/hgc/1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c/")
           and "sponsored" in a0.get_attribute("rel") and page.locator("#homeShop .pr-badge").is_visible(), a0.get_attribute("href"))
     if SHOTS:
-        page.locator("#homeShop").screenshot(path="/tmp/shop-home-pr.png"); page.locator("footer").screenshot(path="/tmp/shop-footer-pr.png")
+        page.locator("#homeBoxes").screenshot(path="/tmp/shop-home-pr.png"); page.locator("footer").screenshot(path="/tmp/shop-footer-pr.png")
     check("affiliate IDs set: the footer says the PR links are affiliate ads, and has Amazon's associate line",
           "アフィリエイト広告" in page.locator("#footPrivacy").inner_text() and "広告はありません" not in page.locator("#footPrivacy").inner_text()
           and page.locator("#footAmazon").inner_text() == "Amazonのアソシエイトとして、悪知恵は適格販売により収入を得ています。")
@@ -3494,14 +3529,14 @@ with sync_playwright() as p:
     check("affiliate IDs set: the Amazon search carries the tracking ID, PR on both parts",
           "&tag=warujie-22" in amz.get_attribute("href") and "sponsored" in amz.get_attribute("rel") and page.locator("#setShop .pr-badge").count() == 2, amz.get_attribute("href"))
     SHOP_MODE["mode"] = "off"
-    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-empty a")
-    href = page.locator("#homeShopBody .hs-empty a").get_attribute("href")
+    page.goto(SITE); page.wait_for_selector("#homeShop .hs-empty a")
+    href = page.locator("#homeShop .hs-empty a").get_attribute("href")
     check("affiliate IDs set, no product list: the Rakuten search link becomes a Rakuten Affiliate link",
           href.startswith("https://hb.afl.rakuten.co.jp/hgc/1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c/?pc=https%3A%2F%2Fbooks.rakuten.co.jp%2Fsearch") and "&m=" in href, href)
     SHOP_MODE["mode"] = "absent"; SHOP_MODE["aff"] = False
     page.evaluate("localStorage.setItem('akuchie-lite', '1')"); SHOP_CALLS.clear()
     page.goto(SITE); page.wait_for_timeout(600)
-    check("lite mode: no Rakuten box, and Rakuten isn't asked", not page.locator("#homeShop").is_visible() and not SHOP_CALLS)
+    check("lite mode: no Rakuten boxes, and Rakuten isn't asked", not page.locator("#homeShop").is_visible() and not page.locator("#homeBoxShop").is_visible() and not SHOP_CALLS)
     page.goto(SITE + "?set=xyz"); page.wait_for_selector("#setGrid .card-tile")
     check("lite mode: no box links on set pages", not page.locator("#setShop").is_visible())
     page.evaluate("localStorage.removeItem('akuchie-lite')")
@@ -3548,15 +3583,26 @@ with sync_playwright() as p:
           and page.locator("#wantToast button").inner_text() == "元に戻す" and page.locator("#cpWant .want-trash").count() == 0)
     page.click("#wantToast button"); page.wait_for_selector("#cpWant .want-trash")
     check("want list: undo brings back all 3 copies", page.locator("#cpWant .want-c").inner_text() == "3枚")
-    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-other")
-    check("want list: another printing's page says which printing is in the list", "MH2 #138" in page.locator("#cpWant .want-other").inner_text())
-    page.click("#cpWant [data-want-act=pick]"); page.wait_for_timeout(200)
+    sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
+        l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 28]; })()""")
+    check("want list: on the card page it is one row, as wide as the picture and as tall as the language buttons",
+          abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5 and page.locator("#cpWant .want-box-head, #cpWant .want-other").count() == 0, sz)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(250)
+    sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
+        l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 26]; })()""")
+    check("phone, card page: the want row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-step")
+    check("want list: another printing's page shows the same count, with no note", page.locator("#cpWant .want-c").inner_text() == "3枚" and "リスト" not in page.locator("#cpWant").inner_text(), page.locator("#cpWant").inner_text())
+    # put this printing (#345) in the list: take the card out and add it again from here
+    page.click("#cpWant .want-trash"); page.wait_for_selector("#cpWant .want-add")
+    page.click("#cpWant .want-add"); page.wait_for_selector("#cpWant .want-step")
+    page.click("#cpWant [data-want-act=more]"); page.click("#cpWant [data-want-act=more]"); page.wait_for_timeout(150)
     rag = [x for x in page.evaluate("JSON.parse(localStorage.getItem('warujie-want'))") if x["o"] == RAG][0]
-    check("want list: この版にする switches the list to this printing, keeping the count", rag["id"] == "rag-en-mh2-bl" and rag["cn"] == "345" and rag["c"] == 3
-          and page.locator("#cpWant .want-other").count() == 0, rag)
+    check("want list: adding from another printing's page keeps that printing", rag["id"] == "rag-en-mh2-bl" and rag["cn"] == "345" and rag["c"] == 3, rag)
 
     page.click("#wantBtn"); page.wait_for_selector("#wantBody .wl-row")
-    page.wait_for_function("document.querySelector('#wantBody .deck-cost') && document.querySelectorAll('#wantBody .deck-cost .dcst-v').length === 2")
+    page.wait_for_function("document.querySelectorAll('#wantBody .want-bar .dcst-v').length === 1")
     check("want list page: the button opens it; its title, both cards, 4 copies of 2 cards",
           "view=want" in page.url and page.title().startswith("ウォントリスト") and page.locator("#wantBody .wl-row").count() == 2
           and "4枚" in page.locator("#wantBody .deck-meta").inner_text() and "2種類" in page.locator("#wantBody .deck-meta").inner_text()
@@ -3564,11 +3610,18 @@ with sync_playwright() as p:
     row = page.locator("#wantBody .wl-row[data-want-row='rag-oracle']")
     check("want list page: each card shows its printing and that printing's price in yen (55 USD at 150)",
           "MH2 #345" in row.locator(".wl-print").inner_text() and "この版 ¥8,250" in row.locator(".wl-prices").inner_text(), row.inner_text())
-    cheap_box = page.locator("#wantBody .deck-cost .dcst").nth(0).inner_text()
-    picked_box = page.locator("#wantBody .deck-cost .dcst").nth(1).inner_text()
-    want_cheap = page.evaluate("costText(deckCost([[1,'Lightning Bolt'],[3,'Ragavan, Nimble Pilferer']]))")
-    check("want list page: what it costs in the cheapest printings and in the printings picked",
-          want_cheap in cheap_box and "いちばん安い版で" in cheap_box and "選んだ版で" in picked_box and "¥" in picked_box, (cheap_box, picked_box, want_cheap))
+    picked_box = page.locator("#wantBody .want-bar .dcst").inner_text()
+    check("want list page: one total, for the printings picked (no cheapest-printing total)",
+          page.locator("#wantBody .dcst").count() == 1 and "選んだ版で" in picked_box and "¥" in picked_box and "いちばん安い版で" not in page.locator("#wantBody").inner_text(), picked_box)
+    order = page.evaluate("[...document.querySelector('#wantBody .want-bar').querySelectorAll('.dcst, .view-toggle, [data-whareruya], #wantExport')].map(e => [e.className || e.id, Math.round(e.getBoundingClientRect().left)])")
+    check("want list page: the total and リスト/画像 on the left, 晴れる屋で買う and 書き出す on the right, all in one bar",
+          len(order) == 4 and [o[1] for o in order] == sorted(o[1] for o in order) and order[2][1] > 640, order)
+    page.set_viewport_size({"width": 1280, "height": 420}); page.wait_for_timeout(200)
+    page.evaluate("window.scrollTo(0, document.querySelector('#wantBody .want-list').getBoundingClientRect().top + scrollY - 40)"); page.wait_for_timeout(200)
+    bar = page.evaluate("[document.querySelector('#wantBody .want-bar').getBoundingClientRect().top, document.querySelector('.topbar').getBoundingClientRect().bottom, scrollY]")
+    check("want list page: the bar stays under the top bar while scrolling", bar[2] > 50 and abs(bar[0] - bar[1]) < 2, bar)
+    page.evaluate("window.scrollTo(0, 0)")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
     page.click("#wantExport summary"); page.click("#wantExport [data-wexport=arena]")
     page.wait_for_function("document.querySelector('#wantExport [data-wexport=arena]').textContent === 'コピーしました'")
     clip = page.evaluate("navigator.clipboard.readText()")
@@ -3610,7 +3663,7 @@ with sync_playwright() as p:
     order = page.evaluate("JSON.parse(localStorage.getItem('warujie-want')).map(x => x.n)")
     check("want list page: undo puts it back where it was", page.locator("#wantBody .wl-row").count() == 2 and order == ["Lightning Bolt", "Ragavan, Nimble Pilferer"], order)
     check("want list page: a リスト / 画像 switch, on リスト at first",
-          page.locator("#wantBody .deck-tools [data-wview=list]").get_attribute("aria-selected") == "true" and page.locator("#wantBody [data-wview=image]").inner_text() == "画像")
+          page.locator("#wantBody .want-bar [data-wview=list]").get_attribute("aria-selected") == "true" and page.locator("#wantBody [data-wview=image]").inner_text() == "画像")
     page.click("#wantBody [data-wview=image]"); page.wait_for_selector("#wantBody .want-grid .wl-card")
     tile = page.locator("#wantBody .wl-card[data-want-row='rag-oracle']")
     check("want list page, pictures: each card's picture with its name, printing and price, and − n ＋ under it",
@@ -3642,7 +3695,7 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=want"); page.wait_for_selector("#wantBody .wl-row")
     page.click("#langBtn"); page.wait_for_timeout(400)
     check("want list in English", page.locator("#wantBody .deck-title").inner_text() == "Want list" and page.title().startswith("Want list")
-          and "Cheapest printings" in page.locator("#wantBody").inner_text() and page.locator("#wantBtn").get_attribute("aria-label") == "Want list", page.locator("#wantBody").inner_text()[:200])
+          and "Printings you picked" in page.locator("#wantBody").inner_text() and page.locator("#wantBtn").get_attribute("aria-label") == "Want list", page.locator("#wantBody").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says the want list stays in the browser", "ウォントリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
