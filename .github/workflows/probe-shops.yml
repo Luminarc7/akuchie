@@ -11,11 +11,7 @@ jobs:
         with: { python-version: '3.12' }
       - run: |
           mkdir -p probe_out
-          git fetch --depth 1 origin staging
-          mkdir -p /tmp/builder
-          git show FETCH_HEAD:ja_cards.json.gz > /tmp/current_db.json.gz
-          cp tools/builder_v23/build_ja_database.py /tmp/builder/build_ja_database.py
-          ( set -x; SKIP_API=1 python tools/rarity_audit.py /tmp/current_db.json.gz /tmp/builder probe_out/db_audit ) > probe_out/db_audit_log.txt 2>&1 || true
-          cat probe_out/db_audit_log.txt
+          ( set -x; bash tools/live_check.sh ) > probe_out/live_log.txt 2>&1 || true
+          cat probe_out/live_log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
