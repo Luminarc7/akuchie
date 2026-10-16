@@ -133,3 +133,37 @@ COMMON_SEARCHES = [
     {"q": "伝説のドラゴン", "has": ["Niv-Mizzet, Parun"], "hasnt": ["Shivan Dragon"]},
     {"q": "X呪文", "has": ["Fireball"], "only": "cost:X"},
 ]
+
+# Everyday words that found nothing, or the wrong cards, before (round 23): slang inside a
+# sentence, words the cards say differently (シャッフル is 切り直す, パートナー is 共闘), a
+# creature type beside ロード. Same fields as above.
+EVERYDAY_SEARCHES = [
+    {"q": "ETBでカードを引く", "has": ["Mulldrifter", "Baleful Strix"], "alias": "ETBでカードを引く>戦場に出たときカードを引く"},
+    {"q": "死亡時にカードを引く", "has": ["Morbid Opportunist", "Midnight Reaper"]},
+    {"q": "戦場に出たときトークン", "has": ["Tireless Provisioner"], "min": 300},
+    {"q": "クリーチャーが死ぬたびにドレイン", "has": ["Blood Artist", "Zulaport Cutthroat"], "max": 200},
+    {"q": "LTBでカードを引く", "has": ["Dour Port-Mage"], "max": 100},
+    {"q": "攻撃したときトークン", "has": ["Goldspan Dragon", "Adeline, Resplendent Cathar"]},
+    {"q": "シャッフル", "has": ["Evolving Wilds"], "alias": "シャッフル>ライブラリーを切り直す", "same": "ライブラリーを切り直す"},
+    {"q": "ディスカード", "has": ["Faithless Looting", "Windfall"], "alias": "ディスカード>捨てる"},
+    {"q": "ミル", "has": ["Stitcher's Supplier", "Ruin Crab"], "alias": "ミル>切削", "min": 300},
+    {"q": "3枚ミル", "has": ["Stitcher's Supplier"], "max": 400},
+    {"q": "パートナー", "has": ["Thrasios, Triton Hero", "Kodama of the East Tree"], "alias": "パートナー>共闘"},
+    {"q": "共闘", "has": ["Thrasios, Triton Hero"]},
+    {"q": "レジェンド", "has": ["The One Ring"], "alias": "レジェンド>伝説の", "min": 2000},
+    {"q": "奪う", "has": ["Insurrection", "Mob Rule"], "alias": "奪う>コントロールを得る"},
+    {"q": "パクる", "has": ["Insurrection"], "hasnt": ["Mikaeus, the Unhallowed"]},
+    {"q": "クリーチャーを奪う", "has": ["Mob Rule", "Humble Defector"]},
+    {"q": "インスタントタイミング", "has": ["Orcish Bowmasters"], "alias": "インスタントタイミング>瞬速"},
+    {"q": "トランプル付与", "has": ["Temur Battle Rage"], "alias": "トランプル付与>トランプルを得る"},
+    {"q": "飛行を与える", "has": ["Archetype of Imagination"], "alias": "飛行を与える>飛行を得る"},
+    {"q": "コストが1少なくなる", "has": ["Herald's Horn", "Foundry Inspector"]},
+    {"q": "1マナ安く", "has": ["Foundry Inspector"]},
+    {"q": "ドローを禁止", "has": ["Narset, Parter of Veils", "Spirit of the Labyrinth"], "max": 100},
+    {"q": "エルフ ロード", "role": "lord", "has": ["Elvish Archdruid", "Imperious Perfect"], "hasnt": ["Lord of Atlantis"]},
+    {"q": "エルフロード", "role": "lord", "same": "エルフ ロード"},
+    {"q": "ゴブリンのロード", "role": "lord", "has": ["Goblin King", "Goblin Chieftain"]},
+    {"q": "elf lord", "role": "lord", "has": ["Elvish Archdruid"]},
+    {"q": "ロード", "has": ["Lord of Atlantis"], "max": 100},
+    {"q": "wipe", "role": "boardwipe", "has": ["Toxic Deluge"]},
+]

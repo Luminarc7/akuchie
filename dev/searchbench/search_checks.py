@@ -273,7 +273,7 @@ with sync_playwright() as p:
           len(missed) <= len(tests) // 100, missed[:10])
 
     # ---- round 22: the 100 searches Japanese players type most (common_searches.py), one check each
-    from common_searches import COMMON_SEARCHES
+    from common_searches import COMMON_SEARCHES, EVERYDAY_SEARCHES
     CS_JS = """(qs) => {
       const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
       return qs.map(q => { try { const r = searchRows(q, st);
@@ -283,7 +283,8 @@ with sync_playwright() as p:
                  cost: r.rows.map(x => x.mana_cost || '') };
       } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });
     }"""
-    cs_qs = sorted({c["q"] for c in COMMON_SEARCHES} | {c[k] for c in COMMON_SEARCHES for k in ("same", "atleast") if k in c})
+    ALL_CS = COMMON_SEARCHES + EVERYDAY_SEARCHES
+    cs_qs = sorted({c["q"] for c in ALL_CS} | {c[k] for c in ALL_CS for k in ("same", "atleast") if k in c})
     CS = {r["q"]: r for r in page.evaluate(CS_JS, cs_qs)}
 
     def only_ok(r, test):
@@ -327,6 +328,13 @@ with sync_playwright() as p:
                                     f"finds {', '.join(c['has'])}" if "has" in c else "", f"note {c['alias']}" if "alias" in c else ""] if x)
         bad = judge(c)
         check(f"common search {c['q']}: {want or 'finds the right cards'}", not bad, bad)
+
+    # ---- round 23: everyday words that found nothing before (EVERYDAY_SEARCHES), one check each
+    for c in EVERYDAY_SEARCHES:
+        want = ", ".join(x for x in [f"role {c['role']}" if "role" in c else "", f"finds {', '.join(c['has'])}" if "has" in c else "",
+                                    f"note {c['alias']}" if "alias" in c else ""] if x)
+        bad = judge(c)
+        check(f"everyday search {c['q']}: {want or 'finds the right cards'}", not bad, bad)
 
     # the same search twice: the second asks Scryfall nothing
     def search(q):
