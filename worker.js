@@ -123,6 +123,9 @@ async function shareTags(url, env) {
   if (view === 'import') {
     return { title: `デッキの価格を調べる | ${SITE}`, description: 'デッキリストを貼り付けると、いちばん安い版でそろえた金額を円で計算。MTGアリーナ・MTGOのリスト、日本語名・英語名どちらでも。', url: pageUrl };
   }
+  if (view === 'want') {
+    return { title: `ウォントリスト | ${SITE}`, description: '☆を押して集めたカードのリスト。いちばん安い版の価格を円で見て、MTGアリーナ・MTGO・Moxfield・Archidektに書き出したり、晴れる屋でまとめて探したりできます。', url: pageUrl };
+  }
   if (view === 'prices') {
     return { title: `価格の動き | ${SITE}`, description: '値上がり・値下がりしたカード（米国・欧州の相場、円換算つき）。', url: pageUrl };
   }

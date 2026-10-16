@@ -21,7 +21,7 @@ grep -n -- '// ---- ' index.html
 
 | Element | What it is |
 |---|---|
-| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), language (`#langBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
+| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), the want list button (`#wantBtn`, count `#wantN`), language (`#langBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
 | `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
 | `#cardView` | The card page; everything is drawn into `#cardViewCard` |
 | `#setsView` | Set list (`#setListPanel`) and one set (`#setDetailPanel`, `#setGrid`) |
@@ -29,9 +29,10 @@ grep -n -- '// ---- ' index.html
 | `#pricesView` | Price movers |
 | `#deckView` | One deck's page |
 | `#importView` | The deck price page: the paste box (`#importForm`, `#importText`, `#importClear`) and the result (`#importBody`) |
+| `#wantView` | The want list; drawn into `#wantBody`. The note after adding or removing a card is `#wantToast` (just above the footer) |
 | `footer.attribution` | Data credits, the Fan Content Policy notice, the privacy promise and the contact link (address assembled in JS) |
 
-`showView(name)` shows one of the seven views and marks the right tab.
+`showView(name)` shows one of the views and marks the right tab (the want list marks `#wantBtn` instead).
 
 ## The script, section by section
 
@@ -103,6 +104,7 @@ In file order. "Key names" are what to search for.
 | `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
 | `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
 | `deck price page…` | Paste a deck list, see what it costs. | `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()` |
+| `want list…` | ☆ on results and card pages, the list page, export. | `wantTogHtml()`, `wantCardHtml()`, `refreshWant()`, `renderWant()`, `drawWant()`, `wantText()` |
 | `the search box follows the page` | Sticky search bar when the hero scrolls away. | `updateHeroOut()`, `updateBarTop()` |
 | `start…` | Applies the saved language, then the route. | |
 
@@ -119,4 +121,4 @@ In file order. "Key names" are what to search for.
 - **Row fields starting with `_`** (`_nameEn`, `_typeEn`, `_colors`, `_cmc`…) are computed in
   `indexRow()` when the database loads; they are not in the file.
 - **Browser storage keys start with `akuchie-`** for historical reasons. Don't rename them
-  (visitors would lose their settings). New keys start with `warujie-` (`IMPORT_SAVE_KEY`).
+  (visitors would lose their settings). New keys start with `warujie-` (`IMPORT_SAVE_KEY`, `WANT_KEY`).
