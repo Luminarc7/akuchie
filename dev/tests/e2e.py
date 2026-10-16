@@ -225,6 +225,9 @@ DB_EXTRA = dict(DB, cards=DB["cards"] + [
 DB_EXTRA_GZ = gzip.compress(json.dumps(DB_EXTRA, ensure_ascii=False).encode("utf-8"))
 LEGAL = {"rag-ja-mh2": "mv", "bolt-ja-m10": "mlvac", "saga-ja": "mlv", "drag-ja": "lvc", "eo-1": "", "elf-ja": "lvac", "qp-ja": "lvc"}
 DB_LEGAL_GZ = gzip.compress(json.dumps(dict(DB, fields=FIELDS + ["legal"], cards=[r + [LEGAL[r[0]]] for r in DB["cards"]]), ensure_ascii=False).encode("utf-8"))
+# every rarity each card was printed at: Shivan Dragon (shown rare) also as a mythic, Llanowar Elves also rare
+RARITIES = {"rag-ja-mh2": "m", "bolt-ja-m10": "cu", "saga-ja": "r", "drag-ja": "rm", "eo-1": "c", "elf-ja": "cr", "qp-ja": "u"}
+DB_RAR_GZ = gzip.compress(json.dumps(dict(DB, fields=FIELDS + ["rarities"], cards=[r + [RARITIES[r[0]]] for r in DB["cards"]]), ensure_ascii=False).encode("utf-8"))
 DB_ABJ_GZ = gzip.compress(json.dumps(dict(DB, cards=DB["cards"] + [
     ["abj-ja", "abj-oracle", "Abjure", "拒絶", "Instant", "", "As an additional cost to cast this spell, sacrifice a blue permanent.\nCounter target spell.", "",
      "{U}", "U", 1, None, None, "common", "wth", "", "1997-06-09", ""]]), ensure_ascii=False).encode("utf-8"))
@@ -403,7 +406,7 @@ def handle(route):
                                  body=REAL_META if META_MODE["mode"] == "real" else json.dumps(META_FIXTURE))
         if path == "ja_cards.json.gz" and DB_MODE["present"]:
             return route.fulfill(status=200, content_type="application/gzip",
-                                 body={"legal": DB_LEGAL_GZ, "many": DB_MANY_GZ, "abj": DB_ABJ_GZ, "roles": DB_ROLES_GZ}.get(DB_MODE["variant"]) or (DB_SEARCH_GZ if DB_MODE["search"] else DB_EXTRA_GZ if DB_MODE["extra"] else DB_GZ))
+                                 body={"legal": DB_LEGAL_GZ, "rar": DB_RAR_GZ, "many": DB_MANY_GZ, "abj": DB_ABJ_GZ, "roles": DB_ROLES_GZ}.get(DB_MODE["variant"]) or (DB_SEARCH_GZ if DB_MODE["search"] else DB_EXTRA_GZ if DB_MODE["extra"] else DB_GZ))
         return route.fulfill(status=404, body="not found")
     if u.netloc == "api.frankfurter.dev":
         eur = "EUR" in url
@@ -471,6 +474,25 @@ results = []
 def check(label, cond, detail=""):
     results.append((label, bool(cond)))
     print(("PASS " if cond else "FAIL ") + label + (f"   [{detail}]" if detail != "" and not cond else ""))
+
+# ---- the card database builder (no browser) ----
+sys.path.insert(0, _os.path.join(REPO, "tools"))
+import build_ja_database as BJ
+def built(*prints):
+    e = BJ.CardEntry()
+    for c in prints: e.add(dict(c, image_status=c.get("image_status", "highres_scan")))
+    return dict(zip(BJ.FIELD_ORDER, e.to_row()))
+_b = built(card("acid-it", "acid", "it", "leg", "44", "Acid Rain", rarity="rare"), card("eel-it", "acid", "it", "drk", "9", "Acid Rain", rarity="rare"),
+            card("eel-en", "acid", "en", "drk", "9", "Acid Rain", rarity="uncommon", released_at="2021-06-18"))
+check("builder: an English printing replaces another language's kept first (no Italian picture); Italian rarities at an English number don't count",
+      _b["id"] == "eel-en" and _b["rarity"] == "uncommon" and _b["rarities"] == "ur", _b)
+_b = built(card("v-en", "v", "en", "m10", "1", "Sengir Vampire", rarity="uncommon"), card("v-sld", "v", "en", "sld", "9", "Sengir Vampire", rarity="mythic", promo=True),
+            card("v-ren", "v", "de", "ren", "5", "Sengir Vampire", rarity="rare"))
+check("builder: rarities lists every paper rarity, Secret Lair and a German-only set included, in c u r m s b order",
+      _b["rarities"] == "urm" and _b["rarity"] == "uncommon", _b)
+_b = built(card("cc-400", "cc", "en", "tdm", "400", "Clarion Conqueror", rarity="mythic", border_color="borderless"),
+            card("cc-5", "cc", "en", "tdm", "5", "Clarion Conqueror", rarity="rare", border_color="black"))
+check("builder: on a tie, the ordinary frame is shown, not the borderless variant", _b["id"] == "cc-5" and _b["rarities"] == "rm", _b)
 
 Q = urllib.parse.quote
 with sync_playwright() as p:
@@ -1539,7 +1561,61 @@ with sync_playwright() as p:
     page.locator("#activeFilters .filter-pill").click()
     page.wait_for_selector("#homeHero", state="visible")
     check("format filter: pill removes it", page.input_value("#formatSelect") == "")
+    # rarity: a card counts under every rarity it was printed at, as on Scryfall
+    names_on = lambda: sorted(page.locator("#cardGrid .card-name-main").all_inner_texts())
+    DB_MODE["variant"] = "rar"
+    home()
+    open_adv()
+    page.locator(".opt-chip[data-group=rarity][data-value=mythic]").click()
+    page.wait_for_function("document.querySelector('#resultCount').textContent.includes('件見つかりました')")
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 2")
+    # each tile: (label, dot class, tooltip, arrow class or "")
+    feet = lambda: {t.locator(".card-name-main").inner_text(): (t.locator(".rarity-dot").inner_text().strip(), t.locator(".rarity-dot .dot").get_attribute("class"),
+            t.locator(".rarity-dot").get_attribute("title") or "", t.locator(".shift-icon").get_attribute("class") if t.locator(".shift-icon").count() else "")
+            for t in page.locator("#cardGrid .card-tile").all()}
+    check("rarity filter: 神話レア finds cards with any mythic printing (Shivan Dragon has one)", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), names_on())
+    f = feet()
+    check("rarity filter: a tile whose printing is another rarity still says 神話レア, with a ↓ arrow in the picture's rarity colour and the picture's rarity as tooltip",
+          f.get("シヴ山のドラゴン", ("",))[0] == "神話レア" and "mythic" in f["シヴ山のドラゴン"][1] and "この絵はレアの版です" in f["シヴ山のドラゴン"][2]
+          and f["シヴ山のドラゴン"][3] == "shift-icon down rare"
+          and f.get("敏捷なこそ泥、ラガバン", ("",))[0] == "神話レア" and not f["敏捷なこそ泥、ラガバン"][2] and not f["敏捷なこそ泥、ラガバン"][3], f)
+    # several rarities at once: any of them
+    page.locator(".opt-chip[data-group=rarity][data-value=rare]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 4")
+    f = feet()
+    check("rarity filter: R and M together find cards with a rare or a mythic printing", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン", "ウルザの物語", "ラノワールのエルフ"]), names_on())
+    check("rarity filter: both buttons stay on, one pill each, in rarity order",
+          page.locator(".opt-chip[data-group=rarity][aria-pressed=true]").evaluate_all("bs => bs.map(b => b.dataset.value)") == ["rare", "mythic"]
+          and page.locator("#activeFilters .filter-pill").all_inner_texts() == ["レア×", "神話レア×"], page.locator("#activeFilters .filter-pill").all_inner_texts())
+    check("rarity filter: with R and M, Shivan Dragon (a rare picture) is plain レア; Llanowar Elves (a common picture) says レア with the arrow",
+          f["シヴ山のドラゴン"][0] == "レア" and not f["シヴ山のドラゴン"][3] and f["ラノワールのエルフ"][0] == "レア"
+          and f["ラノワールのエルフ"][3] == "shift-icon down common" and f["ウルザの物語"][0] == "レア" and not f["ウルザの物語"][3], f)
+    page.locator(".opt-chip[data-group=rarity][data-value=common]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 6")
+    check("rarity filter: adding C finds the commons too", len(names_on()) == 6 and "稲妻" in names_on(), names_on())
+    page.locator(".opt-chip[data-group=rarity][data-value=rare]").click()
+    page.locator(".opt-chip[data-group=rarity][data-value=common]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 2")
+    check("rarity filter: turning R and C off again leaves the mythics", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), names_on())
+    page.locator("#activeFilters .filter-pill").click()
+    page.wait_for_selector("#homeHero", state="visible")
+    for q, want in (("r:m", ["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), ("r:rare", ["ウルザの物語", "シヴ山のドラゴン", "ラノワールのエルフ"]),
+                    ("神話レア ドラゴン", ["シヴ山のドラゴン"]), ("r:u", ["クァーサルの群れ魔道士", "稲妻"]), ("-r:c", ["ウルザの物語", "クァーサルの群れ魔道士", "シヴ山のドラゴン", "敏捷なこそ泥、ラガバン"])):
+        top_search(q)
+        page.wait_for_function("document.querySelector('#resultCount').textContent.includes('件見つかりました')")
+        page.wait_for_function(f"document.querySelectorAll('#cardGrid .card-tile').length === {len(want)}")
+        check(f"rarity: {q} counts every printing's rarity", names_on() == sorted(want), names_on())
+    top_search("r:rare")
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 3")
+    check("rarity: r:rare says レア on every tile and marks only the one whose picture isn't rare (Llanowar Elves, ↓)",
+          page.locator("#cardGrid .rarity-dot").all_inner_texts() == ["レア"] * 3 and page.locator("#cardGrid .shift-icon").count() == 1
+          and page.locator("#cardGrid .card-tile", has_text="ラノワールのエルフ").locator(".shift-icon.down.common").count() == 1,
+          page.locator("#cardGrid .rarity-dot").all_inner_texts())
     DB_MODE["variant"] = None
+    home()
+    top_search("r:m")
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile').length === 1")
+    check("rarity: a database without the rarities field still filters by the shown printing's rarity", names_on() == ["敏捷なこそ泥、ラガバン"], names_on())
     # the preview page
     home(SITE + "preview.html"); page.wait_for_selector("#hxList a.hx-item")
     check("preview.html: same site, kept out of search engines", page.locator("meta[name=robots]").get_attribute("content") == "noindex" and page.locator("#homeHero").is_visible())

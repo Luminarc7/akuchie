@@ -17,6 +17,8 @@ here.
 | A typed name finds nothing | Not the printed name: a nickname, the katakana of an English-only card, or a typo | Add the nickname to `CARD_NICKNAMES`; typos go through `closestJaName()` (check its distance limits) |
 | Japanese results are in an odd order | Missing or wrong `name_kana` for those cards (a kanji left in a reading sorts after ん) | `tools/name_readings.py`; the Name readings workflow run; printed furigana in Scryfall wins over Sudachi; kanji Sudachi doesn't know (滅殺) and numbers (三) are read with pykakasi / the number's reading |
 | A name typed in hiragana doesn't find the card | Its `name_kana` is wrong, or the word reads as game words (`yomiQuery()` skips those) | Check the reading in the database; `yomiKey()` for ー and ゔ |
+| Fewer cards per rarity than Scryfall shows (神話レア 2,203 against Scryfall's 2,853) | The filter looked only at the rarity of the printing shown; Scryfall counts every printing (Sengir Vampire: uncommon, rare, mythic) and Arena-only cards | Fixed: the `rarities` field and `hasRarity()`. The rest of the difference is expected; see data.md, "How the counts compare with Scryfall" |
+| A Legends or The Dark card shows an Italian picture and the wrong rarity | The builder kept another language's printing as the card's "English" one when the English printings ranked level with it | Fixed in the builder (2.3): an English printing always replaces such a fallback; the 116 rows were switched in the database |
 | A search worked yesterday and doesn't now | A recent change in the search sections | `git log -p staging -- index.html`; run the searchbench on the previous commit to compare |
 
 ## Card page

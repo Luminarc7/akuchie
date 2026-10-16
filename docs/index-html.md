@@ -42,7 +42,7 @@ In file order. "Key names" are what to search for.
 - `EDITIONS`, `SITE`: the retired colour editions; only `main` is left. Keep as is.
 - `STR`, `t(key, vars)`, `tn(key, n)`: every interface string, Japanese then English. See
   [interface.md](interface.md).
-- `state`: the search state (query, colour/type/keyword/mana/role sets, rarity, format, sort,
+- `state`: the search state (query, colour/type/keyword/mana/role/rarity sets, format, sort,
   image/text view, `showLoose`). The filter panel, the URL and the search all read it.
 - `CREATURE_TYPE_JA`, `JA_KEYWORDS`, `JA_PHRASES`, `JA_OPERATORS`: Japanese words for creature
   types, keyword abilities, rules phrases and search operators.
@@ -52,7 +52,7 @@ In file order. "Key names" are what to search for.
 | Section marker | What it does | Key names |
 |---|---|---|
 | `Japanese card-name index (legacy, name-only)` | An old fallback when only `ja_names.json` exists. Not deployed any more. | `JA_NAME_INDEX` |
-| `local card database (full, effect-text-searchable)` | Downloads and unpacks the database, turns each row into an object with pre-computed lowercase fields, starts the idle-time warm-up. | `LOCAL_FIELDS`, `LOCAL_DB`, `dbState`, `dbReady`, `DB_FILES`, `fetchMaybeGzipJson()`, `loadCardDatabase()`, `indexRow()`, `warmSearch()`, `rowToCard()` |
+| `local card database (full, effect-text-searchable)` | Downloads and unpacks the database, turns each row into an object with pre-computed lowercase fields, starts the idle-time warm-up. | `LOCAL_FIELDS`, `LOCAL_DB`, `dbState`, `dbReady`, `DB_FILES`, `fetchMaybeGzipJson()`, `loadCardDatabase()`, `indexRow()`, `warmSearch()`, `rowToCard()`, `hasRarity()`, `rarityName()`, `RARITY_CODE`, `RARITY_ORDER` |
 | `Scryfall's /cards/collection…` | Fetches full card objects (pictures, prices) for result rows, 100 ms apart, retries 429/5xx, caches for the visit. Also local matching helpers (types, names, operators, filter panel). | `scryfallTurn()`, `scryfallCollection()`, `CARD_CACHE`, `hydrateRows()`, `nameKey()`, `textMatches()`, `localOperatorMatch()`, `localFilterRow()`, `relevance()`, `yomiQuery()`, `rowYomi()`, `jaSortKey()`, `popularity()`, `ROLE_LIST` |
 | `the tag file` | Loads the role tags and EDHREC ranks from warujie-prices `t/tags.json.gz`. | `loadTags()`, `TAG_MAP`, `tagsState`, `rowTags()`, `rowRoles()`, `hasRole()` |
 | `reading role words in the search box` | Finds role words (除去, ドロー, ramp…) and the colour/guild/format/rarity/type/mana words that narrow them. | `findRoleWords()`, `splitRoleToken()`, `derivedFromWord()`, `COLOR_GROUP_WORDS`, `FORMAT_WORDS`, `RARITY_WORDS`, `AMBIG_ROLE_WORDS`, `roleSuggestions()` |
@@ -69,7 +69,7 @@ In file order. "Key names" are what to search for.
 | `exchange rate (USD -> JPY)` | Dollar and euro to yen. | `fetchJpyRate()`, `USD_JPY`, `EUR_JPY`, `yenFor()`, `updateYenLabels()` |
 | `prices` | Prices on result tiles; a Japanese printing borrows its English twin's prices. | `effectivePrices()`, `ensureEnglishPrices()`, `tilePriceHtml()` |
 | `Japanese names/text for any printing` | Japanese name, type and text for any printing, from the database when Scryfall lacks them; type-line translation. | `displayNameJa()`, `displayTypeJa()`, `displayTextJa()`, `translateTypeLine()`, `cardNames()` |
-| `treatments…` | Labels such as borderless, showcase, extended art; the result tile. | `treatmentLabels()`, `cardTileHtml()` |
+| `treatments…` | Labels such as borderless, showcase, extended art; the result tile and its rarity (the rarity asked for, with an arrow, when the search asks for a rarity its printing doesn't have). | `treatmentLabels()`, `cardTileHtml()`, `tileRarityHtml()`, `wantedRarities()` |
 | `prices on the card page, by market` | JP / US / EU price tabs. | `PRICE_MARKETS`, `priceMarket`, `marketRows()`, `priceHtml()` |
 | `listings and stock…` | Per-shop offers by condition, cheapest first. | `OFFER_SHOPS`, `offerRows()`, `offersHtml()` |
 | `the notes under the card page…` | Where each price comes from; loads today's shop prices (`q/`). Also the card page itself. | `priceNotesHtml()`, `loadCardQuotes()`, `renderCardViewContent()` |

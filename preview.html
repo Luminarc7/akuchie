@@ -316,6 +316,13 @@
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mana-c); flex: none; }
   .dot.common { background: var(--rar-common); } .dot.uncommon { background: var(--rar-uncommon); }
   .dot.rare { background: var(--rar-rare); }   .dot.mythic { background: var(--rar-mythic); }
+  /* the arrow beside a rarity the search asked for when the picture is another rarity's printing
+     (神話レア ↓ = the picture is a lower-rarity printing); the disc takes the picture's rarity colour */
+  .shift-icon { width: 13px; height: 13px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    flex: none; margin-left: -1px; background: var(--mana-c); cursor: help; }
+  .shift-icon svg { width: 10px; height: 10px; fill: none; stroke: #17151d; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .shift-icon.common { background: var(--rar-common); } .shift-icon.uncommon { background: var(--rar-uncommon); }
+  .shift-icon.rare { background: var(--rar-rare); }     .shift-icon.mythic { background: var(--rar-mythic); }
   .tile-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
   .tile-price .yen { color: var(--text); font-weight: 500; margin-left: 4px; }
 
@@ -2104,6 +2111,7 @@ const STR = {
   'rarity.mythic': ['神話レア', 'Mythic'],
   'rarity.special': ['スペシャル', 'Special'],
   'rarity.bonus': ['ボーナス', 'Bonus'],
+  'rarity.alsoTip': ['この絵は{r}の版です。{w}の版もあります', 'This picture is the {r} printing; the card was also printed as {w}'],
   'color.W': ['白', 'White'], 'color.U': ['青', 'Blue'], 'color.B': ['黒', 'Black'],
   'color.R': ['赤', 'Red'], 'color.G': ['緑', 'Green'], 'color.C': ['無色', 'Colorless'],
   'chip.W': ['白', 'W'], 'chip.U': ['青', 'U'], 'chip.B': ['黒', 'B'],
@@ -2686,7 +2694,7 @@ const CREATURE_TYPE_JA = {
 
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
-  keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name',
+  keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: 'name',
   view: (() => { if (document.documentElement.dataset.lite === '1') return 'text'; try { return localStorage.getItem('akuchie-view') === 'text' ? 'text' : 'image'; } catch (e) { return 'image'; } })(),
   showLoose: false,   // also show cards that contain the search words only separately
 };
@@ -2815,7 +2823,7 @@ function indexRow(arr, fields) {
   const o = {};
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout'].forEach(f => { if (o[f] == null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout','rarities'].forEach(f => { if (o[f] == null) o[f] = ''; });
   ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
@@ -2830,8 +2838,22 @@ function indexRow(arr, fields) {
   o._colors = String(o.colors || '').toUpperCase();
   o._cmc = Number(o.cmc) || 0;
   o._hasX = /\{X\}/i.test(o.mana_cost || '');
+  o._rarities = o.rarities || RARITY_CODE[o.rarity] || '';
   return o;
 }
+
+// Rarity filters find a card by every rarity it was printed at (the database's "rarities",
+// c u r m s b), as Scryfall's r: does: Sengir Vampire is uncommon, rare and mythic. The tile
+// still shows the rarity of the printing in its picture. Files without the field have only that one.
+const RARITY_CODE = { common: 'c', uncommon: 'u', rare: 'r', mythic: 'm', special: 's', bonus: 'b' };
+const RARITY_ORDER = ['common', 'uncommon', 'rare', 'special', 'mythic', 'bonus'];   // Scryfall's order, lowest first
+const RARITY_ALIASES = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic', s: 'special', b: 'bonus',
+  'コモン': 'common', 'アンコモン': 'uncommon', 'レア': 'rare', '神話レア': 'mythic', 'スペシャル': 'special' };
+function rarityName(val) {
+  const v = normText(val).trim();
+  return RARITY_ALIASES[v] || RARITY_ALIASES[String(val).trim()] || v;
+}
+function hasRarity(row, rarity) { return !!RARITY_CODE[rarity] && row._rarities.includes(RARITY_CODE[rarity]); }
 
 // Fetches a JSON file that may be gzip-compressed. GitHub Pages serves .gz
 // files as raw bytes, so they're decompressed here in the browser; if a host
@@ -3210,11 +3232,8 @@ function localOperatorMatch(row, op, sep, val) {
       if (sep === '<=') return rowColors.every(c => wanted.includes(c));   // within these colors (colorless too)
       return wanted.every(c => rowColors.includes(c));
     }
-    case 'r': {
-      const aliases = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic',
-        'コモン':'common', 'アンコモン':'uncommon', 'レア':'rare', '神話レア':'mythic' };
-      return row.rarity === (aliases[v] || aliases[val] || v);
-    }
+    case 'r':
+      return hasRarity(row, rarityName(val));
     case 'e': case 'set': case 's':
       return String(row.set).toLowerCase() === v;
     case 'kw': {
@@ -3271,7 +3290,7 @@ function localFilterRow(row, st = state) {
     st.keywords.forEach(k => { if (row._kw.has(normText(k))) hit = true; });
     if (!hit) return false;
   }
-  if (st.rarity && row.rarity !== st.rarity) return false;
+  if (st.rarity && st.rarity.size && ![...st.rarity].some(r => hasRarity(row, r))) return false;   // any chosen rarity
   if (st.format && row.legal != null && !String(row.legal).includes(FORMAT_CODE[st.format])) return false;
   if (st.roles && st.roles.size) {
     let hit = false;
@@ -3719,7 +3738,7 @@ function derivedFromWord(word) {
       test: row => row.legal == null || String(row.legal).includes(FORMAT_CODE[fmt]) };
   }
   const rar = RARITY_WORDS[w] || RARITY_WORDS[lw];
-  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), test: row => row.rarity === rar };
+  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), rarity: rar, test: row => hasRarity(row, rar) };
   // パワー3以上, タフネス2以下, power 5
   let st = w.match(/^(パワー|タフネス|power|toughness)(\d{1,2})(以上|以下)?$/i);
   if (st) {
@@ -4153,7 +4172,7 @@ function narrowingWord(bare) {
   const lw = s.toLowerCase();
   if (ja || EN_NARROW_WORDS.has(lw) || COLOR_GROUP_WORDS[lw] || FORMAT_WORDS[lw] || RARITY_WORDS[lw]) {
     const d = derivedFromWord(s);
-    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone };
+    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone, rarity: d.rarity };
   }
   const m = ja && s.match(/^([白青黒赤緑]+|無色|多色|\d{1,2}マナ(?:以下|以上)?)の?(.+)$/);
   if (m && jaTypeWords().has(m[2])) {
@@ -4261,7 +4280,7 @@ function parseSearch(raw) {
       const nw = narrowingWord(bare);
       if (nw && !(negate && nw.rest) && (nameLike === null ? (nameLike = tokens.length > 1 && rolesLookLikeAName(tokens)) : nameLike) === false
           && !(nw.notAlone && (tokens.length < 2 ? nameStartsWith(bare) : wordsInOneName(tokens)))) {
-        out.filters.push({ negate, test: nw.test });
+        out.filters.push({ negate, test: nw.test, rarity: nw.rarity });
         if (normText(nw.label) !== normText(nw.word || bare)) out.aliases.push({ from: nw.word || bare, to: nw.label, narrow: true });
         if (!nw.rest) return;
         bare = nw.rest;
@@ -5173,7 +5192,7 @@ function buildSearchQuery() {
   if (state.creatureTypes.size) parts.push('(' + [...state.creatureTypes].map(t => `t:${t}`).join(' or ') + ')');
   if (state.keywords.size) parts.push('(' + [...state.keywords].map(k => `kw:"${k}"`).join(' or ') + ')');
   if (state.roles.size) parts.push('(' + [...state.roles].map(roleScryfallClause).join(' or ') + ')');
-  if (state.rarity) parts.push(`r:${state.rarity}`);
+  if (state.rarity.size) parts.push('(' + [...state.rarity].map(r => `r:${r}`).join(' or ') + ')');
   if (state.manaCosts.size) {
     const clauses = [...state.manaCosts].map(m => {
       if (m === 'X') return 'mana:{X}';
@@ -5558,6 +5577,32 @@ function treatmentLabels(p) {
   return keys.map(k => t('tr.' + k));
 }
 
+// The rarities a search asks for (the rarity buttons, r:m, 神話レア ドラゴン), or [].
+function wantedRarities() {
+  const want = new Set(state.rarity);
+  currentPlan().filters.forEach(f => { if (!f.negate && (f.rarity || f.op === 'r')) want.add(f.rarity || rarityName(f.val)); });   // derived words are filters too
+  return [...want];
+}
+// The tile's rarity: its printing's. When the search asks for another rarity the card was also
+// printed at (a mythic Secret Lair Sengir Vampire), the tile says that rarity (神話レア) with an
+// arrow beside it: ↓ the picture is a lower-rarity printing, ↑ a higher one. The tooltip says which.
+const SHIFT_ICON = { down: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2v7M2.8 6.2 6 9.4l3.2-3.2"/></svg>',
+  up: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8v-7M2.8 5.8 6 2.6l3.2 3.2"/></svg>' };
+function tileRarityHtml(card) {
+  const want = wantedRarities();
+  if (want.length && card.rarity && !want.includes(card.rarity)) {
+    const row = dbRowFor(card);
+    const w = RARITY_ORDER.filter(r => want.includes(r) && (!row || hasRarity(row, r))).pop();   // the rarest one asked for
+    if (w) {
+      const tip = t('rarity.alsoTip', { r: rarityLabel(card.rarity), w: rarityLabel(w) });
+      const dir = RARITY_ORDER.indexOf(card.rarity) < RARITY_ORDER.indexOf(w) ? 'down' : 'up';
+      return `<span class="rarity-dot rarity-shift" title="${esc(tip)}"><span class="dot ${w}"></span>${rarityLabel(w)}` +
+        `<span class="shift-icon ${dir} ${card.rarity}" role="img" aria-label="${esc(tip)}">${SHIFT_ICON[dir]}</span></span>`;
+    }
+  }
+  return `<span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>`;
+}
+
 function cardTileHtml(card) {
   const pic = faceUris(card)[0];
   const names = cardNames(card);
@@ -5581,7 +5626,7 @@ function cardTileHtml(card) {
         ${legalityCirclesHtml(card.legalities)}
       </div>
       <div class="card-foot">
-        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
+        ${tileRarityHtml(card)}
         ${tilePriceHtml(card)}
       </div>
     </a>`;
@@ -6692,7 +6737,7 @@ function resetToHome() {
   searchInput.value = '';
   document.getElementById('heroInput').value = '';
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity.clear(); state.format = '';
   syncFilterUI();
   setFilterDrawer(false);
   if (location.search) history.pushState({ app: true }, '', location.pathname);
@@ -6967,7 +7012,7 @@ const searchInput = document.getElementById('searchInput');
 
 function hasActiveFilters() {
   return !!(state.colors.size || state.types.size || state.creatureTypes.size ||
-            state.keywords.size || state.manaCosts.size || state.roles.size || state.rarity || state.format);
+            state.keywords.size || state.manaCosts.size || state.roles.size || state.rarity.size || state.format);
 }
 // Search when there is something to search for, otherwise show random cards.
 function refreshResults() {
@@ -7047,7 +7092,7 @@ function activeFilterItems() {
   state.colors.forEach(v => items.push({ group: 'colors', value: v, label: t('pill.color', { c: t('color.' + v) }) }));
   state.types.forEach(v => items.push({ group: 'types', value: v, label: chipLabel('types', v) }));
   state.manaCosts.forEach(v => items.push({ group: 'manaCosts', value: v, label: t('pill.mv', { v: chipLabel('manaCosts', v) }) }));
-  if (state.rarity) items.push({ group: 'rarity', value: state.rarity, label: chipLabel('rarity', state.rarity) });
+  RARITY_ORDER.filter(v => state.rarity.has(v)).forEach(v => items.push({ group: 'rarity', value: v, label: chipLabel('rarity', v) }));
   if (state.format) items.push({ group: 'format', value: state.format, label: t('pill.format', { f: formatName(state.format) }) });
   state.creatureTypes.forEach(v => items.push({ group: 'creatureTypes', value: v, label: (!en && CREATURE_TYPE_JA[v]) || titleCase(v) }));
   state.keywords.forEach(v => items.push({ group: 'keywords', value: v, label: (!en && KEYWORD_JA_BY_EN[v]) || titleCase(v) }));
@@ -7064,7 +7109,7 @@ function syncFilterUI() {
   });
   document.querySelectorAll('.opt-chip').forEach(b => {
     const { group, value } = b.dataset;
-    const on = group === 'rarity' ? state.rarity === value : state[group].has(value);
+    const on = state[group].has(value);
     b.setAttribute('aria-pressed', String(on));
   });
   document.querySelectorAll('.check-list').forEach(list => {
@@ -7081,8 +7126,7 @@ function syncFilterUI() {
 }
 
 function removeFilter(group, value) {
-  if (group === 'rarity') state.rarity = '';
-  else if (group === 'format') state.format = '';
+  if (group === 'format') state.format = '';
   else state[group].delete(value);
 }
 
@@ -7093,8 +7137,7 @@ document.getElementById('filterPanel').addEventListener('click', (e) => {
   const chip = e.target.closest('.opt-chip');
   if (!chip) return;
   const { group, value } = chip.dataset;
-  if (group === 'rarity') state.rarity = state.rarity === value ? '' : value;
-  else toggleInSet(state[group], value);
+  toggleInSet(state[group], value);
   syncFilterUI();
   refreshResults();
 });
@@ -7107,7 +7150,7 @@ document.getElementById('activeFilters').addEventListener('click', (e) => {
 });
 document.getElementById('clearBtn').addEventListener('click', () => {
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity.clear(); state.format = '';
   syncFilterUI();
   refreshResults();
 });
@@ -7619,8 +7662,8 @@ async function renderZeroHelp(myToken) {
   for (const it of panel) {
     if (!query && panel.length === 1) continue;   // that would be every card
     const st = Object.assign({}, state, { colors: new Set(state.colors), types: new Set(state.types), creatureTypes: new Set(state.creatureTypes),
-      keywords: new Set(state.keywords), manaCosts: new Set(state.manaCosts), roles: new Set(state.roles) });
-    if (it.group === 'rarity') st.rarity = ''; else if (it.group === 'format') st.format = ''; else st[it.group].delete(it.value);
+      keywords: new Set(state.keywords), manaCosts: new Set(state.manaCosts), roles: new Set(state.roles), rarity: new Set(state.rarity) });
+    if (it.group === 'format') st.format = ''; else st[it.group].delete(it.value);
     const n = count(query, st);
     if (n) filterGroup.items.push(`<button type="button" class="zh-btn" data-group="${esc(it.group)}" data-value="${esc(it.value)}">${esc(t('help.unfilter', { f: it.label }))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
     await helpYield();
@@ -7636,7 +7679,7 @@ async function renderZeroHelp(myToken) {
   }
   if (nFilters >= 2) {
     const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(),
-      roles: new Set(), rarity: '', format: '' });
+      roles: new Set(), rarity: new Set(), format: '' });
     const q = tokens.filter((tok, k) => !opIdx.includes(k)).join(' ');
     const n = q.trim() ? count(q, st) : 0;
     if (n) filterGroup.items.push(`<button type="button" class="zh-btn zh-all" data-clear="1" data-q="${esc(q)}">${esc(t('help.unfilter.all'))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
@@ -7655,7 +7698,7 @@ document.getElementById('cardGrid').addEventListener('click', (e) => {
   }
   if (b.dataset.clear) {
     state.colors.clear(); state.types.clear(); state.creatureTypes.clear(); state.keywords.clear(); state.manaCosts.clear();
-    state.roles.clear(); state.rarity = ''; state.format = '';
+    state.roles.clear(); state.rarity.clear(); state.format = '';
     syncFilterUI();
   }
   if (b.dataset.group) {
@@ -9466,7 +9509,7 @@ const HERO_SLANG = [
   ['ライフ回復', 'life gain', 'ライフを得る', 'gain life'],
 ];
 const HERO_STATE = () => Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
-  manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name', showLoose: false });
+  manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: 'name', showLoose: false });
 const SEARCH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
 const heroFx = { entries: [], lang: '', token: 0 };
 function effectOf(fx) {

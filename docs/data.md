@@ -18,7 +18,7 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 
 | Field | Meaning |
 |---|---|
-| `id` | The Scryfall printing shown in results: a Japanese printing with a real scan where possible |
+| `id` | The Scryfall printing shown in results: a Japanese printing with a real scan where possible, else an English one (another language only for cards never printed in English); when the builder's preferences are level, the ordinary frame over a showcase or borderless one (`picture_rank()`) |
 | `oracle_id` | Scryfall's id for the card across printings |
 | `name_en`, `name_ja` | Names; two-part cards as `A // B` |
 | `type_en`, `type_ja` | Type lines |
@@ -26,7 +26,8 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `mana_cost`, `cmc` | `{2}{W}{B}`, mana value |
 | `colors` | Letters, e.g. `GR`; empty for colourless |
 | `power`, `toughness` | Strings or `null` |
-| `rarity`, `set` | Of the printing in `id` |
+| `rarity`, `set` | Of the printing in `id` (the rarity the tile shows) |
+| `rarities` | Every rarity the card was printed at, one letter each in the order `c u r m s b` (common, uncommon, rare, mythic, special, bonus), counted as Scryfall's `r:` counts: each English printing, plus a printing in another language where that set and number has no English one (Renaissance, Japanese-only promos, Phyrexian); promos and Secret Lair included, memorabilia and digital-only printings not (`CardEntry.all_rarities()`). The rarity filters use it (`hasRarity()`); a file without it falls back to `rarity` |
 | `keywords` | Comma-separated |
 | `released_at` | First release of the card |
 | `alt_names_ja` | Older Japanese names, `|`-separated (they still match in search) |
@@ -55,6 +56,22 @@ After a rebuild:
    (888 Japanese type lines taken from other Japanese printings; 51 rows switched to a Japanese
    printing with a real scan).
 3. Run both test suites; the searchbench uses the real database.
+
+### How the counts compare with Scryfall
+
+Checked against Scryfall's search on 2026-10-16 with `tools/audits/rarity_audit.py` (run on a
+runner). Per rarity the site finds the same paper cards as Scryfall's `r:<rarity> game:paper`
+to within a handful. Scryfall's plain `r:` shows more because it also counts:
+
+- Arena- and MTGO-only cards (Alchemy and the like, about 690). The builder leaves
+  digital-only cards out on purpose.
+- Rarities a card has only in a digital set (Vintage Masters' Power Nine as "bonus", Tempest
+  Remastered mythics). With the above, 140 of Scryfall's 2,853 mythics.
+
+The site has about 825 cards Scryfall hides from its searches: playtest cards (Mystery Booster 2,
+Unknown Event), holiday and convention joke promos, Heroes of the Realm, and the seven cards
+Wizards withdrew in 2020 (Invoke Prejudice, Cleanse, Jihad…). They are in the database and in
+the counts. AFR/CLB dungeons count as commons on Scryfall; the builder drops them with tokens.
 
 ### Fixing a Japanese name
 
