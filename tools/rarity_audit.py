@@ -48,16 +48,17 @@ def oid_of(c):
 
 # ---- 1. Scryfall search API ----
 api = {'counts': {}, 'lists': {}}
-for r in RARITIES:
+SKIP_API = os.environ.get('SKIP_API') == '1'
+for r in ([] if SKIP_API else RARITIES):
     for q in (f'r:{r}', f'r:{r} game:paper', f'r:{r} -is:digital', f'r:{r} include:extras'):
         res = scry(search_url(q))
         api['counts'][q] = res['total_cards'] if res else 0
         print(q, api['counts'][q], flush=True)
-for q in ('game:paper', 'cmc>=0', 'cmc>=0 -is:digital'):
+for q in ([] if SKIP_API else ['game:paper', 'cmc>=0', 'cmc>=0 -is:digital']):
     res = scry(search_url(q))
     api['counts'][q] = res['total_cards'] if res else 0
     print(q, api['counts'][q], flush=True)
-for r in RARITIES:
+for r in ([] if SKIP_API else RARITIES):
     q = f'r:{r}'
     ids, page = [], 1
     while True:
@@ -70,8 +71,9 @@ for r in RARITIES:
         page += 1
     api['lists'][q] = ids
     print('listed', q, len(ids), flush=True)
-with gzip.open(os.path.join(out, 'api.json.gz'), 'wt', encoding='utf-8') as f:
-    json.dump(api, f, ensure_ascii=False)
+if not SKIP_API:
+    with gzip.open(os.path.join(out, 'api.json.gz'), 'wt', encoding='utf-8') as f:
+        json.dump(api, f, ensure_ascii=False)
 
 # ---- 2 + 3. Bulk file ----
 db = json.load(gzip.open(db_path))
@@ -82,6 +84,7 @@ print('bulk', url, flush=True)
 rar = collections.defaultdict(dict)       # oid -> rarity -> {kind: example}
 names = {}
 shown = {}                                # printing id shown by the DB -> facts
+what = collections.defaultdict(set)       # oid -> set types, promo types, stamps of kept printings
 entries = {}
 scanned = 0
 for card in B.iter_cards(url, is_jsonl):
@@ -103,11 +106,14 @@ for card in B.iter_cards(url, is_jsonl):
         shown[card['id']] = {'rarity': r, 'set': card.get('set'), 'set_type': card.get('set_type'),
                              'lang': card.get('lang'), 'promo': bool(card.get('promo')), 'oid': oid}
     if not B.is_excluded(card):
+        what[oid].update(['st:' + (card.get('set_type') or ''), 'stamp:' + (card.get('security_stamp') or ''),
+                          'border:' + (card.get('border_color') or '')] + ['pt:' + p for p in card.get('promo_types') or []]
+                         + ['games:' + '+'.join(sorted(card.get('games') or []))])
         entries.setdefault(oid, B.CardEntry()).add(card)
 print('scanned', scanned, 'cards', len(rar), flush=True)
 
 with gzip.open(os.path.join(out, 'rarities.json.gz'), 'wt', encoding='utf-8') as f:
-    json.dump({'rar': rar, 'names': names, 'shown': shown}, f, ensure_ascii=False)
+    json.dump({'rar': rar, 'names': names, 'shown': shown, 'what': {o: sorted(v) for o, v in what.items()}}, f, ensure_ascii=False)
 
 rows = [e.to_row() for e in entries.values() if (e.ja or e.en)]
 rows.sort(key=lambda r: r[B.FIELD_ORDER.index('name_en')])
