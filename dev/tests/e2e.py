@@ -1602,12 +1602,34 @@ with sync_playwright() as p:
     page.locator(".opt-chip[data-group=rarity][data-value=mythic]").click()
     page.wait_for_function("document.querySelector('#resultCount').textContent.includes('件見つかりました')")
     page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 2")
-    feet = {t.locator(".card-name-main").inner_text(): (t.locator(".rarity-dot").inner_text().strip(), t.locator(".rarity-dot .dot").get_attribute("class"),
-            t.locator(".rarity-dot").get_attribute("title") or "") for t in page.locator("#cardGrid .card-tile").all()}
+    # each tile: (label, dot class, tooltip, arrow class or "")
+    feet = lambda: {t.locator(".card-name-main").inner_text(): (t.locator(".rarity-dot").inner_text().strip(), t.locator(".rarity-dot .dot").get_attribute("class"),
+            t.locator(".rarity-dot").get_attribute("title") or "", t.locator(".shift-icon").get_attribute("class") if t.locator(".shift-icon").count() else "")
+            for t in page.locator("#cardGrid .card-tile").all()}
     check("rarity filter: 神話レア finds cards with any mythic printing (Shivan Dragon has one)", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), names_on())
-    check("rarity filter: a tile whose printing is another rarity says 神話レア版あり, with the printing's rarity as tooltip",
-          feet.get("シヴ山のドラゴン", ("",))[0] == "神話レア版あり" and "mythic" in feet["シヴ山のドラゴン"][1] and "この絵の版はレア" in feet["シヴ山のドラゴン"][2]
-          and feet.get("敏捷なこそ泥、ラガバン", ("",))[0] == "神話レア" and not feet["敏捷なこそ泥、ラガバン"][2], feet)
+    f = feet()
+    check("rarity filter: a tile whose printing is another rarity still says 神話レア, with a ↓ arrow in the picture's rarity colour and the picture's rarity as tooltip",
+          f.get("シヴ山のドラゴン", ("",))[0] == "神話レア" and "mythic" in f["シヴ山のドラゴン"][1] and "この絵はレアの版です" in f["シヴ山のドラゴン"][2]
+          and f["シヴ山のドラゴン"][3] == "shift-icon down rare"
+          and f.get("敏捷なこそ泥、ラガバン", ("",))[0] == "神話レア" and not f["敏捷なこそ泥、ラガバン"][2] and not f["敏捷なこそ泥、ラガバン"][3], f)
+    # several rarities at once: any of them
+    page.locator(".opt-chip[data-group=rarity][data-value=rare]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 4")
+    f = feet()
+    check("rarity filter: R and M together find cards with a rare or a mythic printing", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン", "ウルザの物語", "ラノワールのエルフ"]), names_on())
+    check("rarity filter: both buttons stay on, one pill each, in rarity order",
+          page.locator(".opt-chip[data-group=rarity][aria-pressed=true]").evaluate_all("bs => bs.map(b => b.dataset.value)") == ["rare", "mythic"]
+          and page.locator("#activeFilters .filter-pill").all_inner_texts() == ["レア×", "神話レア×"], page.locator("#activeFilters .filter-pill").all_inner_texts())
+    check("rarity filter: with R and M, Shivan Dragon (a rare picture) is plain レア; Llanowar Elves (a common picture) says レア with the arrow",
+          f["シヴ山のドラゴン"][0] == "レア" and not f["シヴ山のドラゴン"][3] and f["ラノワールのエルフ"][0] == "レア"
+          and f["ラノワールのエルフ"][3] == "shift-icon down common" and f["ウルザの物語"][0] == "レア" and not f["ウルザの物語"][3], f)
+    page.locator(".opt-chip[data-group=rarity][data-value=common]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 6")
+    check("rarity filter: adding C finds the commons too", len(names_on()) == 6 and "稲妻" in names_on(), names_on())
+    page.locator(".opt-chip[data-group=rarity][data-value=rare]").click()
+    page.locator(".opt-chip[data-group=rarity][data-value=common]").click()
+    page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 2")
+    check("rarity filter: turning R and C off again leaves the mythics", names_on() == sorted(["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), names_on())
     page.locator("#activeFilters .filter-pill").click()
     page.wait_for_selector("#homeHero", state="visible")
     for q, want in (("r:m", ["敏捷なこそ泥、ラガバン", "シヴ山のドラゴン"]), ("r:rare", ["ウルザの物語", "シヴ山のドラゴン", "ラノワールのエルフ"]),
@@ -1618,7 +1640,9 @@ with sync_playwright() as p:
         check(f"rarity: {q} counts every printing's rarity", names_on() == sorted(want), names_on())
     top_search("r:rare")
     page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile .card-foot').length === 3")
-    check("rarity: r:rare marks only the cards whose shown printing isn't rare", sorted(page.locator("#cardGrid .rarity-dot").all_inner_texts()) == sorted(["レア", "レア", "レア版あり"]),
+    check("rarity: r:rare says レア on every tile and marks only the one whose picture isn't rare (Llanowar Elves, ↓)",
+          page.locator("#cardGrid .rarity-dot").all_inner_texts() == ["レア"] * 3 and page.locator("#cardGrid .shift-icon").count() == 1
+          and page.locator("#cardGrid .card-tile", has_text="ラノワールのエルフ").locator(".shift-icon.down.common").count() == 1,
           page.locator("#cardGrid .rarity-dot").all_inner_texts())
     DB_MODE["variant"] = None
     home()
