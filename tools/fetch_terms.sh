@@ -1,5 +1,5 @@
 #!/bin/bash
-B=https://staging-warujie.warujie-mtg.workers.dev
-for p in / /CLAUDE.md /dev/README.md /dev/tests/e2e.py /tools/make_preview.py /index.html; do
-  curl -sS -o /dev/null -w "$p %{http_code}\n" "$B$p"
-done > probe_out/handover_check.txt 2>&1
+o=probe_out/fonts; mkdir -p $o
+for f in yujiboku/YujiBoku-Regular.ttf yujisyuku/YujiSyuku-Regular.ttf yujimai/YujiMai-Regular.ttf kaiseitokumin/KaiseiTokumin-ExtraBold.ttf zenantique/ZenAntique-Regular.ttf; do
+  curl -sSL -o $o/$(basename $f) -w "$f %{http_code} %{size_download}\n" "https://raw.githubusercontent.com/google/fonts/main/ofl/$f"
+done > probe_out/fonts_log.txt 2>&1
