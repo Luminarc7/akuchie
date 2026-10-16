@@ -24,6 +24,9 @@ DECKS_MODE = {"mode": "absent"}   # fixture | absent
 SHOTS = len(sys.argv) > 1 and sys.argv[1] == "shots"
 PRICE_SITE = {"dir": None}
 PRICES_BASE = "https://warujie.github.io/warujie-prices/"
+SHOP_MODE = {"mode": "absent", "aff": False}   # what worker.js's /shop/rakuten answers: absent (404) | fixture | off (not configured)
+SHOP_CALLS = []
+AFF_IDS = "const AFFILIATE = { rakuten: '1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c', amazon: 'warujie-22' };"
 
 def png(w, h, top, bottom, label=""):
     im = Image.new("RGB", (w, h))
@@ -38,6 +41,7 @@ def png(w, h, top, bottom, label=""):
 
 CARD_PNG = png(244, 340, (70, 62, 96), (38, 34, 58))
 ART_PNG = png(626, 457, (92, 58, 40), (20, 14, 12), "art")
+SHOP_PNG = png(200, 200, (40, 70, 110), (200, 120, 60))
 
 def card(id, oracle, lang, set_, num, name, **kw):
     c = {"object": "card", "id": id, "oracle_id": oracle, "lang": lang, "set": set_,
@@ -366,6 +370,23 @@ def search_results(q):
         return [c for c in CARDS if c["set"] == m.group(1) and c["lang"] == lang]
     return []
 
+import datetime as _dt
+def _jdate(days):   # a Rakuten-style date ("2026年10月13日"), days from today
+    d = _dt.date.today() + _dt.timedelta(days=days)
+    return f"{d.year}年{d.month:02d}月{d.day:02d}日"
+def shop_items(kind, aff):
+    link = lambda n: (f"https://hb.afl.rakuten.co.jp/hgc/{aff}/?pc=https%3A%2F%2Fbooks.rakuten.co.jp%2Frb%2F{n}%2F" if aff else f"https://books.rakuten.co.jp/rb/{n}/")
+    img = lambda n: f"https://thumbnail.image.rakuten.co.jp/@0_mall/book/cabinet/{n}.jpg"
+    if kind == "sl":
+        return [
+            {"title": "マジック：ザ・ギャザリング Secret Lair x Hatsune Miku: Autumn Encore 日本語版", "price": 6600, "url": link(1001), "image": img(1001), "date": _jdate(40), "avail": "5"},
+            {"title": "マジック：ザ・ギャザリング Secret Lair Fall Superdrop 2026 Brand New Drop", "price": 4950, "url": link(1002), "image": img(1002), "date": _jdate(-3), "avail": "1"},
+            {"title": "マジック：ザ・ギャザリング Secret Lair Old Drop", "price": 5500, "url": link(1003), "image": "", "date": "2026年02月中旬", "avail": "2"},
+            {"title": "マジック：ザ・ギャザリング Secret Lair Another Drop", "price": 5000, "url": link(1004), "image": img(1004), "date": _jdate(-90), "avail": "1"},
+            {"title": "マジック：ザ・ギャザリング Secret Lair Fifth Drop", "price": 5000, "url": link(1005), "image": img(1005), "date": _jdate(-120), "avail": "1"},
+            {"title": "Not a Rakuten link", "price": 1, "url": "https://example.com/x", "image": "", "date": "", "avail": "1"}]
+    return [{"title": "マジック：ザ・ギャザリング ローウィンの昏明 プレイ・ブースター 日本語版", "price": 17867, "url": link(2001), "image": img(2001), "date": _jdate(-30), "avail": "1"}]
+
 calls = []
 def handle(route):
     req = route.request
@@ -373,6 +394,15 @@ def handle(route):
     calls.append(url)
     u = urllib.parse.urlparse(url)
     J = lambda obj, status=200: route.fulfill(status=status, content_type="application/json", body=json.dumps(obj))
+    if u.netloc == "warujie.github.io" and u.path == "/shop/rakuten":
+        qs = urllib.parse.parse_qs(u.query)
+        SHOP_CALLS.append(qs)
+        if SHOP_MODE["mode"] == "absent":
+            return route.fulfill(status=404, body="not found")
+        if SHOP_MODE["mode"] == "off":
+            return J({"ok": False, "reason": "not-configured", "items": []})
+        kind = qs.get("kind", [""])[0]
+        return J({"ok": True, "items": shop_items(kind, qs.get("aff", [""])[0])})
     if url.startswith(PRICES_BASE):
         rel = u.path[len("/warujie-prices/"):]
         f = os.path.join(PRICE_SITE["dir"], rel) if PRICE_SITE["dir"] else None
@@ -382,7 +412,8 @@ def handle(route):
     if url.startswith(SITE):
         path = u.path[len("/Warujie/"):]
         if path in ("", "index.html"):
-            return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=INDEX)
+            return route.fulfill(status=200, content_type="text/html; charset=utf-8",
+                                 body=INDEX.replace("const AFFILIATE = { rakuten: '', amazon: '' };", AFF_IDS) if SHOP_MODE["aff"] else INDEX)
         if path == "preview.html":
             return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=PREVIEW)
         if path == "combo_ja.js":
@@ -459,6 +490,8 @@ def handle(route):
         if "art_crop/front/q/p/qp-ja" in u.path:
             return route.fulfill(status=404, body="")
         return route.fulfill(status=200, content_type="image/png", body=ART_PNG if "art_crop" in u.path else CARD_PNG)
+    if u.netloc == "thumbnail.image.rakuten.co.jp":
+        return route.fulfill(status=200, content_type="image/png", body=SHOP_PNG)
     if u.netloc == "svgs.scryfall.io":
         fill = "#b9d7a0" if "card-symbols" in u.path else "#000"
         return route.fulfill(status=200, content_type="image/svg+xml",
@@ -3220,6 +3253,92 @@ with sync_playwright() as p:
     check("deck price page: without the price files it says so, and still lists the cards", page.locator("#importBody .dl-row, #importBody .deck-card").count() >= 4)
     page.fill("#importText", ""); page.wait_for_timeout(500)
     PRICE_SITE["dir"] = PRICES_FULL
+
+    # ---- shops: Secret Lairs and booster boxes at Rakuten Books, box links on set pages
+    page.set_viewport_size({"width": 1280, "height": 900})
+    check("home: without the shop list (no worker, as on GitHub Pages) the Rakuten box offers a Rakuten Books search, plain (no affiliate, no PR)",
+          page.goto(SITE) and page.wait_for_selector("#homeShopBody .hs-empty a") and
+          page.locator("#homeShopBody .hs-empty a").get_attribute("href").startswith("https://books.rakuten.co.jp/search?sitem=") and
+          "&g=006" in page.locator("#homeShopBody .hs-empty a").get_attribute("href") and not page.locator("#homeShop .pr-badge").is_visible()
+          and "sponsored" not in page.locator("#homeShopBody .hs-empty a").get_attribute("rel"))
+    check("footer: no affiliate IDs, so it still says no ads, and no Amazon associate line",
+          "広告はありません" in page.locator("#footPrivacy").inner_text() and not page.locator("#footAmazon").is_visible())
+    SHOP_MODE["mode"] = "off"
+    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-empty a")
+    check("home: Rakuten keys not set up yet (worker answers not-configured): the same search link", "Secret Lair" in page.locator("#homeShopBody").inner_text())
+    SHOP_MODE["mode"] = "fixture"; SHOP_CALLS.clear()
+    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
+    items = page.locator("#homeShopBody .hs-item")
+    check("home: the Secret Lair tab shows four Rakuten Books products, newest first, only Rakuten links",
+          items.count() == 4 and "Autumn Encore" in items.nth(0).inner_text() and
+          all(items.nth(i).locator("a").get_attribute("href").startswith("https://books.rakuten.co.jp/rb/") for i in range(4)), items.count())
+    check("home: asked the worker for Secret Lairs, without an affiliate ID", SHOP_CALLS and SHOP_CALLS[0].get("kind") == ["sl"] and "aff" not in SHOP_CALLS[0], SHOP_CALLS)
+    first = items.nth(0).inner_text()
+    check("home: a product shows its price in yen, 予約受付中 and its release date", "6,600円" in first and "予約受付中" in first and "発売" in first, first)
+    check("home: something released in the last two weeks says NEW, older ones don't",
+          "NEW" in items.nth(1).inner_text() and "NEW" not in items.nth(3).inner_text() and "NEW" not in first)
+    check("home: products open in a new tab", items.nth(0).locator("a").get_attribute("target") == "_blank")
+    check("home: the Rakuten credit (required by Rakuten's API rules) is under the products",
+          page.locator("#homeShop .hs-credit a").get_attribute("href") == "https://developers.rakuten.com/" and "Supported by Rakuten Developers" in page.locator("#homeShop .hs-credit").inner_text())
+    check("home: no Amazon link inside the Rakuten box (Rakuten's rules)", page.locator("#homeShop a[href*='amazon']").count() == 0)
+    check("home: a product without a picture keeps its place", page.locator("#homeShopBody .hs-item").nth(2).locator(".hs-noimg").count() == 1)
+    page.click("#homeShopTabs .seg-btn[data-kind='box']"); page.wait_for_function("document.querySelector('#homeShopBody').textContent.includes('ローウィン')")
+    check("home: the ブースターBOX tab shows boxes", "17,867円" in page.locator("#homeShopBody").inner_text() and SHOP_CALLS[-1].get("kind") == ["box"] and "set" not in SHOP_CALLS[-1])
+    page.click("#langBtn"); page.wait_for_timeout(400)
+    check("home in English: the box's title and tabs", "On sale at Rakuten Books" in page.locator("#homeShop").inner_text() and "Booster boxes" in page.locator("#homeShopTabs").inner_text()
+          and "¥17,867" in page.locator("#homeShopBody").inner_text(), page.locator("#homeShop").inner_text()[:200])
+    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.set_viewport_size({"width": 390, "height": 844}); page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
+    check("phone: the Rakuten box fits, no sideways scroll", no_hscroll())
+    if SHOTS:
+        page.locator("#homeShop").screenshot(path="/tmp/shop-home-phone.png")
+    page.set_viewport_size({"width": 1280, "height": 900})
+    if SHOTS:
+        page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item"); page.locator("#homeBoxes").screenshot(path="/tmp/shop-home-desktop.png")
+    SHOP_CALLS.clear()
+    page.goto(SITE + "?set=xyz"); page.wait_for_selector("#setShop .rakuten .hs-item")
+    check("set page (an expansion from the last three years): boxes from Rakuten Books, asked by the set's name",
+          SHOP_CALLS and SHOP_CALLS[-1].get("set") == ["English Only Set"] and page.locator("#setShop .rakuten .hs-item").count() == 1, SHOP_CALLS)
+    amz = page.locator("#setShop .amazon a")
+    check("set page: an Amazon search for the set's booster boxes, in its own part, plain without a tracking ID",
+          amz.get_attribute("href").startswith("https://www.amazon.co.jp/s?k=") and "English%20Only%20Set" in amz.get_attribute("href") and "tag=" not in amz.get_attribute("href")
+          and page.locator("#setShop .rakuten a[href*='amazon']").count() == 0, amz.get_attribute("href"))
+    page.goto(SITE + "?set=m10"); page.wait_for_selector("#setGrid .card-tile")
+    check("set page: an old core set gets no box links", not page.locator("#setShop").is_visible())
+    page.goto(SITE + "?set=mul"); page.wait_for_selector("#setGrid .card-tile")
+    check("set page: a set not sold in boxes gets none", not page.locator("#setShop").is_visible())
+    SHOP_MODE["aff"] = True; SHOP_CALLS.clear()
+    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-item")
+    a0 = page.locator("#homeShopBody .hs-item a").nth(0)
+    check("affiliate IDs set: the worker is asked with the Rakuten ID and its affiliate links are used as they are, marked PR and rel=sponsored",
+          SHOP_CALLS[0].get("aff") == ["1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c"] and a0.get_attribute("href").startswith("https://hb.afl.rakuten.co.jp/hgc/1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c/")
+          and "sponsored" in a0.get_attribute("rel") and page.locator("#homeShop .pr-badge").is_visible(), a0.get_attribute("href"))
+    if SHOTS:
+        page.locator("#homeShop").screenshot(path="/tmp/shop-home-pr.png"); page.locator("footer").screenshot(path="/tmp/shop-footer-pr.png")
+    check("affiliate IDs set: the footer says the PR links are affiliate ads, and has Amazon's associate line",
+          "アフィリエイト広告" in page.locator("#footPrivacy").inner_text() and "広告はありません" not in page.locator("#footPrivacy").inner_text()
+          and page.locator("#footAmazon").inner_text() == "Amazonのアソシエイトとして、悪知恵は適格販売により収入を得ています。")
+    page.goto(SITE + "?set=xyz"); page.wait_for_selector("#setShop .rakuten .hs-item")
+    amz = page.locator("#setShop .amazon a")
+    if SHOTS:
+        page.screenshot(path="/tmp/shop-set-desktop.png")
+        page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+        page.screenshot(path="/tmp/shop-set-phone.png")
+        page.set_viewport_size({"width": 1280, "height": 900})
+    check("affiliate IDs set: the Amazon search carries the tracking ID, PR on both parts",
+          "&tag=warujie-22" in amz.get_attribute("href") and "sponsored" in amz.get_attribute("rel") and page.locator("#setShop .pr-badge").count() == 2, amz.get_attribute("href"))
+    SHOP_MODE["mode"] = "off"
+    page.goto(SITE); page.wait_for_selector("#homeShopBody .hs-empty a")
+    href = page.locator("#homeShopBody .hs-empty a").get_attribute("href")
+    check("affiliate IDs set, no product list: the Rakuten search link becomes a Rakuten Affiliate link",
+          href.startswith("https://hb.afl.rakuten.co.jp/hgc/1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c/?pc=https%3A%2F%2Fbooks.rakuten.co.jp%2Fsearch") and "&m=" in href, href)
+    SHOP_MODE["mode"] = "absent"; SHOP_MODE["aff"] = False
+    page.evaluate("localStorage.setItem('akuchie-lite', '1')"); SHOP_CALLS.clear()
+    page.goto(SITE); page.wait_for_timeout(600)
+    check("lite mode: no Rakuten box, and Rakuten isn't asked", not page.locator("#homeShop").is_visible() and not SHOP_CALLS)
+    page.goto(SITE + "?set=xyz"); page.wait_for_selector("#setGrid .card-tile")
+    check("lite mode: no box links on set pages", not page.locator("#setShop").is_visible())
+    page.evaluate("localStorage.removeItem('akuchie-lite')")
 
     check("no JavaScript errors", not errors, errors)
     browser.close()

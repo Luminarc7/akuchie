@@ -11,8 +11,11 @@ repository is served as it is, except what `.assetsignore` lists. Configuration:
 - **Build step:** `node tools/brotli_db.mjs` makes `ja_cards.json.br` and checks the database
   unpacks to valid JSON; a broken database stops the deploy instead of reaching visitors.
 - **`run_worker_first`** lists the only paths that go through `worker.js`: `/`, `/index.html`,
-  `/preview`, `/preview.html`, `/preview/`, `/ja_cards.json`. Everything else is served straight
-  from the static files.
+  `/preview`, `/preview.html`, `/preview/`, `/ja_cards.json`, `/shop/rakuten`. Everything else
+  is served straight from the static files.
+- **Secrets:** `RAKUTEN_APP_ID` and `RAKUTEN_ACCESS_KEY` (Rakuten Web Service), set by the owner
+  in Cloudflare → Workers & Pages → warujie → Settings → Variables and Secrets, as type
+  "Secret". They are never in the repository. The test sites use the same ones.
 - **Domain:** warujie.jp is registered at XServer Domain; DNS is on Cloudflare. Cloudflare's
   Bot Fight Mode is on, so warujie.jp challenges bots, including GitHub runners and Claude's
   sandbox. To check the live site from a script, use `https://warujie.warujie-mtg.workers.dev/`
@@ -29,7 +32,7 @@ there.** (The repository itself is public on GitHub, so never put secrets in any
 
 ## `worker.js`
 
-Three jobs:
+Four jobs:
 
 1. **HTML without Cloudflare's injected scripts.** Cloudflare would add its Web Analytics beacon
    and bot-detection script to HTML. The Worker fetches the page from the assets, sets
@@ -50,6 +53,20 @@ Three jobs:
 
 When you add a page type, add its share tags in `shareTags()` and a check in
 `dev/tests/e2e.py`.
+
+4. **Rakuten Books products** (`rakutenItems()`). `/shop/rakuten?kind=sl` (Secret Lair) or
+   `?kind=box[&set=<Japanese set name>]` (booster boxes), with `&aff=<affiliate ID>` when the page
+   has one. It asks Rakuten's Books Total Search API (`RAKUTEN_API`, games genre `006`, newest
+   first) with the two secrets, sending `RAKUTEN_SITE` (warujie.jp, the site registered with the
+   Rakuten app) as Referer and Origin. Only these fixed searches are possible, so nobody can spend
+   the API quota on other searches. It keeps Magic products with Rakuten links only (for boxes:
+   no single packs, bundles or decks, at least 8,000 yen), at most 12, as
+   `{ ok, items: [{ title, price, url, image, date, avail }] }`. Cloudflare keeps Rakuten's
+   answer an hour (`cacheTtlByStatus`), so Rakuten is asked rarely. Until the secrets exist it
+   answers `{ ok: false, reason: "not-configured" }`; a Rakuten error gives
+   `reason: "rakuten-<status>"`, kept two minutes. Tests: `dev/tests/worker_shop.mjs`.
+   **Setting it up (owner):** make a Rakuten Web Service app of type "Webアプリケーション" with
+   `https://warujie.jp` as its allowed site, then add the two secrets above.
 
 ## `sw.js`: the offline copy
 
