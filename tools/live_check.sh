@@ -9,3 +9,4 @@ import json; d = json.load(open('/tmp/db.json')); F = d['fields']; print(F[-3:],
 i = F.index('rarities'); r = F.index('rarity'); n = F.index('name_en')
 print('mythic rows', sum('m' in c[i] for c in d['cards']), 'Amnesia', [c[r] for c in d['cards'] if c[n] == 'Amnesia'])
 "
+# recheck 11:56
