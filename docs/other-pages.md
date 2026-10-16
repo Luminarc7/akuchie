@@ -153,8 +153,12 @@ card, that they can export or save to other deckbuilding sites").
 
 - **Adding.** Every search result has a ☆ over its picture (`wantTogHtml()`, called from
   `cardTileHtml()`; at the end of the row in the text view, `textRowHtml()`): one tap adds the
-  card, another takes it out. The card page has ウォントリストに追加 under the set line
-  (`#cpWant`, `wantCardHtml()`), then a − n枚 ＋ stepper. A note at the bottom of the screen
+  card, another takes it out. The card page has a box of its own under the picture and language
+  buttons (`#cpWant` inside `.cp-art`, `wantCardHtml()`; the owner chose that place,
+  2026-10-16): ウォントリストに追加, then a − n枚 ＋ stepper and a trash can (`TRASH_SVG`) that
+  takes the card out. On phones, where the picture column is narrow, the trash can sits beside
+  the heading (CSS grid areas on `.cp-want`). When the picture is swapped for the English one,
+  the box is put back with the language buttons. A note at the bottom of the screen
   (`wantToast()`, `#wantToast`) confirms, with リストを見る after adding and 元に戻す after taking
   a card out. The ☆ sits inside the result's link, so one click listener on `document` in the
   capture phase handles every want button first (`.want-tog`, `[data-want-act]`) and stops the
@@ -168,7 +172,10 @@ card, that they can export or save to other deckbuilding sites").
   ウォント shows only on screens 1400px and wider. `refreshWant()` updates it, every ☆ on the
   page, the card page and the list page after each change, and when another tab changes the list
   (the `storage` event).
-- **The page** (`drawWant()`): each card with a small picture, its printing (`wantPrintLabel()`),
+- **The page** (`drawWant()`) has a リスト / 画像 switch beside 書き出す (`wantState.view`,
+  remembered as `WANT_VIEW_KEY`; owner's request 2026-10-16). 画像 shows the cards as pictures
+  (`wantTileHtml()`, `.want-grid`, two a row on phones) with the name, printing, price and the
+  − n ＋ buttons under each. リスト (the default) shows each card in a row with a small picture, its printing (`wantPrintLabel()`),
   that printing's price for one copy (`printingYen()`: the cheaper of TCGplayer and Cardmarket in
   yen, non-foil, else foil; the printings come from Scryfall's `/cards/collection` by id,
   `wantFetchPrintings()`) and the card's cheapest price (`cardYen()`, from `cheap.json.gz`) when
