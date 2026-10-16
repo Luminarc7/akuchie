@@ -2116,6 +2116,8 @@ const STR = {
   'rarity.mythic': ['神話レア', 'Mythic'],
   'rarity.special': ['スペシャル', 'Special'],
   'rarity.bonus': ['ボーナス', 'Bonus'],
+  'rarity.also': ['{r}版あり', '{r} printing'],
+  'rarity.alsoTip': ['この絵の版は{r}。{w}の版もあります', 'This printing is {r}; the card was also printed as {w}'],
   'color.W': ['白', 'White'], 'color.U': ['青', 'Blue'], 'color.B': ['黒', 'Black'],
   'color.R': ['赤', 'Red'], 'color.G': ['緑', 'Green'], 'color.C': ['無色', 'Colorless'],
   'chip.W': ['白', 'W'], 'chip.U': ['青', 'U'], 'chip.B': ['黒', 'B'],
@@ -2850,7 +2852,7 @@ function indexRow(arr, fields) {
   const o = {};
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout'].forEach(f => { if (o[f] == null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout','rarities'].forEach(f => { if (o[f] == null) o[f] = ''; });
   ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
@@ -2865,8 +2867,21 @@ function indexRow(arr, fields) {
   o._colors = String(o.colors || '').toUpperCase();
   o._cmc = Number(o.cmc) || 0;
   o._hasX = /\{X\}/i.test(o.mana_cost || '');
+  o._rarities = o.rarities || RARITY_CODE[o.rarity] || '';
   return o;
 }
+
+// Rarity filters find a card by every rarity it was printed at (the database's "rarities",
+// c u r m s b), as Scryfall's r: does: Sengir Vampire is uncommon, rare and mythic. The tile
+// still shows the rarity of the printing in its picture. Files without the field have only that one.
+const RARITY_CODE = { common: 'c', uncommon: 'u', rare: 'r', mythic: 'm', special: 's', bonus: 'b' };
+const RARITY_ALIASES = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic', s: 'special', b: 'bonus',
+  'コモン': 'common', 'アンコモン': 'uncommon', 'レア': 'rare', '神話レア': 'mythic', 'スペシャル': 'special' };
+function rarityName(val) {
+  const v = normText(val).trim();
+  return RARITY_ALIASES[v] || RARITY_ALIASES[String(val).trim()] || v;
+}
+function hasRarity(row, rarity) { return !!RARITY_CODE[rarity] && row._rarities.includes(RARITY_CODE[rarity]); }
 
 // Fetches a JSON file that may be gzip-compressed. GitHub Pages serves .gz
 // files as raw bytes, so they're decompressed here in the browser; if a host
@@ -3245,11 +3260,8 @@ function localOperatorMatch(row, op, sep, val) {
       if (sep === '<=') return rowColors.every(c => wanted.includes(c));   // within these colors (colorless too)
       return wanted.every(c => rowColors.includes(c));
     }
-    case 'r': {
-      const aliases = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic',
-        'コモン':'common', 'アンコモン':'uncommon', 'レア':'rare', '神話レア':'mythic' };
-      return row.rarity === (aliases[v] || aliases[val] || v);
-    }
+    case 'r':
+      return hasRarity(row, rarityName(val));
     case 'e': case 'set': case 's':
       return String(row.set).toLowerCase() === v;
     case 'kw': {
@@ -3306,7 +3318,7 @@ function localFilterRow(row, st = state) {
     st.keywords.forEach(k => { if (row._kw.has(normText(k))) hit = true; });
     if (!hit) return false;
   }
-  if (st.rarity && row.rarity !== st.rarity) return false;
+  if (st.rarity && !hasRarity(row, st.rarity)) return false;
   if (st.format && row.legal != null && !String(row.legal).includes(FORMAT_CODE[st.format])) return false;
   if (st.roles && st.roles.size) {
     let hit = false;
@@ -3754,7 +3766,7 @@ function derivedFromWord(word) {
       test: row => row.legal == null || String(row.legal).includes(FORMAT_CODE[fmt]) };
   }
   const rar = RARITY_WORDS[w] || RARITY_WORDS[lw];
-  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), test: row => row.rarity === rar };
+  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), rarity: rar, test: row => hasRarity(row, rar) };
   // パワー3以上, タフネス2以下, power 5
   let st = w.match(/^(パワー|タフネス|power|toughness)(\d{1,2})(以上|以下)?$/i);
   if (st) {
@@ -4188,7 +4200,7 @@ function narrowingWord(bare) {
   const lw = s.toLowerCase();
   if (ja || EN_NARROW_WORDS.has(lw) || COLOR_GROUP_WORDS[lw] || FORMAT_WORDS[lw] || RARITY_WORDS[lw]) {
     const d = derivedFromWord(s);
-    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone };
+    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone, rarity: d.rarity };
   }
   const m = ja && s.match(/^([白青黒赤緑]+|無色|多色|\d{1,2}マナ(?:以下|以上)?)の?(.+)$/);
   if (m && jaTypeWords().has(m[2])) {
@@ -4296,7 +4308,7 @@ function parseSearch(raw) {
       const nw = narrowingWord(bare);
       if (nw && !(negate && nw.rest) && (nameLike === null ? (nameLike = tokens.length > 1 && rolesLookLikeAName(tokens)) : nameLike) === false
           && !(nw.notAlone && (tokens.length < 2 ? nameStartsWith(bare) : wordsInOneName(tokens)))) {
-        out.filters.push({ negate, test: nw.test });
+        out.filters.push({ negate, test: nw.test, rarity: nw.rarity });
         if (normText(nw.label) !== normText(nw.word || bare)) out.aliases.push({ from: nw.word || bare, to: nw.label, narrow: true });
         if (!nw.rest) return;
         bare = nw.rest;
@@ -5593,6 +5605,23 @@ function treatmentLabels(p) {
   return keys.map(k => t('tr.' + k));
 }
 
+// The rarity a search asks for (the rarity buttons, r:m, 神話レア ドラゴン), or ''.
+function wantedRarity() {
+  if (state.rarity) return state.rarity;
+  const f = currentPlan().filters.find(f => !f.negate && (f.rarity || f.op === 'r'));   // derived words are filters too
+  return f ? f.rarity || rarityName(f.val) : '';
+}
+// The tile's rarity: its printing's. When the search asks for another rarity the card was also
+// printed at (a mythic Secret Lair Sengir Vampire), it says so: 神話レア版あり.
+function tileRarityHtml(card) {
+  const want = wantedRarity();
+  if (want && card.rarity && card.rarity !== want && STR['rarity.' + want]) {
+    const tip = t('rarity.alsoTip', { r: rarityLabel(card.rarity), w: rarityLabel(want) });
+    return `<span class="rarity-dot" title="${esc(tip)}"><span class="dot ${want}"></span>${esc(t('rarity.also', { r: rarityLabel(want) }))}</span>`;
+  }
+  return `<span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>`;
+}
+
 function cardTileHtml(card) {
   const pic = faceUris(card)[0];
   const names = cardNames(card);
@@ -5616,7 +5645,7 @@ function cardTileHtml(card) {
         ${legalityCirclesHtml(card.legalities)}
       </div>
       <div class="card-foot">
-        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
+        ${tileRarityHtml(card)}
         ${tilePriceHtml(card)}
       </div>
     </a>`;
