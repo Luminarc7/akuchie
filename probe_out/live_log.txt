@@ -1,6 +1,6 @@
 + bash tools/live_check.sh
 + curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/live_index.html https://warujie.warujie-mtg.workers.dev/
 + sha256sum probe_out/live_index.html
-631b1d86137b3dfc94c83cc7cc55655ca6244cd0e1747f7ec4f94aa86de1805f  probe_out/live_index.html
-+ grep -c -- --sym-s probe_out/live_index.html
-5
+02a10ed49b8ba42bbe11475cc5fbd44949cd234103f8734fd7e42be6b96cfaaa  probe_out/live_index.html
++ grep -c -- rar-chip probe_out/live_index.html
+18
