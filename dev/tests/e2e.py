@@ -26,6 +26,7 @@ PRICE_SITE = {"dir": None}
 PRICES_BASE = "https://warujie.github.io/warujie-prices/"
 SHOP_MODE = {"mode": "absent", "aff": False}   # what worker.js's /shop/rakuten answers: absent (404) | fixture | off (not configured)
 SHOP_CALLS = []
+NO_AFF_IDS = "const AFFILIATE = { rakuten: '', amazon: '' };"   # the page as if no IDs were set yet
 AFF_IDS = "const AFFILIATE = { rakuten: '1a2b3c4d.5e6f7a8b.1a2b3c4e.9f8e7d6c', amazon: 'warujie-22' };"
 
 def png(w, h, top, bottom, label=""):
@@ -416,7 +417,7 @@ def handle(route):
         path = u.path[len("/Warujie/"):]
         if path in ("", "index.html"):
             return route.fulfill(status=200, content_type="text/html; charset=utf-8",
-                                 body=INDEX.replace("const AFFILIATE = { rakuten: '', amazon: '' };", AFF_IDS) if SHOP_MODE["aff"] else INDEX)
+                                 body=re.sub(r"const AFFILIATE = \{[^}]*\};", lambda m: AFF_IDS if SHOP_MODE["aff"] else NO_AFF_IDS, INDEX))
         if path == "preview.html":
             return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=PREVIEW)
         if path == "combo_ja.js":
