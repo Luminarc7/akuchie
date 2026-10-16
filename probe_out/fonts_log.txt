@@ -1,0 +1,5 @@
+yujiboku/YujiBoku-Regular.ttf 200 8525588
+yujisyuku/YujiSyuku-Regular.ttf 200 8430348
+yujimai/YujiMai-Regular.ttf 200 8496292
+kaiseitokumin/KaiseiTokumin-ExtraBold.ttf 200 4564000
+zenantique/ZenAntique-Regular.ttf 200 5507920
