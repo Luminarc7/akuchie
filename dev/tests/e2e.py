@@ -3076,11 +3076,7 @@ with sync_playwright() as p:
     PRICE_SITE["dir"] = PRICES_FULL
     DECKS_MODE["mode"] = "fixture"
     page.set_viewport_size({"width": 1280, "height": 900})
-    prints = json.loads(gzip.decompress(open(os.path.join(PRICES_FULL, "cheap_prints.json.gz"), "rb").read()))["cards"]
     cheap = json.loads(gzip.decompress(open(os.path.join(PRICES_FULL, "cheap.json.gz"), "rb").read()))["cards"]
-    check("prices: the builder also writes which printing each cheapest price is (set/number), for the same cards",
-          prints.get("Lightning Bolt") and prints["Lightning Bolt"][0] == "m10/146" and set(prints) <= set(cheap)
-          and all(bool(p[0]) == bool(cheap[n][0]) and bool(p[1]) == bool(cheap[n][1]) for n, p in prints.items()), prints.get("Lightning Bolt"))
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importText")
     page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
     check("deck price page: opens with an empty box and help on what it reads", page.locator(".imp-empty").count() == 1 and page.locator("#importSample").count() == 1
@@ -3114,7 +3110,8 @@ with sync_playwright() as p:
           newcard == [[[2, "Deathrite Shaman", False]], 0], newcard)
     LIST = "Deck\n4 稲妻\n4 Shivan Dragon (M10) 156\n3 ラノワールのエルフ\n4 Lightnig Bolt\n20 Mountain\n\nSideboard\n2 Qasali Pridemage"
     page.fill("#importText", LIST)
-    page.wait_for_function("document.querySelector('#importBody .deck-cost .dcst-v') && document.querySelector('#importBody .ib-print a')")
+    page.wait_for_function("document.querySelector('#importBody .deck-cost .dcst-v') && document.querySelector('#importBody [data-iview=list]')")
+    page.click("#importBody [data-iview=list]"); page.wait_for_selector("#importBody .dl-yen:not(:empty)")
     def yen1(name):
         r = cheap.get(name)
         opts = [x for x in ((r[0] / 100 * 150.0) if r and r[0] else None, (r[1] / 100 * 160.0) if r and r[1] else None) if x is not None]
@@ -3125,19 +3122,10 @@ with sync_playwright() as p:
     want_txt = "約¥{:,}〜".format(int(round(round(want) / 100) * 100))
     body = page.locator("#importBody").inner_text()
     check("deck price page: the total in yen, each card's cheapest printing, basic lands left out (the same sum as the deck pages); the card not found makes it 〜",
-          page.locator("#importBody .deck-cost .dcst-v").inner_text() == want_txt and page.locator(".ib-total b").inner_text() == want_txt
+          page.locator("#importBody .deck-cost .dcst-v").inner_text() == want_txt
           and "価格のないカード{}枚を除く".format(gone) in page.locator("#importBody .deck-cost").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), want_txt))
     check("deck price page: main deck and sideboard counted, the deck's facts line says so", "メイン 31枚" in body and "サイドボード 2枚" in body, body[:200])
-    subs = page.evaluate("[...document.querySelectorAll('#importBody .ib-row .ib-yen')].map(e => Number(e.textContent.replace(/[^0-9]/g, '')) || 0)")
-    npriced = sum(1 for n, nm in parts if yen1(nm) is not None)
-    check("deck price page: the breakdown lists every card, the most expensive first, then those with no price",
-          len(subs) == 4 and subs[:npriced] == sorted(subs[:npriced], reverse=True) and all(x > 0 for x in subs[:npriced]) and all(x == 0 for x in subs[npriced:]), (subs, npriced))
-    bolt = page.locator("#importBody .ib-row", has=page.locator(".ib-name", has_text="稲妻")).first
-    bp = page.evaluate("cheapestPrinting('Lightning Bolt', rowByEnglishName('Lightning Bolt'))")
-    check("deck price page: the cheapest printing is named (set, number, set name, shop) and opens that printing's page",
-          ("M10 #146" in bolt.locator(".ib-print").inner_text()) and bp["key"] == "m10/146"
-          and bolt.locator(".ib-print a").get_attribute("href") == "?card=bolt-en-m10" and ("TCGplayer" in bolt.inner_text() or "Cardmarket" in bolt.inner_text()), bolt.inner_text())
-    check("deck price page: basic lands are listed as not counted", "基本土地（価格に含めません）：Mountain ×20" in body, body)
+    check("deck price page: no breakdown of the cheapest printings (the owner didn't want it)", page.locator(".imp-breakdown, .ib-row").count() == 0)
     miss = page.locator(".imp-miss")
     check("deck price page: a card it can't find is listed with what it may be", miss.count() == 1 and "4 Lightnig Bolt" in miss.inner_text()
           and "見つからなかったカード 4枚" in miss.inner_text() and page.locator(".imp-fix").first.inner_text() == "Lightning Bolt", miss.inner_text() if miss.count() else "")
@@ -3145,7 +3133,7 @@ with sync_playwright() as p:
     page.wait_for_function("!document.querySelector('.imp-miss')")
     check("deck price page: picking the suggestion fixes that line (count kept) and the price follows",
           "4 Lightning Bolt" in page.input_value("#importText").split("\n") and page.locator(".imp-miss").count() == 0
-          and page.locator("#importBody .ib-row", has=page.locator(".ib-name", has_text="稲妻")).first.locator(".ib-n").inner_text() == "8", page.input_value("#importText"))
+          and page.locator("#importBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first.locator(".dl-count").inner_text() == "8", page.input_value("#importText"))
     page.click("#importExport summary"); page.click("#importExport [data-iexport=arena]")
     page.wait_for_function("document.querySelector('#importExport [data-iexport=arena]').textContent === 'コピーしました'")
     clip = page.evaluate("navigator.clipboard.readText()")
@@ -3168,7 +3156,7 @@ with sync_playwright() as p:
     page.click("[data-iview=image]"); page.wait_for_selector("#importBody .deck-card")
     check("deck price page: the picture view shows the cards with their counts", page.locator("#importBody .deck-card .dc-count").count() >= 4)
     page.click("[data-iview=list]")
-    page.locator("#importBody .ib-name", has_text="稲妻").first.click(); page.wait_for_selector("#cardView .card-name, #cardView h1")
+    page.locator("#importBody .dl-name", has_text="稲妻").first.click(); page.wait_for_selector("#cardView .card-name, #cardView h1")
     check("deck price page: a card's name opens its card page", "card=" in page.url, page.url)
     page.go_back(); page.wait_for_selector("#importBody .deck-cost")
     page.click("#importClear")
@@ -3189,10 +3177,38 @@ with sync_playwright() as p:
           and "Unknown New Card" in page.locator(".imp-miss").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), deck_cost))
     page.goto(SITE + "?view=prices"); page.wait_for_selector("#pricesView .imp-cta a")
     check("price tab: a link to the deck price page", page.locator("#pricesView .imp-cta a").get_attribute("href") == "?view=import")
+    page.goto(SITE + "?view=import"); page.fill("#importText", "4 稲妻\n2 Shivan Dragon\n\nSideboard\n2 Lightning Bolt\n1 Qasali Pridemage"); page.wait_for_selector("#importBody .imp-buy")
+    buy = page.locator("#importBody .imp-buy")
+    check("deck price page: 晴れる屋で買う links to Hareruya's buy-from-a-list page, in a new tab",
+          buy.inner_text().startswith("晴れる屋で買う") and buy.get_attribute("href") == "https://www.hareruyamtg.com/ja/deck/bulk" and buy.get_attribute("target") == "_blank"
+          and "noopener" in buy.get_attribute("rel"), buy.evaluate("e => e.outerHTML"))
+    with page.context.expect_page() as newtab:
+        buy.click()
+    newtab.value.close()
+    page.wait_for_selector(".imp-buy-note")
+    clip = page.evaluate("navigator.clipboard.readText()")
+    check("deck price page: the tap copies the whole list (sideboard too, same card added up) in English names and says to paste it there",
+          clip == "6 Lightning Bolt\n2 Shivan Dragon\n1 Qasali Pridemage\n" and "貼り付けてください" in page.locator(".imp-buy-note").inner_text(), clip)
+    for w in (390, 360):
+        page.set_viewport_size({"width": w, "height": 844}); page.wait_for_timeout(250)
+        page.click("#importExport summary"); page.wait_for_timeout(250)
+        r = page.evaluate("(() => { const b = document.querySelector('#importExport .deck-export-menu').getBoundingClientRect(); return [b.left, b.right, document.documentElement.clientWidth]; })()")
+        check(f"phone ({w}px), deck price page: the export menu stays on the screen", r[0] >= 0 and r[1] <= r[2], r)
+        page.click("#importExport summary"); page.wait_for_timeout(150)
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
+    page.click("#deckExport summary"); page.wait_for_timeout(250)
+    r = page.evaluate("(() => { const b = document.querySelector('#deckExport .deck-export-menu').getBoundingClientRect(); return [b.left, b.right, document.documentElement.clientWidth]; })()")
+    check("phone, deck page: the export menu stays on the screen too", r[0] >= 0 and r[1] <= r[2], r)
+    page.click("#deckExport summary")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.click("#deckExport summary"); page.wait_for_timeout(250)
+    r = page.evaluate("(() => { const m = document.querySelector('#deckExport .deck-export-menu').getBoundingClientRect(), b = document.querySelector('#deckExport summary').getBoundingClientRect(); return [m.right, b.right]; })()")
+    check("desktop, deck page: the export menu still opens right-aligned under its button", abs(r[0] - r[1]) < 1, r)
+    page.click("#deckExport summary")
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-cost")
     page.click("#langBtn"); page.wait_for_timeout(400)
     check("deck price page in English", page.locator(".imp-title").inner_text() == "Price a deck list" and "Main deck" in page.locator("#importBody").inner_text()
-          and "Where the money goes" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list"), page.locator("#importBody").inner_text()[:200])
+          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list"), page.locator("#importBody").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says pasted deck lists stay in the browser", "貼り付けたデッキリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
@@ -3201,7 +3217,7 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 1280, "height": 900})
     PRICE_SITE["dir"] = None
     page.goto(SITE + "?view=import"); page.wait_for_function("document.querySelector('#importBody .deck-cost') && document.querySelector('#importBody .deck-cost').textContent.includes('読み込めませんでした')")
-    check("deck price page: without the price files it says so, and still lists the cards", page.locator("#importBody .dl-row").count() >= 4 and page.locator(".imp-breakdown").count() == 0)
+    check("deck price page: without the price files it says so, and still lists the cards", page.locator("#importBody .dl-row, #importBody .deck-card").count() >= 4)
     page.fill("#importText", ""); page.wait_for_timeout(500)
     PRICE_SITE["dir"] = PRICES_FULL
 

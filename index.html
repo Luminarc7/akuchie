@@ -1249,7 +1249,9 @@
   .imp-cta { margin: 10px 2px; font-size: 13px; }
   .imp-cta a { color: var(--accent); font-weight: 700; text-decoration: none; }
   .imp-cta a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .deck-edit { text-decoration: none; }
+  .deck-edit, .imp-buy { text-decoration: none; }
+  .imp-buy-note { margin: 2px 0 0; font-size: 12.5px; color: var(--ok); font-weight: 700; }
+  .deck-export-menu { max-width: calc(100vw - 16px); }
   .imp-layout { display: grid; gap: 18px; }
   .imp-form { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .imp-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; }
@@ -1276,22 +1278,6 @@
   .imp-miss-line { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; overflow-wrap: anywhere; }
   .imp-miss-fix { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; color: var(--muted); font-size: 12px; }
   .imp-fix { padding: 3px 11px; font-size: 12.5px; cursor: pointer; }
-  .ib { list-style: none; margin: 0; padding: 0; max-width: 760px; }
-  .ib-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 6px 0; font-size: 14px; }
-  .ib-row + .ib-row { border-top: 1px dashed var(--line); }
-  .ib-n { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
-  .ib-main { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-  .ib-name { color: inherit; text-decoration: none; overflow-wrap: anywhere; }
-  .ib-name small { margin-left: 7px; font-size: 11px; color: var(--muted); }
-  a.ib-name:hover { color: var(--accent); }
-  .ib-sub { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .ib-print a { color: var(--accent); text-decoration: none; }
-  .ib-print a:hover { text-decoration: underline; }
-  .ib-where { margin-left: 6px; }
-  .ib-yen { font-weight: 800; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .ib-basics { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 760px; }
-  .ib-total { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--line-strong); display: flex; justify-content: space-between; max-width: 760px; font-size: 15px; }
-  .ib-total b { font-weight: 800; font-variant-numeric: tabular-nums; }
   @media (min-width: 1000px) {
     .imp-layout { grid-template-columns: 340px minmax(0, 1fr); align-items: start; gap: 28px; }
     .imp-form { position: sticky; top: calc(var(--stick-top, 0px) + 12px); }
@@ -1301,7 +1287,6 @@
     .imp-title { font-size: 21px; }
     #importBody .deck-title { font-size: 19px; }
     #importText { font-size: 16px; height: 220px; }
-    .ib-row { font-size: 13.5px; gap: 8px; }
   }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
   @media (max-width: 820px) {
@@ -2200,15 +2185,10 @@ const STR = {
   'imp.missing': ['見つからなかったカード {n}枚（価格に含めていません）', '{n} cards not found (left out of the price)'],
   'imp.missing.one': ['見つからなかったカード {n}枚（価格に含めていません）', '1 card not found (left out of the price)'],
   'imp.missing.guess': ['もしかして：', 'Did you mean: '],
-  'imp.breakdown': ['価格の内訳', 'Where the money goes'],
-  'imp.breakdown.sub': ['高い順・いちばん安い版で', 'Most expensive first, cheapest printings'],
-  'imp.one': ['1枚 {y}', '{y} each'],
-  'imp.print': ['最安：', 'Cheapest: '],
-  'imp.noprice': ['価格なし', 'No price'],
-  'imp.basics': ['基本土地（価格に含めません）：{list}', 'Basic lands (not counted): {list}'],
-  'imp.total': ['合計', 'Total'],
+  'imp.hareruya': ['晴れる屋で買う', 'Buy at Hareruya'],
+  'imp.hareruya.title': ['リストをコピーして、晴れる屋の「カードリストで購入」ページを開きます。開いたページの入力欄に貼り付けてください。', 'Copies the list and opens Hareruya’s “buy from a card list” page. Paste the list into the box there.'],
+  'imp.hareruya.done': ['リストをコピーしました。開いた晴れる屋のページの入力欄に貼り付けてください。', 'The list is copied. Paste it into the box on the Hareruya page that opened.'],
   'imp.share': ['このリストのリンクをコピー', 'Copy a link to this list'],
-  'imp.note': ['同じカードでも版（セット）によって価格が大きく違います。「最安」の版を選ぶとこの金額に近くなります。', 'The same card can cost very different amounts in different printings; buying the “cheapest” one gets you close to this total.'],
   'app.install': ['アプリとして使う（ホーム画面に追加）', 'Use as an app (add to home screen)'],
   'app.ios': ['iPhone・iPad：Safariの共有ボタン（□↑）から「ホーム画面に追加」を選んでください。', 'iPhone / iPad: in Safari, tap Share (□↑) and choose “Add to Home Screen”.'],
   'sort.cmc_asc': ['マナ総量が低い順', 'Mana value: low to high'],
@@ -10045,6 +10025,17 @@ function deckExportText(list, kind) {
   if (kind === 'arena') return ['Deck'].concat(main).concat(side.length ? ['', 'Sideboard'].concat(side) : []).join('\n') + '\n';
   return main.join('\n') + (side.length ? '\n\n' + side.join('\n') : '') + '\n';
 }
+// The export menu opens under its button, right-aligned; where that would run off the screen
+// (phones, where the button sits on the left) it moves over so all of it shows.
+function fitExportMenu(d) {
+  const m = d && d.querySelector('.deck-export-menu');
+  if (!m || !d.open) return;
+  m.style.left = ''; m.style.right = '';
+  const r = m.getBoundingClientRect(), box = d.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left, document.documentElement.clientWidth - r.width - 8));
+  if (Math.abs(left - r.left) > 0.5) { m.style.right = 'auto'; m.style.left = `${left - box.left}px`; }
+}
+document.addEventListener('toggle', (e) => { if (e.target.classList && e.target.classList.contains('deck-export')) fitExportMenu(e.target); }, true);
 function saveTextFile(name, text) {
   const url = URL.createObjectURL(new Blob([text.replace(/\n/g, '\r\n')], { type: 'text/plain;charset=utf-8' }));
   const link = document.createElement('a');
@@ -10136,7 +10127,7 @@ function drawDeck() {
   if (entry) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('deckExport') || {}).open;
   document.getElementById('deckBody').innerHTML = html;
-  if (exportOpen && document.getElementById('deckExport')) document.getElementById('deckExport').open = true;
+  if (exportOpen && document.getElementById('deckExport')) { document.getElementById('deckExport').open = true; fitExportMenu(document.getElementById('deckExport')); }
   const copied = deckState.copied;
   if (copied && Date.now() < copied.until) {
     const btn = document.querySelector(`#deckExport [data-export="${copied.kind}"]`);
@@ -10366,34 +10357,9 @@ function readImport(text) {
   return { title: parsed.title, commander: parts.commander, main: parts.main, side: parts.side, missing, lines: parsed.lines.length };
 }
 
-// which printing gives a card's price: cheap_prints.json.gz (warujie-prices, daily, same names as cheap.json.gz)
-const cheapPrints = { promise: null, data: null };
-function loadCheapPrints() {
-  if (!cheapPrints.promise) {
-    cheapPrints.promise = fetchMaybeGzipJson(PRICE_DATA_URL + 'cheap_prints.json.gz')
-      .then(d => { cheapPrints.data = d && d.cards ? d : null; return cheapPrints.data; })
-      .catch(() => null);
-  }
-  return cheapPrints.promise;
-}
-// { key: 'set/number', set, cn, market: 'us' | 'eu' } for the cheaper of the two prices, or null
-function cheapestPrinting(name, row) {
-  const k = cheapKey(name, row);
-  const p = k && cheapPrints.data ? cheapPrints.data.cards[k] : null;
-  const r = k ? cheapStore.data.cards[k] : null;
-  if (!p || !r) return null;
-  const us = r[0] && USD_JPY && p[0] ? r[0] / 100 * USD_JPY : Infinity;
-  const eu = r[1] && EUR_JPY && p[1] ? r[1] / 100 * EUR_JPY : Infinity;
-  if (us === Infinity && eu === Infinity) return null;
-  const key = us <= eu ? p[0] : p[1];
-  const cut = key.lastIndexOf('/');
-  return { key, set: key.slice(0, cut), cn: key.slice(cut + 1), market: us <= eu ? 'us' : 'eu' };
-}
-
 const importState = {
   token: 0, result: null, tried: false, copied: null,
   pics: new Map(),     // LANG|name -> { row, card } with pictures
-  prints: new Map(),   // 'set/number' -> the Scryfall card of that printing (null: not found)
   view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })(),
 };
 function loadImportText() { try { return localStorage.getItem(IMPORT_SAVE_KEY) || ''; } catch (e) { return ''; } }
@@ -10424,27 +10390,18 @@ async function priceImport() {
   }
   importState.result = readImport(text);
   drawImport();
-  await Promise.all([loadCheapest(), loadCheapPrints(), fxReady]);
+  await Promise.all([loadCheapest(), fxReady]);
   importState.tried = true;
   if (token !== importState.token) return;
   importState.result = readImport(text);   // with the price file in, cards too new for the database are found too
   drawImport();
-  // then the pictures, and the cheapest printings' own pages, for the cards not fetched yet
+  // then the pictures, for the cards not fetched yet
   const res = importState.result;
   const names = [...new Set(res.commander.concat(res.main, res.side).map(x => x.name))];
   const need = names.filter(n => !importState.pics.has(LANG + '|' + n));
   if (need.length) {
     const infos = await deckCardInfo(need, true);
     infos.forEach((v, n) => importState.pics.set(LANG + '|' + n, v));
-  }
-  const keys = [...new Set(names.map(n => cheapestPrinting(n, rowByEnglishName(n))).filter(Boolean).map(p => p.key))].filter(k => !importState.prints.has(k));
-  for (let i = 0; i < keys.length; i += 75) {
-    const chunk = keys.slice(i, i + 75);
-    try {
-      const data = await scryfallCollection(chunk.map(k => { const c = k.lastIndexOf('/'); return { set: k.slice(0, c), collector_number: k.slice(c + 1) }; }));
-      data.forEach(c => importState.prints.set(`${c.set}/${c.collector_number}`, c));
-    } catch (err) { /* the printing is still named, without its page */ }
-    chunk.forEach(k => { if (!importState.prints.has(k)) importState.prints.set(k, null); });
   }
   if (token !== importState.token) return;
   drawImport();
@@ -10453,37 +10410,6 @@ function importEmptyHtml() {
   return `<div class="imp-empty"><p class="imp-empty-h">${t('imp.empty.h')}</p>
     <ul class="imp-empty-list"><li>${t('imp.empty.arena')}</li><li>${t('imp.empty.mtgo')}</li><li>${t('imp.empty.typed')}</li></ul>
     <button type="button" class="adv-btn" id="importSample">${t('imp.sample')}</button></div>`;
-}
-function importPrintingHtml(it) {
-  const p = cheapestPrinting(it.name, it.info.row);
-  if (!p) return '';
-  const card = importState.prints.get(p.key);
-  const setLabel = (LANG !== 'en' && SET_NAME_JA[p.set]) || (card && card.set_name) || '';
-  const label = `${p.set.toUpperCase()} #${p.cn}${setLabel ? `・${setLabel}` : ''}`;
-  const where = p.market === 'us' ? 'TCGplayer' : 'Cardmarket';
-  const link = card ? `<a href="?card=${encodeURIComponent(card.id)}" data-card="${esc(card.id)}">${esc(label)}</a>` : esc(label);
-  return `<span class="ib-print">${esc(t('imp.print'))}${link}<span class="ib-where">${esc(where)}</span></span>`;
-}
-// every card's part of the price, the most expensive first; then cards with no price and basic lands
-function importBreakdownHtml(items, cost) {
-  const by = new Map();
-  items.forEach(it => { const g = by.get(it.name); if (g) g.count += it.count; else by.set(it.name, Object.assign({}, it)); });
-  const rows = [...by.values()];
-  const basics = rows.filter(it => isBasicLand(it.name, it.info.row));
-  const priced = rows.filter(it => it.yen && !basics.includes(it)).sort((x, y) => y.yen * y.count - x.yen * x.count);
-  const none = rows.filter(it => !it.yen && !basics.includes(it));
-  const nameHtml = it => {
-    const id = it.info.card ? it.info.card.id : (it.info.row ? it.info.row.id : null);
-    const label = `${esc(it.label)}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}`;
-    return id ? `<a class="ib-name" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}">${label}</a>` : `<span class="ib-name">${label}</span>`;
-  };
-  const row = it => `<li class="ib-row"><span class="ib-n">${fmtNum(it.count)}</span><span class="ib-main">${nameHtml(it)}`
-    + `<span class="ib-sub">${it.yen ? `<span class="ib-one">${esc(t('imp.one', { y: yenSmall(it.yen) }))}</span>` : ''}${it.yen ? importPrintingHtml(it) : ''}</span></span>`
-    + `<span class="ib-yen">${it.yen ? esc(yenSmall(it.yen * it.count)) : esc(t('imp.noprice'))}</span></li>`;
-  let html = `<ul class="ib">${priced.map(row).join('')}${none.map(row).join('')}</ul>`;
-  if (basics.length) html += `<p class="ib-basics">${esc(t('imp.basics', { list: basics.map(it => `${it.label} ×${it.count}`).join('、') }))}</p>`;
-  if (cost.priced) html += `<p class="ib-total"><span>${esc(t('imp.total'))}</span><b>${esc(costText(cost))}</b></p>`;
-  return `<section class="deck-section imp-breakdown"><h2>${t('imp.breakdown')}<span class="dg-n">${esc(t('imp.breakdown.sub'))}</span></h2>${html}</section>`;
 }
 function importMissingHtml(missing) {
   if (!missing.length) return '';
@@ -10505,6 +10431,29 @@ function importListText(res, kind) {
       res.side.length ? ['', 'Sideboard'].concat(res.side.map(line)) : []).join('\n') + '\n';
   }
   return res.commander.concat(res.main).map(line).join('\n') + (res.side.length ? '\n\n' + res.side.map(line).join('\n') : '') + '\n';
+}
+// Hareruya's "buy from a card list" page (a link only: CLAUDE.md rule 3). It reads "4 Card Name"
+// lines in English or Japanese, so the whole deck goes as one list in English names.
+const HARERUYA_BULK = 'https://www.hareruyamtg.com/ja/deck/bulk';
+function hareruyaText(res) {
+  const all = new Map();
+  res.commander.concat(res.main, res.side).forEach(x => all.set(x.name, (all.get(x.name) || 0) + x.count));
+  return [...all].map(([n, c]) => `${c} ${n}`).join('\n') + '\n';
+}
+// copies at once, inside the tap, so the link can open Hareruya's page in the same tap
+function copyTextNow(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+  ta.remove();
+  if (!ok && navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+  return ok;
 }
 function importShareUrl() {
   const res = importState.result;
@@ -10558,21 +10507,21 @@ function drawImport() {
   let html = `<div class="deck-head">
       <div class="deck-title-row">
         <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t('imp.untitled'))}</span></h2>
-        <div class="deck-tools">${copy}${found ? toggle : ''}</div>
+        <div class="deck-tools">${found ? `<a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-hareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>` : ''}${copy}${found ? toggle : ''}</div>
       </div>
       <p class="deck-meta">${facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>')}</p>
       ${found ? deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound) : ''}
+      ${importState.bought && Date.now() < importState.bought ? `<p class="imp-buy-note" role="status">${esc(t('imp.hareruya.done'))}</p>` : ''}
     </div>`;
   html += importMissingHtml(res.missing);
   if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false)}</section>`;
   if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
-  if (found && cost.priced) html += importBreakdownHtml(all, cost);
   if (main.length) html += deckCurveHtml(cmd.concat(main));
-  if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))} ${esc(t('imp.note'))}</p>`;
+  if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('importExport') || {}).open;
   body.innerHTML = html;
-  if (exportOpen && document.getElementById('importExport')) document.getElementById('importExport').open = true;
+  if (exportOpen && document.getElementById('importExport')) { document.getElementById('importExport').open = true; fitExportMenu(document.getElementById('importExport')); }
   const copied = importState.copied;
   if (copied && Date.now() < copied.until) {
     const btn = document.querySelector(`#importExport [data-iexport="${copied.kind}"]`);
@@ -10618,6 +10567,15 @@ document.getElementById('importBody').addEventListener('click', async (e) => {
       saveImportText(ta.value);
       priceImport();
     }
+    return;
+  }
+  const buy = e.target.closest('[data-hareruya]');
+  if (buy && importState.result) {
+    // the link opens Hareruya's page as usual; the list is on the clipboard to paste there
+    // read the box again: the tap may come before the last change was priced
+    copyTextNow(hareruyaText(readImport(document.getElementById('importText').value)));
+    importState.bought = Date.now() + 15000;
+    setTimeout(drawImport, 0);   // after the tap, so the link still opens
     return;
   }
   const vb = e.target.closest('[data-iview]');

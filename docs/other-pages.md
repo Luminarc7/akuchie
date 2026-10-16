@@ -126,11 +126,14 @@ swapped and the price follows. The tab bar marks メタゲーム while it is ope
   letters away with `editDistance()`); picking one rewrites that line, keeping its count.
 - **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
   worked out" above), with lines not found counted as missing (so the total reads 「〜」).
-  Arena wildcards show when every card is on Arena. `importBreakdownHtml()` lists every card,
-  most expensive first, with the price of one copy, the subtotal and the cheapest printing
-  (`cheapestPrinting()` from `cheap_prints.json.gz`, `loadCheapPrints()`: set, number, set name and
-  whether the lower price is TCGplayer's or Cardmarket's; it links to that printing's page once
-  `/cards/collection` has named it). Then the mana curve (`deckCurveHtml()`).
+  Arena wildcards show when every card is on Arena. Each card shows the price of one copy, as
+  on the deck pages; then the mana curve (`deckCurveHtml()`). (A breakdown naming each card's
+  cheapest printing was tried and left out at the owner's request, 2026-10-16.)
+- **晴れる屋で買う** (`.imp-buy`): a plain link to Hareruya's "buy from a card list" page
+  (`HARERUYA_BULK`; Hareruya allows links only, CLAUDE.md rule 3). The same tap copies the whole
+  deck as "4 Card Name" lines in English names, sideboard included, the same card added up
+  (`hareruyaText()`, copied at once inside the tap by `copyTextNow()` so the link still opens),
+  and a line says to paste it there.
 - **Export** (`importListText()`): Arena or MTGO text and the .txt file in English names, and a
   link that carries the list (`importShareUrl()`, `?view=import&list=`); opening such a link
   puts the list in the box and makes the address plain again.
@@ -141,7 +144,8 @@ swapped and the price follows. The tab bar marks メタゲーム while it is ope
 ## Export (MTG Arena / Magic Online)
 
 `deckExportText(list, kind)` writes the shown list in Arena format (`Deck` / `Sideboard`
-headings) or MTGO format (main deck, blank line, sideboard). `exportName()` shortens two-part
+headings) or MTGO format (main deck, blank line, sideboard). The menu opens right-aligned under
+its button; `fitExportMenu()` moves it over where that would run off the screen (phones). `exportName()` shortens two-part
 names to the front face, except split cards and Rooms, which keep `A // B`. It can be copied
 (`copyText()`) or saved as a file (`saveTextFile()`).
 
