@@ -124,6 +124,7 @@ All in `localStorage`, all optional (private browsing just forgets them). **Keep
 | `akuchie-deck-view` | `list` for the deck list view (also the deck price page's view) |
 | `warujie-deck-import` | the list pasted on the deck price page (`IMPORT_SAVE_KEY`). New keys use `warujie-`; the old `akuchie-` ones stay as they are |
 | `warujie-want` | the want list: JSON, one entry per card with its printing (`WANT_KEY`; see [other-pages.md](other-pages.md#want-list-)) |
+| `warujie-want-view` | `image` when the want list page shows pictures (`WANT_VIEW_KEY`) |
 
 Nothing is sent anywhere. The footer promises no sign-up, cookies, analytics or ads; any change
 that would break that promise needs the owner's decision first (CLAUDE.md, rule 6).

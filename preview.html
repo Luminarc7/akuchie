@@ -1333,14 +1333,29 @@
   .want-btn .want-n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800;
     display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
   .want-btn .want-n[hidden] { display: none; }
-  .cp-want { gap: 8px 10px; }
-  .cp-want .adv-btn { cursor: pointer; min-height: 36px; }
-  .cp-want .adv-btn svg { width: 16px; height: 16px; }
-  .cp-want .want-on { color: var(--accent); display: inline-flex; align-items: center; gap: 5px; margin-right: 0; }
-  .cp-want .want-on svg { width: 16px; height: 16px; }
+  /* the card page's want list box, under the picture */
+  .cp-want { margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head head" "step trash" "other other"; gap: 8px; align-items: center; }
+  .cp-want > .want-add { grid-column: 1 / -1; }
+  .cp-want > .want-box-head { grid-area: head; }
+  .cp-want > .want-step { grid-area: step; justify-content: space-between; }
+  .cp-want > .want-trash { grid-area: trash; }
+  .cp-want > .want-other { grid-area: other; }
+  .cp-want:empty { display: none; }
+  .cp-want svg { width: 16px; height: 16px; flex: none; }
+  .want-add { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 40px; border: 1px solid var(--accent); border-radius: 8px;
+    background: none; color: var(--accent); font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .want-add:hover { background: var(--accent); color: var(--accent-ink); }
+  .want-box-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cp-want .want-on { color: var(--accent); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; }
   .cp-want .want-on svg path { fill: currentColor; }
-  .cp-want a { color: var(--accent); font-size: 13px; }
-  .want-other { flex-basis: 100%; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .cp-want .want-on-short { display: none; }
+  .cp-want a { color: var(--accent); font-size: 12.5px; }
+  .want-trash { flex: none; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--surface); color: var(--text-2); cursor: pointer; }
+  .want-trash svg { width: 18px; height: 18px; }
+  .want-trash:hover, .want-trash:focus-visible { border-color: var(--bad); color: var(--bad); }
+  .want-other { font-size: 12px; line-height: 1.6; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
   .want-other .try-pill { padding: 3px 11px; font-size: 12.5px; cursor: pointer; }
   .want-step { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; flex: none; }
   .want-step button { width: 36px; height: 36px; border: 0; background: none; color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; padding: 0; }
@@ -1365,6 +1380,17 @@
   .wl-prices { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .wl-prices b { color: var(--text); font-size: 13.5px; }
   .wl-prices .wl-cheaper { color: var(--ok); font-weight: 700; }
+  .want-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px 14px; margin-top: 14px; }
+  .wl-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .wl-card-pic { display: block; text-decoration: none; color: inherit; }
+  .wl-card-pic:hover .dc-pic { box-shadow: 0 0 0 2px var(--accent); }
+  .wl-card .dc-pic img { position: relative; z-index: 1; }
+  .wl-card .dc-name { font-size: 13px; margin-top: 2px; }
+  .wl-card .wl-title { color: var(--text); text-decoration: none; font-family: inherit; font-size: inherit; }
+  .wl-card .wl-title:hover { color: var(--accent); }
+  .wl-card .wl-prices { flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 0 8px; }
+  .wl-card .wl-prices b { font-size: 12.5px; }
+  .wl-card .want-step { margin-top: auto; width: 100%; justify-content: space-between; }
   .want-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; }
   .want-foot .adv-btn { cursor: pointer; text-decoration: none; min-height: 36px; }
   .want-foot .want-clear[data-armed="1"] { border-color: var(--bad); color: var(--bad); }
@@ -1384,6 +1410,19 @@
     .wl-pic { width: 40px; }
     .wl-prices { grid-column: 2; grid-row: 2; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 2px 10px; }
     .wl-row .want-step { grid-column: 3; grid-row: 1 / span 2; }
+    .want-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
+    /* the card page's narrow picture column: the trash can moves up beside the heading */
+    .cp-want { margin-top: 8px; padding: 8px; gap: 6px; grid-template-areas: "head trash" "step step" "other other"; }
+    .cp-want .want-box-head a, .cp-want .want-on-full { display: none; }
+    .cp-want .want-on-short { display: inline; }
+    .cp-want .want-on { font-size: 11.5px; gap: 4px; }
+    .cp-want .want-on svg { width: 13px; height: 13px; }
+    .cp-want .want-trash { width: 30px; height: 30px; }
+    .cp-want .want-trash svg { width: 15px; height: 15px; }
+    .cp-want .want-step button { width: 30px; height: 32px; font-size: 16px; }
+    .cp-want .want-step .want-c { min-width: 0; font-size: 13px; }
+    .want-add { font-size: 12px; min-height: 36px; padding: 4px 6px; gap: 4px; }
+    .cp-want .want-other { font-size: 11px; }
   }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
   @media (max-width: 820px) {
@@ -6180,7 +6219,7 @@ function renderCardViewContent(card) {
 
   box.innerHTML = `
     <div class="card-page">
-      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="print-slot" id="printSlot"></div></div>
+      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="print-slot" id="printSlot"></div><div class="cp-want" id="cpWant">${wantCardHtml(card)}</div></div>
       <div class="cp-info">
         <div class="cp-title-row">
           <div>
@@ -6199,7 +6238,6 @@ function renderCardViewContent(card) {
           ${card.collector_number ? `<span>#${esc(card.collector_number)}</span>` : ''}
           ${card.scryfall_uri ? `<a href="${esc(card.scryfall_uri)}" target="_blank" rel="noopener">Scryfall ↗</a>` : ''}
         </div>
-        <div class="cp-row cp-want" id="cpWant">${wantCardHtml(card)}</div>
         <div class="cp-market" data-market="${priceMarket}"><div class="cp-market-grid">
           <div class="cp-market-main">
             ${priceHtml(card)}
@@ -6255,9 +6293,10 @@ function renderCardViewContent(card) {
       if (card._enPrices) rerenderPriceSection(card);
       const art = document.querySelector('#cardViewCard .cp-art');
       if (art && pictureSource(card) !== card) {
-        const slot = document.getElementById('printSlot');
+        const slot = document.getElementById('printSlot'), want = document.getElementById('cpWant');
         art.innerHTML = cardArtHtml(card, cardPageNames(card, printChoice(card)).main);
         if (slot) art.appendChild(slot);   // the language buttons stay
+        if (want) art.appendChild(want);   // and the want list box
       }
     });
   }
@@ -11120,15 +11159,18 @@ function wantStepHtml(x) {
     + `<span class="want-c">${esc(t('want.n', { n: x.c }))}</span>`
     + `<button type="button" data-want-act="more"${attrs} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>`;
 }
-// the card page: add, or how many are in the list (and which printing)
+// the card page: a box under the picture. Add, or how many are in the list (− n ＋), a trash can
+// to take the card out, and which printing is in the list.
+const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12.2A2 2 0 0 0 8.5 21h7a2 2 0 0 0 2-1.8l1-12.2M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></svg>';
 function wantCardHtml(card) {
   const e = wantEntryOf(card);
   if (!e) return '';
   const x = wantFind(wantKeyOf(e));
-  if (!x) return `<button type="button" class="adv-btn want-add" data-want-act="add"${wantAttrs(e)}>${STAR_SVG}${esc(t('want.add'))}</button>`;
-  let html = `<span class="cp-row-label want-on">${STAR_SVG}${esc(t('want.in'))}</span>${wantStepHtml(x)}<a href="?view=want" data-want-go="1">${esc(t('want.see'))}</a>`;
+  if (!x) return `<button type="button" class="want-add" data-want-act="add"${wantAttrs(e)}>${STAR_SVG}${esc(t('want.add'))}</button>`;
+  let html = `<div class="want-box-head"><span class="want-on">${STAR_SVG}<span class="want-on-full">${esc(t('want.in'))}</span><span class="want-on-short">${esc(t('want.short'))}</span></span><a href="?view=want" data-want-go="1">${esc(t('want.see'))}</a></div>`
+    + `${wantStepHtml(x)}<button type="button" class="want-trash" data-want-act="remove" data-want="${esc(wantKeyOf(x))}" aria-label="${esc(t('want.remove'))}" title="${esc(t('want.remove'))}">${TRASH_SVG}</button>`;
   if (x.id && e.id && x.id !== e.id) {
-    html += `<span class="want-other">${esc(t('want.other', { p: wantPrintLabel(x) }))}<button type="button" class="try-pill" data-want-act="pick"${wantAttrs(e)}>${esc(t('want.this'))}</button></span>`;
+    html += `<div class="want-other">${esc(t('want.other', { p: wantPrintLabel(x) }))}<button type="button" class="try-pill" data-want-act="pick"${wantAttrs(e)}>${esc(t('want.this'))}</button></div>`;
   }
   return html;
 }
@@ -11216,7 +11258,10 @@ window.addEventListener('storage', (e) => {
 });
 
 // the list page
-const wantState = { token: 0, cards: new Map(), tried: false, printsTried: false, armed: 0, copied: null, note: null };
+const WANT_VIEW_KEY = 'warujie-want-view';
+const wantState = { token: 0, cards: new Map(), tried: false, printsTried: false, armed: 0, copied: null, note: null,
+  // list (rows) or pictures (cards with − n ＋ under each); remembered
+  view: (() => { try { return localStorage.getItem(WANT_VIEW_KEY) === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })() };
 async function renderWant() {
   const token = ++wantState.token;
   document.title = t('title.want');
@@ -11280,6 +11325,27 @@ function wantRowHtml({ x, row, card, it, basic }) {
     + `<div class="wl-name">${title}${it.sub ? `<span class="wl-sub">${esc(it.sub)}</span>` : ''}${x.s ? `<span class="wl-print">${esc(wantPrintLabel(x))}</span>` : ''}</div>`
     + `<div class="wl-prices">${prices.join('')}</div>${wantStepHtml(x)}</li>`;
 }
+// picture view: the card, its name and printing, the price, and − n ＋ under it
+function wantTileHtml({ x, row, card, it, basic }) {
+  const id = x.id || (row && row.id) || '';
+  const uris = card ? faceUris(card)[0] : null;
+  const src = uris ? (uris.normal || uris.small) : (id ? `https://cards.scryfall.io/normal/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg` : '');
+  const href = id ? `?card=${encodeURIComponent(id)}` : '';
+  const pic = `<span class="dc-pic">${src ? `<img src="${esc(src)}" alt="${esc(it.label)}" loading="lazy" onerror="this.remove()">` : ''}<span class="dc-noimg">${esc(it.label)}</span></span>`;
+  let price = '';
+  if (basic) price = esc(t('want.p.basic'));
+  else {
+    const mine = card ? printingYen(card) : null;
+    if (mine !== null) price = `<b>${esc(t('want.p.this', { y: yenSmall(mine) }))}</b>`;
+    if (it.yen && (mine === null || it.yen < mine * 0.95)) price += `<span${mine !== null ? ' class="wl-cheaper"' : ''}>${esc(t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>`;
+    if (!price && wantState.tried && (wantState.printsTried || !x.id)) price = esc(t('want.p.none'));
+  }
+  return `<div class="wl-card" data-want-row="${esc(wantKeyOf(x))}">`
+    + (href ? `<a class="wl-card-pic" href="${href}" data-card="${esc(id)}" title="${esc(it.label)}">${pic}</a>` : `<span class="wl-card-pic">${pic}</span>`)
+    + `<span class="dc-name">${href ? `<a class="wl-title" href="${href}" data-card="${esc(id)}">${esc(it.label)}</a>` : esc(it.label)}</span>`
+    + (x.s ? `<span class="wl-print">${esc(wantPrintLabel(x))}</span>` : '')
+    + `<span class="wl-prices">${price}</span>${wantStepHtml(x)}</div>`;
+}
 function wantCostHtml(items) {
   const cheap = deckCost(wantList.map(x => [x.c, x.n]));
   let yen = 0, missing = 0;
@@ -11318,15 +11384,20 @@ function drawWant() {
         ${WANT_SITES.map(([name, url, key]) => `<a role="menuitem" href="${url}" target="_blank" rel="noopener" data-wsite="${name}" title="${esc(t('want.site.title', { site: name }))}">${esc(t(key))} ↗</a>`).join('')}
         <p class="deck-export-note">${t('want.note')}</p>
       </div></details>`;
+  const view = wantState.view;
+  const toggle = LITE ? '' : `<div class="view-toggle" role="tablist" aria-label="${esc(t('deck.view.aria'))}">
+      <button type="button" class="view-btn" role="tab" data-wview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
+      <button type="button" class="view-btn" role="tab" data-wview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
+    </div>`;
   body.innerHTML = `<div class="deck-head">
       <div class="deck-title-row">${title}
-        <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-whareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${menu}</div>
+        <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-whareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${menu}${toggle}</div>
       </div>
       <p class="deck-meta"><span class="fact">${esc(tn('want.f.cards', total))}</span> <span class="sep">·</span> <span class="fact">${esc(t('want.f.kinds', { n: fmtNum(wantList.length) }))}</span></p>
       ${wantCostHtml(items)}
       ${note}
     </div>
-    <ul class="want-list">${items.map(wantRowHtml).join('')}</ul>
+    ${view === 'image' ? `<div class="want-grid">${items.map(wantTileHtml).join('')}</div>` : `<ul class="want-list">${items.map(wantRowHtml).join('')}</ul>`}
     <div class="want-foot">
       <a class="adv-btn" href="?view=import" data-want-import="1" title="${esc(t('want.import.title'))}">${esc(t('want.import'))}</a>
       <button type="button" class="adv-btn want-clear" data-armed="${Date.now() < wantState.armed ? 1 : 0}">${esc(t(Date.now() < wantState.armed ? 'want.clear.sure' : 'want.clear'))}</button>
@@ -11350,6 +11421,13 @@ document.getElementById('wantBody').addEventListener('click', async (e) => {
     // Hareruya reads "4 Card Name" lines (CLAUDE.md rule 3: a link only, the list goes on the clipboard)
     copyTextNow(wantText('mtgo'));
     wantNote(t('imp.hareruya.done'));
+    return;
+  }
+  const vb = e.target.closest('[data-wview]');
+  if (vb) {
+    wantState.view = vb.dataset.wview === 'image' ? 'image' : 'list';
+    try { localStorage.setItem(WANT_VIEW_KEY, wantState.view); } catch (err) { /* private mode */ }
+    drawWant();
     return;
   }
   const site = e.target.closest('[data-wsite]');

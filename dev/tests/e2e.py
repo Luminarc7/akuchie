@@ -3481,6 +3481,14 @@ with sync_playwright() as p:
     page.click("#cpWant .want-add"); page.wait_for_selector("#cpWant .want-step")
     page.click("#cpWant [data-want-act=more]"); page.click("#cpWant [data-want-act=more]")
     check("want list: on the card page, + and − change how many copies", page.locator("#cpWant .want-c").inner_text() == "3枚" and page.locator("#wantN").inner_text() == "4")
+    art, box = page.locator("#cardViewCard .cp-art img").first.bounding_box(), page.locator("#cpWant").bounding_box()
+    check("want list: on the card page it is a box of its own under the picture",
+          page.evaluate("document.querySelector('.cp-art').contains(document.getElementById('cpWant'))") and box["y"] > art["y"] + art["height"], (art, box))
+    page.click("#cpWant .want-trash"); page.wait_for_selector("#cpWant .want-add")
+    check("want list: the trash can takes the card out (all copies), with undo", page.locator("#wantN").inner_text() == "1"
+          and page.locator("#wantToast button").inner_text() == "元に戻す" and page.locator("#cpWant .want-trash").count() == 0)
+    page.click("#wantToast button"); page.wait_for_selector("#cpWant .want-trash")
+    check("want list: undo brings back all 3 copies", page.locator("#cpWant .want-c").inner_text() == "3枚")
     page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-other")
     check("want list: another printing's page says which printing is in the list", "MH2 #138" in page.locator("#cpWant .want-other").inner_text())
     page.click("#cpWant [data-want-act=pick]"); page.wait_for_timeout(200)
@@ -3542,6 +3550,27 @@ with sync_playwright() as p:
     page.click("#wantToast button"); page.wait_for_timeout(150)
     order = page.evaluate("JSON.parse(localStorage.getItem('warujie-want')).map(x => x.n)")
     check("want list page: undo puts it back where it was", page.locator("#wantBody .wl-row").count() == 2 and order == ["Lightning Bolt", "Ragavan, Nimble Pilferer"], order)
+    check("want list page: a リスト / 画像 switch, on リスト at first",
+          page.locator("#wantBody .deck-tools [data-wview=list]").get_attribute("aria-selected") == "true" and page.locator("#wantBody [data-wview=image]").inner_text() == "画像")
+    page.click("#wantBody [data-wview=image]"); page.wait_for_selector("#wantBody .want-grid .wl-card")
+    tile = page.locator("#wantBody .wl-card[data-want-row='rag-oracle']")
+    check("want list page, pictures: each card's picture with its name, printing and price, and − n ＋ under it",
+          page.locator("#wantBody .want-grid .wl-card").count() == 2 and page.locator("#wantBody .want-list").count() == 0
+          and tile.locator(".dc-pic img").count() == 1 and "MH2 #345" in tile.inner_text() and "¥8,250" in tile.inner_text()
+          and tile.locator(".want-c").inner_text() == "2枚", tile.inner_text())
+    pic_box, step_box = tile.locator(".dc-pic").bounding_box(), tile.locator(".want-step").bounding_box()
+    check("want list page, pictures: the quantity buttons sit under the card", step_box["y"] > pic_box["y"] + pic_box["height"], (pic_box, step_box))
+    tile.locator("[data-want-act=more]").click(); page.wait_for_timeout(150)
+    check("want list page, pictures: ＋ adds a copy and stays in the picture view",
+          page.locator("#wantBody .wl-card[data-want-row='rag-oracle'] .want-c").inner_text() == "3枚" and page.locator("#wantBody .want-grid").count() == 1)
+    page.locator("#wantBody .wl-card[data-want-row='rag-oracle'] [data-want-act=less]").click(); page.wait_for_timeout(150)
+    page.reload(); page.wait_for_selector("#wantBody .want-grid .wl-card")
+    check("want list page: the picture view is remembered", page.evaluate("localStorage.getItem('warujie-want-view')") == "image")
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+    check("phone, want list pictures: two cards a row, no sideways scroll", no_hscroll() and page.evaluate(
+          "getComputedStyle(document.querySelector('#wantBody .want-grid')).gridTemplateColumns.split(' ').length") == 2)
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.click("#wantBody [data-wview=list]"); page.wait_for_selector("#wantBody .want-list .wl-row")
     page.reload(); page.wait_for_selector("#wantBody .wl-row")
     check("want list: still there after a reload (kept in this browser)", page.locator("#wantBody .wl-row").count() == 2 and page.locator("#wantN").inner_text() == "3")
     page.locator("#wantBody .wl-title").first.click(); page.wait_for_selector("#cpWant .want-step")
