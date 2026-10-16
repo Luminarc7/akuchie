@@ -799,6 +799,7 @@
     .meta-bar .meta-head > .seg::-webkit-scrollbar { display: none; }
     .meta-bar .meta-head > .seg .seg-btn { flex: none; }
     .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+    #pricesView .meta-controls { flex-wrap: wrap; } /* the deck price button drops below the periods on narrow phones */
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
     .meta-decklink { order: 4; }
     .meta-price .meta-cost { font-size: 11px; }
@@ -1247,9 +1248,10 @@
   .deck-foot { margin: 20px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   .deck-cost-note { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   /* the deck price page: paste a list, see what it costs */
-  .imp-cta { margin: 10px 2px; font-size: 13px; }
-  .imp-cta a { color: var(--accent); font-weight: 700; text-decoration: none; }
-  .imp-cta a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* the price tab's way in to the deck price page */
+  .imp-open { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+    font-size: 12.5px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .imp-open:hover { filter: brightness(1.07); }
   .deck-edit, .imp-buy { text-decoration: none; }
   .imp-buy-note { margin: 2px 0 0; font-size: 12.5px; color: var(--ok); font-weight: 700; }
   .deck-export-menu { max-width: calc(100vw - 16px); }
@@ -1865,7 +1867,6 @@
     </div>
     <p class="result-count" id="metaSummary"></p>
   </div>
-  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta">自分のデッキリストを貼り付けて価格を調べる →</a></p>
   <div class="meta-help" id="metaHelp" hidden data-i18n-html="meta.help"></div>
   <div id="metaBody"></div>
   <p class="meta-note" id="metaNote"></p>
@@ -1899,11 +1900,11 @@
       <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
       <div class="meta-controls">
         <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
+        <a class="imp-open" href="?view=import" data-import="1" data-i18n="imp.open">デッキの価格を調べる</a>
       </div>
     </div>
     <p class="result-count" id="moverSummary"></p>
   </div>
-  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta.prices">デッキリストを貼り付けて、まとめて価格を調べる →</a></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -2161,8 +2162,7 @@ const STR = {
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
-  'imp.cta': ['自分のデッキリストを貼り付けて価格を調べる →', 'Paste your own deck list and price it →'],
-  'imp.cta.prices': ['デッキリストを貼り付けて、まとめて価格を調べる →', 'Paste a deck list and price it all at once →'],
+  'imp.open': ['デッキの価格を調べる', 'Price a deck list'],
   'deck.edit': ['編集して計算', 'Edit & price'],
   'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
   'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
@@ -6319,8 +6319,8 @@ function showView(name) {
   if (name !== 'card') {
     document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
     document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
-    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck' || name === 'import'));
-    document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices'));
+    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck'));
+    document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices' || name === 'import'));
   }
 }
 function showSearchView() { showView('search'); }
@@ -10627,7 +10627,7 @@ document.getElementById('importBody').addEventListener('mouseover', (e) => {
   deckPeek.style.display = 'block';
 });
 document.getElementById('importBody').addEventListener('mouseout', (e) => { if (e.target.closest('[data-peek]')) hideDeckPeek(); });
-// links to this page: the metagame and price tabs, and "edit and price" on a deck page
+// links to this page: the price tab's button, and "edit and price" on a deck page
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[data-import]');
   if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;

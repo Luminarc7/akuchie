@@ -1292,6 +1292,10 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     up_box = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box(); down_box = page.locator('#moverBody .mover-col[data-dir="down"]').bounding_box()
     check("phone: price movers fit, losers below winners", no_hscroll() and page.locator("#tabPrices").is_visible() and down_box["y"] > up_box["y"] + up_box["height"] - 1, (up_box, down_box))
+    for w in (390, 360):
+        page.set_viewport_size({"width": w, "height": 800}); page.wait_for_timeout(200)
+        ob = page.locator("#pricesView .imp-open").bounding_box(); bar = page.locator("#pricesView .meta-head").bounding_box()
+        check(f"phone {w}px: the deck price button sits inside the price tab's bar", no_hscroll() and ob["x"] >= bar["x"] and ob["x"] + ob["width"] <= bar["x"] + bar["width"] + 0.5, (ob, bar))
     if SHOTS: page.screenshot(path="prices_phone.png", full_page=True)
     page.set_viewport_size({"width": 1280, "height": 900})
     PRICE_SITE["dir"] = PRICES_NOEU
@@ -3080,7 +3084,7 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importText")
     page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
     check("deck price page: opens with an empty box and help on what it reads", page.locator(".imp-empty").count() == 1 and page.locator("#importSample").count() == 1
-          and page.title().startswith("デッキの価格を調べる") and page.locator("#tabMeta").get_attribute("aria-selected") == "true")
+          and page.title().startswith("デッキの価格を調べる") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
     parsed = page.evaluate("""(() => { const P = s => parseDeckText(s).lines.map(l => [l.count, l.name, l.part]);
       return {
         arena: (() => { const r = parseDeckText('About\\nName Gruul Smash\\n\\nCommander\\n1 Ragavan, Nimble Pilferer\\n\\nCompanion\\n1 Qasali Pridemage\\n\\nDeck\\n4 Lightning Bolt (M10) 146\\n2 Shivan Dragon (M10) 156 *F*\\n\\nSideboard\\n1 Qasali Pridemage\\n3 Llanowar Elves'); return [r.title, r.lines.map(l => [l.count, l.name, l.part])]; })(),
@@ -3167,10 +3171,18 @@ with sync_playwright() as p:
     page.fill("#importText", "hello\nworld"); page.wait_for_timeout(600)
     check("deck price page: text with no card in it says nothing was found", "見つからなかったカード" in page.locator("#importBody").inner_text(), page.locator("#importBody").inner_text()[:200])
     page.fill("#importText", "")
-    # the ways in: the metagame tab, the price tab, and a deck page's 編集して計算
+    # the ways in: the price tab's button, and a deck page's 編集して計算
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
-    page.click("#metaView .imp-cta a"); page.wait_for_selector("#importView .imp-empty")
-    check("metagame tab: a link opens the deck price page", "view=import" in page.url and page.locator("#importView").is_visible())
+    check("metagame tab: no link to the deck price page (it moved to the price tab)", page.locator("#metaView a[data-import]").count() == 0)
+    page.goto(SITE + "?view=prices"); page.wait_for_selector("#pricesView .imp-open")
+    check("price tab: a デッキの価格を調べる button", page.locator("#pricesView .imp-open").inner_text().strip() == "デッキの価格を調べる" and page.locator("#pricesView .imp-open").get_attribute("href") == "?view=import")
+    if SHOTS: page.screenshot(path="prices_deck_button.png", full_page=False)
+    page.click("#pricesView .imp-open"); page.wait_for_selector("#importView .imp-empty")
+    check("price tab: the button opens the deck price page, and the tab bar marks 価格",
+          "view=import" in page.url and page.locator("#importView").is_visible() and page.locator("#tabPrices").get_attribute("aria-selected") == "true"
+          and page.locator("#tabMeta").get_attribute("aria-selected") == "false")
+    page.click("#tabPrices"); page.wait_for_selector("#pricesView .imp-open")
+    check("deck price page: the 価格 tab goes back to the price movers", "view=prices" in page.url and page.locator("#pricesView").is_visible())
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
     page.wait_for_function("document.querySelector('#deckBody .deck-cost .dcst-v')")
     deck_cost = page.locator("#deckBody .deck-cost .dcst-v").inner_text()
@@ -3178,8 +3190,6 @@ with sync_playwright() as p:
     check("deck page: 編集して計算 opens the shown list on the deck price page, with the deck's name and the same price",
           page.locator("#importBody .deck-cost .dcst-v").inner_text() == deck_cost and page.locator(".imp-deck-title").inner_text().strip().startswith("グルール・ドラゴン")
           and "Unknown New Card" in page.locator(".imp-miss").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), deck_cost))
-    page.goto(SITE + "?view=prices"); page.wait_for_selector("#pricesView .imp-cta a")
-    check("price tab: a link to the deck price page", page.locator("#pricesView .imp-cta a").get_attribute("href") == "?view=import")
     page.goto(SITE + "?view=import"); page.fill("#importText", "4 稲妻\n2 Shivan Dragon\n\nSideboard\n2 Lightning Bolt\n1 Qasali Pridemage"); page.wait_for_selector("#importBody .imp-buy")
     buy = page.locator("#importBody .imp-buy")
     check("deck price page: 晴れる屋で買う links to Hareruya's buy-from-a-list page, in a new tab",

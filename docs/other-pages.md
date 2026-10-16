@@ -103,10 +103,11 @@ view).
 
 ## Deck price page (paste a list)
 
-`?view=import` (`#importView`): people paste a deck list and see what it costs. Ways in: a link
-under the metagame and price tabs' bars (`.imp-cta`, `a[data-import]`), and 編集して計算 on a deck
-page (`.deck-edit`), which opens the shown list there (with the deck's name) so cards can be
-swapped and the price follows. The tab bar marks メタゲーム while it is open.
+`?view=import` (`#importView`): people paste a deck list and see what it costs. It belongs to the
+price tab (the tab bar marks 価格 while it is open; the owner moved it there from the metagame tab,
+2026-10-16). Ways in: the デッキの価格を調べる button in the price tab's bar (`.imp-open`,
+`a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the shown list there
+(with the deck's name) so cards can be swapped and the price follows.
 
 - **Reading the list** (`parseDeckText()`): one card per line. Section headings as MTG Arena
   (English and Japanese client), Magic Online and deck sites write them (`IMPORT_PARTS`:
