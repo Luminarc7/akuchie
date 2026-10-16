@@ -1448,8 +1448,30 @@
   #homeMoversTabs { align-self: flex-start; }
   .hb-src { margin: 4px 0 0; font-size: 11.5px; color: var(--muted); }
   /* home and set pages: things to buy at Rakuten Books / Amazon (affiliate links say PR) */
-  .home-shop { flex-basis: 100%; }
-  #homeShopTabs { align-self: flex-start; }
+  /* the Secret Lair / booster box boxes: the size of the price movers box, a sliding strip of products */
+  .hs-strip-wrap { position: relative; min-width: 0; }
+  .hs-strip { list-style: none; margin: 0; padding: 2px 2px 10px; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  .hs-strip::-webkit-scrollbar { height: 6px; }
+  .hs-strip::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+  .hs-strip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+  .hs-card { flex: none; width: 132px; scroll-snap-align: start; }
+  .hs-card a { display: flex; flex-direction: column; gap: 5px; height: 100%; color: inherit; text-decoration: none; }
+  .hs-pic { position: relative; display: block; width: 132px; height: 132px; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid var(--line); }
+  .hs-pic img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform .25s ease; }
+  .hs-card a:hover .hs-pic img { transform: scale(1.04); }
+  .hs-pic.none { background: var(--field); }
+  .hs-pic .hs-badge { position: absolute; left: 6px; top: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+  .hs-pic .hs-badge.soft { background: var(--surface); }
+  .hs-card .hs-title { font-size: 12.5px; }
+  .hs-card a:hover .hs-title { color: var(--accent); }
+  .hs-card .hs-date { font-size: 11px; color: var(--muted); }
+  .hs-card .hs-price { margin-top: auto; }
+  .hs-nav { display: inline-flex; gap: 6px; margin-left: auto; }
+  .hs-nav button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--field); color: var(--text); font-size: 15px; line-height: 1; cursor: pointer; }
+  .hs-nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .hs-nav button:disabled { opacity: .35; cursor: default; }
+  .home-shop .hb-head { align-items: center; }
+  .home-shop .hs-more { order: 3; flex-basis: 100%; }
   .pr-badge { display: inline-block; margin-left: 8px; padding: 0 6px; border: 1px solid var(--line-strong); border-radius: 4px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10.5px; font-weight: 700; color: var(--muted); line-height: 1.6; vertical-align: 3px; }
   .pr-badge[hidden] { display: none; }
   .hs-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 18px; }
@@ -1465,8 +1487,9 @@
   .hs-badge.soft { background: transparent; color: var(--text-2); border: 1px solid var(--line-strong); }
   .hs-foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
   .hs-foot .hb-src { margin: 0; }
-  .hs-credit { font-size: 11px; color: var(--muted); }
-  .hs-credit a { color: var(--muted); }
+  .hs-credit { font-size: 10.5px; color: var(--muted); }
+  .hs-credit a { color: var(--muted); text-decoration: none; }
+  .hs-credit a:hover { text-decoration: underline; }
   .hs-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; color: var(--text-2); }
   .hs-empty .external-link-btn, .set-shop .external-link-btn { border-radius: 999px; padding: 3px 12px; font-size: 12.5px; }
   .set-shop { margin: 4px 0 16px; display: flex; flex-wrap: wrap; gap: 10px 14px; }
@@ -1839,10 +1862,13 @@
       <div class="seg seg-sm" id="homeMetaTabs" role="tablist" aria-label="フォーマット" data-i18n-aria="meta.formats.aria"></div>
       <div id="homeMetaBody"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
     </div>
-    <div class="home-box home-shop" id="homeShop">
-      <div class="hb-head"><h2><span data-i18n="shop.home.title">楽天ブックスで予約・販売中</span><span class="pr-badge" hidden>PR</span></h2><a href="https://books.rakuten.co.jp/" id="homeShopMore" target="_blank" rel="sponsored noopener" data-i18n="shop.more">楽天ブックスでもっと見る</a></div>
-      <div class="seg seg-sm" id="homeShopTabs" role="tablist" aria-label="商品" data-i18n-aria="shop.tabs.aria"></div>
-      <div id="homeShopBody"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
+    <div class="home-box home-shop" id="homeShop" data-kind="sl">
+      <div class="hb-head"><h2><span data-i18n="shop.home.sl">Secret Lair 予約・販売中</span><span class="pr-badge" hidden>PR</span></h2><a href="https://books.rakuten.co.jp/" class="hs-more" target="_blank" rel="noopener" data-i18n="shop.more">楽天ブックスでもっと見る</a></div>
+      <div class="hs-body-slot"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
+    </div>
+    <div class="home-box home-shop" id="homeBoxShop" data-kind="box">
+      <div class="hb-head"><h2><span data-i18n="shop.home.box">ブースターBOX 予約・販売中</span><span class="pr-badge" hidden>PR</span></h2><a href="https://books.rakuten.co.jp/" class="hs-more" target="_blank" rel="noopener" data-i18n="shop.more">楽天ブックスでもっと見る</a></div>
+      <div class="hs-body-slot"><p class="hb-empty" data-i18n="loading">読み込み中…</p></div>
     </div>
   </section>
 
@@ -2423,12 +2449,14 @@ const STR = {
   'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリスト、ウォントリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）、楽天ブックスの商品画像などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode), recent searches, pasted deck lists and your want list are saved only in your own browser. Fonts (Google Fonts, not used in lite mode), card pictures (Scryfall) and Rakuten Books product pictures are loaded from those services, which receive your IP address and similar details.'],
   'footer.privacy.aff': ['このサイトには会員登録・Cookie・アクセス解析はありません。「PR」の印がある楽天ブックス・Amazonへのリンクはアフィリエイト広告で、そこから買い物をすると悪知恵に紹介料が入ることがあります（お支払いの金額は変わりません）。リンク先では各サイトのCookieが使われます。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリスト、ウォントリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）、楽天ブックスの商品画像などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies or analytics. Links to Rakuten Books and Amazon marked “PR” are affiliate ads: if you buy something through them, 悪知恵 may earn a referral fee (you pay the same). Those sites use their own cookies. Your display settings (theme, language, lite mode), recent searches, pasted deck lists and your want list are saved only in your own browser. Fonts (Google Fonts, not used in lite mode), card pictures (Scryfall) and Rakuten Books product pictures are loaded from those services, which receive your IP address and similar details.'],
   'footer.amazon': ['Amazonのアソシエイトとして、悪知恵は適格販売により収入を得ています。', 'As an Amazon Associate, 悪知恵 earns from qualifying purchases.'],
-  'shop.home.title': ['楽天ブックスで予約・販売中', 'On sale at Rakuten Books'],
-  'shop.tabs.aria': ['商品', 'Products'],
-  'shop.tab.sl': ['Secret Lair', 'Secret Lair'],
-  'shop.tab.box': ['ブースターBOX', 'Booster boxes'],
+  'shop.home.sl': ['Secret Lair 予約・販売中', 'Secret Lair on sale'],
+  'shop.home.box': ['ブースターBOX 予約・販売中', 'Booster boxes on sale'],
+  'shop.strip.aria': ['楽天ブックスの商品（横にスクロール）', 'Rakuten Books products (scroll sideways)'],
+  'shop.prev': ['前の商品', 'Previous'],
+  'shop.next': ['次の商品', 'Next'],
   'shop.more': ['楽天ブックスでもっと見る', 'More at Rakuten Books'],
   'shop.src': ['楽天ブックスの販売価格（税込）。1時間ごとに更新しています。最新の価格と在庫は楽天ブックスでご確認ください。', 'Rakuten Books prices (tax included), updated hourly. Check Rakuten Books for the latest price and stock.'],
+  'shop.src.short': ['楽天ブックスの税込価格・1時間ごとに更新', 'Rakuten Books prices incl. tax, updated hourly'],
   'shop.none.sl': ['楽天ブックスで販売中のSecret Lairは、楽天ブックスのサイトで探せます。', 'Look for Secret Lair drops on the Rakuten Books site.'],
   'shop.none.box': ['ブースターBOXは、楽天ブックスのサイトで探せます。', 'Look for booster boxes on the Rakuten Books site.'],
   'shop.search': ['楽天ブックスで探す', 'Search Rakuten Books'],
@@ -9986,7 +10014,6 @@ document.getElementById('homeBoxes').addEventListener('click', (e) => {
 const AFFILIATE = { rakuten: '588d3206.c18f0a3c.588d3207.894d323d', amazon: '' };
 const SHOP_API = '/shop/rakuten';   // worker.js asks Rakuten's API (its keys are Cloudflare secrets)
 const RAKUTEN_CREDIT = '<!-- Rakuten Web Services Attribution Snippet FROM HERE --><a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a><!-- Rakuten Web Services Attribution Snippet TO HERE -->';
-const SHOP_KINDS = ['sl', 'box'];
 const shopCache = new Map();
 const affOn = (shop) => /^[\w.-]{4,80}$/.test(AFFILIATE[shop] || '');
 const shopRel = (shop) => affOn(shop) ? 'sponsored noopener' : 'noopener';
@@ -10036,32 +10063,85 @@ function shopItemsHtml(items, n) {
   }).join('')}</ul>`;
 }
 const SHOP_WORDS = { sl: 'マジック ザ ギャザリング Secret Lair', box: 'マジック ザ ギャザリング ブースター' };
-let homeShopKind = 'sl';
-async function renderHomeShop() {
-  const body = document.getElementById('homeShopBody');
-  const more = document.getElementById('homeShopMore');
-  document.querySelectorAll('#homeShop .pr-badge').forEach(b => { b.hidden = !affOn('rakuten'); });
-  document.getElementById('homeShopTabs').innerHTML = SHOP_KINDS.map(k =>
-    `<button type="button" class="seg-btn" role="tab" data-kind="${k}" aria-pressed="${k === homeShopKind}" aria-selected="${k === homeShopKind}">${esc(t('shop.tab.' + k))}</button>`).join('');
-  const kind = homeShopKind;
+// one product in the sliding strip: a big picture, the title, the date and the price
+function shopCardHtml(it) {
+  const d = shopDate(it.date), now = Date.now();
+  const fresh = d && d.getTime() <= now && now - d.getTime() < 14 * 864e5;
+  const badge = it.avail === '5' ? `<span class="hs-badge">${esc(t('shop.avail.5'))}</span>`
+    : fresh ? `<span class="hs-badge">${esc(t('shop.new'))}</span>`
+    : /^[1-6]$/.test(it.avail) ? `<span class="hs-badge soft">${esc(t('shop.avail.' + it.avail))}</span>` : '';
+  const pic = /^https:\/\/thumbnail\.image\.rakuten\.co\.jp\//.test(it.image || '')
+    ? `<span class="hs-pic"><img src="${esc(it.image)}" alt="" loading="lazy">${badge}</span>` : `<span class="hs-pic none">${badge}</span>`;
+  return `<li class="hs-card"><a href="${esc(rakutenLink(it.url))}" target="_blank" rel="${shopRel('rakuten')}">${pic}
+    <span class="hs-title">${esc(it.title)}</span>${it.date ? `<span class="hs-date">${esc(t('shop.release', { d: it.date }))}</span>` : ''}
+    <span class="hs-price">${esc(t('shop.yen', { v: Math.round(it.price).toLocaleString('ja-JP') }))}</span></a></li>`;
+}
+// The strip moves on by itself, one product every few seconds, like Rakuten's motion widget,
+// and back to the start at the end. It stops while the pointer or a finger is on it, while it
+// has focus, off screen, in a background tab, and never moves for people who turn motion off.
+const SHOP_MOTION_MS = 4500;
+const reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+function stripStep(strip, dir) {
+  const card = strip.querySelector('.hs-card');
+  const step = card ? card.getBoundingClientRect().width + 12 : 160;
+  const atEnd = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+  if (dir > 0 && atEnd) strip.scrollTo({ left: 0 });
+  else strip.scrollBy({ left: dir * step });
+}
+function startStripMotion(box) {
+  const strip = box.querySelector('.hs-strip');
+  if (!strip) return;
+  const nav = box.querySelector('.hs-nav');
+  const syncNav = () => {
+    if (!nav) return;
+    nav.hidden = strip.scrollWidth <= strip.clientWidth + 4;
+    nav.querySelector('[data-dir="-1"]').disabled = strip.scrollLeft <= 2;
+  };
+  strip.addEventListener('scroll', syncNav, { passive: true });
+  requestAnimationFrame(syncNav);
+  let hold = 0, seen = true;
+  const pause = (ms) => { hold = Date.now() + ms; };
+  strip.addEventListener('pointerenter', () => pause(1e9));
+  strip.addEventListener('pointerleave', () => pause(1500));
+  strip.addEventListener('touchstart', () => pause(10000), { passive: true });
+  strip.addEventListener('focusin', () => pause(1e9));
+  strip.addEventListener('focusout', () => pause(1500));
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(strip);
+  clearInterval(box._motion);
+  box._motion = setInterval(() => {
+    if (!strip.isConnected) { clearInterval(box._motion); return; }
+    if (reduceMotion.matches || document.hidden || !seen || Date.now() < hold || document.documentElement.dataset.home !== 'true') return;
+    if (strip.scrollWidth > strip.clientWidth + 4) stripStep(strip, 1);
+  }, SHOP_MOTION_MS);
+}
+async function renderShopBox(box) {
+  const kind = box.dataset.kind;
+  const slot = box.querySelector('.hs-body-slot');
+  const more = box.querySelector('.hs-more');
+  box.querySelectorAll('.pr-badge').forEach(b => { b.hidden = !affOn('rakuten'); });
   const search = rakutenSearchUrl(SHOP_WORDS[kind]);
   more.href = search; more.rel = shopRel('rakuten');
   const data = await loadShopItems(kind);
-  if (homeShopKind !== kind) return;
-  if (!data.ok || !data.items.length) {
+  const items = data.items.filter(it => SHOP_LINK_OK.test(it.url || ''));
+  box.querySelector('.hs-nav') && box.querySelector('.hs-nav').remove();
+  if (!data.ok || !items.length) {
     more.hidden = true;
-    body.innerHTML = `<p class="hs-empty">${esc(t('shop.none.' + kind))} <a class="external-link-btn" href="${esc(search)}" target="_blank" rel="${shopRel('rakuten')}">${esc(t('shop.search'))} ↗</a></p>`;
+    slot.innerHTML = `<p class="hs-empty">${esc(t('shop.none.' + kind))} <a class="external-link-btn" href="${esc(search)}" target="_blank" rel="${shopRel('rakuten')}">${esc(t('shop.search'))} ↗</a></p>`;
     return;
   }
   more.hidden = false;
-  body.innerHTML = `${shopItemsHtml(data.items, 4)}<div class="hs-foot"><p class="hb-src">${esc(t('shop.src'))}</p><span class="hs-credit">${RAKUTEN_CREDIT}</span></div>`;
+  box.querySelector('.hb-head').insertAdjacentHTML('beforeend', `<span class="hs-nav" hidden><button type="button" data-dir="-1" aria-label="${esc(t('shop.prev'))}">‹</button><button type="button" data-dir="1" aria-label="${esc(t('shop.next'))}">›</button></span>`);
+  slot.innerHTML = `<div class="hs-strip-wrap"><ul class="hs-strip" tabindex="0" aria-label="${esc(t('shop.strip.aria'))}">${items.map(shopCardHtml).join('')}</ul></div>
+    <div class="hs-foot"><p class="hb-src">${esc(t('shop.src.short'))}</p><span class="hs-credit">${RAKUTEN_CREDIT}</span></div>`;
+  box.querySelector('.hs-nav').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-dir]');
+    if (b) stripStep(box.querySelector('.hs-strip'), Number(b.dataset.dir));
+  });
+  startStripMotion(box);
 }
-document.getElementById('homeShopTabs').addEventListener('click', (e) => {
-  const b = e.target.closest('.seg-btn');
-  if (!b || b.dataset.kind === homeShopKind) return;
-  homeShopKind = b.dataset.kind;
-  renderHomeShop();
-});
+function renderHomeShop() {
+  document.querySelectorAll('#homeBoxes .home-shop').forEach(renderShopBox);
+}
 // set pages: boxes of the set, for sets sold in boxes (main and masters sets of the last
 // three years, and upcoming ones). Rakuten's own part shows only Rakuten links (its rules);
 // Amazon gets a part of its own.

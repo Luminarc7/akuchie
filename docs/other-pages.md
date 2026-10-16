@@ -31,7 +31,7 @@ in `dev/tests/e2e.py`.
 | Three effects, each with a card that has it, and slang examples | `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHeroExample()` |
 | Price risers box | `renderHomeMovers()` (from `movers.json`) |
 | Top decks box | `renderHomeMeta()`, `HOME_META_FORMATS` (from `meta.json`) |
-| Rakuten Books box (Secret Lair / ブースターBOX tabs) | `renderHomeShop()`, `#homeShop` (from `worker.js` `/shop/rakuten`; see [Shops](#shops-rakuten-books-and-amazon)) |
+| Secret Lair and booster box boxes (Rakuten Books, sliding strips) | `renderHomeShop()`, `renderShopBox()`, `#homeShop`, `#homeBoxShop` (from `worker.js` `/shop/rakuten`; see [Shops](#shops-rakuten-books-and-amazon)) |
 | Random cards below | `loadRandomCards()` (`RANDOM_COUNT`), from the local database, or Scryfall's `/cards/random` without it |
 
 ## Sets
@@ -46,9 +46,13 @@ add new sets there when they come out (the Rakuten box search on set pages uses 
 Things to buy, with affiliate links once the owner has the IDs ("shops" section of
 `index.html`).
 
-- **Where:** the home page's Rakuten Books box (`renderHomeShop()`: four Secret Lair products or
-  booster boxes, newest first, with price, 予約受付中 / 在庫あり, release date, NEW for the last
-  two weeks), and a "このセットのBOXを買う" strip on set pages (`renderSetShop()`, `#setShop`)
+- **Where:** two home-page boxes the size of the price movers box, Secret Lair (`#homeShop`) and
+  booster boxes (`#homeBoxShop`), each drawn by `renderShopBox()`. Each is a sideways strip of
+  products (`shopCardHtml()`: big picture, 予約受付中 / NEW / 在庫あり on it, title, release
+  date, price), newest first, with ‹ › buttons. Like Rakuten's motion widget it moves on by itself
+  every `SHOP_MOTION_MS` (`startStripMotion()`), back to the start at the end; it stops under the
+  pointer or a finger, with focus, off screen, in a background tab, and never moves when the
+  visitor's system asks for reduced motion. Also a "このセットのBOXを買う" strip on set pages (`renderSetShop()`, `#setShop`)
   for sets in `SHOP_SET_TYPES` released in the last three years or upcoming. Not in
   lightweight mode.
 - **Products come from Rakuten's API**, asked by `worker.js` (`/shop/rakuten`, see
