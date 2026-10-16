@@ -14,7 +14,7 @@ Everything in `dev/` (and `tools/`) stays out of the website: `.assetsignore` li
     python3 dev/tests/e2e.py            # tests ./index.html and ./preview.html
     WARUJIE_PAGES=/some/build python3 dev/tests/e2e.py   # tests pages in another folder
 
-About 580 checks. Every network request is answered from fixtures (Scryfall, the exchange
+About 660 checks. Every network request is answered from fixtures (Scryfall, the exchange
 rate, the card database, price and combo data, metagame files), so it runs offline and
 gives the same result every time. It covers search, filters, suggestions, card pages
 (language buttons, prices, listings, history), sets, metagame and deck pages, export,
@@ -31,8 +31,9 @@ the app install, link previews, English mode, lightweight mode (軽量), phones.
 
     cd dev/searchbench && python3 search_checks.py ../../index.html
 
-46 checks of real searches (Japanese and English names, rules text, readings, typos,
-punctuation-free names, role words) against the real `ja_cards.json.gz` and role tags.
+About 110 checks of real searches (Japanese and English names, rules text, readings, typos,
+punctuation-free names, role words, players' slang, everyday wording, hiragana, card shapes,
+colors and mana values, and 600 searches typed from random cards' own text and names) against the real `ja_cards.json.gz` and role tags.
 `harness.py` opens the site with the real database and stubs Scryfall; use it for
 screenshots or to reproduce a bug with real data.
 

@@ -9,6 +9,9 @@ here.
 |---|---|---|
 | Searches are slow or the results come from Scryfall (a "translated" note above results) | The card database didn't load | Browser console and network tab for `/ja_cards.json` / `ja_cards.json.gz`. On Cloudflare, check the deploy built `ja_cards.json.br` (build log of `tools/brotli_db.mjs`). Locally, make sure you run a web server (not `file://`) |
 | Role words (除去, ドロー…) are searched as text; a note says roles are unavailable | `t/tags.json.gz` from warujie-prices didn't load (`tagsState === 'absent'`) | Is `https://warujie.github.io/warujie-prices/t/tags.json.gz` there? Check the warujie-prices workflow run |
+| A sentence copied from a card finds it, the same sentence typed without 、 finds nothing | Punctuation was compared literally | Fixed: `normJaSearch()` drops it from cards and searches (`JA_PUNCT_RE`). When mapping a list through it, write `.map(l => normJaSearch(l))`: `.map(normJaSearch)` passes the index as `keep` |
+| `{T}:…` or `2:…` typed from a card finds nothing | `parseSearch()` read the part before the colon as an operator | Fixed: an unknown "operator" in Japanese text or starting with `{` is text. A new real operator must be in `KNOWN_OPS` |
+| A slang word finds nothing or the wrong cards | Missing or too-broad entry in `JA_SLANG`, `JA_KW_SLANG`, `EN_WORD_ALIAS` | Add or narrow the entry; add a check in `dev/searchbench/search_checks.py` (also one that a wrong card is *not* found) |
 | A card's name doesn't match without punctuation | `NAME_PUNCT_RE` lacks that character | Add it; check `nameKey()` |
 | Japanese results are in an odd order | Missing or wrong `name_kana` for those cards | `tools/name_readings.py`; the Name readings workflow run; printed furigana in Scryfall wins over Sudachi |
 | A search worked yesterday and doesn't now | A recent change in the search sections | `git log -p staging -- index.html`; run the searchbench on the previous commit to compare |
@@ -31,6 +34,7 @@ here.
 |---|---|---|
 | Metagame data is old | The daily **Update metagame data** run failed | GitHub → Warujie → Actions. Run it by hand ("Run workflow"). If MTGODecklistCache changed its format, `build_meta.py` needs a fix |
 | A deck has an odd name or is "unclassified" | MTGOFormatData's archetype rules don't know it yet | Usually fixed upstream within days; nothing to change here |
+| A phone page scrolls sideways in English only | Short pieces with `white-space: nowrap` joined with no space between them: English has no place to break the line (Japanese breaks after （）) | Join them with a space, as the deck page's facts line (`.deck-meta`) does before each ·; check with `dev/tests/e2e.py`'s `no_hscroll()` at 360px in English |
 | Arena/MTGO import complains about a card name | The two clients spell some two-part names differently | `exportName()` |
 
 ## Deploys and hosting

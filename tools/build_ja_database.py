@@ -77,7 +77,7 @@ FIELD_ORDER = [
     "id", "oracle_id", "name_en", "name_ja", "type_en", "type_ja",
     "oracle_en", "oracle_ja", "mana_cost", "colors", "cmc",
     "power", "toughness", "rarity", "set", "keywords", "released_at",
-    "alt_names_ja", "legal",
+    "alt_names_ja", "legal", "layout",
 ]
 
 # Formats the site can filter by, one letter each in the row's "legal" field
@@ -158,6 +158,27 @@ def joined(card, key):
         return card[key]
     parts = [f.get(key) for f in faces_of(card) if f.get(key)]
     return " // ".join(parts)
+
+
+# Card shapes the site searches by (分割カード, 両面カード, 出来事...): Scryfall's layout,
+# empty for an ordinary one-faced card.
+SHAPE_LAYOUTS = {
+    "split", "transform", "modal_dfc", "meld", "flip", "adventure", "prepare", "saga",
+    "class", "case", "leveler", "mutate", "prototype", "host", "augment",
+}
+
+
+def english_name(card):
+    """Some Omen printings repeat the front: "Bloomvine Regent // Claim Territory //
+    Bloomvine Regent". The repeat is dropped."""
+    parts = card.get("name", "").split(" // ")
+    if len(parts) > 2 and parts[-1] == parts[0]:
+        parts = parts[:-1]
+    return " // ".join(parts)
+
+
+def layout_of(card):
+    return card.get("layout") if card.get("layout") in SHAPE_LAYOUTS else ""
 
 
 def oracle_id_of(card):
@@ -254,7 +275,7 @@ class CardEntry:
         row = {
             "id": pic.get("id", ""),
             "oracle_id": oracle_id_of(base) or "",
-            "name_en": en.get("name", ""),
+            "name_en": english_name(en),
             "name_ja": name_ja,
             "type_en": en.get("type_line", "") or joined(en, "type_line"),
             "type_ja": joined(text_src, "printed_type_line") if text_src else "",
@@ -270,6 +291,7 @@ class CardEntry:
             "keywords": ",".join(en.get("keywords", [])),
             "released_at": self.first_released or "",
             "alt_names_ja": "|".join(sorted(n for n in self.ja_names if n != name_ja)),
+            "layout": layout_of(en),
             "legal": "".join(code for fmt, code in LEGAL_CODES
                              if ((en.get("legalities") or base.get("legalities") or {}).get(fmt)) in ("legal", "restricted")),
         }

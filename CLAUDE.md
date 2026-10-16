@@ -103,8 +103,9 @@ One row per card (about 33,800), with these fields: `id` (the Scryfall printing 
 results, a Japanese one where possible), `oracle_id`, `name_en`, `name_ja`, `type_en`, `type_ja`,
 `oracle_en`, `oracle_ja`, `mana_cost`, `colors`, `cmc`, `power`, `toughness`, `rarity`, `set`,
 `keywords`, `released_at` (first release), `alt_names_ja` (older Japanese names, `|`-separated),
-`legal` (letters s p m l v a c), and `name_kana` (the reading, used only for the あいうえお sort;
-never shown or searched).
+`legal` (letters s p m l v a c), `layout` (the card's shape from Scryfall when not an ordinary
+one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード), and
+`name_kana` (the reading, used only for the あいうえお sort; never shown or searched).
 
 - **Built by `tools/build_ja_database.py`** from Scryfall's `all_cards` bulk file. Scryfall
   serves bulk files as gzipped JSON Lines (`jsonl_download_uri`) since September 2026; the builder
@@ -130,6 +131,8 @@ never shown or searched).
     in Scryfall (e.g. Dominaria Remastered's split cards #207–216). About 4,000 cards have a
     Japanese name but no Japanese text anywhere in Scryfall. Nothing to show for these until
     another source is permitted.
+  - Some Omen printings repeat the front name (`Bloomvine Regent // Claim Territory // Bloomvine
+    Regent`); the builder drops the repeat (`english_name()`).
   - Many old Japanese printings have only a placeholder image. The page then shows the same
     printing's English picture with a note naming the language.
 
@@ -153,6 +156,30 @@ never shown or searched).
   (`name_kana`). Readings are never displayed.
 - **Name matching ignores punctuation:** `nameKey()` drops punctuation and spaces (and folds
   kana), so "yawgmoth thran" finds "Yawgmoth, Thran Physician".
+- **Players' words count:** slang and everyday wording are read as the cards' own wording
+  as well (`JA_SLANG`, `JA_KW_SLANG`, `EN_WORD_ALIAS`, `WORD_FILTERS`): 山札 → ライブラリー,
+  3ダメージ → 3点のダメージ, 2ドロー, サクる, 自分のクリーチャー, 攻撃したとき → 攻撃するたび,
+  フライヤー/飛行持ち → 飛行, PW, 置物, unblockable, sac. `・`, 全て/すべて and 時/とき are
+  ignored. 墓地から手札 matches the two words in one ability, in that order first. A note
+  above the results says what a word was read as. Words that are slang only sometimes
+  (カウンター, ロード, ラス, ティム) stay text and the note offers the role
+  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role.
+- **Hiragana game words** (typed before converting, on phones) are read as kanji/katakana
+  (`JA_READINGS`, longest word first): はかい → 破壊, くりーちゃーをはかい, じょきょ (the role).
+  Names in hiragana still match by kana folding.
+- **Typed the way players type:** punctuation (、。「」) is ignored, so a sentence typed without it
+  matches; `{T}:` and `-2:` in typed text are text, not filters; a card's own name in older
+  Japanese text reads as このクリーチャー / この土地 (`rowJaText()`); English names match without
+  hyphens or accents ("wrenchrigger", "lim dul").
+- **Colors and mana values narrow:** 白 天使, 白の天使, 3マナ ゴブリン, 黒のクリーチャー, red goblin
+  filter by color / mana value (`narrowingWord()`), except inside a card name (黒 騎士, black
+  lotus) or in quotes. A note says so.
+- **Card shapes:** 分割カード, 両面カード/両面/DFC, MDFC, 変身カード, 反転カード, 合体カード,
+  出来事カード, 前兆カード, split card, double-faced card, and `is:split`/`is:dfc`/`is:mdfc`
+  (`CARD_SHAPES`, from the `layout` field).
+- **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
+  `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
+  the Japanese matches in the same group.
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -168,9 +195,9 @@ never shown or searched).
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
    Update the matching doc in `docs/` (see "Documentation" above).
-3. **Test** with `python3 dev/tests/e2e.py` (about 640 offline checks; needs a warujie-prices
+3. **Test** with `python3 dev/tests/e2e.py` (about 660 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (46 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
+   (110 real-data search checks), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
