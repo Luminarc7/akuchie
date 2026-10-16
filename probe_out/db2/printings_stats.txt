@@ -1,0 +1,5 @@
+sets 653 printings 99998
+[('en', 98207), ('ja', 62721), ('fr', 59679), ('de', 59345), ('es', 53823), ('it', 53582), ('zhs', 40817), ('pt', 39543), ('zht', 23952), ('ru', 21761), ('ko', 15753), ('ph', 49), ('qya', 7), ('dw', 5), ('grc', 3), ('sa', 1), ('la', 1), ('he', 1), ('ar', 1)]
+twins 1305
+['en ja fr de it es pt zht@4bb ko@4bb', 'r', 'o'] ['en ja zhs fr de it es pt ru', 'c', ''] ['en ja zhs fr de it es pt', 'u', '']
+size 285296

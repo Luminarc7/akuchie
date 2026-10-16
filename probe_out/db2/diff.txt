@@ -1,0 +1,185 @@
+old 33821 new 33821 fields old ['id', 'oracle_id', 'name_en', 'name_ja', 'type_en', 'type_ja', 'oracle_en', 'oracle_ja', 'mana_cost', 'colors', 'cmc', 'power', 'toughness', 'rarity', 'set', 'keywords', 'released_at', 'alt_names_ja', 'legal', 'name_kana', 'layout', 'rarities'] 
+fields new ['id', 'oracle_id', 'name_en', 'name_ja', 'type_en', 'type_ja', 'oracle_en', 'oracle_ja', 'mana_cost', 'colors', 'cmc', 'power', 'toughness', 'rarity', 'set', 'keywords', 'released_at', 'alt_names_ja', 'legal', 'layout', 'rarities', 'sets', 'treatments', 'name_kana']
+
+== id: 933
+    ('A Realm Reborn', '1eb3c175-5dd2-4d90-bf39-b6cd0b976fa4', 'a3ab1352-13a5-43f0-a093-0ba9363395e6', 'fin', 'fin', 'rare', 'rare')
+    ('Abaddon the Despoiler', '2dbe9f43-a95c-4493-9b95-bff69497cd66', 'a78ab8fe-4499-4860-87d3-f8707398c00c', '40k', '40k', 'mythic', 'mythic')
+    ('Abbot of Keral Keep', 'a151e39c-9ff0-46ca-b2e4-eed1279e98d3', 'c311d8da-ab39-4995-9966-bb431e72e1d4', '2x2', '2x2', 'rare', 'rare')
+    ('Abigale, Eloquent First-Year', '958417f5-38fc-4464-a829-420d25578123', '5ade8350-bf73-4b9d-b354-642bcf8399a9', 'ecl', 'ecl', 'rare', 'rare')
+    ('Abomination, Terrifying Titan', '28a7fed4-edb7-4780-b159-7a29d0ed33fc', '649d4671-2a10-40ec-94bd-972166e712a8', 'msh', 'msh', 'uncommon', 'uncommon')
+    ('Adult Gold Dragon', '4e8c2a5d-c0c9-4648-8187-b367f4bceb17', '57576159-d077-4223-a76c-3821eebaa750', 'afr', 'afr', 'rare', 'rare')
+    ('Adéwalé, Breaker of Chains', '23e6a7c5-91fc-4fe5-84f5-14a24ab6825a', 'f74eeb34-eb2b-4325-a406-f958a4b2907f', 'acr', 'acr', 'uncommon', 'uncommon')
+    ('Aerith Gainsborough', '6ce87fed-a844-408e-978a-ec16cc86ef08', '77e594a0-949b-4410-ae3d-d688ebc418dd', 'fin', 'fin', 'rare', 'rare')
+    ('Agonasaur Rex', '467b04b3-8a24-4a66-b33b-eb82d89d3fb0', 'cdde25ea-dcf1-4d24-a910-3c8c9124ca92', 'dft', 'dft', 'rare', 'rare')
+    ('Air Response Unit', '2fa6208e-b5bc-4746-a5d1-4453d1c59d18', '31d94cbb-358c-40f4-b68f-2a2d7f128db6', 'dft', 'dft', 'uncommon', 'uncommon')
+    ('Ajani, Caller of the Pride', '98648efe-5cc8-44f3-bcd5-399a987b9cab', 'cf10eb64-2a10-469a-884e-e4bcc8571dc1', 'fdn', 'fdn', 'mythic', 'mythic')
+    ('Ajani, Sleeper Agent', '093e5c3d-b748-4295-8811-f51ab7717719', 'a062ee8c-aafa-4250-a7cf-35717747af5c', 'dmu', 'dmu', 'mythic', 'mythic')
+    ('Alesha, Who Laughs at Fate', '6b7a888f-7177-4ab6-b3dd-6d0b01cb92f5', 'b71e48d4-61fb-4f67-a4ad-4931669021df', 'fdn', 'fdn', 'rare', 'rare')
+    ('Alibou, Ancient Witness', 'e7651d46-0a0a-4720-b66e-67310c8aa24c', 'edd92ad9-bfc1-42a5-bee1-d4d1b0449115', 'mar', 'eoc', 'mythic', 'mythic')
+    ('Allosaurus Shepherd', '24ba2b29-1d3a-4e90-b03a-053eaf17db93', 'c51ce23c-1ecc-43d9-84d9-9c3e4a5578fb', '2x2', '2x2', 'mythic', 'mythic')
+    ('Alms Collector', '0f7508ca-79c9-4867-861d-7fe306009ffe', '7e1e06a4-87bc-412b-bc03-50d852bc5a1c', 'cmm', 'cmm', 'rare', 'rare')
+    ('Alpharael, Stonechosen', '6cccdf8f-33ac-4970-9558-4ec71bd4ecd9', '94364ca7-97d6-498a-b03a-7cbfae1f7fe0', 'eoe', 'eoe', 'mythic', 'mythic')
+    ("Alrund's Epiphany", '1951adbb-f7e2-4ef3-b97c-71e8bc82422b', '736101ff-cd05-4c04-9c32-afba42b2988a', 'khm', 'khm', 'mythic', 'mythic')
+    ('Altar of the Wretched // Wretched Bonemass', '5842332a-b27b-49ac-948d-f88a21deb1de', 'e2c812bb-19f8-4a22-bda9-f2a6233cf700', 'lcc', 'lcc', 'rare', 'rare')
+    ('Aminatou, the Fateshifter', '3f996ccc-8d43-4bc7-a201-18ff0167a74f', '73c48440-e6a3-4b3b-935d-bcfcdc32eba1', '2x2', '2x2', 'mythic', 'mythic')
+    ('Anafenza, Unyielding Lineage', '64a3921a-2ee4-467a-ac21-2dcd10e041ef', '7e99b5a4-2d87-4448-af86-046b07be4423', 'tdm', 'tdm', 'rare', 'rare')
+    ('Anhelo, the Painter', '1478e4b0-be5d-48e2-a5c9-c2a56ee6cf16', '6ac9cedb-9e90-4da1-9d8e-ad419fea9437', 'ncc', 'ncc', 'mythic', 'mythic')
+    ('Annie Flash, the Veteran', 'cb2bd34d-c1c3-47db-87d1-92a45ea6014d', 'cfde635d-a8d2-46c2-acda-9f3ac8f55a0b', 'otj', 'otj', 'mythic', 'mythic')
+    ('Apple of Eden, Isu Relic', '4e3096db-0722-4208-b048-77855206469e', '6ac7a776-c40d-4f21-bf96-8b16437cc72e', 'acr', 'acr', 'mythic', 'mythic')
+    ('Aragorn, Company Leader', '75edfb94-4e32-4200-95b4-8e1946bb5bf7', 'c26fddf1-6e94-4d44-8ecf-19cd7836db80', 'ltr', 'ltr', 'rare', 'rare')
+
+== oracle_ja changed: 67
+    ('Arcanis the Omnipotent', '{T}：カード３枚を引く。\n{2}{U}{U}：全能なる者アルカニスをオーナーの手札に戻す。', '{T}：カード３枚を引く。\n{2}{U}{U}：これをオーナーの手札に戻す。', 'fdn', 'fdn', 'rare', 'rare')
+    ('Bloodline Bidding', '召集（あなたのクリーチャーが、この呪文を唱える助けとなる。この呪文を唱える段階であなたがタップした各クリーチャーはそれぞれ{1}かそのクリー', '召集\nクリーチャー・タイプ１つを選ぶ。あなたの墓地にありその選ばれたタイプであるすべてのクリーチャー・カードを戦場に戻す。', 'ecl', 'ecl', 'rare', 'rare')
+    ('Bloodtithe Collector', '飛行\n税血の徴収者が戦場に出たとき、このターンに対戦相手がライフを失っていた場合、各対戦相手はそれぞれカード１枚を捨てる。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nこのクリーチャーが戦場に出たとき、このターンに対戦相手がラ', 'j25', 'fdn', 'uncommon', 'uncommon')
+    ('Boggart Cursecrafter', '接死\nあなたがコントロールしていてこれでないゴブリン１体が死亡するたび、このクリーチャーは各対戦相手にそれぞれ１点のダメージを与える。', '接死\nあなたがコントロールしていてこれでないゴブリン１つが死亡するたび、このクリーチャーは各対戦相手にそれぞれ１点のダメージを与える。', 'ecl', 'ecl', 'uncommon', 'uncommon')
+    ('Bristlebane Battler', 'トランプル、護法{2}\nこのクリーチャーは－１/－１カウンター５個が置かれた状態で戦場に出る。\nこのクリーチャーの上に－１/－１カウンターが', 'トランプル、護法{2}\nこのクリーチャーは－１/－１カウンター５個が置かれた状態で戦場に出る。\nこのクリーチャーの上に－１/－１カウンターが', 'ecl', 'ecl', 'rare', 'rare')
+    ('Carnelian Orb of Dragonkind', '{T}：{R}を加える。このマナがドラゴン・クリーチャー・呪文のために支払われたなら、ターン終了時まで、それは速攻を得る。', '{T}：{R}を加える。このマナがドラゴン・クリーチャー・呪文のために支払われたなら、ターン終了時まで、それは速攻を得る。（このターン、それ', 'j25', 'fdn', 'common', 'common')
+    ('Champions of the Perfect', 'この呪文を唱える追加コストとして、エルフの後見を受けてそれを追放する。（あなたがコントロールしているエルフ１体か、あなたの手札にあるエルフ・', 'この呪文を唱える追加コストとして、エルフの後見を受けてそれを追放する。\nあなたがクリーチャー・呪文１つを唱えるたび、カード１枚を引く。\nこの', 'ecl', 'ecl', 'rare', 'rare')
+    ('Champions of the Shoal', 'この呪文を唱えるための追加コストとして、マーフォークの後見を受けてそれを追放する。（あなたがコントロールしているマーフォーク１体か、あなたの', 'この呪文を唱えるための追加コストとして、マーフォークの後見を受けてそれを追放する。\nこのクリーチャーが戦場に出るかタップ状態になるたび、クリ', 'ecl', 'ecl', 'rare', 'rare')
+    ('Crusader of Odric', 'オドリックの十字軍のパワーとタフネスは、それぞれあなたがコントロールしているクリーチャーの総数に等しい。', 'オドリックの十字軍のパワーとタフネスはそれぞれ、あなたがコントロールしているクリーチャーの数に等しい。', 'fdn', 'fdn', 'common', 'common')
+    ('Cryptic Caves', '{T}：{C}を加える。\n{1}, {T}, 謎めいた洞窟を生け贄に捧げる：カード１枚を引く。この能力は、あなたが土地５つ以上をコントロール', '{T}：{C}を加える。\n{1}, {T}, この土地を生け贄に捧げる：カード１枚を引く。あなたが５つ以上の土地をコントロールしていなければ', 'fdn', 'fdn', 'uncommon', 'uncommon')
+    ('Dazzling Angel', '飛行\nあなたがコントロールしていてこれでないクリーチャー１体が戦場に出るたび、１点のライフを得る。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nあなたがコントロールしていてこれでないクリーチャー１体が戦', 'fdn', 'fdn', 'common', 'common')
+    ('Deepchannel Duelist', 'あなたの終了ステップの開始時に、あなたがコントロールしているマーフォーク１体を対象とする。それをアンタップする。\nあなたがコントロールしてい', 'あなたの終了ステップの開始時に、あなたがコントロールしているマーフォーク１つを対象とする。それをアンタップする。\nあなたがコントロールしてい', 'ecl', 'ecl', 'uncommon', 'uncommon')
+    ('Diamond Mare', '金剛牝馬が戦場に出るに際し、色１色を選ぶ。\nあなたがその選ばれた色の呪文を唱えるたび、あなたは１点のライフを得る。', 'このクリーチャーが戦場に出るに際し、色１色を選ぶ。\nあなたがその選ばれた色の呪文１つを唱えるたび、１点のライフを得る。', 'fdn', 'fdn', 'uncommon', 'uncommon')
+    ('Disruptor of Currents', '瞬速\n召集（あなたのクリーチャーが、この呪文を唱える助けとなる。この呪文を唱える段階であなたがタップした各クリーチャーはそれぞれ{1}かその', '瞬速、召集\nこのクリーチャーが戦場に出たとき、土地でもこれでもないパーマネント最大１つを対象とする。それをオーナーの手札に戻す。', 'ecl', 'ecl', 'rare', 'rare')
+    ('Drakuseth, Maw of Flames', '飛行\nこれが攻撃するたび、１つを対象とし、それでない最大２つを対象とする。これはその前者に４点のダメージ、それらの後者にそれぞれ３点のダメー', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nこれが攻撃するたび、１つを対象とし、それでない最大２つを対', 'fdn', 'fdn', 'rare', 'rare')
+    ('Exemplar of Light', '飛行\nあなたがライフを得るたび、このクリーチャーの上に＋１/＋１カウンター１個を置く。\nあなたがこのクリーチャーの上に１個以上の＋１/＋１カ', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nあなたがライフを得るたび、このクリーチャーの上に＋１/＋１', 'fdn', 'fdn', 'rare', 'rare')
+    ('Firespitter Whelp', '飛行\nあなたがクリーチャーでないまたはドラゴンである呪文１つを唱えるたび、このクリーチャーは各対戦相手にそれぞれ１点のダメージを与える。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nあなたがクリーチャーでない、またはドラゴンである呪文１つを', 'fdn', 'fdn', 'uncommon', 'uncommon')
+    ('Gatekeeper of Malakir', 'キッカー{B}（あなたはこの呪文を唱えるに際し、追加で{B}を支払ってもよい。）マラキールの門番が戦場に出たとき、それがキッカーされている場', 'キッカー{B}（この呪文を唱えるに際し、追加で{B}を支払ってもよい。）\nこのクリーチャーが戦場に出たとき、これがキッカーされていた場合、プ', 'fdn', 'fdn', 'uncommon', 'uncommon')
+    ('Hallowed Fountain', '（{T}：{W}か{U}を加える。）\n神聖なる泉が戦場に出るに際し、２点のライフを支払ってもよい。そうしないなら、これはタップ状態で戦場に出', '（{T}：{W}か{U}を加える。）\nこの土地が戦場に出るに際し、２点のライフを支払ってもよい。そうしないなら、これはタップ状態で戦場に出る', 'ecl', 'ecl', 'rare', 'rare')
+    ('Harmonized Crescendo', '召集（あなたのクリーチャーが、この呪文を唱える助けとなる。この呪文を唱える段階であなたがタップした各クリーチャーはそれぞれ{1}かそのクリー', '召集\nクリーチャー・タイプ１つを選ぶ。あなたがコントロールしていてそのタイプであるパーマネント１つにつき１枚のカードを引く。', 'ecl', 'ecl', 'rare', 'rare')
+    ("Healer's Hawk", '飛行\n絆魂（このクリーチャーがダメージを与えると、さらにあなたはその点数分のライフを得る。）', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\n絆魂（このクリーチャーがダメージを与えると、さらにあなたは', 'fdn', 'fdn', 'common', 'common')
+    ('Herald of Faith', '飛行\nこのクリーチャーが攻撃するたび、２点のライフを得る。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nこのクリーチャーが攻撃するたび、２点のライフを得る。', 'fdn', 'fdn', 'uncommon', 'uncommon')
+    ('High Perfect Morcant', '高位完全者、モーカントか、あなたがコントロールしていてこれでないエルフ１体が戦場に出るたび、各対戦相手はそれぞれ枯朽１を行う。（それらのプレ', '高位完全者、モーカントか、あなたがコントロールしていてこれでないエルフ１つが戦場に出るたび、各対戦相手はそれぞれ枯朽１を行う。\nあなたがコン', 'ecl', 'ecl', 'rare', 'rare')
+    ('Icewind Elemental', '飛行\nこのクリーチャーが戦場に出たとき、カード１枚を引き、その後、カード１枚を捨てる。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nこのクリーチャーが戦場に出たとき、カード１枚を引き、その後', 'fdn', 'fdn', 'common', 'common')
+    ('Inspiring Overseer', '飛行\n鼓舞する監視者が戦場に出たとき、１点のライフを得てカード１枚を引く。', '飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）\nこのクリーチャーが戦場に出たとき、１点のライフを得てカード', 'j25', 'fdn', 'common', 'common')
+
+== released_at: 67
+    ('Arzakon', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ("Ashaya's Enduring Bond", '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Autumn Willow, Harmony', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Balefang the Unslayable', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Blor the Impervious', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ("Boss Uramon, Shadow's Reach", '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Chief Magistrate of Mercadia', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Chira, All In', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Davvol, Evincar of Rath', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ("Dragon's Smile", '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Dyfed, the Guiding Hand', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Ekthi, Contaminator Priest', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Elda, Conjurer of Spectacle', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Emerald Collector', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'uncommon', 'uncommon')
+    ('Euru, Acorn Scrounger', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'uncommon', 'uncommon')
+    ("Feroz, Ulgrotha's Warden", '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Flitwing, Lyev Detective', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Glava, Five-Advents Mage', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Grakk the Pacifist', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Grandmother Goby', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Greensleeves', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Grizzlegom, Hurloon Hero', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Gustha Ebbasdotter', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Homer, the Hermit', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+    ('Istvan, Butcher of Eln', '2026-11-09', '2026-10-19', 'mbc', 'mbc', 'rare', 'rare')
+
+== set: 32
+    ('Alibou, Ancient Witness', 'mar', 'eoc', 'mar', 'eoc', 'mythic', 'mythic')
+    ('Bloodfell Caves', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ('Bloodtithe Collector', 'j25', 'fdn', 'j25', 'fdn', 'uncommon', 'uncommon')
+    ('Blossoming Sands', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ('Broken Wings', 'fdn', 'dft', 'fdn', 'dft', 'common', 'common')
+    ('Carnelian Orb of Dragonkind', 'j25', 'fdn', 'j25', 'fdn', 'common', 'common')
+    ('Clever Impersonator', 'mar', 'c19', 'mar', 'c19', 'mythic', 'mythic')
+    ('Consuming Aberration', 'fdn', 'tdc', 'fdn', 'tdc', 'rare', 'rare')
+    ('Dismal Backwater', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ("Dwynen's Elite", 'fdn', 'j25', 'fdn', 'j25', 'common', 'uncommon')
+    ('Exchange of Words', 'unf', 'plst', 'unf', 'plst', 'rare', 'rare')
+    ('Inniaz, the Gale Force', 'jmp', 'plst', 'jmp', 'plst', 'rare', 'rare')
+    ('Inspiring Overseer', 'j25', 'fdn', 'j25', 'fdn', 'common', 'common')
+    ('Jungle Hollow', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ('Mindbreak Trap', 'mar', 'zen', 'mar', 'zen', 'mythic', 'mythic')
+    ('Najeela, the Blade-Blossom', 'mar', 'cmr', 'mar', 'cmr', 'mythic', 'mythic')
+    ('Pelakka Wurm', 'm19', 'fdn', 'm19', 'fdn', 'rare', 'uncommon')
+    ('Rugged Highlands', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ('Savage Beating', 'mar', 'cmm', 'mar', 'cmm', 'mythic', 'mythic')
+    ('Savannah Lions', 'fdn', 'j25', 'fdn', 'j25', 'uncommon', 'common')
+    ('Scoured Barrens', 'fdn', 'tdm', 'fdn', 'tdm', 'common', 'common')
+    ('Serra Angel', 'j25', 'fdn', 'j25', 'fdn', 'uncommon', 'uncommon')
+    ('Skithiryx, the Blight Dragon', 'mar', '2xm', 'mar', '2xm', 'mythic', 'mythic')
+    ('Space Beleren', 'unf', 'plst', 'unf', 'plst', 'mythic', 'mythic')
+    ('Spectral Sailor', 'j25', 'fdn', 'j25', 'fdn', 'uncommon', 'uncommon')
+
+== type_ja changed: 15
+    ('Chandra, Torch of Defiance', 'プレインズウォーカー — チャンドラ', '伝説のプレインズウォーカー — チャンドラ', 'fra', 'fra', 'mythic', 'mythic')
+    ('Cosmium Confluence', 'Sorcery', 'ソーサリー', 'lci', 'lci', 'rare', 'rare')
+    ('Eldrazi Conscription', '部族エンチャント — エルドラージ・オーラ', '同族・エンチャント — エルドラージ・オーラ', 'soc', 'soc', 'rare', 'rare')
+    ("Elspeth, Sun's Champion", 'プレインズウォーカー — エルズペス', '伝説のプレインズウォーカー — エルズペス', 'frc', 'frc', 'mythic', 'mythic')
+    ('Forest', 'Basic Land — Forest', '基本土地 — 森', 'fra', 'fra', 'common', 'common')
+    ('Hoofprints of the Stag', '部族・エンチャント — エレメンタル', '同族・エンチャント — エレメンタル', 'ecc', 'ecc', 'rare', 'rare')
+    ('Island', 'Basic Land — Island', '基本土地 — 島', 'fra', 'fra', 'common', 'common')
+    ('Mountain', 'Basic Land — Mountain', '基本土地 — 山', 'fra', 'fra', 'common', 'common')
+    ('Nameless Inversion', '部族インスタント — 多相の戦士', '部族・インスタント — 多相の戦士', 'ecl', 'ecl', 'uncommon', 'uncommon')
+    ('Phyrexian Metamorph', 'アーティファクト・クリーチャー — 多相の戦士', 'アーティファクト・クリーチャー — ファイレクシアン・多相の戦士', 'eoc', 'eoc', 'rare', 'rare')
+    ('Plains', 'Basic Land — Plains', '基本土地 — 平地', 'fra', 'fra', 'common', 'common')
+    ('Souls of the Lost', 'Creature — Spirit', 'クリーチャー — スピリット', 'lci', 'lci', 'rare', 'rare')
+    ('Subterranean Schooner', 'Artifact — Vehicle', 'アーティファクト — 機体', 'lci', 'lci', 'rare', 'rare')
+    ('Swamp', 'Basic Land — Swamp', '基本土地 — 沼', 'fra', 'fra', 'common', 'common')
+    ('Thrummingbird', 'クリーチャー — 鳥・ホラー', 'クリーチャー — ファイレクシアン・鳥・ホラー', 'eoc', 'eoc', 'uncommon', 'uncommon')
+
+== rarity: 9
+    ("Dwynen's Elite", 'common', 'uncommon', 'fdn', 'j25', 'common', 'uncommon')
+    ('Enduring Courage', 'mythic', 'rare', 'dsk', 'dsk', 'mythic', 'rare')
+    ('Enduring Innocence', 'mythic', 'rare', 'dsk', 'dsk', 'mythic', 'rare')
+    ('Explosive Getaway', 'mythic', 'rare', 'dft', 'dft', 'mythic', 'rare')
+    ('Gardenize', 'mythic', 'rare', 'fra', 'fra', 'mythic', 'rare')
+    ('Pelakka Wurm', 'rare', 'uncommon', 'm19', 'fdn', 'rare', 'uncommon')
+    ('Savannah Lions', 'uncommon', 'common', 'fdn', 'j25', 'uncommon', 'common')
+    ('Starfield Vocalist', 'mythic', 'rare', 'eoe', 'eoe', 'mythic', 'rare')
+    ('Surrak, the Hunt Caller', 'uncommon', 'rare', 'cmm', 'fdn', 'uncommon', 'rare')
+
+== oracle_en: 2
+    ('Bloomvine Regent // Claim Territory', 'Flying\nWhenever this creature or another Dragon you control enters, yo', 'Flying\nWhenever this creature or another Dragon you control enters, yo', 'tdm', 'tdm', 'rare', 'rare')
+    ('Marang River Regent // Coil and Catch', 'Flying\nWhen this creature enters, return up to two other target nonlan', 'Flying\nWhen this creature enters, return up to two other target nonlan', 'tdm', 'tdm', 'rare', 'rare')
+
+== mana_cost: 2
+    ('Bloomvine Regent // Claim Territory', '{3}{G}{G}', '{3}{G}{G} // {2}{G}', 'tdm', 'tdm', 'rare', 'rare')
+    ('Marang River Regent // Coil and Catch', '{4}{U}{U}', '{4}{U}{U} // {3}{U}', 'tdm', 'tdm', 'rare', 'rare')
+
+== cmc: 2
+    ('Bloomvine Regent // Claim Territory', '0', '5.0', 'tdm', 'tdm', 'rare', 'rare')
+    ('Marang River Regent // Coil and Catch', '0', '6.0', 'tdm', 'tdm', 'rare', 'rare')
+
+== name_ja changed: 1
+    ('Springbloom Druid', '春（しゅん）花（か）のドルイド', '春花のドルイド', 'fdn', 'fdn', 'common', 'common')
+
+== alt_names_ja: 1
+    ('Springbloom Druid', '春花のドルイド', '春（しゅん）花（か）のドルイド', 'fdn', 'fdn', 'common', 'common')
+
+added 0 []
+lost 0 []
+sets per card avg 2.3431891428402474 max 215
+treatments Counter({'o': 7289, 'O': 5949, 'b': 3736, 'x': 3655, 'B': 2317, 's': 2241, 'e': 1074, 'f': 861, 'E': 675, 'F': 333, 'n': 292, 'X': 263, 'u': 232, 'S': 223, 't': 126, 'U': 81, 'T': 11})
+id              0.738 MB gz
+oracle_id       0.738 MB gz
+name_en         0.234 MB gz
+name_ja         0.281 MB gz
+type_en         0.089 MB gz
+type_ja         0.078 MB gz
+oracle_en       1.149 MB gz
+oracle_ja       1.334 MB gz
+mana_cost       0.047 MB gz
+colors          0.020 MB gz
+cmc             0.019 MB gz
+power           0.018 MB gz
+toughness       0.018 MB gz
+rarity          0.014 MB gz
+set             0.057 MB gz
+keywords        0.054 MB gz
+released_at     0.067 MB gz
+alt_names_ja    0.008 MB gz
+legal           0.020 MB gz
+layout          0.003 MB gz
+rarities        0.015 MB gz
+sets            0.121 MB gz
+treatments      0.019 MB gz
+name_kana       0.243 MB gz

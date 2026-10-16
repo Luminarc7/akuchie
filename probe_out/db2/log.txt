@@ -1,0 +1,77 @@
++ mkdir -p probe_out/db2
++ cd dbprobe
++ mkdir -p tools
++ cp build_ja_database.py check_database.py update_database.py fix_names.py name_readings.py name_fixes_ja.json tools/
++ cp old_ja_cards.json.gz ja_cards.json.gz
++ pip install -q sudachipy sudachidict_full pykakasi
++ python3 tools/update_database.py --work ../probe_out/db2/new --note ../probe_out/db2/note.md
++ /home/runner/work/Warujie/Warujie/dbprobe/tools/build_ja_database.py --out ../probe_out/db2/new/ja_cards.json.gz --printings ../probe_out/db2/new/printings.json.gz
+Fetching Scryfall bulk-data manifest...
+Downloading Scryfall's full multi-language export (large, one-time):
+  https://data.scryfall.io/all-cards/all-cards-20261016091845.jsonl.gz
+
+  ...scanned 100,000 printings, 28,371 cards so far
+  ...scanned 200,000 printings, 31,971 cards so far
+  ...scanned 300,000 printings, 32,869 cards so far
+  ...scanned 400,000 printings, 33,343 cards so far
+  ...scanned 500,000 printings, 33,699 cards so far
+
+Scanned 546,256 printings (19,814 tokens/art cards/digital-only skipped).
+Wrote ../probe_out/db2/new/ja_cards.json.gz  (6.5 MB)
+Wrote ../probe_out/db2/new/printings.json.gz  (0.3 MB, 99,998 printings)
+  33,821 cards total
+    30,839 with a Japanese name
+    26,837 with Japanese rules text
+    2,982 English only (never printed in Japanese)
+
+Spot check:
+  ok        Lightning Bolt  ->  稲妻
+  ok        Counterspell  ->  対抗呪文
+  ok        Slippery Bogle  ->  ぬめるボーグル
+  ok        Ragavan, Nimble Pilferer  ->  敏捷なこそ泥、ラガバン
+  ok        Sheoldred, the Apocalypse  ->  黙示録、シェオルドレッド
+  ok        The One Ring  ->  一つの指輪
+  ok        Orcish Bowmasters  ->  オークの弓使い
+  ok        Fable of the Mirror-Breaker // Reflection of Kiki-Jiki  ->  鏡割りの寓話 // キキジキの鏡像
+  ok        Solitude  ->  孤独
+  ok        Thoughtseize  ->  思考囲い
+  ok        Llanowar Elves  ->  ラノワールのエルフ
+  ok        Black Lotus  ->  (English only)
+
+Upload ja_cards.json.gz and printings.json.gz next to index.html in your repo.
++ /home/runner/work/Warujie/Warujie/dbprobe/tools/fix_names.py ../probe_out/db2/new/ja_cards.json.gz
+281 names corrected
++ /home/runner/work/Warujie/Warujie/dbprobe/tools/name_readings.py ../probe_out/db2/new/ja_cards.json.gz
+30835 names: 547 from printed furigana, 30288 from the dictionary; 0 still have a kanji in the reading
++ /home/runner/work/Warujie/Warujie/dbprobe/tools/check_database.py /home/runner/work/Warujie/Warujie/dbprobe/ja_cards.json.gz ../probe_out/db2/new/ja_cards.json.gz --new-printings ../probe_out/db2/new/printings.json.gz --note ../probe_out/db2/note.md
+## Card database update 2026-10-16
+
+- Cards: 33,821 → 33,821 (0 new, 0 gone)
+- With a Japanese name: 30,840 → 30,840
+- With Japanese rules text: 26,837 → 26,837
+- Printings: 99,998
+- Per rarity (c u r m): 11,242→11,242 10,800→10,800 12,004→12,004 2,775→2,775
+
+### Japanese name changed (1)
+- 春（しゅん）花（か）のドルイド → 春花のドルイド (Springbloom Druid)
+
+### Fields changed on existing cards
+
+id 933, oracle_ja 67, released_at 67, set 32, type_ja 15, rarity 9, oracle_en 2, mana_cost 2, cmc 2, name_ja 1, alt_names_ja 1
+
+replaced ja_cards.json.gz
+replaced printings.json.gz
+
+real	0m52.815s
+user	0m48.191s
+sys	0m1.769s
++ echo 'update exit 0'
+update exit 0
++ python3 db_diff.py old_ja_cards.json.gz ../probe_out/db2/new/ja_cards.json.gz
++ python3 -
++ ls -la ../probe_out/db2/new
+total 7344
+drwxr-xr-x 2 runner runner    4096 Oct 16 16:40 .
+drwxr-xr-x 3 runner runner    4096 Oct 16 16:40 ..
+-rw-r--r-- 1 runner runner 7224391 Oct 16 16:40 ja_cards.json.gz
+-rw-r--r-- 1 runner runner  285296 Oct 16 16:40 printings.json.gz
