@@ -117,7 +117,8 @@ All in `localStorage`, all optional (private browsing just forgets them). **Keep
 | `akuchie-offer-foil` | `1` when listings show foil |
 | `akuchie-similar` | similar-cards toggles (colour, mana value, type) |
 | `akuchie-recent` | the last 10 searches |
-| `akuchie-deck-view` | `list` for the deck list view |
+| `akuchie-deck-view` | `list` for the deck list view (also the deck price page's view) |
+| `warujie-deck-import` | the list pasted on the deck price page (`IMPORT_SAVE_KEY`). New keys use `warujie-`; the old `akuchie-` ones stay as they are |
 
 Nothing is sent anywhere. The footer promises no sign-up, cookies, analytics or ads; any change
 that would break that promise needs the owner's decision first (CLAUDE.md, rule 6).

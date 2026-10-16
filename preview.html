@@ -1246,6 +1246,64 @@
   .dl-rate { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .deck-foot { margin: 20px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   .deck-cost-note { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
+  /* the deck price page: paste a list, see what it costs */
+  .imp-cta { margin: 10px 2px; font-size: 13px; }
+  .imp-cta a { color: var(--accent); font-weight: 700; text-decoration: none; }
+  .imp-cta a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .deck-edit { text-decoration: none; }
+  .imp-layout { display: grid; gap: 18px; }
+  .imp-form { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .imp-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; }
+  .imp-lead { margin: 0 0 4px; font-size: 13px; line-height: 1.75; color: var(--text-2); }
+  .imp-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+  #importText { width: 100%; min-height: 220px; height: 300px; resize: vertical; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 10px;
+    background: var(--field); color: var(--text); font-family: inherit; font-size: 14px; line-height: 1.65; }
+  #importText:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .imp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .imp-go { height: 40px; padding: 0 22px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 15px; cursor: pointer; }
+  .imp-go:hover { filter: brightness(1.07); }
+  .imp-actions .adv-btn { height: 40px; cursor: pointer; }
+  .imp-saved { font-size: 11.5px; color: var(--muted); }
+  #importBody { min-width: 0; }
+  #importBody .deck-title { font-size: 23px; }
+  .imp-empty { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
+  .imp-empty-h { margin: 0 0 4px; font-weight: 700; color: var(--text); }
+  .imp-empty-list { margin: 0 0 12px; padding-left: 1.2em; }
+  .imp-empty .adv-btn { cursor: pointer; }
+  .imp-miss { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
+  .imp-miss-h { margin: 0 0 6px; font-weight: 700; }
+  .imp-miss ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .imp-miss li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+  .imp-miss-line { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; overflow-wrap: anywhere; }
+  .imp-miss-fix { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; color: var(--muted); font-size: 12px; }
+  .imp-fix { padding: 3px 11px; font-size: 12.5px; cursor: pointer; }
+  .ib { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+  .ib-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 6px 0; font-size: 14px; }
+  .ib-row + .ib-row { border-top: 1px dashed var(--line); }
+  .ib-n { font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .ib-main { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .ib-name { color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+  .ib-name small { margin-left: 7px; font-size: 11px; color: var(--muted); }
+  a.ib-name:hover { color: var(--accent); }
+  .ib-sub { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ib-print a { color: var(--accent); text-decoration: none; }
+  .ib-print a:hover { text-decoration: underline; }
+  .ib-where { margin-left: 6px; }
+  .ib-yen { font-weight: 800; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ib-basics { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 760px; }
+  .ib-total { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--line-strong); display: flex; justify-content: space-between; max-width: 760px; font-size: 15px; }
+  .ib-total b { font-weight: 800; font-variant-numeric: tabular-nums; }
+  @media (min-width: 1000px) {
+    .imp-layout { grid-template-columns: 340px minmax(0, 1fr); align-items: start; gap: 28px; }
+    .imp-form { position: sticky; top: calc(var(--stick-top, 0px) + 12px); }
+    #importText { height: min(56vh, 520px); }
+  }
+  @media (max-width: 820px) {
+    .imp-title { font-size: 21px; }
+    #importBody .deck-title { font-size: 19px; }
+    #importText { font-size: 16px; height: 220px; }
+    .ib-row { font-size: 13.5px; gap: 8px; }
+  }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
   @media (max-width: 820px) {
     .deck-title { font-size: 21px; }
@@ -1824,6 +1882,7 @@
     </div>
     <p class="result-count" id="metaSummary"></p>
   </div>
+  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta">自分のデッキリストを貼り付けて価格を調べる →</a></p>
   <div class="meta-help" id="metaHelp" hidden data-i18n-html="meta.help"></div>
   <div id="metaBody"></div>
   <p class="meta-note" id="metaNote"></p>
@@ -1832,6 +1891,23 @@
 <div id="deckView" class="wrap" style="display:none;">
   <button type="button" class="back-link" id="deckBack" data-i18n="deck.back">← 戻る</button>
   <div id="deckBody"></div>
+</div>
+
+<div id="importView" class="wrap" style="display:none;">
+  <div class="imp-layout">
+    <form class="imp-form" id="importForm">
+      <h1 class="imp-title" data-i18n="imp.title">デッキの価格を調べる</h1>
+      <p class="imp-lead" data-i18n="imp.lead">デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。</p>
+      <label class="imp-label" for="importText" data-i18n="imp.label">デッキリスト</label>
+      <textarea id="importText" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="4 稲妻&#10;4 Ragavan, Nimble Pilferer&#10;20 山&#10;&#10;サイドボード&#10;2 Pyroblast" data-i18n-ph="imp.ph"></textarea>
+      <div class="imp-actions">
+        <button type="submit" class="imp-go" data-i18n="imp.go">価格を見る</button>
+        <button type="button" class="adv-btn" id="importClear" data-i18n="imp.clear">消す</button>
+        <span class="imp-saved" data-i18n="imp.saved">このブラウザにだけ保存されます</span>
+      </div>
+    </form>
+    <div id="importBody"></div>
+  </div>
 </div>
 
 <div id="pricesView" class="wrap" style="display:none;">
@@ -1845,6 +1921,7 @@
     </div>
     <p class="result-count" id="moverSummary"></p>
   </div>
+  <p class="imp-cta"><a href="?view=import" data-import="1" data-i18n="imp.cta.prices">デッキリストを貼り付けて、まとめて価格を調べる →</a></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -1856,7 +1933,7 @@
     <p data-i18n-html="footer.credit">データ：カード情報・画像・価格 <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>（TCGplayer / Cardmarket の価格）・役割 <a href="https://tagger.scryfall.com" target="_blank" rel="noopener">Scryfall Tagger</a>・採用数 <a href="https://edhrec.com" target="_blank" rel="noopener">EDHREC</a>・ショップ別の価格 <a href="https://mtgjson.com" target="_blank" rel="noopener">MTGJSON</a>・最安出品 <a href="https://tcgcsv.com" target="_blank" rel="noopener">TCGCSV</a>（TCGplayer）と <a href="https://www.cardmarket.com" target="_blank" rel="noopener">Cardmarket</a>・為替レート <a href="https://frankfurter.dev" target="_blank" rel="noopener">Frankfurter</a>（欧州中央銀行）・メタゲーム <a href="https://github.com/Jiliac/MTGODecklistCache" target="_blank" rel="noopener">MTGODecklistCache</a> / <a href="https://github.com/Badaro/MTGOFormatData" target="_blank" rel="noopener">MTGOFormatData</a>・出品と在庫 <a href="https://www.cardkingdom.com" target="_blank" rel="noopener">Card Kingdom</a>・<a href="https://manapool.com" target="_blank" rel="noopener">Mana Pool</a>・<a href="https://www.cardtrader.com" target="_blank" rel="noopener">CardTrader</a></p>
     <p class="combos-only" data-i18n-html="footer.combos"></p>
     <p data-i18n="footer.disclaimer">価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。</p>
-    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）と最近の検索は、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
+    <p data-i18n="footer.privacy">このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。</p>
     <p class="app-install" id="appInstall" hidden><button type="button" class="adv-btn" id="appInstallBtn" data-i18n="app.install">アプリとして使う（ホーム画面に追加）</button><span class="app-ios" id="appIos" hidden data-i18n="app.ios"></span></p>
     <p><span data-i18n="footer.contact">お問い合わせ</span>：<a id="contactLink" href="#">…</a></p>
     <p><span id="dbCount"></span>
@@ -2094,6 +2171,45 @@ const STR = {
   'deck.export.file': ['MTGO用ファイル（.txt）を保存', 'Save a Magic Online file (.txt)'],
   'deck.export.done': ['コピーしました', 'Copied'],
   'deck.export.note': ['カード名は英語です。両面カードや出来事のカードは表の面の名前、分割カードと部屋は「A // B」で書き出します。', 'Card names are in English: double-faced and adventure cards by their front face, split cards and Rooms as “A // B”.'],
+  'title.import': ['デッキの価格を調べる — 悪知恵', 'Price a deck list — 悪知恵'],
+  'imp.title': ['デッキの価格を調べる', 'Price a deck list'],
+  'imp.lead': ['デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。',
+    'Paste a deck list to see what it costs in yen with each card’s cheapest printing. Lists from MTG Arena or Magic Online work, and so do typed lines like “4 Lightning Bolt”, with English or Japanese names.'],
+  'imp.label': ['デッキリスト', 'Deck list'],
+  'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
+  'imp.go': ['価格を見る', 'Price it'],
+  'imp.clear': ['消す', 'Clear'],
+  'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
+  'imp.cta': ['自分のデッキリストを貼り付けて価格を調べる →', 'Paste your own deck list and price it →'],
+  'imp.cta.prices': ['デッキリストを貼り付けて、まとめて価格を調べる →', 'Paste a deck list and price it all at once →'],
+  'deck.edit': ['編集して計算', 'Edit & price'],
+  'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
+  'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
+  'imp.nodb': ['カードのデータを読み込めませんでした。少し待ってからもう一度お試しください。', 'The card data could not be loaded. Please try again in a moment.'],
+  'imp.nocards': ['カードの行が見つかりませんでした', 'No card lines found'],
+  'imp.nocards.body': ['「4 稲妻」のように、枚数とカード名を1行に1枚ずつ書いてください。', 'Write one card per line, with the number of copies first: “4 Lightning Bolt”.'],
+  'imp.empty.h': ['こんなリストが読めます', 'Lists it reads'],
+  'imp.empty.arena': ['MTGアリーナの「書き出し」（デッキ・サイドボード・統率者・相棒。日本語版のアリーナでも）', 'MTG Arena’s Export (Deck, Sideboard, Commander, Companion; the Japanese client too)'],
+  'imp.empty.mtgo': ['MTGOや海外のデッキサイトのテキスト（空行のあとがサイドボード、SB: の行も）', 'Magic Online and deck-site text (after a blank line comes the sideboard; SB: lines too)'],
+  'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。セット記号や (M10) 146 は無視します', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. Set codes like (M10) 146 are ignored'],
+  'imp.sample': ['例を入れてみる', 'Try an example'],
+  'imp.untitled': ['貼り付けたデッキ', 'Your deck'],
+  'imp.f.main': ['メイン {n}枚', 'Main deck {n}'],
+  'imp.f.side': ['サイドボード {n}枚', 'Sideboard {n}'],
+  'imp.f.commander': ['統率者 {n}枚', 'Commander {n}'],
+  'imp.commander': ['統率者', 'Commander'],
+  'imp.missing': ['見つからなかったカード {n}枚（価格に含めていません）', '{n} cards not found (left out of the price)'],
+  'imp.missing.one': ['見つからなかったカード {n}枚（価格に含めていません）', '1 card not found (left out of the price)'],
+  'imp.missing.guess': ['もしかして：', 'Did you mean: '],
+  'imp.breakdown': ['価格の内訳', 'Where the money goes'],
+  'imp.breakdown.sub': ['高い順・いちばん安い版で', 'Most expensive first, cheapest printings'],
+  'imp.one': ['1枚 {y}', '{y} each'],
+  'imp.print': ['最安：', 'Cheapest: '],
+  'imp.noprice': ['価格なし', 'No price'],
+  'imp.basics': ['基本土地（価格に含めません）：{list}', 'Basic lands (not counted): {list}'],
+  'imp.total': ['合計', 'Total'],
+  'imp.share': ['このリストのリンクをコピー', 'Copy a link to this list'],
+  'imp.note': ['同じカードでも版（セット）によって価格が大きく違います。「最安」の版を選ぶとこの金額に近くなります。', 'The same card can cost very different amounts in different printings; buying the “cheapest” one gets you close to this total.'],
   'app.install': ['アプリとして使う（ホーム画面に追加）', 'Use as an app (add to home screen)'],
   'app.ios': ['iPhone・iPad：Safariの共有ボタン（□↑）から「ホーム画面に追加」を選んでください。', 'iPhone / iPad: in Safari, tap Share (□↑) and choose “Add to Home Screen”.'],
   'sort.cmc_asc': ['マナ総量が低い順', 'Mana value: low to high'],
@@ -2108,7 +2224,7 @@ const STR = {
   'footer.fcp': ['悪知恵は、ファンコンテンツ・ポリシーのもとで認められた非公式のファンコンテンツです。ウィザーズ・オブ・ザ・コースト社の承認・推奨を受けたものではありません。使用している素材の一部はウィザーズ・オブ・ザ・コースト社の財産です。', ''],
   'footer.combos': ['統率者戦のコンボ：<a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>', 'Commander combos: <a href="https://commanderspellbook.com" target="_blank" rel="noopener">Commander Spellbook</a>'],
   'footer.disclaimer': ['価格は参考値です。円の金額は為替レートで換算した目安で、実際の販売・買取価格とは異なることがあります。掲載している情報の正確さは保証できませんので、購入・売却の前に各ショップでご確認ください。', 'Prices are for reference only. Yen amounts are converted at the exchange rate shown and may differ from what shops actually charge or pay. We can’t guarantee the information here is accurate, so please check with the shop before buying or selling.'],
-  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）と最近の検索は、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode) and recent searches are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
+  'footer.privacy': ['このサイトには会員登録・Cookie・アクセス解析・広告はありません。表示の設定（テーマ・言語・軽量モードなど）、最近の検索、貼り付けたデッキリストは、お使いのブラウザの中にだけ保存されます。フォント（Google Fonts。軽量モードでは使いません）やカード画像（Scryfall）などは各サービスから読み込むため、そのサービスにはIPアドレスなどが送られます。', 'This site has no accounts, cookies, analytics or ads. Your display settings (theme, language, lite mode), recent searches and pasted deck lists are saved only in your own browser. Fonts (Google Fonts, not used in lite mode) and card pictures (Scryfall) are loaded from those services, which receive your IP address and similar details.'],
   'footer.contact': ['お問い合わせ', 'Contact'],
   'meta.illus': ['イラスト：{a}', 'Art: {a}'],
   'art.title': ['{name}（イラスト：{a}　© Wizards of the Coast）', '{name} (art by {a} © Wizards of the Coast)'],
@@ -5977,12 +6093,13 @@ function showView(name) {
   document.getElementById('metaView').style.display = name === 'meta' ? '' : 'none';
   document.getElementById('pricesView').style.display = name === 'prices' ? '' : 'none';
   document.getElementById('deckView').style.display = name === 'deck' ? '' : 'none';
+  document.getElementById('importView').style.display = name === 'import' ? '' : 'none';
   if (name !== 'search') setFilterDrawer(false);
-  if (name !== 'deck') hideDeckPeek();
+  if (name !== 'deck' && name !== 'import') hideDeckPeek();
   if (name !== 'card') {
     document.getElementById('tabSearch').setAttribute('aria-selected', String(name === 'search'));
     document.getElementById('tabSets').setAttribute('aria-selected', String(name === 'sets'));
-    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck'));
+    document.getElementById('tabMeta').setAttribute('aria-selected', String(name === 'meta' || name === 'deck' || name === 'import'));
     document.getElementById('tabPrices').setAttribute('aria-selected', String(name === 'prices'));
   }
 }
@@ -6228,7 +6345,7 @@ document.getElementById('setTypeSelect').addEventListener('change', renderSetLis
 
 // ---- routing ----------------------------------------------------------------
 // ?card=<id> card page · ?set=<code>[&lang=ja|en] set page · ?view=sets set list
-// · ?view=meta[&format=modern][&days=30] metagame tab
+// · ?view=meta[&format=modern][&days=30] metagame tab · ?view=import[&list=…] deck price page
 function routeFromUrl() {
   const p = new URLSearchParams(location.search);
   if (p.get('card')) return { view: 'card', id: p.get('card') };
@@ -6240,6 +6357,7 @@ function routeFromUrl() {
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
   if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '', market: p.get('market') || '' };
+  if (p.get('view') === 'import') return { view: 'import', list: p.get('list') || '' };
   if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1', list: Math.max(0, parseInt(p.get('list') || '0', 10) || 0) };
   return { view: 'search' };
 }
@@ -6284,6 +6402,9 @@ function applyRoute(route) {
     if (META_FORMATS.includes(route.format)) metaState.format = route.format;
     if (route.days) metaState.days = route.days;
     renderDeck(route);
+  } else if (route.view === 'import') {
+    showView('import');
+    renderImport(route);
   } else if (route.view === 'prices') {
     showView('prices');
     if (['1', '7', '30'].includes(route.win)) moverState.win = route.win;
@@ -7487,6 +7608,9 @@ function setLang(lang, save) {
     renderMeta();
   } else if (route.view === 'deck') {
     renderDeck(route);
+  } else if (route.view === 'import') {
+    document.title = t('title.import');
+    priceImport();   // names, pictures and set names in the other language
   } else if (route.view === 'prices') {
     renderMovers();
   } else {
@@ -9370,18 +9494,22 @@ function loadCheapest() {
   }
   return cheapStore.promise;
 }
-function cheapRow(name, row) {
+// the name a card goes by in cheap.json.gz (and cheap_prints.json.gz)
+function cheapKey(name, row) {
   const d = cheapStore.data;
   if (!d) return null;
   const c = d.cards;
-  if (c[name]) return c[name];
-  if (row && c[row.name_en]) return c[row.name_en];
+  if (c[name]) return name;
+  if (row && c[row.name_en]) return row.name_en;
   if (!cheapStore.front) {   // deck lists name two-faced cards by their front face
     cheapStore.front = new Map();
     Object.keys(c).forEach(k => { const f = k.split(' // ')[0]; if (f !== k && !cheapStore.front.has(f)) cheapStore.front.set(f, k); });
   }
-  const full = cheapStore.front.get(name);
-  return full ? c[full] : null;
+  return cheapStore.front.get(name) || null;
+}
+function cheapRow(name, row) {
+  const k = cheapKey(name, row);
+  return k ? cheapStore.data.cards[k] : null;
 }
 // one copy in yen: the cheaper of the US and the European price
 function cardYen(name, row) {
@@ -9570,14 +9698,15 @@ async function copyText(text) {
 }
 
 // the box under a deck's title: its price, Arena wildcards and mana curve
-function deckCostHtml(main, side, format) {
+function deckCostHtml(main, side, format, tried = deckState.costTried, notFound = 0) {
   const all = main.concat(side).map(it => [it.count, it.name]);
   const cost = deckCost(all);
+  cost.missing += notFound;   // the deck price page: lines it could not find
   let price;
   if (cost.priced) {
     price = `<b class="dcst-v" title="${esc(t('deck.cost.sub'))}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`;
   } else {
-    price = `<span class="dcst-s">${esc(t(deckState.costTried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`;
+    price = `<span class="dcst-s">${esc(t(tried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`;
   }
   const wcs = wildcardsHtml(cost, format);
   return `<div class="deck-cost">
@@ -9746,7 +9875,7 @@ function drawDeck() {
   let html = `<div class="deck-head">
       <div class="deck-title-row">
         <h1 class="deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(name)}</span>${label.sub ? `<small class="deck-title-en">${esc(label.sub)}</small>` : ''}</h1>
-        <div class="deck-tools">${copy}${toggle}</div>
+        <div class="deck-tools">${entry ? `<a class="adv-btn deck-edit" href="?view=import" data-import="deck" title="${esc(t('deck.edit.title'))}">${t('deck.edit')}</a>` : ''}${copy}${toggle}</div>
       </div>
       <p class="deck-meta">${factHtml}</p>
       ${entry ? deckCostHtml(main, side, format) : ''}
@@ -9848,6 +9977,468 @@ document.getElementById('deckBody').addEventListener('mouseover', (e) => {
 });
 document.getElementById('deckBody').addEventListener('mouseout', (e) => { if (e.target.closest('[data-peek]')) hideDeckPeek(); });
 window.addEventListener('scroll', hideDeckPeek, { passive: true });
+
+// ---- deck price page: paste a list, see what it costs --------------------------------------
+// ?view=import[&list=<a list>]. A list copied from MTG Arena or Magic Online, or typed as
+// "4 稲妻" lines (Japanese or English names, with or without the set code), is read line by
+// line (parseDeckText()), every card looked up in the card database (importRow()) and priced
+// the way the deck pages are (deckCost(): each card's cheapest printing, basic lands free).
+// Which printing is the cheapest comes from cheap_prints.json.gz. The pasted text is kept only
+// in this browser (IMPORT_SAVE_KEY), so it is still there next time.
+const IMPORT_SAVE_KEY = 'warujie-deck-import';
+const IMPORT_MAX_LINES = 400;
+// section headings, as MTG Arena (English and Japanese), Magic Online and deck sites write them
+const IMPORT_PARTS = [
+  [/^(?:deck|decklist|main|maindeck|main deck|mainboard|デッキ|メイン|メインデッキ)$/i, 'main'],
+  [/^(?:sideboard|side ?board|side|sb|サイド|サイドボード)$/i, 'side'],
+  [/^(?:commanders?|統率者)$/i, 'commander'],
+  [/^(?:companion|相棒)$/i, 'companion'],
+  [/^(?:maybeboard|maybe|considering|tokens?|トークン)$/i, 'skip'],
+  [/^(?:about|情報)$/i, 'about'],
+];
+// "Creatures (16)" and the like: headings between the cards, not cards
+const IMPORT_TYPE_HEAD = /^(?:creatures?|planeswalkers?|battles?|instants?|sorcer(?:y|ies)|artifacts?|enchantments?|lands?|spells?|other|クリーチャー|プレインズウォーカー|バトル|インスタント|ソーサリー|アーティファクト|エンチャント|土地|呪文|その他)$/i;
+// what follows a card's name in exported lists: the set and number "(M10) 146", foil marks, tags
+function cleanImportName(s) {
+  return String(s)
+    .replace(/^\[[A-Za-z0-9]{2,8}\]\s*/, '')                                  // [M10] Lightning Bolt
+    .replace(/\s+\^[^^]*\^\s*$/, '')                                          // ^tags^
+    .replace(/\s+\[[^\]]*\]\s*$/, '')                                         // [Removal]
+    .replace(/\s+\*[A-Za-z]+\*\s*$/, '')                                      // *F*
+    .replace(/\s+\((?:f|foil|e|etched)\)\s*$/i, '')
+    .replace(/\s+\([A-Za-z0-9]{2,8}\)(?:\s+[A-Za-z0-9★†\-]+)?\s*$/, '')      // (M10) 146
+    .replace(/\s+\*[A-Za-z]+\*\s*$/, '')
+    .replace(/\s*\/\/?\s*/g, ' // ')                                          // Fire/Ice, Fire // Ice
+    .trim();
+}
+// text -> { title, lines: [{ i (line number), count, name, part }] }
+function parseDeckText(text) {
+  const out = { title: '', lines: [] };
+  let part = 'main', named = false, typeHeads = false, cards = false, gap = false;
+  String(text || '').replace(/^﻿/, '').split(/\r?\n/).slice(0, IMPORT_MAX_LINES).forEach((raw, i) => {
+    let s = raw.normalize('NFKC').replace(/\s+/g, ' ').trim();
+    if (!s) { if (cards) gap = true; return; }
+    let comment = false;
+    if (/^(?:\/\/|#)/.test(s)) { s = s.replace(/^(?:\/\/|#)+\s*/, ''); comment = true; }
+    if (!/^\d/.test(s)) {
+      const head = s.replace(/\s*[:：]?\s*[(（]?\d+\s*(?:枚|cards?)?[)）]?$/i, '').replace(/\s*[:：]$/, '').trim();
+      const hit = IMPORT_PARTS.find(([re]) => re.test(head));
+      if (hit) { part = hit[1]; named = true; gap = false; return; }
+      if (IMPORT_TYPE_HEAD.test(head)) { typeHeads = true; gap = false; return; }
+      if (part === 'about') {
+        const m = /^(?:name|名前)\s+(.+)$/i.exec(s);
+        if (m && !out.title) out.title = m[1].trim();
+        return;
+      }
+    }
+    if (comment || part === 'skip' || part === 'about') return;
+    let to = part;
+    const sb = /^sb:\s*/i.exec(s);
+    if (sb) { s = s.slice(sb[0].length); to = 'side'; }
+    else if (gap && part === 'main' && !named && !typeHeads) part = to = 'side';   // Magic Online: a blank line, then the sideboard
+    gap = false;
+    let count = 1, m;
+    if ((m = /^(\d{1,3})\s*(?:[xX×*](?=\s)|枚)?\s*(\S.*)$/.exec(s))) { count = Number(m[1]); s = m[2]; }
+    else if ((m = /^(.+?)\s*[xX×]\s*(\d{1,3})$/.exec(s))) { s = m[1]; count = Number(m[2]); }
+    const name = cleanImportName(s);
+    if (!name || !count) return;
+    cards = true;
+    out.lines.push({ i, count, name, part: to });
+  });
+  return out;
+}
+// A card from the list: by English name, Japanese name (also older ones and front faces),
+// or either written without punctuation or in the other kana.
+let IMPORT_JA = null;
+function importRow(name) {
+  if (!LOCAL_DB) return null;
+  const row = rowByEnglishName(name);
+  if (row) return row;
+  if (!IMPORT_JA) {
+    IMPORT_JA = new Map();
+    const add = (k, r) => { if (k && !IMPORT_JA.has(k)) IMPORT_JA.set(k, r); };
+    LOCAL_DB.forEach(r => add(r._nameJa, r));
+    LOCAL_DB.forEach(r => { if (r.name_ja.includes(' // ')) add(normJa(r.name_ja.split(' // ')[0]), r); r._altJa.forEach(a => add(a, r)); });
+    LOCAL_DB.forEach(r => rowNameKey(r).split('|').forEach(k => add('k:' + k, r)));
+  }
+  return IMPORT_JA.get(normJa(name)) || IMPORT_JA.get('k:' + nameKey(name)) || null;
+}
+// up to 3 cards a name that was not found may have meant: the name suggestions, else the
+// closest names a few letters away ("Lightnig Bolt")
+function importGuesses(name) {
+  const hits = nameSuggestions(name).slice(0, 3);
+  if (hits.length) return hits;
+  const key = nameKey(name);
+  if (key.length < 3) return [];
+  const max = key.length >= 12 ? 3 : key.length >= 6 ? 2 : 1;
+  const found = [];
+  LOCAL_DB.forEach(r => {
+    let best = max + 1;
+    // a back face counts half a letter further: "Lightnig Bolt" is Lightning Bolt before Emeritus of Conflict // Lightning Bolt
+    const keys = rowNameKey(r).split('|'), faces = String(r.name_en || '').split(' // ').length;
+    keys.forEach((k, j) => {
+      if (Math.abs(k.length - key.length) > max) return;
+      best = Math.min(best, editDistance(key, k, max) + (j > 1 && j <= faces ? 0.5 : 0));
+    });
+    if (best <= max) found.push([best, r]);
+  });
+  return found.sort((a, b) => a[0] - b[0] || a[1].name_en.length - b[1].name_en.length).slice(0, 3).map(x => x[1]);
+}
+const IMPORT_BASICS = { plains: 'Plains', island: 'Island', swamp: 'Swamp', mountain: 'Mountain', forest: 'Forest', wastes: 'Wastes',
+  '平地': 'Plains', '島': 'Island', '沼': 'Swamp', '山': 'Mountain', '森': 'Forest', '荒地': 'Wastes' };
+// an English name as cheap.json.gz has it (front faces too), for cards the database lacks
+let IMPORT_CHEAP = null;
+function importCheapName(name) {
+  const d = cheapStore.data;
+  if (!d) return '';
+  if (!IMPORT_CHEAP || IMPORT_CHEAP.src !== d) {
+    const m = new Map();
+    Object.keys(d.cards).forEach(k => {
+      m.set(nameKey(k), k);
+      const f = k.split(' // ')[0];
+      if (f !== k && !m.has(nameKey(f))) m.set(nameKey(f), f);
+    });
+    IMPORT_CHEAP = { src: d, m };
+  }
+  return IMPORT_CHEAP.m.get(nameKey(name)) || '';
+}
+// the parsed list against the database: the cards by part (the same card added up) and the lines not found
+function readImport(text) {
+  const parsed = parseDeckText(text);
+  const parts = { commander: [], main: [], side: [], companion: [] };
+  const missing = [];
+  parsed.lines.forEach(l => {
+    const row = importRow(l.name);
+    // basic lands count even when the database lacks them (they are free anyway)
+    // a card too new for the database is still priced when the price file knows its English name
+    const other = row ? '' : IMPORT_BASICS[normJa(l.name)] || importCheapName(l.name);
+    if (!row && !other) { missing.push(l); return; }
+    const name = row ? exportName(row.name_en) : other;
+    const list = parts[l.part] || parts.main;
+    const got = list.find(x => x.name === name);
+    if (got) got.count += l.count; else list.push({ name, count: l.count, row });
+  });
+  // MTG Arena writes the companion under Companion and again in the sideboard
+  parts.companion.forEach(c => { if (!parts.side.some(x => x.name === c.name)) parts.side.push(c); });
+  return { title: parsed.title, commander: parts.commander, main: parts.main, side: parts.side, missing, lines: parsed.lines.length };
+}
+
+// which printing gives a card's price: cheap_prints.json.gz (warujie-prices, daily, same names as cheap.json.gz)
+const cheapPrints = { promise: null, data: null };
+function loadCheapPrints() {
+  if (!cheapPrints.promise) {
+    cheapPrints.promise = fetchMaybeGzipJson(PRICE_DATA_URL + 'cheap_prints.json.gz')
+      .then(d => { cheapPrints.data = d && d.cards ? d : null; return cheapPrints.data; })
+      .catch(() => null);
+  }
+  return cheapPrints.promise;
+}
+// { key: 'set/number', set, cn, market: 'us' | 'eu' } for the cheaper of the two prices, or null
+function cheapestPrinting(name, row) {
+  const k = cheapKey(name, row);
+  const p = k && cheapPrints.data ? cheapPrints.data.cards[k] : null;
+  const r = k ? cheapStore.data.cards[k] : null;
+  if (!p || !r) return null;
+  const us = r[0] && USD_JPY && p[0] ? r[0] / 100 * USD_JPY : Infinity;
+  const eu = r[1] && EUR_JPY && p[1] ? r[1] / 100 * EUR_JPY : Infinity;
+  if (us === Infinity && eu === Infinity) return null;
+  const key = us <= eu ? p[0] : p[1];
+  const cut = key.lastIndexOf('/');
+  return { key, set: key.slice(0, cut), cn: key.slice(cut + 1), market: us <= eu ? 'us' : 'eu' };
+}
+
+const importState = {
+  token: 0, result: null, tried: false, copied: null,
+  pics: new Map(),     // LANG|name -> { row, card } with pictures
+  prints: new Map(),   // 'set/number' -> the Scryfall card of that printing (null: not found)
+  view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })(),
+};
+function loadImportText() { try { return localStorage.getItem(IMPORT_SAVE_KEY) || ''; } catch (e) { return ''; } }
+function saveImportText(text) {
+  try { if (text.trim()) localStorage.setItem(IMPORT_SAVE_KEY, text.slice(0, 20000)); else localStorage.removeItem(IMPORT_SAVE_KEY); } catch (e) { /* private mode */ }
+}
+function renderImport(route) {
+  document.title = t('title.import');
+  const ta = document.getElementById('importText');
+  if (route.list) {
+    ta.value = route.list;
+    saveImportText(ta.value);
+    // the list is in the box (and kept) now: a reload shows what was edited, not the link's list again
+    history.replaceState(history.state, '', '?view=import');
+  } else if (!ta.value.trim()) ta.value = loadImportText();
+  priceImport();
+}
+async function priceImport() {
+  const token = ++importState.token;
+  const text = document.getElementById('importText').value;
+  const body = document.getElementById('importBody');
+  if (!text.trim()) { importState.result = null; body.innerHTML = importEmptyHtml(); return; }
+  if (!LOCAL_DB) {
+    body.innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">${t('imp.loading')}</span></div>`;
+    await dbReady;
+    if (token !== importState.token) return;
+    if (!LOCAL_DB) { body.innerHTML = `<div class="status-line"><span class="serif">${t('imp.nodb')}</span></div>`; return; }
+  }
+  importState.result = readImport(text);
+  drawImport();
+  await Promise.all([loadCheapest(), loadCheapPrints(), fxReady]);
+  importState.tried = true;
+  if (token !== importState.token) return;
+  importState.result = readImport(text);   // with the price file in, cards too new for the database are found too
+  drawImport();
+  // then the pictures, and the cheapest printings' own pages, for the cards not fetched yet
+  const res = importState.result;
+  const names = [...new Set(res.commander.concat(res.main, res.side).map(x => x.name))];
+  const need = names.filter(n => !importState.pics.has(LANG + '|' + n));
+  if (need.length) {
+    const infos = await deckCardInfo(need, true);
+    infos.forEach((v, n) => importState.pics.set(LANG + '|' + n, v));
+  }
+  const keys = [...new Set(names.map(n => cheapestPrinting(n, rowByEnglishName(n))).filter(Boolean).map(p => p.key))].filter(k => !importState.prints.has(k));
+  for (let i = 0; i < keys.length; i += 75) {
+    const chunk = keys.slice(i, i + 75);
+    try {
+      const data = await scryfallCollection(chunk.map(k => { const c = k.lastIndexOf('/'); return { set: k.slice(0, c), collector_number: k.slice(c + 1) }; }));
+      data.forEach(c => importState.prints.set(`${c.set}/${c.collector_number}`, c));
+    } catch (err) { /* the printing is still named, without its page */ }
+    chunk.forEach(k => { if (!importState.prints.has(k)) importState.prints.set(k, null); });
+  }
+  if (token !== importState.token) return;
+  drawImport();
+}
+function importEmptyHtml() {
+  return `<div class="imp-empty"><p class="imp-empty-h">${t('imp.empty.h')}</p>
+    <ul class="imp-empty-list"><li>${t('imp.empty.arena')}</li><li>${t('imp.empty.mtgo')}</li><li>${t('imp.empty.typed')}</li></ul>
+    <button type="button" class="adv-btn" id="importSample">${t('imp.sample')}</button></div>`;
+}
+function importPrintingHtml(it) {
+  const p = cheapestPrinting(it.name, it.info.row);
+  if (!p) return '';
+  const card = importState.prints.get(p.key);
+  const setLabel = (LANG !== 'en' && SET_NAME_JA[p.set]) || (card && card.set_name) || '';
+  const label = `${p.set.toUpperCase()} #${p.cn}${setLabel ? `・${setLabel}` : ''}`;
+  const where = p.market === 'us' ? 'TCGplayer' : 'Cardmarket';
+  const link = card ? `<a href="?card=${encodeURIComponent(card.id)}" data-card="${esc(card.id)}">${esc(label)}</a>` : esc(label);
+  return `<span class="ib-print">${esc(t('imp.print'))}${link}<span class="ib-where">${esc(where)}</span></span>`;
+}
+// every card's part of the price, the most expensive first; then cards with no price and basic lands
+function importBreakdownHtml(items, cost) {
+  const by = new Map();
+  items.forEach(it => { const g = by.get(it.name); if (g) g.count += it.count; else by.set(it.name, Object.assign({}, it)); });
+  const rows = [...by.values()];
+  const basics = rows.filter(it => isBasicLand(it.name, it.info.row));
+  const priced = rows.filter(it => it.yen && !basics.includes(it)).sort((x, y) => y.yen * y.count - x.yen * x.count);
+  const none = rows.filter(it => !it.yen && !basics.includes(it));
+  const nameHtml = it => {
+    const id = it.info.card ? it.info.card.id : (it.info.row ? it.info.row.id : null);
+    const label = `${esc(it.label)}${it.sub ? `<small>${esc(it.sub)}</small>` : ''}`;
+    return id ? `<a class="ib-name" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}">${label}</a>` : `<span class="ib-name">${label}</span>`;
+  };
+  const row = it => `<li class="ib-row"><span class="ib-n">${fmtNum(it.count)}</span><span class="ib-main">${nameHtml(it)}`
+    + `<span class="ib-sub">${it.yen ? `<span class="ib-one">${esc(t('imp.one', { y: yenSmall(it.yen) }))}</span>` : ''}${it.yen ? importPrintingHtml(it) : ''}</span></span>`
+    + `<span class="ib-yen">${it.yen ? esc(yenSmall(it.yen * it.count)) : esc(t('imp.noprice'))}</span></li>`;
+  let html = `<ul class="ib">${priced.map(row).join('')}${none.map(row).join('')}</ul>`;
+  if (basics.length) html += `<p class="ib-basics">${esc(t('imp.basics', { list: basics.map(it => `${it.label} ×${it.count}`).join('、') }))}</p>`;
+  if (cost.priced) html += `<p class="ib-total"><span>${esc(t('imp.total'))}</span><b>${esc(costText(cost))}</b></p>`;
+  return `<section class="deck-section imp-breakdown"><h2>${t('imp.breakdown')}<span class="dg-n">${esc(t('imp.breakdown.sub'))}</span></h2>${html}</section>`;
+}
+function importMissingHtml(missing) {
+  if (!missing.length) return '';
+  const lis = missing.slice(0, 40).map(l => {
+    const guesses = importGuesses(l.name);
+    const fix = guesses.map(r => {
+      const nm = (/[぀-ヿ㐀-鿿]/.test(l.name) && r.name_ja) ? r.name_ja : exportName(r.name_en);
+      return `<button type="button" class="try-pill imp-fix" data-line="${l.i}" data-name="${esc(nm)}">${esc(nm)}</button>`;
+    }).join('');
+    return `<li><span class="imp-miss-line">${esc(`${l.count} ${l.name}`)}</span>${fix ? `<span class="imp-miss-fix">${esc(t('imp.missing.guess'))}${fix}</span>` : ''}</li>`;
+  }).join('');
+  return `<div class="imp-miss" role="status"><p class="imp-miss-h">${esc(tn('imp.missing', missing.reduce((s, l) => s + l.count, 0)))}</p><ul>${lis}</ul></div>`;
+}
+// the list as text: English names, as both games import them (Commander and Companion as Arena writes them)
+function importListText(res, kind) {
+  const line = x => `${x.count} ${x.name}`;
+  if (kind === 'arena') {
+    return (res.commander.length ? ['Commander'].concat(res.commander.map(line), ['']) : []).concat(['Deck'], res.main.map(line),
+      res.side.length ? ['', 'Sideboard'].concat(res.side.map(line)) : []).join('\n') + '\n';
+  }
+  return res.commander.concat(res.main).map(line).join('\n') + (res.side.length ? '\n\n' + res.side.map(line).join('\n') : '') + '\n';
+}
+function importShareUrl() {
+  const res = importState.result;
+  if (!res) return '';
+  // the cards found, in English (short and the same in both languages), and the lines not found as typed
+  let text = importListText(res, 'arena');
+  const rest = res.missing.map(l => `${l.count} ${l.name}`);
+  if (rest.length) text = text.replace(/\n$/, '') + '\n' + rest.join('\n') + '\n';
+  return `${location.origin}${location.pathname}?view=import&list=${encodeURIComponent(text.trim())}`;
+}
+function drawImport() {
+  const res = importState.result;
+  const body = document.getElementById('importBody');
+  if (!res) return;
+  if (!res.lines) { body.innerHTML = `<div class="status-line"><span class="serif">${t('imp.nocards')}</span>${t('imp.nocards.body')}</div>`; return; }
+  const view = importState.view;
+  const names = [...new Set(res.commander.concat(res.main, res.side).map(x => x.name))];
+  const infos = new Map();
+  names.forEach(n => {
+    const got = importState.pics.get(LANG + '|' + n);
+    const row = rowByEnglishName(n);
+    infos.set(n, got || { row, card: row ? rowToCard(row) : null });
+  });
+  const mk = list => list.map(x => deckItem(x.name, x.count, null, infos));
+  const cmd = mk(res.commander), main = mk(res.main), side = mk(res.side);
+  const total = list => list.reduce((s, it) => s + (it.count || 0), 0);
+  const all = cmd.concat(main, side);
+  const cost = deckCost(all.map(it => [it.count, it.name]));
+  const notFound = res.missing.reduce((n, l) => n + l.count, 0);
+  cost.missing += notFound;
+  const colors = new Set();
+  cmd.concat(main).forEach(it => { if (it.group !== 'land' && it.info.row) it.info.row._colors.split('').forEach(c => colors.add(c)); });
+  const pips = 'WUBRG'.split('').filter(c => colors.has(c)).map(c => symbolImg(c, 'sym')).join('');
+  const facts = [];
+  if (cmd.length) facts.push(t('imp.f.commander', { n: total(cmd) }));
+  facts.push(t('imp.f.main', { n: total(main) }));
+  if (side.length) facts.push(t('imp.f.side', { n: total(side) }));
+  const toggle = `<div class="view-toggle" role="tablist" aria-label="${esc(t('deck.view.aria'))}">
+      <button type="button" class="view-btn" role="tab" data-iview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
+      <button type="button" class="view-btn" role="tab" data-iview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
+    </div>`;
+  const found = all.length > 0;
+  const copy = found ? `<details class="deck-export" id="importExport"><summary class="adv-btn">${t('deck.export')}</summary>
+      <div class="deck-export-menu" role="menu">
+        <button type="button" role="menuitem" data-iexport="arena">${t('deck.export.arena')}</button>
+        <button type="button" role="menuitem" data-iexport="mtgo">${t('deck.export.mtgo')}</button>
+        <button type="button" role="menuitem" data-iexport="file">${t('deck.export.file')}</button>
+        <button type="button" role="menuitem" data-iexport="link">${t('imp.share')}</button>
+        <p class="deck-export-note">${t('deck.export.note')}</p>
+      </div></details>` : '';
+  let html = `<div class="deck-head">
+      <div class="deck-title-row">
+        <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t('imp.untitled'))}</span></h2>
+        <div class="deck-tools">${copy}${found ? toggle : ''}</div>
+      </div>
+      <p class="deck-meta">${facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>')}</p>
+      ${found ? deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound) : ''}
+    </div>`;
+  html += importMissingHtml(res.missing);
+  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false)}</section>`;
+  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true)}</section>`;
+  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
+  if (found && cost.priced) html += importBreakdownHtml(all, cost);
+  if (main.length) html += deckCurveHtml(cmd.concat(main));
+  if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))} ${esc(t('imp.note'))}</p>`;
+  const exportOpen = !!(document.getElementById('importExport') || {}).open;
+  body.innerHTML = html;
+  if (exportOpen && document.getElementById('importExport')) document.getElementById('importExport').open = true;
+  const copied = importState.copied;
+  if (copied && Date.now() < copied.until) {
+    const btn = document.querySelector(`#importExport [data-iexport="${copied.kind}"]`);
+    if (btn) btn.textContent = t('deck.export.done');
+  }
+}
+// a few cards to show how it works: Japanese and English names, a sideboard
+const IMPORT_SAMPLE = ['デッキ', '4 稲妻', '4 Monastery Swiftspear', '4 ゴブリンの先達', '4 Lava Spike', '4 Rift Bolt', '4 批判家刺殺',
+  '4 Eidolon of the Great Revel', '4 炎の印章', '4 Skullcrack', '4 Light Up the Stage', '4 Inspiring Vantage', '16 山', '',
+  'サイドボード', '3 Smash to Smithereens', '2 Path to Exile'].join('\n');
+let importTimer = null;
+document.getElementById('importText').addEventListener('input', (e) => {
+  saveImportText(e.target.value);
+  clearTimeout(importTimer);
+  importTimer = setTimeout(priceImport, 350);
+});
+document.getElementById('importForm').addEventListener('submit', (e) => { e.preventDefault(); clearTimeout(importTimer); priceImport(); });
+document.getElementById('importClear').addEventListener('click', () => {
+  const ta = document.getElementById('importText');
+  ta.value = '';
+  saveImportText('');
+  priceImport();
+  ta.focus();
+});
+document.getElementById('importBody').addEventListener('click', async (e) => {
+  if (e.target.closest('#importSample')) {
+    const ta = document.getElementById('importText');
+    ta.value = IMPORT_SAMPLE;
+    saveImportText(ta.value);
+    priceImport();
+    return;
+  }
+  const fix = e.target.closest('.imp-fix');
+  if (fix) {
+    // the line keeps its count; the name becomes the one picked
+    const ta = document.getElementById('importText');
+    const lines = ta.value.split(/\r?\n/);
+    const i = Number(fix.dataset.line);
+    if (lines[i] !== undefined) {
+      const m = /^(\s*(?:SB:\s*)?\d{1,3}\s*(?:[xX×*](?=\s)|枚)?\s*)/i.exec(lines[i].normalize('NFKC'));
+      lines[i] = (m ? m[1] : '1 ') + fix.dataset.name;
+      ta.value = lines.join('\n');
+      saveImportText(ta.value);
+      priceImport();
+    }
+    return;
+  }
+  const vb = e.target.closest('[data-iview]');
+  if (vb) {
+    importState.view = vb.dataset.iview === 'image' ? 'image' : 'list';
+    try { localStorage.setItem('akuchie-deck-view', importState.view); } catch (err) { /* fine */ }
+    hideDeckPeek();
+    drawImport();
+    return;
+  }
+  const ex = e.target.closest('[data-iexport]');
+  if (ex && importState.result) {
+    const kind = ex.dataset.iexport;
+    if (kind === 'file') {
+      const name = String(importState.result.title || 'deck').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'deck';
+      saveTextFile(`${name}.txt`, importListText(importState.result, 'mtgo'));
+      const d = document.getElementById('importExport');
+      if (d) d.open = false;
+      return;
+    }
+    const label = ex.textContent;
+    const ok = await copyText(kind === 'link' ? importShareUrl() : importListText(importState.result, kind));
+    ex.textContent = ok ? t('deck.export.done') : label;
+    importState.copied = ok ? { kind, until: Date.now() + 1200 } : null;
+    setTimeout(() => {
+      importState.copied = null;
+      const btn = document.querySelector(`#importExport [data-iexport="${kind}"]`);
+      if (btn) btn.textContent = kind === 'link' ? t('imp.share') : t('deck.export.' + kind);
+      const d = document.getElementById('importExport'); if (d) d.open = false;
+    }, 1200);
+    return;
+  }
+  const link = e.target.closest('a[data-card]');
+  if (!link || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  hideDeckPeek();
+  goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
+});
+document.addEventListener('click', (e) => {
+  const d = document.getElementById('importExport');
+  if (d && d.open && !e.target.closest('#importExport')) d.open = false;
+});
+document.getElementById('importBody').addEventListener('mouseover', (e) => {
+  const a = e.target.closest('[data-peek]');
+  if (!a || !window.matchMedia('(hover: hover)').matches) return;
+  const r = a.getBoundingClientRect();
+  deckPeek.src = a.dataset.peek;
+  const w = 230, h = 321;
+  const left = r.right + 18 + w < window.innerWidth ? r.right + 18 : Math.max(8, r.left - w - 18);
+  deckPeek.style.left = `${left}px`;
+  deckPeek.style.top = `${Math.max(8, Math.min(window.innerHeight - h - 8, r.top + r.height / 2 - h / 2))}px`;
+  deckPeek.style.display = 'block';
+});
+document.getElementById('importBody').addEventListener('mouseout', (e) => { if (e.target.closest('[data-peek]')) hideDeckPeek(); });
+// links to this page: the metagame and price tabs, and "edit and price" on a deck page
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-import]');
+  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  if (a.dataset.import === 'deck' && deckState.current && deckState.current.chosen) {
+    const text = `About\nName ${deckLabel(deckState.current.a).name}\n\n` + deckExportText(deckState.current.chosen, 'arena');
+    goTo('?view=import&list=' + encodeURIComponent(text.trim()));
+  } else goTo('?view=import');
+});
 
 // ---- the search box follows the page -----------------------------------------------------
 // On the home page the big search box is the search. Once it has scrolled out
