@@ -52,7 +52,7 @@ In file order. "Key names" are what to search for.
 | Section marker | What it does | Key names |
 |---|---|---|
 | `Japanese card-name index (legacy, name-only)` | An old fallback when only `ja_names.json` exists. Not deployed any more. | `JA_NAME_INDEX` |
-| `local card database (full, effect-text-searchable)` | Downloads and unpacks the database, turns each row into an object with pre-computed lowercase fields, starts the idle-time warm-up. | `LOCAL_FIELDS`, `LOCAL_DB`, `dbState`, `dbReady`, `DB_FILES`, `fetchMaybeGzipJson()`, `loadCardDatabase()`, `indexRow()`, `warmSearch()`, `rowToCard()`, `hasRarity()`, `rarityName()`, `RARITY_CODE`, `RARITY_ORDER` |
+| `local card database (full, effect-text-searchable)` | Downloads and unpacks the database, turns each row into an object with pre-computed lowercase fields, starts the idle-time warm-up. | `LOCAL_FIELDS`, `LOCAL_DB`, `dbState`, `dbReady`, `DB_FILES`, `fetchMaybeGzipJson()`, `loadCardDatabase()`, `indexRow()`, `warmSearch()`, `rowToCard()`, `hasRarity()`, `rarityName()`, `RARITY_CODE`, `RARITY_ORDER`; the printings in the database (every set, treatments, 日本語版): `TREATMENTS`, `treatmentTest()`, `hasJaPrinting()`, `setCodeOf()` |
 | `Scryfall's /cards/collection…` | Fetches full card objects (pictures, prices) for result rows, 100 ms apart, retries 429/5xx, caches for the visit. Also local matching helpers (types, names, operators, filter panel). | `scryfallTurn()`, `scryfallCollection()`, `CARD_CACHE`, `hydrateRows()`, `nameKey()`, `textMatches()`, `localOperatorMatch()`, `localFilterRow()`, `relevance()`, `yomiQuery()`, `rowYomi()`, `jaSortKey()`, `popularity()`, `ROLE_LIST` |
 | `the tag file` | Loads the role tags and EDHREC ranks from warujie-prices `t/tags.json.gz`. | `loadTags()`, `TAG_MAP`, `tagsState`, `rowTags()`, `rowRoles()`, `hasRole()` |
 | `reading role words in the search box` | Finds role words (除去, ドロー, ramp…) and the colour/guild/format/rarity/type/mana words that narrow them. | `findRoleWords()`, `splitRoleToken()`, `derivedFromWord()`, `COLOR_GROUP_WORDS`, `FORMAT_WORDS`, `RARITY_WORDS`, `AMBIG_ROLE_WORDS`, `roleSuggestions()` |
@@ -74,7 +74,7 @@ In file order. "Key names" are what to search for.
 | `listings and stock…` | Per-shop offers by condition, cheapest first. | `OFFER_SHOPS`, `offerRows()`, `offersHtml()` |
 | `the notes under the card page…` | Where each price comes from; loads today's shop prices (`q/`). Also the card page itself. | `priceNotesHtml()`, `loadCardQuotes()`, `renderCardViewContent()` |
 | `links to shops and deck sites` | Search links to shops (Japanese, US, EU) and deck sites; all printings. | `JP_SHOP_SEARCH`, `JP_MAIN_SHOPS`, `jpShopDirHtml()`, `hareruyaUrl()`, `tcgplayerUrl()`, `loadPrintings()` |
-| `the printing's language: 日本語版 / 英語版` | The language buttons under the picture. | `PRINT_LANGS`, `SET_TWIN`, `printingLanguages()`, `fillPrintToggle()`, `showView()`, `navigateToCard()` |
+| `the printing's language: 日本語版 / 英語版` | The language buttons under the picture, from the printings file (`printings.json.gz`) or one Scryfall search. | `PRINT_LANGS`, `SET_TWIN`, `loadPrintingsFile()`, `printingLanguages()`, `fillPrintToggle()`, `openPrinting()`, `showView()`, `navigateToCard()` |
 
 ### Pages, navigation and controls
 
