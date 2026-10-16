@@ -1,0 +1,15 @@
++ mkdir -p probe_out/site
++ pip install -q playwright==1.56.0
++ python3 -m playwright install --with-deps chromium
++ python3 dbprobe/site_check.py
+printings.json.gz: 285296 bytes, 99998 printings; mh2/138: ['en ja zhs zht ko fr de it es pt ru', 'm', '']
+fields: id oracle_id name_en name_ja type_en type_ja oracle_en oracle_ja mana_cost colors cmc power toughness rarity set keywords released_at alt_names_ja legal layout rarities sets treatments name_kana
+search 日本語版 ボーダーレス ドラゴン -> 「日本語版 ボーダーレス ドラゴン」：72 件見つかりました | 「日本語版」で日本語版のあるカードに絞り込みました。 「ボーダーレス」で日本語のボーダーレス版のあるカードに絞り込みました。 | first: ['アダルト・ゴールド・ドラゴン', '運命の大嵐、ドラゴンホーク', 'エインシャント・カッパー・ドラゴン', 'エインシャント・ゴールド・ドラゴン']
+search e:mh3 -> 「e:mh3」：309 件見つかりました |  | first: ['アヴァシンの創造', '悪意の閃光', '悪臭のガルガンチュア', '浅瀬蟲']
+search 旧枠 稲妻 -> 「旧枠 稲妻」：19 件見つかりました | 「旧枠」で旧枠版のあるカードに絞り込みました。 | first: ['稲妻', '稲妻の斧', '稲妻の裂け目', '稲妻のすね当て']
+search lang:ja is:showcase -> 「lang:ja is:showcase」：222 件見つかりました |  | first: ['アエリド・コンストラリ', '崇められし擬態の原形質', '灯を追う者、チャンドラ', '灯を委ねる']
+card page buttons: ['JP', 'EN', 'CS', 'CT', 'KO', 'FR', 'DE', 'IT', 'ES', 'PT', 'RU'] | multilingual searches: 0 | printings file loads: 1
+after FR: Ragavan, habile chapardeur | buttons: ['JP', 'EN', 'CS', 'CT', 'KO', 'FR', 'DE', 'IT', 'ES', 'PT', 'RU'] | url: https://staging-warujie.warujie-mtg.workers.dev/?card=d226215f-65fe-44b5-9c30-a4e03cb48cfd&print=fr
+4bb buttons: ['JP', 'EN', 'CT', 'KO', 'FR', 'DE', 'IT', 'ES', 'PT']
+4bb -> EN: Animate Wall レア Fourth Edition（4ED） #4 Scryfall ↗
+errors: []
