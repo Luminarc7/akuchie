@@ -2,7 +2,7 @@
 + U=https://warujie.warujie-mtg.workers.dev
 + sleep 170
 + for i in 1 2 3 4
-+ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/live_index.html 'https://warujie.warujie-mtg.workers.dev/?v=129659'
++ curl -sS --compressed -A warujie.jp-probe/1.0 -o probe_out/live_index.html 'https://warujie.warujie-mtg.workers.dev/?v=11860'
 + cmp -s probe_out/live_index.html probe_out/expected_index.html
 + echo LIVE_MATCH
 LIVE_MATCH
