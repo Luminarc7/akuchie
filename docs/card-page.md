@@ -43,6 +43,11 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
   another.
 - `?print=<lang>` shows that printing in its own language (`printChoice()`); without it the
   site language decides which name is big.
+- In English, a link to another language's printing without `?print=` (the database's Japanese
+  printings are behind the home page's examples, the metagame lists, the zero-results help and
+  links shared by Japanese visitors) opens the English card of that same printing when the
+  printings file lists one (`siteLanguagePrinting()`, one `/cards/<set>/<number>/en` request);
+  the URL is then the English printing's. A printing with no English version stays as it is.
 - The languages come from the printings file (`printings.json.gz`, made with the card database;
   [data.md](data.md#the-printings-file-printingsjsongz)), loaded once per visit by
   `loadPrintingsFile()`, so opening a card page no longer asks Scryfall which languages exist.

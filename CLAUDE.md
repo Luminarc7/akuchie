@@ -124,7 +124,7 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
 borderless, showcase, extended art, full art, old frame, future frame, textless, etched,
 serialized; upper case where a Japanese printing has it).
 
-- **Built by `tools/build_ja_database.py`** (2.4) from Scryfall's `all_cards` bulk file, together
+- **Built by `tools/build_ja_database.py`** (2.5) from Scryfall's `all_cards` bulk file, together
   with **`printings.json.gz`** (every printing's languages, rarity and treatments, about 0.3 MB,
   for the card page's language buttons). Scryfall serves bulk files as gzipped JSON Lines
   (`jsonl_download_uri`) since September 2026; the builder and `warujie-prices` handle that.
@@ -171,6 +171,10 @@ serialized; upper case where a Japanese printing has it).
   - Italian Legends/The Dark printings sometimes carry a rarity their English printing
     doesn't. The builder used to keep such a printing as the card's picture when the English
     one ranked level (116 cards showed an Italian picture, 10 a wrong rarity); fixed in 2.3.
+  - Most Edge of Eternities (EOE/EOC) Japanese printings carry the English rules text, and their
+    names print furigana inline (吹（ふ）きさらしの…; the site strips it, `stripRuby()`). Since 2.5
+    a "Japanese" text or type line with no Japanese in it doesn't count (about 410 cards), and
+    the site's `indexRow()` empties such fields in older files.
 
 ## How the card page picks printings and languages
 
@@ -182,7 +186,9 @@ serialized; upper case where a Japanese printing has it).
 - There is never a jump to another set's printing. A printing that exists only in English shows
   EN alone.
 - The `?print=<lang>` URL parameter shows that printing's own language; otherwise the site
-  language decides.
+  language decides. In English, a link to a Japanese printing (the database's ids are behind the
+  home examples, metagame lists and shared links) opens the English card of the same printing
+  when the printings file lists one (`siteLanguagePrinting()`).
 - Prices for a non-English printing come from the English printing with the same set and
   number. Price history is kept for English printings.
 
@@ -237,7 +243,11 @@ serialized; upper case where a Japanese printing has it).
 - **Printings:** `e:mh3` / セット:モダンホライゾン3 finds every card printed in the set, reprints
   too (`sets`); ボーダーレス, ショーケース, 旧枠, 拡張アート, フルアート, シリアルナンバー, `is:showcase`
   find cards with such a printing (`TREATMENTS`), and beside 日本語版 or `lang:ja` a Japanese one
-  (日本語版 ボーダーレス); 日本語版 alone finds cards printed in Japanese.
+  (日本語版 ボーダーレス); 日本語版 alone finds cards printed in Japanese. Written the way players
+  write them too: ボーダーレス版, 旧枠のカード, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号
+  (`printWordForms()`). Part of a Japanese set name finds every set it is in (セット:マーベル).
+- **Reminder text** （…） still matches, but a word found only there comes after the cards whose
+  own text has it (到達 lists reach before flyers; `JA_REMINDER_RE`).
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);

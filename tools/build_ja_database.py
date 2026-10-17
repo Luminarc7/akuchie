@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_ja_database.py  (version 2.4)
+build_ja_database.py  (version 2.5)
 
 Builds `ja_cards.json.gz` - the card database for the 悪知恵 site: one entry
 per real Magic card, with its Japanese name / type / rules text wherever a
@@ -60,6 +60,11 @@ WHAT VERSION 2 FIXES
    upper case where a Japanese printing has it). A second file,
    printings.json.gz, lists every printing (set and number) with its
    languages, rarity and treatments.
+
+10. (2.5) A Japanese rules text or type line must have Japanese in it. Scryfall
+   gives some Japanese printings the English text (most of Edge of Eternities);
+   such a text is skipped for another Japanese printing's, or left empty, so
+   the site translates the type and finds the card through its English text.
 
 USAGE
 -----
@@ -349,7 +354,7 @@ class CardEntry:
                 self.ja = card
             if self.ja_pic is None or picture_rank(card) > picture_rank(self.ja_pic):
                 self.ja_pic = card
-            if joined(card, "printed_text"):
+            if JA_CHARS.search(joined(card, "printed_text")):
                 if self.ja_text is None or printing_rank(card) > printing_rank(self.ja_text):
                     self.ja_text = card
             if JA_CHARS.search(joined(card, "printed_type_line")):
@@ -392,8 +397,8 @@ class CardEntry:
         name_ja = joined(self.ja, "printed_name") if self.ja else ""
         text_src = self.ja_text or self.ja
         type_ja = joined(text_src, "printed_type_line") if text_src else ""
-        if not JA_CHARS.search(type_ja) and self.ja_type:
-            type_ja = joined(self.ja_type, "printed_type_line")
+        if not JA_CHARS.search(type_ja):
+            type_ja = joined(self.ja_type, "printed_type_line") if self.ja_type else ""
         row = {
             "id": pic.get("id", ""),
             "oracle_id": oracle_id_of(base) or "",
@@ -402,7 +407,7 @@ class CardEntry:
             "type_en": en.get("type_line", "") or joined(en, "type_line"),
             "type_ja": type_ja,
             "oracle_en": joined(en, "oracle_text"),
-            "oracle_ja": joined(text_src, "printed_text") if text_src else "",
+            "oracle_ja": joined(self.ja_text, "printed_text") if self.ja_text else "",
             "mana_cost": base.get("mana_cost") or (faces[0].get("mana_cost", "") if faces else ""),
             "colors": "".join(base.get("colors") or sorted({c for f in faces for c in f.get("colors", [])})),
             "cmc": base.get("cmc", 0),
