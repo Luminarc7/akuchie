@@ -51,7 +51,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Add a search operator (`o:`, `t:`, `色:`…) | `JA_OPERATORS`, `KNOWN_OPS`, `localOperatorMatch()` |
 | Fix a wrong Japanese card name | `tools/name_fixes_ja.json` (English name → Japanese). See [data.md](data.md#fixing-a-japanese-name) |
 | Add a Japanese shop link to card pages | `JP_SHOP_SEARCH` (search links), `JP_MAIN_SHOPS`, and the `…Url()` helpers in "links to shops and deck sites" |
-| Show a Japanese shop's prices | Only for shops that gave permission (CLAUDE.md rule 3). The JP tab is `jpShopDirHtml()`; the price builder is in warujie-prices |
+| Show a Japanese shop's prices | Only for shops that gave permission (CLAUDE.md rule 3). The stock table is `jpOffersHtml()` (shops in `OFFER_SHOPS` with market `jp`), the shop list `jpShopDirHtml()`; the price builder is in warujie-prices (ENNDAL GAMES: its [shop_enndal.py](https://github.com/warujie/warujie-prices/blob/main/shop_enndal.py)) |
 | Change the example searches on the home page | `HERO_TRY`, `HERO_EFFECTS`, `HERO_SLANG` |
 | Change the search tips | `GUIDE_ROWS`, `GUIDE_EXAMPLES` |
 | Change which formats are shown | `FORMAT_ORDER`, `MAIN_FORMATS`, `FORMAT_JA`, `FORMAT_EN`; metagame: `META_FORMATS` and `build_meta.py` |

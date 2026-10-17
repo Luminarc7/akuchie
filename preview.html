@@ -1636,6 +1636,9 @@
   .jp-notice { display: flex; align-items: center; gap: 8px 14px; padding: 12px 16px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
   .jp-notice p { margin: 0; font-size: 12.5px; line-height: 1.7; color: var(--text-2); }
   .cp-market[data-market="jp"] .cp-market-grid { grid-template-columns: minmax(0, 1fr); }
+  .jp-offers { max-width: 640px; }
+  .jp-offers .of-scroll { max-height: 360px; }
+  .jp-offers-note { margin: 10px 0 0; font-size: 11.5px; color: var(--muted); }
   .cp-market[data-market="jp"] .cp-offers, .cp-offers[hidden] { display: none; }
   .cp-market[data-market="jp"] .shop-links { display: none; }
   .cp-market:not([data-market="jp"]) .jp-dir { display: none; }
@@ -2550,7 +2553,13 @@ const STR = {
   'offers.heading': ['出品と在庫', 'Listings and stock'],
   'offers.sub.us': ['米国・安い順', 'US · cheapest first'],
   'offers.sub.eu': ['欧州・安い順', 'Europe · cheapest first'],
-  'offers.sub.jp': ['日本', 'Japan'],
+  'offers.sub.jp': ['日本・安い順', 'Japan · cheapest first'],
+  'offers.jp.heading': ['日本のショップの在庫と価格', 'Stock and prices at Japanese shops'],
+  'offers.jp.more': ['ほかの日本のショップは、掲載の許可をいただいたショップから順に追加します。', 'More Japanese shops will be added as they give permission.'],
+  'offers.lang.en': ['英語', 'English'],
+  'price.jp.none': ['ENNDAL GAMES にこの版の在庫はありませんでした（毎晩確認）。ほかの日本のショップは、掲載の許可をいただいたショップから順に追加します。下のショップでも探せます。', 'ENNDAL GAMES has no copies of this printing in stock (checked every night). More Japanese shops will be added as they give permission; you can also search the shops below.'],
+  'notes.offers.jp': ['日本の在庫と価格：ENNDAL GAMES の在庫（{date}）より。毎晩確認しているため、売り切れていることがあります。価格はショップの表示どおりの円です。', 'Japanese stock and prices: ENNDAL GAMES’ stock{date}. It is checked every night, so a copy may have sold since. Prices are in yen, as the shop shows them.'],
+  'notes.cond.jp': ['状態の目安：NM＝ほぼ新品、EX＝軽い傷。', 'Condition: NM = near mint; EX = light wear.'],
   'offers.col.cond': ['状態', 'Condition'],
   'offers.col.price': ['価格', 'Price'],
   'offers.col.stock': ['在庫', 'Stock'],
@@ -6051,7 +6060,9 @@ function priceHtml(card) {
   let body = '';
   const rows = market === 'jp' ? [] : marketRows(card, market);
   if (market === 'jp') {
-    body = `<div class="jp-notice"><span class="wip-badge">${t('market.soon')}</span><p>${t('price.jp.notice')}</p></div>`;
+    const shopsRead = card._quotes !== undefined && (card._offersAsOf || {}).enndal;   // Japanese shop stock is published
+    body = jpOffersHtml(card)
+      || `<div class="jp-notice"><span class="wip-badge">${t('market.soon')}</span><p>${t(shopsRead ? 'price.jp.none' : 'price.jp.notice')}</p></div>`;
   } else {
     body = rows.length
       ? `<div class="shop-prices">
@@ -6091,8 +6102,8 @@ function rerenderPriceSection(card) {
 // language too); TCGplayer and Cardmarket only their cheapest copy, without
 // its condition or stock. The panel follows the price tabs; the foil switch
 // is remembered.
-const OFFER_SHOPS = { ck: 'Card Kingdom', mp: 'Mana Pool', tcg: 'TCGplayer', cm: 'Cardmarket', ct: 'CardTrader' };
-const OFFER_MARKET = { ck: 'us', mp: 'us', tcg: 'us', cm: 'eu', ct: 'eu' };
+const OFFER_SHOPS = { ck: 'Card Kingdom', mp: 'Mana Pool', tcg: 'TCGplayer', cm: 'Cardmarket', ct: 'CardTrader', ed: 'ENNDAL GAMES' };
+const OFFER_MARKET = { ck: 'us', mp: 'us', tcg: 'us', cm: 'eu', ct: 'eu', ed: 'jp' };   // 'jp' offers are in yen, not cents
 const OFFER_CONDS = {
   NM: ['ニアミント（ほぼ新品）', 'Near mint'], EX: ['エクセレント（軽い傷）', 'Excellent (light wear)'], LP: ['ライトリープレイド（軽い傷）', 'Lightly played'],
   VG: ['ベリーグッド（中程度の傷）', 'Very good (moderate wear)'], MP: ['モデレートリープレイド（中程度の傷）', 'Moderately played'],
@@ -6118,6 +6129,10 @@ function offerLink(card, shop, foil) {
   if (shop === 'mp') return /^https:\/\/manapool\.com\//.test(lk.mp || '') ? lk.mp : '';
   if (shop === 'tcg') return Number.isInteger(lk.tcg) ? `https://www.tcgplayer.com/product/${lk.tcg}` : tcgplayerUrl(card);
   if (shop === 'ct') return Number.isInteger(lk.ct) ? `https://www.cardtrader.com/cards/${lk.ct}` : '';
+  if (shop === 'ed') {
+    const path = (lk.ed || [])[foil] || (lk.ed || [])[1 - foil] || '';
+    return /^[\w%+.~\/-]+$/.test(path) ? 'https://www.enndalgames.com/' + path : '';
+  }
   if (shop === 'cm') return Number.isInteger(lk.cm) ? `https://www.cardmarket.com/en/Magic/Products?idProduct=${lk.cm}` : cardmarketUrl(card);
   return '';
 }
@@ -6138,30 +6153,25 @@ function offerRowHtml(card, r, market, foil, first) {
   const url = offerLink(card, r.shop, foil);
   const name = esc(OFFER_SHOPS[r.shop] || r.shop);
   const shop = url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${name} ↗</a>` : name;
+  const jp = market === 'jp';   // Japanese shops: the language is always shown (English too), prices are in yen
   const lang = (r.country ? `<span class="of-lang of-country" title="${esc(t('offers.country', { c: r.country }))}">${esc(r.country)}</span>` : '')
-    + (r.lang ? `<span class="of-lang">${esc(pick2(OFFER_LANGS[r.lang]) || r.lang)}</span>` : '');
+    + (r.lang ? `<span class="of-lang">${esc(pick2(OFFER_LANGS[r.lang]) || r.lang)}</span>` : jp ? `<span class="of-lang">${t('offers.lang.en')}</span>` : '');
   const cond = r.cond
     ? `<span class="of-cond" title="${esc(pick2(OFFER_CONDS[r.cond]) || r.cond)}">${esc(r.cond)}</span>`
     : `<span class="of-cond any" title="${esc(t('offers.cond.any'))}">—</span>`;
   const amount = (r.cents / 100).toFixed(2);
   const eu = market === 'eu';
-  const yen = eu ? yenForEur(amount) : yenFor(amount);
+  const yen = jp ? '' : eu ? yenForEur(amount) : yenFor(amount);
   const stock = r.qty === null
     ? `<span class="of-stock any" title="${esc(t('offers.stock.any'))}">${t('offers.listed')}</span>`
     : `<span class="of-stock">${t('offers.qty', { n: fmtNum(r.qty) })}</span>`;
   return `<div class="of-row${first ? ' best' : ''}" role="row"><span class="of-shop" role="cell">${shop}${lang}</span><span role="cell">${cond}</span>`
-    + `<span class="of-price" role="cell"><strong>${eu ? '€' : '$'}${amount}</strong><span class="jpy" ${eu ? 'data-eur' : 'data-usd'}="${amount}">${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`
+    + (jp ? `<span class="of-price" role="cell"><strong>¥${Math.round(r.cents).toLocaleString('ja-JP')}</strong></span>`
+          : `<span class="of-price" role="cell"><strong>${eu ? '€' : '$'}${amount}</strong><span class="jpy" ${eu ? 'data-eur' : 'data-usd'}="${amount}">${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`)
     + `<span role="cell">${stock}</span></div>`;
 }
-function offersHtml(card) {
-  const market = priceMarket;
-  const head = sw => `<div class="offers-head"><div class="offers-title">${t('offers.heading')}<small>${t('offers.sub.' + market)}</small></div>${sw || ''}</div>`;
-  if (market === 'jp') {
-    return `<aside class="cp-offers" id="offersBox" data-market="jp" hidden></aside>`;
-  }
-  if (card._quotes === undefined) {
-    return `<aside class="cp-offers" id="offersBox" data-market="${market}">${head()}<p class="offers-empty">${t('loading')}</p></aside>`;
-  }
+// the cheapest-first table with its foil switch: { foil, sw, table }
+function offerTableParts(card, market) {
   const plain = offerRows(card, market, 0), foils = offerRows(card, market, 1);
   let foil = offerFoil ? 1 : 0;
   if (!offerFoilTouched) {   // a printing that only has foil copies (or only non-foil ones) opens on what it has
@@ -6176,7 +6186,30 @@ function offersHtml(card) {
         <div class="of-scroll" role="rowgroup" tabindex="0" aria-label="${esc(t('offers.count', { n: fmtNum(rows.length) }))}">${rows.map((r, i) => offerRowHtml(card, r, market, foil, i === 0)).join('')}</div>
       </div>`
     : `<p class="offers-empty">${t(foil ? 'offers.none.foil' : 'offers.none')}</p>`;
+  return { foil, sw, table };
+}
+function offersHtml(card) {
+  const market = priceMarket;
+  const head = sw => `<div class="offers-head"><div class="offers-title">${t('offers.heading')}<small>${t('offers.sub.' + market)}</small></div>${sw || ''}</div>`;
+  if (market === 'jp') {   // the Japan tab shows its shops' stock in the price column (jpOffersHtml)
+    return `<aside class="cp-offers" id="offersBox" data-market="jp" hidden></aside>`;
+  }
+  if (card._quotes === undefined) {
+    return `<aside class="cp-offers" id="offersBox" data-market="${market}">${head()}<p class="offers-empty">${t('loading')}</p></aside>`;
+  }
+  const { foil, sw, table } = offerTableParts(card, market);
   return `<aside class="cp-offers" id="offersBox" data-market="${market}" data-foil="${foil}">${head(sw)}${table}</aside>`;
+}
+// the Japan tab: the Japanese shops' stock (so far ENNDAL GAMES), or '' when this printing has none
+function jpOffersHtml(card) {
+  if (!card._quotes && !(card._offers || []).length) return '';
+  if (!offerRows(card, 'jp', 0).length && !offerRows(card, 'jp', 1).length) return '';
+  const { foil, sw, table } = offerTableParts(card, 'jp');
+  return `<div class="jp-offers" id="jpOffers" data-foil="${foil}">
+    <div class="offers-head"><div class="offers-title">${t('offers.jp.heading')}<small>${t('offers.sub.jp')}</small></div>${sw}</div>
+    ${table}
+    <p class="jp-offers-note">${t('offers.jp.more')}</p>
+  </div>`;
 }
 
 // ---- the notes under the card page: where the prices come from ----------------
@@ -6212,8 +6245,20 @@ function priceNotesHtml(card) {
       }
     }
   }
+  if (market === 'jp' && card._quotes !== undefined && (offerRows(card, 'jp', 0).length || offerRows(card, 'jp', 1).length)) {
+    const d = (card._offersAsOf || {}).enndal || '';
+    items.push(t('notes.offers.jp', { date: /^\d{4}-\d\d-\d\dT/.test(d) ? jpNightLabel(d) : '' }));
+    items.push(t('notes.cond.jp'));
+  }
   if (!items.length) return '';
   return `<h2 class="price-notes-heading">${t('notes.heading')}</h2><ul>${items.map(s => `<li>${s}</li>`).join('')}</ul>`;
+}
+// "2026-10-17T17:00:00Z" -> the night in Japan time: "2026/10/18 2時ごろ" / " (as of 2:00 on 2026-10-18, Japan time)"
+function jpNightLabel(iso) {
+  const j = new Date(Date.parse(iso) + 9 * 3600e3);
+  if (isNaN(j)) return '';
+  const day = dateLabel(j.toISOString().slice(0, 10), true), h = j.getUTCHours();
+  return LANG === 'en' ? ` (as of ${h}:00 on ${day}, Japan time)` : `${day} ${h}時ごろ`;
 }
 // today's prices at several shops (published with the price history)
 function loadQuoteShard(key) {
@@ -6242,7 +6287,7 @@ async function loadCardQuotes(card) {
 }
 document.getElementById('cardViewCard').addEventListener('click', (e) => {
   if (e.target.closest('#offerFoil') && shownCard) {
-    offerFoil = document.getElementById('offersBox').dataset.foil !== '1';
+    offerFoil = e.target.closest('#offerFoil').getAttribute('aria-checked') !== 'true';
     offerFoilTouched = true;
     try { localStorage.setItem('akuchie-offer-foil', offerFoil ? '1' : '0'); } catch (err) { /* fine */ }
     rerenderPriceSection(shownCard);

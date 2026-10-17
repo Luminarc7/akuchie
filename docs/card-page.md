@@ -79,6 +79,13 @@ Card Kingdom, Mana Pool, TCGplayer, Cardmarket and CardTrader (`OFFER_SHOPS`). T
 saved in `akuchie-offer-foil`; foil-only printings switch to foil automatically unless the
 visitor changed it by hand (`offerFoilTouched`).
 
+**Japanese shop stock** (`jpOffersHtml()`): on the JP tab the price column shows the offers whose
+market is `jp` in `OFFER_MARKET` (so far ENNDAL GAMES, `ed`, read once a night by
+warujie-prices). Their price field is in **yen**, not cents, and English copies get an 英語 label.
+The table shares `offerTableParts()` and the foil switch with the US/EU listings. A printing with
+none shows the notice instead (`price.jp.none` once ENNDAL's stock is published, otherwise
+`price.jp.notice`); the notes give the night it was read in Japan time (`jpNightLabel()`).
+
 **Price history** keeps US dollars and euros, non-foil and foil, daily for 120 days and weekly
 after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`histState`).
 
@@ -91,7 +98,8 @@ shops. Japanese shops: `hareruyaUrl()`, `bigMagicUrl()`, `cardRushUrl()`, `tokyo
 "load more". Star City Games is a link only (no price feed exists).
 
 Adding a shop's **prices** is a different matter: it needs the shop's permission first
-(CLAUDE.md rule 3), then a builder in warujie-prices.
+(CLAUDE.md rule 3), then a builder in warujie-prices (as ENNDAL GAMES has), a code in
+`OFFER_SHOPS` and `OFFER_MARKET`, and a link rule in `offerLink()`.
 
 ## Combos
 

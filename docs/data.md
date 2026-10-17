@@ -158,7 +158,7 @@ documented in the warujie-prices repository
 |---|---|---|
 | `index.json` | `loadPriceIndex()` | Dates in the history, today's date, providers and their currencies, when listings were read |
 | `h/<xx>.json.gz` | `loadPriceShard()` | Price history of printings whose Scryfall id starts with `xx` |
-| `q/<xx>.json.gz` | `loadQuoteShard()` | Today's shop prices (`p`), listings (`l`), shop product links (`lk`) |
+| `q/<xx>.json.gz` | `loadQuoteShard()` | Today's shop prices (`p`), listings (`l`; ENNDAL GAMES rows `ed` are in yen), shop product links (`lk`) |
 | `movers.json` | `loadMovers()` | Biggest risers and fallers, 1/7/30 days, US and EU |
 | `c/index.json`, `c/<xx>.json.gz` | `loadComboIndex()`, `loadComboShard()` | Commander combos by oracle id |
 | `t/tags.json.gz` | `loadTags()` | Role tags and EDHREC rank by oracle id (first 12 characters) |
