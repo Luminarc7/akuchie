@@ -21,7 +21,7 @@ grep -n -- '// ---- ' index.html
 
 | Element | What it is |
 |---|---|
-| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), the want list button (`#wantBtn`, count `#wantN`), which opens the tray, language (`#langBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
+| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), the want list button (`#wantBtn`, count `#wantN`), which opens the tray, the JP \| EN and ¥ \| $ switches (`#langBtn`, `#curBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
 | `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
 | `#cardView` | The card page; everything is drawn into `#cardViewCard` |
 | `#setsView` | Set list (`#setListPanel`) and one set (`#setDetailPanel`, `#setGrid`) |
@@ -68,7 +68,8 @@ In file order. "Key names" are what to search for.
 | Section marker | What it does | Key names |
 |---|---|---|
 | `card pictures` | Picks the best picture (real scan over placeholder), `srcset` sizes. | `imageQuality()`, `pictureTag()`, `getImage()` |
-| `exchange rate (USD -> JPY)` | Dollar and euro to yen. | `fetchJpyRate()`, `USD_JPY`, `EUR_JPY`, `yenFor()`, `updateYenLabels()` |
+| `exchange rate (USD -> JPY)` | Dollar and euro to yen; redraws every price. | `fetchJpyRate()`, `USD_JPY`, `EUR_JPY`, `updateYenLabels()` |
+| `currency: every price in ¥ or $…` | The ¥ \| $ switch: each price in the chosen currency, the shop's own on hover. | `CUR`, `curHtml()`, `curText()`, `fromYen()`, `setCurrency()` |
 | `prices` | Prices on result tiles; a Japanese printing borrows its English twin's prices. | `effectivePrices()`, `ensureEnglishPrices()`, `tilePriceHtml()` |
 | `Japanese names/text for any printing` | Japanese name, type and text for any printing, from the database when Scryfall lacks them; type-line translation. | `displayNameJa()`, `displayTypeJa()`, `displayTextJa()`, `translateTypeLine()`, `cardNames()` |
 | `treatments…` | Labels such as borderless, showcase, extended art; the result tile and its rarity (the rarity asked for, with an arrow, when the search asks for a rarity its printing doesn't have). | `treatmentLabels()`, `cardTileHtml()`, `tileRarityHtml()`, `wantedRarities()` |
@@ -90,7 +91,7 @@ In file order. "Key names" are what to search for.
 | `themes: light / dark` | Theme and lightweight mode switches; the contact link. | `setTheme()`, `setLite()` |
 | `search tips…` | The tips table under the results. | `GUIDE_ROWS`, `GUIDE_EXAMPLES`, `renderGuide()` |
 | `links between the main site and the colour editions` | Retired; harmless. | `renderSiteSwitch()` |
-| `language switch` | Redraws everything in the other language. | `applyStaticText()`, `setLang()` |
+| `language switch` | Redraws everything in the other language; the top bar's switches; prices redrawn after the ¥ \| $ switch. | `applyStaticText()`, `setLang()`, `syncTopToggles()`, `redrawPrices()` |
 | `metagame tab` | Deck shares, win rates, trends. | `META_FORMATS`, `META_MIN_MATCHES`, `loadMeta()`, `renderMeta()` |
 | `deck names in Japanese…` | Turns English archetype names into the words Japanese players use (ディミーア・ミッドレンジ, 赤単バーン); a name with an unknown word stays English. | `DECK_NAME_WHOLE`, `DECK_GUILD_JA`, `DECK_MONO_JA`, `DECK_WORD_JA`, `deckNameJa()`, `deckLabel()`, `toggleMetaRow()` |
 | `price history & price movers` | The price chart on card pages and the movers tab. | `PRICE_DATA_URL`, `loadPriceShard()`, `priceHistoryId()`, `drawPriceHistory()`, `loadMovers()`, `renderMovers()` |
