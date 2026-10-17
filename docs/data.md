@@ -22,8 +22,8 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `id` | The Scryfall printing shown in results: a Japanese printing with a real scan where possible, else an English one (another language only for cards never printed in English); when the builder's preferences are level, the ordinary frame over a showcase or borderless one (`picture_rank()`). When the chosen Japanese printing has no sharp scan, a Japanese one that has, at the same rarity in a regular set (`CardEntry.picture()`) |
 | `oracle_id` | Scryfall's id for the card across printings |
 | `name_en`, `name_ja` | Names; two-part cards as `A // B` |
-| `type_en`, `type_ja` | Type lines; `type_ja` from another Japanese printing when the one with the text has an English type line (`ja_type` in `CardEntry`) |
-| `oracle_en`, `oracle_ja` | Rules text (Japanese from the newest Japanese printing that has it) |
+| `type_en`, `type_ja` | Type lines; `type_ja` from another Japanese printing when the one with the text has an English type line (`ja_type` in `CardEntry`), empty when no Japanese printing has a Japanese one |
+| `oracle_en`, `oracle_ja` | Rules text (Japanese from the newest Japanese printing whose text has Japanese in it: since 2.5 an English text on a Japanese printing, as Scryfall has for most of Edge of Eternities, doesn't count) |
 | `mana_cost`, `cmc` | `{2}{W}{B}`, mana value |
 | `colors` | Letters, e.g. `GR`; empty for colourless |
 | `power`, `toughness` | Strings or `null` |
@@ -39,7 +39,9 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `name_kana` | Reading of the Japanese name in hiragana: the あいうえお order, and names typed in hiragana (いなずま finds 稲妻); never shown. Made by `tools/name_readings.py`: printed furigana, else SudachiDict, else pykakasi for kanji Sudachi doesn't know, so no reading keeps a kanji |
 
 When the page loads it, `indexRow()` adds computed fields starting with `_` (lowercased names,
-type and text, colour string, keyword set…). To add a database field: add it in
+type and text, colour string, keyword set…). It also empties a `type_ja` or `oracle_ja` with no
+Japanese in it (files built before 2.5 have about 410), so the type line is translated and the
+card is found through its English text. To add a database field: add it in
 `build_ja_database.py`, in `LOCAL_FIELDS` (the fallback field list) and, if needed, in
 `indexRow()`; old files without it must still work.
 
@@ -58,7 +60,7 @@ on `staging`. It:
    does both itself;
 3. compares the new files with the ones in the repository (`tools/check_database.py`) and
    **refuses** the build when something looks lost: more than 30 cards gone, more than 30
-   Japanese names or 60 Japanese texts gone, any rarity down by more than 3%, more than 2% of
+   Japanese names or 60 Japanese texts gone (a text counts only with Japanese in it), any rarity down by more than 3%, more than 2% of
    Japanese names changed, more than 1% of printings gone, readings for fewer than 95% of
    Japanese names, or a well-known card (`SPOT_CHECKS`) without its Japanese name. A refused
    build changes nothing and the run goes red;

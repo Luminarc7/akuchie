@@ -271,6 +271,20 @@ with sync_playwright() as p:
     check("printings: 日本語版 narrows to Japanese printings (日本語版 ボーダーレス fewer than ボーダーレス; 日本語版 旧枠 稲妻 is the Japanese 4th Edition Bolt)",
           1500 <= pr["blJa"] < pr["bl"] and "Lightning Bolt" in pr["oldBolt"], pr)
     check("printings: lang:ja finds every card printed in Japanese, -日本語版 the rest", pr["ja"] == pr["named"] and pr["notJa"] == pr["all"] - pr["named"], pr)
+    # 2026-10-17: printing words as players write them, set names in part, reminder text after the cards' own words
+    pf = page.evaluate("""(() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+      manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
+      const rows = q => searchRows(q, st).rows, reach = rows('到達'), at = n => reach.findIndex(r => r.name_en === n);
+      return { ban: rows('ボーダーレス版').length, bl: rows('ボーダーレス').length, of: rows('ボーダーレスのドラゴン').length, sp: rows('ボーダーレス ドラゴン').length,
+        jaCard: rows('日本語版のカード').length, ja: rows('日本語版').length, serial: rows('シリアル番号').length, serial2: rows('シリアルナンバー').length,
+        marvel: rows('セット:マーベル').length, spm: new Set(rows('e:spm').concat(rows('e:msh'))).size, hawk: at("Healer's Hawk"), angel: at('Dazzling Angel'),
+        lastReach: reach.reduce((m, r, i) => (r._kw.has('reach') ? i : m), -1),
+        english: LOCAL_DB.filter(r => (r.oracle_ja && !JA_CHARS.test(r.oracle_ja)) || (r.type_ja && !JA_CHARS.test(r.type_ja))).length }; })()""")
+    check("printing words: ボーダーレス版, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号 find what the plain words find; セット:マーベル finds both Marvel sets",
+          pf["ban"] == pf["bl"] and pf["of"] == pf["sp"] > 0 and pf["jaCard"] == pf["ja"] and pf["serial"] == pf["serial2"] > 0 and pf["marvel"] == pf["spm"] > 0, pf)
+    check("reminder text: 到達 lists every card with reach before flyers whose reminder mentions it (Healer's Hawk, Dazzling Angel)",
+          pf["lastReach"] >= 0 and pf["hawk"] > pf["lastReach"] and pf["angel"] > pf["lastReach"], pf)
+    check("no English text is kept as a card's Japanese text or type line (Edge of Eternities)", pf["english"] == 0, pf)
     # every card found by its own words: one sentence of its Japanese text typed plainly (no 、, half-width numbers),
     # and its English name in lower case without punctuation (a fixed sample of 300 cards)
     import random, re as _re
