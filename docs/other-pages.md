@@ -194,7 +194,7 @@ the pasted deck (with the deck's name) so cards can be swapped and the price fol
 The top bar's ☆ button (`#wantBtn`, count of copies `#wantN`; the word ウォント only on screens
 1400px and wider) opens `#wantTray` from the right over a dimmed page (`#wantTrayBg`; phones: the
 whole width), `openTray()` / `closeTray()`; the ☆ again, ×, Esc or a click beside it closes it.
-`drawTray()`: the title and how many cards; a リスト / 画像 switch (remembered as
+`drawTray()`: the title (the want list's name when it has one, `wantData().title`) and how many cards; a リスト / 画像 switch (remembered as
 `WANT_VIEW_KEY`, `warujie-want-view`; no pictures in lightweight mode); each card with − n ＋ and
 a trash can (`wantStepHtml()`, `wantTrashHtml()`), as rows with a small picture, the name in the
 site's language, the English name and the cheapest price (`trayRowHtml()`), or as pictures two a
@@ -210,8 +210,9 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
 - **Reading the list** (`parseDeckText()`): one card per line. Section headings as MTG Arena
   (English and Japanese client), Magic Online and deck sites write them (`IMPORT_PARTS`:
   Deck/デッキ, Sideboard/サイドボード, Commander/統率者, Companion/相棒, About + `Name …` for the
-  deck's name; maybeboard and tokens are skipped). Without headings, a blank line after cards
-  starts the sideboard (Magic Online), unless the list has card-type headings
+  deck's name, which ends at a blank line; maybeboard and tokens are skipped). Without headings
+  (About doesn't count as one), a blank line after cards starts the sideboard (Magic Online),
+  unless the list has card-type headings
   (`IMPORT_TYPE_HEAD`, "Creatures (16)"), and `SB:` lines are sideboard too. Counts as `4`,
   `4x`, `x4` after the name, `4枚`, full-width digits, or none (one copy). The set and number
   (`(M10) 146`, also before a foil mark `*F*` or Archidekt's `[Removal]` / `^Tag^`; a number is
@@ -229,9 +230,20 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
 - **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
   worked out" above), with lines not found counted as missing (so the total reads 「〜」).
   Arena wildcards show when every card is on Arena. Each card shows the price of one copy, as
-  on the deck pages; then the mana curve (`deckCurveHtml()`). An untitled list is called
-  ウォントリスト or 貼り付けたデッキ (`want.title`, `imp.untitled`). An empty want list says how to
-  fill it with ☆ (`tray.empty`); an empty deck shows the formats it reads and an example.
+  on the deck pages; then the mana curve (`deckCurveHtml()`). An empty want list (or one with
+  only its name left) says how to fill it with ☆ (`tray.empty`); an empty deck shows the formats
+  it reads and an example.
+- **The name** (owner's request 2026-10-17) is a text box with a pen in place of the title
+  (`#impName`, `.imp-name`), showing ウォントリスト or 貼り付けたデッキ (`want.title`,
+  `imp.untitled`) until it has one. Typing writes it at the top of the list as MTG Arena does,
+  `About` / `Name …` and a blank line (`textWithName()`, at most `IMPORT_NAME_MAX` letters);
+  emptying it takes those lines out. So the name is kept with the list, read back by
+  `parseDeckText()`, used for the .txt file and carried by the share link. The text changes at
+  once (`importNameTyped()`), but not while Japanese is being converted (an `input` event with
+  `isComposing`; the word goes in at `compositionend`); the page is priced again a moment later
+  so line numbers follow, and `drawImport()` leaves the box itself alone while it has the focus
+  (only what is around it is drawn again), so the keyboard and the conversion are never cut off.
+  Enter finishes. A ☆ on a list that has only a name puts the card under it (`withLineAdded()`).
 - **The bar** (`.want-bar`, owner's request 2026-10-16): the price and リスト / 画像 on the left,
   晴れる屋で買う and 書き出す on the right, staying under the top bar while the list scrolls
   (`position: sticky` at `--stick-top`). On phones the price box's note goes under the price.
@@ -255,7 +267,10 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
 ### Counts and art under each card
 
 In the picture view (画像) each card has − n ＋ and an art button under it (`impCardHtml()`,
-passed to `deckGroupsHtml()`; owner's request 2026-10-17). The list view stays as it was.
+passed to `deckGroupsHtml()`; owner's request 2026-10-17), and in the list view (リスト) each row
+has the same − n ＋ in place of the count and the art button at its end (`impRowHtml()`:
+`deckRowHtml()` with `impStepHtml()` and `impArtHtml()` as its lead and tail; owner's request,
+the same day, "make the UI consistent with the image view").
 
 - **− n ＋** change that card's lines in that part only (main, sideboard or commander), the way
   they were written (`impEntry()` reads the list again, then `listSetCount()`); − on the last copy

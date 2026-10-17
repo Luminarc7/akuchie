@@ -1302,6 +1302,27 @@
   .imp-saved { font-size: 11.5px; color: var(--muted); }
   #importBody { min-width: 0; }
   #importBody .deck-title { font-size: 23px; }
+  /* the list's name: a box to type in, with a pen (owner's request 2026-10-17) */
+  .imp-deck-title { flex-wrap: nowrap; width: 100%; }
+  .imp-deck-title .pips:empty { display: none; }
+  .imp-name { position: relative; flex: 1 1 auto; min-width: 0; max-width: 560px; display: flex; align-items: center; }
+  .imp-name input { width: 100%; min-width: 0; height: 46px; margin: 0; padding: 0 42px 0 12px; border: 1px solid var(--line-strong); border-radius: 8px;
+    background: var(--field); color: var(--text); font: inherit; text-overflow: ellipsis; }
+  .imp-name input::placeholder { color: var(--text); opacity: .55; }
+  .imp-name input:hover { border-color: var(--accent); }
+  .imp-name input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .imp-name svg { position: absolute; right: 13px; width: 19px; height: 19px; color: var(--muted); pointer-events: none; }
+  .imp-name:hover svg, .imp-name:focus-within svg { color: var(--accent); }
+  .imp-note:empty { display: none; }
+  /* the list view's rows: − n ＋ in place of the count, the art button at the end, as under the pictures */
+  .dl-row.imp-row { grid-template-columns: auto minmax(0, 1fr) auto auto auto; gap: 8px; padding: 4px 0; }
+  .imp-row .dl-yen:empty { display: block; }
+  .imp-row .want-step button { width: 26px; height: 28px; font-size: 15px; }
+  .imp-row .want-step .want-c { min-width: 34px; font-size: 12.5px; white-space: nowrap; }
+  .imp-row .imp-art { width: 30px; height: 30px; }
+  .imp-row .imp-art svg { width: 16px; height: 16px; }
+  .imp-row .imp-art-none { width: 30px; }
+  .imp-act .imp-art-none { display: none; }
   .imp-empty { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .imp-empty-h { margin: 0 0 4px; font-weight: 700; color: var(--text); }
   .imp-empty-list { margin: 0 0 12px; padding-left: 1.2em; }
@@ -1321,6 +1342,8 @@
   @media (max-width: 820px) {
     .imp-title { font-size: 21px; }
     #importBody .deck-title { font-size: 19px; }
+    .imp-name input { height: 42px; padding-right: 38px; }
+    .imp-name svg { right: 11px; width: 17px; height: 17px; }
     #importText { font-size: 16px; height: 220px; }
   }
   /* want list: the star on cards, the top bar's button, the tray */
@@ -2452,6 +2475,8 @@ const STR = {
   'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。セット記号や (M10) 146 は無視します', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. Set codes like (M10) 146 are ignored'],
   'imp.sample': ['例を入れてみる', 'Try an example'],
   'imp.untitled': ['貼り付けたデッキ', 'Your deck'],
+  'imp.name.aria': ['リストの名前', 'Name of the list'],
+  'imp.name.title': ['名前を入力して変えられます', 'Type to rename the list'],
   'imp.replaced': ['リストを入れ替えました', 'The list was replaced'],
   'imp.n.aria': ['{name}の枚数', 'Copies of {name}'],
   'pick.btn': ['絵柄を変える', 'Change the art'],
@@ -10700,7 +10725,8 @@ function deckCardHtml(it) {
     ? `<a class="deck-card" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}" title="${esc(it.name)}">${inner}</a>`
     : `<div class="deck-card" title="${esc(it.name)}">${inner}</div>`;
 }
-function deckRowHtml(it) {
+// lead and tail take the place of the count and the rate (the deck price page's buttons, impRowHtml())
+function deckRowHtml(it, lead = null, tail = null) {
   const { card, row } = it.info;
   const id = card ? card.id : (row ? row.id : null);
   const cost = (row && row.mana_cost) || (card && (card.mana_cost || (card.card_faces && card.card_faces[0] && card.card_faces[0].mana_cost))) || '';
@@ -10712,10 +10738,10 @@ function deckRowHtml(it) {
     : `<span class="dl-name">${label}</span>`;
   const rate = typeof it.pct !== 'number' ? ''
     : (it.avg !== undefined ? t('deck.more.rate', { v: it.pct, a: it.avg }) : t('deck.rate.short', { v: it.pct }));
-  return `<li class="dl-row${it.avg !== undefined ? ' more' : ''}"><span class="dl-count">${it.count || ''}</span>${nameHtml}`
+  return `<li class="dl-row${it.avg !== undefined ? ' more' : ''}${lead !== null ? ' imp-row' : ''}">${lead !== null ? lead : `<span class="dl-count">${it.count || ''}</span>`}${nameHtml}`
     + `<span class="dl-cost">${cost ? renderPips(cost.split(' // ')[0]) : ''}</span>`
     + `<span class="dl-yen"${it.yen ? ` title="${esc(t('deck.yen.title'))}"` : ''}>${it.yen ? esc(yenSmall(it.yen)) : ''}</span>`
-    + `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span></li>`;
+    + (tail !== null ? tail : `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span>`) + '</li>';
 }
 function deckSort(items, byType) {
   const order = it => DECK_GROUPS.indexOf(it.group);
@@ -10723,9 +10749,9 @@ function deckSort(items, byType) {
     || ((y.count || 0) - (x.count || 0)) || x.label.localeCompare(y.label, LANG === 'en' ? 'en' : 'ja'));
 }
 // Main deck: one block per card type. Sideboard: one block, in card-type order.
-function deckGroupsHtml(items, view, grouped, cardHtml = deckCardHtml) {
+function deckGroupsHtml(items, view, grouped, cardHtml = deckCardHtml, rowHtml = deckRowHtml) {
   const body = list => view === 'list'
-    ? `<ul class="dl">${list.map(deckRowHtml).join('')}</ul>`
+    ? `<ul class="dl">${list.map(it => rowHtml(it)).join('')}</ul>`
     : `<div class="deck-grid">${list.map(it => cardHtml(it)).join('')}</div>`;
   if (!grouped) return view === 'list' ? body(deckSort(items, true)) : `<div class="deck-flow">${body(deckSort(items, true))}</div>`;
   const sorted = deckSort(items, false);
@@ -10959,7 +10985,7 @@ function drawDeck() {
   html += `<section class="deck-section"><h2>${entry ? t('deck.main') : t('deck.keycards')}${entry ? `<span class="dg-n">${tn('deck.cards', total(main))}</span>` : ''}</h2>${deckGroupsHtml(main, view, true)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
   if (entry) html += deckCurveHtml(main);
-  if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(deckRowHtml).join('')}</ul></section>`;
+  if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(it => deckRowHtml(it)).join('')}</ul></section>`;
   html += deckTrendHtml(format, a);
   if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
   if (entry) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
@@ -11093,13 +11119,13 @@ function parseDeckText(text) {
   let part = 'main', named = false, typeHeads = false, cards = false, gap = false;
   String(text || '').replace(/^﻿/, '').split(/\r?\n/).slice(0, IMPORT_MAX_LINES).forEach((raw, i) => {
     let s = raw.normalize('NFKC').replace(/\s+/g, ' ').trim();
-    if (!s) { if (cards) gap = true; return; }
+    if (!s) { if (part === 'about') part = 'main'; else if (cards) gap = true; return; }   // "About / Name …" ends at a blank line
     let comment = false;
     if (/^(?:\/\/|#)/.test(s)) { s = s.replace(/^(?:\/\/|#)+\s*/, ''); comment = true; }
     if (!/^\d/.test(s)) {
       const head = s.replace(/\s*[:：]?\s*[(（]?\d+\s*(?:枚|cards?)?[)）]?$/i, '').replace(/\s*[:：]$/, '').trim();
       const hit = IMPORT_PARTS.find(([re]) => re.test(head));
-      if (hit) { part = hit[1]; named = true; gap = false; return; }
+      if (hit) { part = hit[1]; if (part !== 'about') named = true; gap = false; return; }
       if (IMPORT_TYPE_HEAD.test(head)) { typeHeads = true; gap = false; return; }
       if (part === 'about') {
         const m = /^(?:name|名前)\s+(.+)$/i.exec(s);
@@ -11266,6 +11292,28 @@ function lineWithPrint(raw, s, cn) {
   return `${str} (${String(s).toUpperCase()}) ${cn}${foil}${tail}`;
 }
 
+// the list's name, written as MTG Arena writes it: "About" and "Name …" at the top (owner's request
+// 2026-10-17: the name box above the list). An empty name takes the lines out again.
+function textWithName(text, name) {
+  name = String(name || '').replace(/\s+/g, ' ').trim().slice(0, IMPORT_NAME_MAX);
+  const lines = String(text || '').split(/\r?\n/);
+  let a = -1, n = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const s = lines[i].normalize('NFKC').trim();
+    if (a < 0) { if (/^(?:about|情報)\s*[:：]?$/i.test(s)) a = i; continue; }
+    if (!s) break;
+    if (/^(?:name|名前)\s/i.test(s)) { n = i; break; }
+  }
+  if (n >= 0 && name) lines[n] = `Name ${name}`;
+  else if (n >= 0) {
+    lines.splice(n, 1);
+    // nothing else under "About": it goes too, with the blank line after it
+    if (!(lines[a + 1] || '').trim()) lines.splice(a, lines[a + 1] === undefined ? 1 : 2);
+  } else if (a >= 0 && name) lines.splice(a + 1, 0, `Name ${name}`);
+  else if (name) lines.unshift('About', `Name ${name}`, '');
+  return lines.join('\n');
+}
+const IMPORT_NAME_MAX = 60;
 const importState = {
   which: 'deck',       // the list shown: 'deck' (?view=import) or 'want' (?view=want)
   token: 0, result: null, tried: false, copied: null, note: null,
@@ -11408,22 +11456,32 @@ function importShareUrl() {
   const res = importState.result;
   if (!res) return '';
   // the cards found, in English (short and the same in both languages), and the lines not found as typed
-  let text = importListText(res, 'arena');
+  let text = (res.title ? `About\nName ${res.title}\n\n` : '') + importListText(res, 'arena');
   const rest = res.missing.map(l => `${l.count} ${l.name}`);
   if (rest.length) text = text.replace(/\n$/, '') + '\n' + rest.join('\n') + '\n';
   return `${location.origin}${location.pathname}?view=import&list=${encodeURIComponent(text.trim())}`;
 }
 // the picture view's card: − n ＋ and the art button under it (owner's request 2026-10-17)
 function impCardHtml(it) {
+  return `<div class="imp-card">${deckCardHtml(it)}<div class="imp-act">${impStepHtml(it)}${impArtHtml(it)}</div></div>`;
+}
+const PEN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
+function impStepHtml(it) {
   const a = ` data-ip="${it.part}" data-in="${esc(it.name)}"`;
   const less = t(it.count > 1 ? 'want.less' : 'want.remove');
-  const art = it.info.row && it.info.row.oracle_id
-    ? `<button type="button" class="imp-art" data-imp-act="art"${a} aria-haspopup="dialog" aria-label="${esc(t('pick.btn.aria', { name: it.label }))}" title="${esc(t('pick.btn'))}">${ART_SVG}</button>` : '';
-  return `<div class="imp-card">${deckCardHtml(it)}<div class="imp-act">`
-    + `<span class="want-step" role="group" aria-label="${esc(t('imp.n.aria', { name: it.label }))}">`
+  return `<span class="want-step" role="group" aria-label="${esc(t('imp.n.aria', { name: it.label }))}">`
     + `<button type="button" data-imp-act="less"${a} aria-label="${esc(less)}" title="${esc(less)}">−</button>`
     + `<span class="want-c">${esc(t('want.n', { n: it.count }))}</span>`
-    + `<button type="button" data-imp-act="more"${a} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>${art}</div></div>`;
+    + `<button type="button" data-imp-act="more"${a} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>`;
+}
+function impArtHtml(it) {
+  return it.info.row && it.info.row.oracle_id
+    ? `<button type="button" class="imp-art" data-imp-act="art" data-ip="${it.part}" data-in="${esc(it.name)}" aria-haspopup="dialog" aria-label="${esc(t('pick.btn.aria', { name: it.label }))}" title="${esc(t('pick.btn'))}">${ART_SVG}</button>`
+    : '<span class="imp-art-none"></span>';
+}
+// the list view's row: the same − n ＋ and art button, in place of the count (owner's request 2026-10-17)
+function impRowHtml(it) {
+  return deckRowHtml(it, impStepHtml(it), impArtHtml(it));
 }
 function impActSel(act, part, name) {
   return `[data-imp-act="${act}"][data-ip="${part}"][data-in="${CSS.escape(name || '')}"]`;
@@ -11436,7 +11494,12 @@ function drawImport() {
   const res = importState.result;
   const body = document.getElementById('importBody');
   if (!res) return;
-  if (!res.lines) { body.innerHTML = `<div class="status-line"><span class="serif">${t('imp.nocards')}</span>${t('imp.nocards.body')}</div>`; return; }
+  if (!res.lines) {
+    // a want list with only its name left (every card taken out) is an empty want list
+    body.innerHTML = res.title && importState.which === 'want' ? importEmptyHtml()
+      : `<div class="status-line"><span class="serif">${t('imp.nocards')}</span>${t('imp.nocards.body')}</div>`;
+    return;
+  }
   const view = importState.view;
   const names = [...new Set(res.commander.concat(res.main, res.side).map(x => x.name))];
   const infos = new Map();
@@ -11483,13 +11546,18 @@ function drawImport() {
         <p class="deck-export-note">${t('deck.export.note')} ${t('want.note.print')}</p>
       </div></details>` : '';
   const note = importState.note && Date.now() < importState.note.until ? `<p class="imp-buy-note" role="status">${esc(importState.note.text)}</p>` : '';
-  let html = `<div class="deck-head">
+  const meta = facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>');
+  // the name is a box to type in (owner's request 2026-10-17); empty, it shows the usual name
+  const head = `<div class="deck-head">
       <div class="deck-title-row">
-        <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t(importState.which === 'want' ? 'want.title' : 'imp.untitled'))}</span></h2>
+        <h2 class="deck-title imp-deck-title"><span class="pips">${pips}</span><label class="imp-name" title="${esc(t('imp.name.title'))}"><input id="impName" type="text" value="${esc(res.title)}"
+          placeholder="${esc(t(importState.which === 'want' ? 'want.title' : 'imp.untitled'))}" maxlength="${IMPORT_NAME_MAX}" autocomplete="off" spellcheck="false" enterkeyhint="done"
+          aria-label="${esc(t('imp.name.aria'))}">${PEN_SVG}</label></h2>
       </div>
-      <p class="deck-meta">${facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>')}</p>
-      ${note}
+      <p class="deck-meta">${meta}</p>
+      <div class="imp-note">${note}</div>
     </div>`;
+  let html = '';
   // the price, リスト / 画像, Hareruya and export in one bar that stays in view (owner's request 2026-10-16)
   if (found) {
     html += `<div class="want-bar">
@@ -11498,16 +11566,25 @@ function drawImport() {
     </div>`;
   }
   html += importMissingHtml(res.missing);
-  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false, impCardHtml)}</section>`;
-  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml)}</section>`;
-  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml)}</section>`;
+  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false, impCardHtml, impRowHtml)}</section>`;
+  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml, impRowHtml)}</section>`;
+  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml, impRowHtml)}</section>`;
   if (main.length) html += deckCurveHtml(cmd.concat(main));
   if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('importExport') || {}).open;
   // a − / ＋ / art button keeps the focus through the redraw
   const fa = document.activeElement;
   const keep = fa && body.contains(fa) && fa.dataset.impAct ? impActSel(fa.dataset.impAct, fa.dataset.ip, fa.dataset.in) : '';
-  body.innerHTML = html;
+  const oldHead = fa && fa.id === 'impName' && body.contains(fa) ? fa.closest('.deck-head') : null;
+  if (oldHead) {
+    // typing a name: its box stays as it is (the keyboard and Japanese input go on), the rest is drawn again
+    oldHead.querySelector('.pips').innerHTML = pips;
+    oldHead.querySelector('.deck-meta').innerHTML = meta;
+    oldHead.querySelector('.imp-note').innerHTML = note;
+    while (oldHead.nextSibling) oldHead.nextSibling.remove();
+    while (oldHead.previousSibling) oldHead.previousSibling.remove();
+    oldHead.insertAdjacentHTML('afterend', html);
+  } else body.innerHTML = head + html;
   if (keep) { const f = body.querySelector(keep); if (f) f.focus({ preventScroll: true }); }
   if (exportOpen && document.getElementById('importExport')) { document.getElementById('importExport').open = true; fitExportMenu(document.getElementById('importExport')); }
   const copied = importState.copied;
@@ -11532,6 +11609,22 @@ document.getElementById('importText').addEventListener('input', (e) => {
   importTimer = setTimeout(priceImport, 350);
 });
 document.getElementById('importForm').addEventListener('submit', (e) => e.preventDefault());
+// the name box: the list's text gets the name at once; priced again (so line numbers follow) a moment later
+let importNameTimer = null;
+function importNameTyped(el) {
+  const which = importState.which;
+  setList(which, textWithName(lists[which], el.value), 'name');
+  if (importState.result) importState.result.title = el.value.replace(/\s+/g, ' ').trim().slice(0, IMPORT_NAME_MAX);
+  clearTimeout(importNameTimer);
+  importNameTimer = setTimeout(priceImport, 600);
+}
+const importBodyEl = document.getElementById('importBody');
+importBodyEl.addEventListener('input', (e) => { if (e.target.id === 'impName' && !e.isComposing) importNameTyped(e.target); });
+importBodyEl.addEventListener('compositionend', (e) => { if (e.target.id === 'impName') importNameTyped(e.target); });
+importBodyEl.addEventListener('keydown', (e) => {
+  if (e.target.id !== 'impName' || e.isComposing || e.keyCode === 229) return;
+  if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+});
 document.getElementById('importClear').addEventListener('click', () => {
   const which = importState.which, before = lists[which];
   setList(which, '', 'box');
@@ -11792,8 +11885,12 @@ function withLineAdded(text, line) {
   const parsed = parseDeckText(text);
   const mains = parsed.lines.filter(l => l.part === 'main');
   if (mains.length) lines.splice(mains[mains.length - 1].i + 1, 0, line);
-  else if (parsed.lines.length) lines.unshift(line);
-  else { while (lines.length && !lines[lines.length - 1].trim()) lines.pop(); lines.push(line, ''); }
+  else if (parsed.lines.length) lines.splice(parsed.lines[0].i, 0, line);
+  else {
+    while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+    // only a name so far ("About / Name …"): a blank line after it, so the card isn't read as part of it
+    lines.push(...(parsed.title ? ['', line, ''] : [line, '']));
+  }
   return lines.join('\n');
 }
 // the same line with another count, written the way it was ("4 稲妻", "4x Bolt", "Bolt x4", "SB: 2 …")
@@ -11829,7 +11926,7 @@ function wantData() {
     x.lines.push({ i: l.i, count: l.count });
     if (!x.s && l.s) { x.s = l.s; x.cn = l.cn; }
   });
-  wantMemo = { key, list, byKey, byName, total, missing };
+  wantMemo = { key, list, byKey, byName, total, missing, title: parsed.title };
   return wantMemo;
 }
 // what a ☆ carries: the card's key, English name and printing
@@ -12057,7 +12154,7 @@ function drawTray() {
   }
   const armed = Date.now() < trayState.armed;
   tray.innerHTML = `<div class="wt-head">
-      <h2 class="wt-h" id="wantTrayH">${STAR_SVG}<span>${esc(t('want.title'))}</span></h2>
+      <h2 class="wt-h" id="wantTrayH">${STAR_SVG}<span>${esc(d.title || t('want.title'))}</span></h2>
       <button type="button" class="wt-close" aria-label="${esc(t('tray.close'))}" title="${esc(t('tray.close'))}">×</button>
     </div>
     <div class="wt-sub"><span class="wt-count">${d.total ? `<b>${esc(tn('want.f.cards', d.total))}</b>` : ''}${d.list.length ? ` <span class="sep">·</span> ${esc(t('want.f.kinds', { n: fmtNum(d.list.length) }))}` : ''}</span>${d.list.length ? toggle : ''}</div>
