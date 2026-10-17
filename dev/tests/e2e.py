@@ -1320,10 +1320,11 @@ with sync_playwright() as p:
           and "MTGJSON" in page.locator("#priceNotes").inner_text() and "2026/10/9" in page.locator("#priceNotes").inner_text(), (shop_rows(), page.locator("#priceNotes").inner_text()))
     page.goto(SITE + "?card=bolt-en-m10"); wait_market("eu"); page.wait_for_timeout(500)
     check("card prices: no euro price at all -> says so", "この版の価格情報はありません" in psec.inner_text() and psec.locator(".shop-prices").count() == 0, psec.inner_text())
-    # Japan: work in progress
+    # Japan: ENNDAL GAMES has no copies of this printing -> one notice, nothing else
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
     check("card prices: Japan tab - one notice for prices and listings, nothing else", psec.locator(".jp-notice .wip-badge").inner_text() == "準備中"
-          and "日本のショップの価格と在庫" in psec.inner_text() and page.locator("#offersBox").is_hidden() and psec.locator(".shop-prices").count() == 0 and psec.locator(".price-sub").count() == 0, psec.inner_text())
+          and "ENNDAL GAMES にこの版の在庫はありませんでした" in psec.inner_text() and page.locator("#offersBox").is_hidden() and psec.locator(".shop-prices").count() == 0
+          and psec.locator(".price-sub").count() == 0 and psec.locator("#jpOffers").count() == 0, psec.inner_text())
     page.goto(SITE + "?card=rag-en-mh2"); wait_market("jp")
     page.wait_for_function("document.getElementById('priceHistory') && !document.getElementById('priceHistory').hidden && document.querySelector('#priceHistory .hist-note')")
     check("card prices: Japan tab - the chart says Japanese history is on the way", "日本の価格の推移は準備中" in page.locator("#priceHistory").inner_text()
@@ -1347,7 +1348,9 @@ with sync_playwright() as p:
           and shop_rows() == [["TCGplayer lowest listing", "$37.50", "$55.00"], ["Card Kingdom selling", "$44.99", "$69.99"], ["Cardsphere", "$39.50", "—"], ["Card Kingdom buying", "$30.00", "$45.00"]]
           and psec.locator(".sp-h").all_inner_texts() == ["Shop", "Non-foil", "Foil"] and "€1 = ¥160.00" in psec.inner_text(), (shop_rows(), psec.inner_text()))
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
-    check("card prices in English: Japan - coming soon, as shops give permission", "Coming soon" in psec.inner_text() and "permission" in psec.inner_text(), psec.inner_text())
+    page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
+    check("card prices in English: Japan - ENNDAL GAMES' stock, more shops as they give permission", "Stock and prices at Japanese shops" in psec.inner_text()
+          and "permission" in psec.inner_text() and psec.locator("#jpOffers .of-lang").all_inner_texts() == ["Japanese", "Japanese", "English"], psec.inner_text())
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
     page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
@@ -2221,8 +2224,8 @@ with sync_playwright() as p:
     if SHOTS: page.locator("#cardViewCard .cp-info").screenshot(path="offers_eu_box.png")
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
     page.wait_for_selector("#offersBox[data-market=jp]", state="attached")
-    check("listings: Japan tab - no listings column (the price notice covers both)", ob.is_hidden() and ob.locator(".of-row").count() == 0
-          and "在庫" in page.locator("#cardViewCard .jp-notice").inner_text())
+    check("listings: Japan tab - no listings column (the Japanese shops' stock is in the price column)", ob.is_hidden() and ob.locator(".of-row").count() == 0
+          and page.locator("#jpOffers .of-row:not(.of-h)").count() > 0)
     if SHOTS: page.locator("#cardViewCard .cp-info").screenshot(path="offers_jp_box.png")
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
     page.wait_for_selector("#offersBox[data-market=us] .of-row:not(.of-h)")
@@ -2570,7 +2573,7 @@ with sync_playwright() as p:
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); page.wait_for_function("document.querySelector('#cardViewCard .cp-market').dataset.market === 'jp'")
     g = jp()
     check("English: English names first, the Japanese name in grey", g[0] == ["Hareruya", "晴れる屋"] and ["Single Star", "シングルスター"] in g and ["Tokyo MTG", ""] in g
-          and "Japanese shop prices and stock" in page.locator("#cardViewCard .jp-notice").inner_text() and page.locator("#cardViewCard .jp-dir-head").inner_text().startswith("Find it in shops"), g)
+          and "ENNDAL GAMES has no copies of this printing" in page.locator("#cardViewCard .jp-notice").inner_text() and page.locator("#cardViewCard .jp-dir-head").inner_text().startswith("Find it in shops"), g)
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     check("English phone: 'Load more (11 more)'", page.locator("#cardViewCard .jp-dir-more").inner_text() == "Load more (11 more)")
     page.set_viewport_size({"width": 1280, "height": 900})
@@ -3819,7 +3822,62 @@ with sync_playwright() as p:
           sum(1 for c in calls[n0:] if c.endswith("/printings.json.gz")))
     PRINTINGS_MODE["file"] = False
 
-    # ---- 46. after the database check (2026-10-17): printing words as players write them, set names in part,
+    # ---- 46. Japanese shop stock on the JP tab: ENNDAL GAMES, in yen, by language and condition ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("localStorage.clear()")
+    JP_JS = """[...document.querySelectorAll('#jpOffers .of-row:not(.of-h)')].map(r => [
+        (r.querySelector('.of-shop a') || r.querySelector('.of-shop')).textContent.replace(' ↗', '').trim(),
+        r.querySelector('.of-lang').textContent, r.querySelector('.of-cond').textContent,
+        r.querySelector('.of-price').textContent, r.querySelector('.of-stock').textContent])"""
+    jp_rows = lambda: page.evaluate(JP_JS)
+    jpo = page.locator("#jpOffers")
+    page.goto(SITE + "?card=rag-ja-mh2"); page.wait_for_selector("#cardViewCard .price-tabs")
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
+    page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
+    check("JP stock: a Japanese printing shows its card's ENNDAL GAMES copies, cheapest first, in yen with language and stock",
+          jp_rows() == [["ENNDAL GAMES", "日本語", "EX", "¥5,980", "1点"], ["ENNDAL GAMES", "日本語", "NM", "¥6,980", "2点"], ["ENNDAL GAMES", "英語", "NM", "¥7,480", "3点"]], jp_rows())
+    check("JP stock: heading, columns, the cheapest marked, no 'coming soon' notice", jpo.locator(".offers-title").inner_text().replace("\n", "") == "日本のショップの在庫と価格日本・安い順"
+          and jpo.locator(".of-h > span").all_inner_texts() == ["ショップ", "状態", "価格", "在庫"] and jpo.locator(".of-row.best .of-price").inner_text() == "¥5,980"
+          and psec.locator(".jp-notice").count() == 0 and "許可をいただいたショップから順に追加" in jpo.inner_text(), jpo.inner_text())
+    check("JP stock: the shop name opens the product at ENNDAL GAMES, in a new tab",
+          jpo.locator(".of-shop a").first.get_attribute("href") == "https://www.enndalgames.com/%28MH2-MR%29Ragavan%2C+Nimble+Pilferer%2F%E6%95%8F%E6%8D%B7%E3%81%AA%E3%81%8B%E3%81%99%E3%82%81%E5%8F%96%E3%82%8A%E3%80%81%E3%83%A9%E3%82%AC%E3%83%B4%E3%82%A1%E3%83%B3/product/MH2-MR-0138-JP-NM-normal/"
+          and jpo.locator(".of-shop a").first.get_attribute("target") == "_blank", jpo.locator(".of-shop a").first.get_attribute("href"))
+    check("JP stock: no US or European listings column, and the Japanese shop list stays below", page.locator("#offersBox").is_hidden()
+          and page.locator("#cardViewCard .jp-dir").is_visible() and page.locator("#cardViewCard .jp-dir").bounding_box()["y"] > jpo.bounding_box()["y"])
+    notes = page.locator("#priceNotes").inner_text()
+    check("JP stock: the notes say where it's from and when (the night, Japan time), and the conditions", "ENNDAL GAMES の在庫（2026/10/9 2時ごろ）" in notes
+          and "NM＝ほぼ新品、EX＝軽い傷" in notes, notes)
+    if SHOTS: page.locator("#cardViewCard .cp-market").screenshot(path="jp_stock.png")
+    page.click("#jpOffers #offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'true'")
+    check("JP stock: the foil switch shows the foil copy and its own product link", jp_rows() == [["ENNDAL GAMES", "日本語", "NM", "¥12,800", "1点"]]
+          and jpo.locator(".of-shop a").first.get_attribute("href").endswith("/product/MH2-MR-0138-JP-NM-foil/"), jp_rows())
+    page.click("#jpOffers #offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'false'")
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
+    page.wait_for_selector("#offersBox[data-market=us] .of-row:not(.of-h)")
+    check("JP stock: the US tab's listings leave ENNDAL GAMES out, and its foil switch still works",
+          "ENNDAL" not in page.locator("#offersBox").inner_text() and page.locator("#cardViewCard .price-section #jpOffers").count() == 0)
+    page.click("#offersBox #offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'true'")
+    page.click("#offersBox #offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'false'")
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
+    page.goto(SITE + "?card=saga-en"); wait_market("jp"); page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
+    check("JP stock: an English-only offer is labelled 英語; a printing with no foil copies opens on non-foil", jp_rows() == [["ENNDAL GAMES", "英語", "NM", "¥4,280", "5点"]]
+          and page.get_attribute("#offerFoil", "aria-checked") == "false", jp_rows())
+    page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
+    page.goto(SITE + "?card=rag-en-mh2"); wait_market("jp"); page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
+    rb = [r.bounding_box() for r in page.locator("#jpOffers .of-row:not(.of-h)").all()]
+    check("JP stock on a phone: every row fits, no sideways scrolling", no_hscroll() and all(b["x"] >= 0 and b["x"] + b["width"] <= 390 for b in rb) and len(rb) == 3, rb)
+    if SHOTS: page.locator("#cardViewCard .cp-market").screenshot(path="jp_stock_phone.png")
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
+    check("JP stock in English: labels, and the night in Japan time", jp_rows()[0] == ["ENNDAL GAMES", "Japanese", "EX", "¥5,980", "1"]
+          and "ENNDAL GAMES’ stock (as of 2:00 on 2026-10-09, Japan time)" in page.locator("#priceNotes").inner_text(), (jp_rows(), page.locator("#priceNotes").inner_text()))
+    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
+    page.evaluate("localStorage.clear()")
+
+    # ---- 47. after the database check (2026-10-17): printing words as players write them, set names in part,
     # reminder text, English "Japanese" texts, English pages on English printings, ordinals ----
     DB_MODE["variant"] = "prints"
     home()

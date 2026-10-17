@@ -1,8 +1,8 @@
 """Price data for the end-to-end test, made by running the real builder
 (build_prices.py v4) over 45 simulated days, with euro prices and, on the
 last day, MTGJSON's shop prices for a few printings and the shops' offers
-(Card Kingdom, Mana Pool) by condition with stock."""
-import json, lzma, os, subprocess, sys, tempfile
+(Card Kingdom, Mana Pool) by condition with stock, and ENNDAL GAMES' stock in yen."""
+import gzip, json, lzma, os, subprocess, sys, tempfile
 from datetime import date as _date, timedelta as _td
 
 # the price and combo builders come from the warujie-prices repository (a clone next to this one,
@@ -97,6 +97,20 @@ def cardtrader_files(folder):
                                                                    p(3, 1000, 5, "Near Mint", "en", False, "US")]})
     A("marketplace_products_expansion_id-70_foil-true", {"701": [p(4, 5000, 1, "Mint", "en", True, "ES")]})
 
+def enndal_files(folder):
+    """A night's ENNDAL GAMES data (as shop_enndal.py saves it): Ragavan in
+    Japanese and English, non-foil and foil; Urza's Saga in English only; a
+    product in a set we don't have (matches nothing)."""
+    R = "%28MH2-MR%29Ragavan%2C+Nimble+Pilferer%2F%E6%95%8F%E6%8D%B7%E3%81%AA%E3%81%8B%E3%81%99%E3%82%81%E5%8F%96%E3%82%8A%E3%80%81%E3%83%A9%E3%82%AC%E3%83%B4%E3%82%A1%E3%83%B3/product/MH2-MR-0138-JP-NM-{}/"
+    S = "%28MH2-RL%29Urza%27s+Saga%2F%E3%82%A6%E3%83%AB%E3%82%B6%E3%81%AE%E3%82%B5%E3%83%BC%E3%82%AC/product/MH2-RL-0259-JP-NM-normal/"
+    data = {"version": 1, "updated": "2026-10-08T17:40:00Z", "read_tonight": 1, "sets": 1, "cats": {"1537": {"name": "モダンホライゾン2", "read": "2026-10-08T17:40:00Z", "p": [
+        ["mh2", "138", "normal", R.format("normal"), [["JA", "NM", 6980, 2], ["JA", "EX", 5980, 1], ["EN", "NM", 7480, 3]]],
+        ["mh2", "138", "foil", R.format("foil"), [["JA", "NM", 12800, 1]]],
+        ["mh2", "259", "normal", S, [["EN", "NM", 4280, 5]]],
+        ["zzz", "1", "normal", "%28ZZZ-CR%29Nothing%2F%E7%84%A1/product/ZZZ-CR-0001-JP-NM-normal/", [["JA", "NM", 50, 9]]]]}}}
+    with gzip.open(os.path.join(folder, "enndal.json.gz"), "wt", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+
 def build_prices(cards, days, name, tmp, quotes=True):
     prev = ""
     for n in range(days):
@@ -111,9 +125,11 @@ def build_prices(cards, days, name, tmp, quotes=True):
             lows_files(tmp)
             offers_files(tmp)
             cardtrader_files(tmp)
+            enndal_files(tmp)
             extra = ["--mtgjson-today", os.path.join(tmp, "AllPricesToday.json.xz"), "--mtgjson-ids", os.path.join(tmp, "AllIdentifiers.json.xz"),
                      "--tcgcsv", os.path.join(tmp, "tcgcsv"), "--cardmarket-guide", os.path.join(tmp, "guide.json"),
-                     "--ck-pricelist", os.path.join(tmp, "ck.json"), "--manapool-variants", os.path.join(tmp, "mp.json"), "--cardtrader", os.path.join(tmp, "ct")]
+                     "--ck-pricelist", os.path.join(tmp, "ck.json"), "--manapool-variants", os.path.join(tmp, "mp.json"), "--cardtrader", os.path.join(tmp, "ct"),
+                     "--enndal", os.path.join(tmp, "enndal.json.gz")]
         r = subprocess.run([sys.executable, BUILDER, "--out", out, "--previous", prev, "--bulk", bulk, "--date", day.isoformat(),
                             "--min-cards", "1", "--backfill", "never", *extra] + (["--allow-fresh"] if n == 0 else []), capture_output=True, text=True)
         if r.returncode:
