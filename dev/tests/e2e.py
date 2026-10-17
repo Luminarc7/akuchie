@@ -4299,6 +4299,10 @@ with sync_playwright() as p:
     check("printing prices: the total adds them up, and says which lines count how",
           total() == total_txt(2 * 9000 + bolt_cheap + 6150) and page.locator("#importBody .want-bar .dcst-v").first.get_attribute("title") == "選んだ版はその版で、ほかはいちばん安い版で・サイドボード込み"
           and "版を指定した行" in page.locator("#importBody .deck-cost-note").inner_text() and "*F* の行はフォイルの価格" in page.locator("#importBody .deck-cost-note").inner_text(), total())
+    page.click("#curBtn [aria-pressed=false]")
+    page.wait_for_function("document.querySelector('#importBody .want-bar .dcst-v') && document.querySelector('#importBody .want-bar .dcst-v').textContent.includes('$')")
+    check("printing prices: with $ chosen, a printing's price shows in dollars (the *F* line: MH2 #138's US foil price, $60.00)", rowyen(RAG_N)[0] == "$60.00", rowyen(RAG_N))
+    page.click("#curBtn [aria-pressed=false]"); page.wait_for_function("document.querySelector('#importBody .want-bar .dcst-v').textContent.includes('¥')")
     unit = page.evaluate("""() => {
       const r = [];
       r.push(parseDeckText('1 Ragavan, Nimble Pilferer (MH2) 138 *F*\\n1 Ragavan, Nimble Pilferer (MH2) 138 *E*\\n1 Ragavan, Nimble Pilferer (MH2) 138\\n1 Bolt *F*').lines.map(l => l.f).join());
