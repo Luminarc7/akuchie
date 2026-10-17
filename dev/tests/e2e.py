@@ -3273,7 +3273,11 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importText")
     page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
     check("deck price page: opens with an empty box and help on what it reads", page.locator(".imp-empty").count() == 1 and page.locator("#importSample").count() == 1
-          and page.title().startswith("ウォントリスト・デッキの価格") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
+          and page.title().startswith("デッキの価格を調べる") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
+    check("deck price page: a switch at the top between the want list and the pasted deck, on デッキの価格",
+          page.locator("#impWhich a").all_inner_texts() == ["ウォントリスト", "デッキの価格"] and page.locator("#impWhich a[aria-current=page]").inner_text() == "デッキの価格"
+          and page.locator("#impWhich a").first.get_attribute("href") == "?view=want" and page.locator(".imp-title").inner_text() == "デッキの価格を調べる"
+          and page.locator("#impLabel").inner_text() == "デッキリスト", page.locator("#impWhich").inner_text())
     parsed = page.evaluate("""(() => { const P = s => parseDeckText(s).lines.map(l => [l.count, l.name, l.part]);
       return {
         arena: (() => { const r = parseDeckText('About\\nName Gruul Smash\\n\\nCommander\\n1 Ragavan, Nimble Pilferer\\n\\nCompanion\\n1 Qasali Pridemage\\n\\nDeck\\n4 Lightning Bolt (M10) 146\\n2 Shivan Dragon (M10) 156 *F*\\n\\nSideboard\\n1 Qasali Pridemage\\n3 Llanowar Elves'); return [r.title, r.lines.map(l => [l.count, l.name, l.part])]; })(),
@@ -3421,8 +3425,9 @@ with sync_playwright() as p:
     page.click("#deckExport summary")
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-cost")
     page.click("#langBtn"); page.wait_for_timeout(400)
-    check("deck price page in English", page.locator(".imp-title").inner_text() == "Want list & deck prices" and "Main deck" in page.locator("#importBody").inner_text()
-          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Want list & deck prices"), page.locator("#importBody").inner_text()[:200])
+    check("deck price page in English", page.locator(".imp-title").inner_text() == "Price a deck list" and "Main deck" in page.locator("#importBody").inner_text()
+          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list")
+          and page.locator("#impWhich a").all_inner_texts() == ["Want list", "Deck prices"], page.locator("#importBody").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says pasted deck lists stay in the browser", "貼り付けたデッキリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
@@ -3556,16 +3561,20 @@ with sync_playwright() as p:
     check("lite mode: no box links on set pages", not page.locator("#setShop").is_visible())
     page.evaluate("localStorage.removeItem('akuchie-lite')")
 
-    # ---- 43. the want list: ☆ on results and card pages, the tray, one list with the deck price page ----
+    # ---- 43. the want list: ☆ on results and card pages, the tray, its own list on the deck price page ----
     PRICE_SITE["dir"] = PRICES_FULL
     DB_MODE.update({"present": True, "extra": False, "search": False, "variant": None})
     page.set_viewport_size({"width": 1280, "height": 900})
     home()
-    page.evaluate("['warujie-want', 'warujie-deck-import', 'warujie-want-view', 'akuchie-view', 'akuchie-lite', 'akuchie-lang', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))"); home()
-    listtext = lambda: page.evaluate("localStorage.getItem('warujie-deck-import')")
+    page.evaluate("['warujie-want', 'warujie-want-list', 'warujie-want-view', 'akuchie-view', 'akuchie-lite', 'akuchie-lang', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+    # a deck pasted before (the live site's deck price page) stays the deck: the want list starts empty
+    page.evaluate("localStorage.setItem('warujie-deck-import', '2 Shivan Dragon\\n')"); home()
+    listtext = lambda: page.evaluate("localStorage.getItem('warujie-want-list')")
+    decktext = lambda: page.evaluate("localStorage.getItem('warujie-deck-import')")
     check("want list: a ☆ button in the top bar that opens a tray, with no count while the list is empty",
           page.locator("#wantBtn").is_visible() and page.evaluate("document.getElementById('wantBtn').tagName") == "BUTTON"
           and page.locator("#wantBtn").get_attribute("aria-expanded") == "false" and not page.locator("#wantN").is_visible())
+    check("want list: a deck pasted on the deck price page before is not in it", decktext() == "2 Shivan Dragon\n" and listtext() is None, decktext())
     top_search("稲妻"); page.wait_for_selector("#cardGrid .card-tile .want-tog")
     tog = page.locator("#cardGrid .card-tile[data-id='bolt-ja-m10'] .want-tog, #cardGrid .card-tile .want-tog").first
     check("want list: every search result has a ☆, not pressed yet", tog.get_attribute("aria-pressed") == "false" and tog.get_attribute("aria-label") == "ウォントリストに追加")
@@ -3573,12 +3582,12 @@ with sync_playwright() as p:
     tog.click(); page.wait_for_timeout(200)
     check("want list: the ☆ adds a line to the list (English name and printing) without opening the card, and the top bar counts it",
           page.url == url_before and tog.get_attribute("aria-pressed") == "true" and page.locator("#wantN").inner_text() == "1"
-          and listtext() == "1 Lightning Bolt (M10) 146\n", listtext())
+          and listtext() == "1 Lightning Bolt (M10) 146\n" and decktext() == "2 Shivan Dragon\n", listtext())
     check("want list: a note says it was added, with a button to see the list", "ウォントリストに追加しました" in page.locator("#wantToast").inner_text()
           and page.locator("#wantToast button").inner_text() == "リストを見る")
     tog.click(); page.wait_for_timeout(200)
     check("want list: pressing ☆ again takes it out, and offers undo", tog.get_attribute("aria-pressed") == "false" and not page.locator("#wantN").is_visible()
-          and page.evaluate("localStorage.getItem('warujie-deck-import')") is None and page.locator("#wantToast button").inner_text() == "元に戻す")
+          and listtext() is None and decktext() == "2 Shivan Dragon\n" and page.locator("#wantToast button").inner_text() == "元に戻す")
     page.click("#wantToast button"); page.wait_for_timeout(200)
     check("want list: undo puts it back", tog.get_attribute("aria-pressed") == "true" and page.locator("#wantN").inner_text() == "1" and listtext() == "1 Lightning Bolt (M10) 146\n")
     page.click("#viewToggle [data-view=text]"); page.wait_for_selector("#cardGrid .text-row .want-tog")
@@ -3593,16 +3602,20 @@ with sync_playwright() as p:
     star.click(); page.wait_for_timeout(200)
     check("want list: the card page's ☆ adds the card after the others", star.get_attribute("aria-pressed") == "true" and page.locator("#wantN").inner_text() == "2"
           and listtext() == "1 Lightning Bolt (M10) 146\n1 Ragavan, Nimble Pilferer (MH2) 138\n", listtext())
-    art, box = page.locator("#cardViewCard .cp-art img").first.bounding_box(), page.locator("#cpWant").bounding_box()
-    check("want list: on the card page it is a row of its own under the picture",
-          page.evaluate("document.querySelector('.cp-art').contains(document.getElementById('cpWant'))") and box["y"] > art["y"] + art["height"], (art, box))
+    page.wait_for_selector("#printSlot .print-lang")
+    art, box, langs = page.locator("#cardViewCard .cp-art img").first.bounding_box(), page.locator("#cpWant").bounding_box(), page.locator("#printSlot .print-langs").bounding_box()
+    check("want list: on the card page it is a row of its own between the picture and the language buttons",
+          page.evaluate("document.querySelector('.cp-art').contains(document.getElementById('cpWant'))") and box["y"] > art["y"] + art["height"]
+          and langs["y"] >= box["y"] + box["height"], (art, box, langs))
     sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
         l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 28]; })()""")
     check("want list: on the card page the ☆ row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(250)
     sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
         l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 26]; })()""")
-    check("phone, card page: the ☆ row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
+    order = page.evaluate("(() => { const a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(), w = document.getElementById('cpWant').getBoundingClientRect(), l = document.querySelector('#printSlot .print-langs').getBoundingClientRect(); return [a.bottom, w.top, w.bottom, l.top]; })()")
+    check("phone, card page: the ☆ row is as wide as the picture and as tall as the language buttons, between the two",
+          abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5 and order == sorted(order), [sz, order])
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
     star.click(); page.wait_for_timeout(200)
     check("want list: the card page's ☆ again takes the card out, with undo", star.get_attribute("aria-pressed") == "false" and page.locator("#wantN").inner_text() == "1"
@@ -3666,11 +3679,13 @@ with sync_playwright() as p:
     check("phone, tray: the whole width of the screen, no sideways scroll", abs(tb["width"] - 390) < 2 and tb["x"] < 1 and no_hscroll(), tb)
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
 
-    # the deck price page is the same list
+    # the deck price page shows the want list on ?view=want
     tray.locator(".wt-go").click(); page.wait_for_selector("#importBody .want-bar .dcst-v")
-    check("tray: 価格を見る・書き出す opens the deck price page with the same list, and closes the tray",
-          "view=import" in page.url and not tray.is_visible() and page.input_value("#importText") == "1 Lightning Bolt (M10) 146\n2 Ragavan, Nimble Pilferer (MH2) 138\n"
-          and page.locator(".imp-deck-title").inner_text().strip() == "ウォントリスト" and page.locator(".imp-title").inner_text() == "ウォントリスト・デッキの価格",
+    check("tray: 価格を見る・書き出す opens the want list on the deck price page, and closes the tray",
+          page.url.endswith("?view=want") and not tray.is_visible() and page.input_value("#importText") == "1 Lightning Bolt (M10) 146\n2 Ragavan, Nimble Pilferer (MH2) 138\n"
+          and page.locator(".imp-deck-title").inner_text().strip() == "ウォントリスト" and page.locator(".imp-title").inner_text() == "ウォントリスト"
+          and page.locator("#impWhich a[aria-current=page]").inner_text() == "ウォントリスト" and page.title().startswith("ウォントリスト — ")
+          and page.locator("#tabPrices").get_attribute("aria-selected") == "true",
           page.input_value("#importText"))
     check("deck price page: its total is the cheapest printings', as on deck pages",
           page.locator("#importBody .want-bar .dcst-v").first.inner_text() == page.evaluate("costText(deckCost([[1,'Lightning Bolt'],[2,'Ragavan, Nimble Pilferer']]))"))
@@ -3709,17 +3724,33 @@ with sync_playwright() as p:
     check("deck price page: the bar stays under the top bar while scrolling", bar[2] > 50 and abs(bar[0] - bar[1]) < 2, bar)
     page.evaluate("window.scrollTo(0, 0)")
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    want_now = listtext()
+    check("want list: none of it touched the pasted deck", decktext() == "2 Shivan Dragon\n", decktext())
+    page.click("#impWhich a[data-which=deck]"); page.wait_for_function("document.querySelector('#importBody .imp-deck-title') && document.querySelector('#importBody .imp-deck-title').textContent.includes('貼り付けたデッキ')")
+    check("switch: デッキの価格 shows the pasted deck, its title and words, on ?view=import",
+          page.url.endswith("?view=import") and page.input_value("#importText") == "2 Shivan Dragon\n" and page.locator(".imp-title").inner_text() == "デッキの価格を調べる"
+          and page.locator("#impWhich a[aria-current=page]").inner_text() == "デッキの価格" and page.title().startswith("デッキの価格を調べる")
+          and "シヴ山のドラゴン" in page.locator("#importBody").inner_text() and page.locator("#importBody .imp-buy-note").count() == 0,
+          page.input_value("#importText"))
+    page.fill("#importText", "3 Shivan Dragon\n"); page.wait_for_timeout(500)
+    check("switch: editing the deck leaves the want list and its count alone", decktext() == "3 Shivan Dragon\n" and listtext() == want_now and page.locator("#wantN").inner_text() == "6")
+    page.go_back(); page.wait_for_selector("#importBody .want-bar .dcst-v")
+    check("switch: Back goes to the want list again", page.url.endswith("?view=want") and page.input_value("#importText") == want_now)
     page.goto(SITE + "?view=import&list=" + "4%20Ragavan%2C%20Nimble%20Pilferer"); page.wait_for_selector("#importBody .want-bar")
-    check("deck price page: a deck's list or a shared link takes the place of the list, with undo",
-          page.input_value("#importText") == "4 Ragavan, Nimble Pilferer" and page.locator("#wantToast button").inner_text() == "元に戻す" and "入れ替え" in page.locator("#wantToast").inner_text())
+    check("deck price page: a deck's list or a shared link takes the place of the pasted deck, with undo, and not the want list",
+          page.input_value("#importText") == "4 Ragavan, Nimble Pilferer" and page.locator("#wantToast button").inner_text() == "元に戻す" and "入れ替え" in page.locator("#wantToast").inner_text()
+          and listtext() == want_now and page.locator("#wantN").inner_text() == "6")
     page.click("#wantToast button"); page.wait_for_timeout(300)
-    check("deck price page: undo brings the list back", page.input_value("#importText").startswith("1 Lightning Bolt (M10) 146") and page.locator("#wantN").inner_text() == "6")
+    check("deck price page: undo brings the deck back", page.input_value("#importText") == "3 Shivan Dragon\n" and decktext() == "3 Shivan Dragon\n")
+    page.click("#importClear"); page.wait_for_timeout(300)
+    check("deck price page: 消す clears the deck only", decktext() is None and listtext() == want_now and page.locator("#wantN").inner_text() == "6")
     page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .want-bar")
-    check("want list: the old ?view=want address opens the deck price page", page.locator("#importView").is_visible())
+    check("want list: ?view=want opens it directly", page.input_value("#importText") == want_now and page.locator("#impWhich a[aria-current=page]").inner_text() == "ウォントリスト")
     page.click("#langBtn"); page.wait_for_timeout(300)
     page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row")
     check("tray in English", "Want list" in tray.locator(".wt-h").inner_text() and tray.locator(".wt-go").inner_text() == "See prices and export"
-          and page.locator(".imp-title").inner_text() == "Want list & deck prices", tray.inner_text()[:200])
+          and page.locator(".imp-title").inner_text() == "Want list" and page.title().startswith("Want list — ")
+          and page.locator("#impWhich a").all_inner_texts() == ["Want list", "Deck prices"], tray.inner_text()[:200])
     page.keyboard.press("Escape")
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says the want list stays in the browser", "ウォントリスト" in page.locator(".attribution").inner_text())
@@ -3740,7 +3771,9 @@ with sync_playwright() as p:
     page.click("#wantToast button"); page.wait_for_selector("#wantTray .wt-row")
     check("tray: even clearing can be undone", tray.locator(".wt-row").count() >= 2 and page.input_value("#importText") != "")
     page.keyboard.press("Escape")
-    page.evaluate("['warujie-deck-import', 'warujie-want-view'].forEach(k => localStorage.removeItem(k))")
+    page.evaluate("setList('want', '')"); page.wait_for_selector("#importBody .imp-empty")
+    check("want list: empty, the page says how to fill it with ☆", "☆" in page.locator("#importBody .imp-empty").inner_text() and page.locator("#importSample").count() == 0)
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'warujie-want-view'].forEach(k => localStorage.removeItem(k))")
 
     # ---- 44. everyday words: slang inside a sentence, words the cards say differently, a creature type beside ロード ----
     ev = page.evaluate("""(() => {
@@ -4006,10 +4039,24 @@ with sync_playwright() as p:
     later = calls[n_calls:]
     check("after a reload the card still shows the picked art: the Japanese printings asked in one search, the rest by set and number",
           sum("/cards/search" in c and "lang%3Aja+%28" in c for c in later) == 1 and sum("/cards/collection" in c for c in later) >= 1, later)
+    page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-empty")
+    check("tray: the pasted deck is not in it", "☆" in page.locator("#wantTray .wt-empty").inner_text())
+    page.keyboard.press("Escape")
+    page.evaluate("setList('want', '1 Ragavan, Nimble Pilferer (MH2) 345\\n')")
     page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row")
     page.wait_for_function("[...document.querySelectorAll('#wantTray .wt-row img')].some(i => i.src.includes('rag-en-mh2-bl'))", timeout=5000)
-    check("tray: the card shows the picked art there too", True)
+    check("tray: a want list line with a printing shows that printing's picture", page.input_value("#importText").startswith("5 Ragavan, Nimble Pilferer (MH2) 345\n"))
     page.keyboard.press("Escape")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-card")
+    page.click(rag + "[data-imp-act='more']"); page.wait_for_timeout(250)
+    check("want list page: ＋ under a card changes the want list (the top bar counts it) and not the deck",
+          listtext() == "2 Ragavan, Nimble Pilferer (MH2) 345\n" and page.locator("#wantN").inner_text() == "2"
+          and decktext().startswith("5 Ragavan, Nimble Pilferer (MH2) 345\n"), listtext())
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    pick.locator(".ap-item", has_text="#138").click(); page.wait_for_timeout(300)
+    check("want list page: the art picker writes on the want list", listtext() == "2 Ragavan, Nimble Pilferer (MH2) 138\n" and decktext().startswith("5 Ragavan, Nimble Pilferer (MH2) 345\n"), listtext())
+    page.evaluate("setList('want', '')")
+    page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .imp-card")
     page.click("#importBody [data-ip='main'][data-in='Lightning Bolt'][data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
     check("art picker: a Japanese printing with no real scan shows the English picture",
           "bolt-en-m10" in (pick.locator(".ap-item img").first.get_attribute("src") or ""), pick.locator(".ap-item img").first.get_attribute("src"))
@@ -4047,7 +4094,7 @@ with sync_playwright() as p:
           and page.locator(rag + "[data-imp-act='art']").get_attribute("aria-label") == "Change the art of Ragavan, Nimble Pilferer", pick.inner_text()[:200])
     page.keyboard.press("Escape")
     page.click("#langBtn"); page.wait_for_timeout(300)
-    page.evaluate("['warujie-deck-import', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
     str_src = INDEX[INDEX.index("const STR = {"):INDEX.index("\n};", INDEX.index("const STR = {"))]
     str_keys = re.findall(r"^\s+'([^']+)':\s*\[", str_src, re.M)
     check("interface strings: no key in STR twice (a later one would win silently)", len(str_keys) > 500 and len(set(str_keys)) == len(str_keys),
