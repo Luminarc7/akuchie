@@ -11,7 +11,7 @@ jobs:
         with: { python-version: '3.12' }
       - run: |
           mkdir -p probe_out
-          mkdir -p probe_out/site; ( bash dbprobe/site_run.sh ) > probe_out/site/log.txt 2>&1 || true
-          tail -50 probe_out/site/log.txt
+          mkdir -p probe_out/en; ( bash dbprobe/en_run.sh ) > probe_out/en/log.txt 2>&1 || true
+          tail -50 probe_out/en/log.txt
           git config user.name probe; git config user.email probe@users.noreply.github.com
           git add probe_out && git commit -m "probe result [skip ci]" && git push
