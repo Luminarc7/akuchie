@@ -95,8 +95,8 @@ A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is
 - **`combo_ja.js`** has the Japanese wording for combo results.
 - **`manifest.webmanifest`, `sw.js`, `icons/`, `og.png`** make it installable, give it a
   network-first offline copy (cache `warujie-v2`) and provide the share picture.
-  The app icon is the owner's favicon (`favicon.ico`), redrawn at full size by
-  `tools/make_icons.py`: green for warujie.jp, pink for the test sites (`worker.js` swaps the
+  The app icon is the owner's artwork (`tools/icon_source.png`; `favicon.ico` is its small
+  version), cut to size by `tools/make_icons.py`, never redrawn: green for warujie.jp, pink for the test sites (`worker.js` swaps the
   icon and manifest links there, `manifest-test.webmanifest`).
 - **`.assetsignore`** lists what is *not* served: `tools/`, `dev/`, `docs/`, `CLAUDE.md`,
   workflows, scripts. Anything new that shouldn't be public goes there.
