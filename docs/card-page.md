@@ -18,7 +18,8 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Part | Function(s) | Data from |
 |---|---|---|
 | Picture | `cardArtHtml()`, `pictureTag()` | Scryfall images. Placeholder Japanese scans are swapped for the same printing's English picture with a note |
-| Language buttons (JP EN CS…) under the picture | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()`, `openPrinting()` | The printings file (`printings.json.gz`, `loadPrintingsFile()`); for a printing it doesn't have yet, one Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
+| ☆ want list button under the picture, as wide as it (`#cpWant`) | `wantCardHtml()` | The want list in the browser ([other-pages.md](other-pages.md#the-lists)) |
+| Language buttons (JP EN CS…) under the ☆ | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()`, `openPrinting()` | The printings file (`printings.json.gz`, `loadPrintingsFile()`); for a printing it doesn't have yet, one Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
 | Name, cost, type line, text | `cardPageNames()`, `cardPageType()`, `cardPageText()` | Scryfall card, Japanese from the database where Scryfall lacks it |
 | Roles row | `showCardRoles()` | Tag file |
 | Set, number, Scryfall link | inline in `renderCardViewContent()` | |
@@ -28,7 +29,7 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Legality | `legalityHtml()` | Scryfall `legalities` |
 | Deck sites | `mtgDecksUrl()`, `goldfishUrl()` | Links only |
 | Price history chart | `showPriceHistory()`, `drawPriceHistory()` | warujie-prices `h/` shards |
-| All printings | `loadPrintings()` | Scryfall search `oracleid:<id> unique:prints` |
+| All printings | `loadPrintings()`, `printEntries()` (shared with the deck price page's art picker, kept for the visit) | Scryfall search `oracleid:<id> unique:prints`, and the same with `lang:ja` (`fetchAllPages()`) |
 | Combos (preview page only) | `loadCardCombos()` | warujie-prices `c/` shards, `combo_ja.js` for Japanese |
 | Similar cards | `showSimilar()`, `renderSimilar()` | The local similarity index (see [search.md](search.md#similar-cards-似)) |
 | Price notes | `priceNotesHtml()` | Which source each number came from and its date |

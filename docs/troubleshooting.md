@@ -46,6 +46,12 @@ here.
 | A deck has an odd name or is "unclassified" | MTGOFormatData's archetype rules don't know it yet | Usually fixed upstream within days; nothing to change here |
 | A phone page scrolls sideways in English only | Short pieces with `white-space: nowrap` joined with no space between them: English has no place to break the line (Japanese breaks after （）) | Join them with a space, as the deck page's facts line (`.deck-meta`) does before each ·; check with `dev/tests/e2e.py`'s `no_hscroll()` at 360px in English |
 | Arena/MTGO import complains about a card name | The two clients spell some two-part names differently | `exportName()` |
+| A card on the deck price page shows its usual picture, not the printing its line names | Scryfall doesn't know that set code and number (Arena writes some sets under its own codes), or the request failed | `loadPrintCards()`; a failed request is asked again on the next pricing, an unknown printing is remembered as none for the visit |
+| A card on the deck price page shows the cheapest price, not the printing its line names | Scryfall has no price for that printing (often a Japanese-only one, which has no English printing to borrow from), the exchange rate isn't in yet, or the request failed | `entryYen()` falls back to `cardYen()`; `loadPrintPrices()` asks again after a failure, a printing with no price is remembered as none for the visit |
+| Metagame or deck page prices come out tiny (a deck at ¥300) | Something read the third item of a metagame list's `[count, name, play rate]` as a price | `deckCost()` takes per-card prices only as its own second list (the deck price page's `entryYen()` values), never from the cards' items |
+| A centred note at the bottom (`.want-toast`) wraps a longer message into a tall narrow box on phones | Placed with `left: 50%` and `translateX(-50%)`, a box shrinks to fit the half of the screen right of its left edge | `width: max-content` with `max-width: calc(100vw - 24px)` |
+| On the deck price page a card swaps places with another when its count changes (Flare of Malice passing Baleful Mastery at 5 copies) | Deck pages order cards of the same mana value by copies, most first | The price page passes `byCount` false to `deckGroupsHtml()` / `deckSort()`: mana value, then name |
+| A new interface string shows some other text | `STR` already had that key further down, and the later one wins silently (`art.title` is the picture credit) | Pick another key; `dev/tests/e2e.py` checks `STR` has no key twice |
 
 ## Deploys and hosting
 
@@ -58,6 +64,8 @@ here.
 | Link previews show the site's default card | The bot isn't matched by `PREVIEW_BOTS`, or `shareTags()` failed | Test with that bot's User-Agent against the `workers.dev` address |
 | Visitors see an old version | Unlikely (the service worker is network-first); usually a slow deploy | Check the deployment in Cloudflare; a hard reload confirms |
 | A file that should be private is downloadable from warujie.jp | Not listed in `.assetsignore` | Add it and push |
+| A deck page's "other popular cards" rows show buttons, or lose their share | `deckRowHtml()` takes optional `lead` / `tail`; `.map(deckRowHtml)` passes the index as `lead` | Call it as `.map(it => deckRowHtml(it))` |
+| Typing a list's name in Japanese drops letters or closes the phone keyboard | The name box was drawn again while the word was being converted | Keep `drawImport()`'s rule: a focused `#impName` stays in place, and `isComposing` input waits for `compositionend` |
 
 ## Getting at outside data
 

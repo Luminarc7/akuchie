@@ -122,7 +122,10 @@ All in `localStorage`, all optional (private browsing just forgets them). **Keep
 | `akuchie-similar` | similar-cards toggles (colour, mana value, type) |
 | `akuchie-recent` | the last 10 searches |
 | `akuchie-deck-view` | `list` for the deck list view (also the deck price page's view) |
-| `warujie-deck-import` | the list pasted on the deck price page (`IMPORT_SAVE_KEY`). New keys use `warujie-`; the old `akuchie-` ones stay as they are |
+| `warujie-deck-import` | the deck pasted on the deck price page: its text (`IMPORT_SAVE_KEY`, `lists.deck`; see [other-pages.md](other-pages.md#want-list-and-deck-price-page-two-lists-one-page)). New keys use `warujie-`; the old `akuchie-` ones stay as they are |
+| `warujie-want-list` | the want list (the ☆ cards): its text (`WANT_SAVE_KEY`, `lists.want`), kept apart from the pasted deck |
+| `warujie-want` | the want list's old JSON store (staging only, 2026-10-16): moved into the want list once and removed (`WANT_OLD_KEY`) |
+| `warujie-want-view` | `image` when the tray shows pictures (`WANT_VIEW_KEY`) |
 
 Nothing is sent anywhere. The footer promises no sign-up, cookies, analytics or ads; any change
 that would break that promise needs the owner's decision first (CLAUDE.md, rule 6).

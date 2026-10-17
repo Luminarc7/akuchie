@@ -45,7 +45,7 @@ Three jobs:
    asks for a page with a query string, `shareTags()` works out a title, description and
    picture, and `rewriteTags()` writes them into `<title>` and the `og:`/`twitter:` tags with
    `HTMLRewriter`. Covered: `?card=` (from Scryfall, cached a day), `?view=deck` (numbers from
-   `meta.json`), `?view=meta`, `?view=prices`, `?view=import`, `?set=`. People always get the page unchanged.
+   `meta.json`), `?view=meta`, `?view=prices`, `?view=import` (also `?view=want`), `?set=`. People always get the page unchanged.
    Any error keeps the page's own tags.
 
 When you add a page type, add its share tags in `shareTags()` and a check in
