@@ -3,9 +3,18 @@ the searches that were wrong; the metagame ordinals. Read-only visits to the tes
 through the site's own page, which spaces its requests)."""
 import json, time
 from playwright.sync_api import sync_playwright
-BASE = "https://staging-warujie.warujie-mtg.workers.dev/"
+import os, hashlib, gzip, urllib.request
+BASE = os.environ.get("BASE", "https://warujie.warujie-mtg.workers.dev/")
 IDS = json.load(open("dbprobe/en_ids.json"))
-out = {"cards": [], "search": {}, "meta": None}
+out = {"cards": [], "search": {}, "meta": None, "base": BASE}
+def get(url):
+    r = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (warujie.jp publish check)", "Accept-Encoding": "gzip"}), timeout=60)
+    body = r.read()
+    if body[:2] == b"\x1f\x8b": body = gzip.decompress(body)
+    return r.status, body
+st, html = get(BASE)
+out["index_sha256"] = hashlib.sha256(html).hexdigest(); out["index_status"] = st
+st, pr = get(BASE + "printings.json.gz"); out["printings"] = [st, len(pr)]
 COLLECT = r"""() => ({ url: location.search, name: (document.querySelector('.cp-name') || {}).textContent || '',
   art: [...document.querySelectorAll('div.cp-art img')].map(i => i.currentSrc || i.src).slice(0, 2),
   flavor: (document.querySelector('p.cp-flavor') || {}).textContent || '',
@@ -36,7 +45,7 @@ with sync_playwright() as p:
             out["search"] = page.evaluate("""() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
               manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
               const r = q => searchRows(q, st);
-              return Object.fromEntries(['到達', 'ボーダーレス版', 'ボーダーレスのドラゴン', '日本語版のカード', 'シリアル番号', 'セット:マーベル', 'セット:タルキール', '追放'].map(q => {
+              return Object.fromEntries(['到達', 'ボーダーレス版', 'ボーダーレスのドラゴン', '日本語版のカード', 'シリアル番号', 'セット:イニストラード', 'e:mid', 'e:vow', '日本語版 ボーダーレス', '追放'].map(q => {
                 const x = r(q); return [q, { n: x.rows.length, top: x.rows.slice(0, 8).map(y => y.name_ja || y.name_en), last: x.rows.slice(-4).map(y => y.name_ja || y.name_en),
                   note: (x.info.aliases || []).map(a => a.from + '>' + a.to) }]; })); }""")
             page.fill("#heroInput", "ボーダーレスのドラゴン"); page.press("#heroInput", "Enter"); page.wait_for_timeout(4000)
