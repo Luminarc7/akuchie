@@ -71,8 +71,8 @@ translation layer"). That path is weaker and only a safety net.
 
 | Service | Used for | In the code |
 |---|---|---|
-| `api.scryfall.com/cards/collection` | Pictures, prices, details of result cards | `scryfallCollection()` |
-| `api.scryfall.com/cards/search` | All printings of a card; language buttons; set pages; the fallback search | `loadPrintings()`, `printingLanguages()`, `setSearchUrl()`, `runSearch()` |
+| `api.scryfall.com/cards/collection` | Pictures, prices, details of result cards; the printings a want list's lines name, by set and number | `scryfallCollection()`, `loadPrintCards()` |
+| `api.scryfall.com/cards/search` | All printings of a card (card page, art picker); language buttons; set pages; the fallback search | `printEntries()`, `loadPrintCards()`, `printingLanguages()`, `setSearchUrl()`, `runSearch()` |
 | `api.scryfall.com/cards/<id>`, `/cards/<set>/<number>/en` | Opening a card page directly; the English twin of a Japanese printing (for prices) | `fetchSingleCard()`, `priceHistoryId()` |
 | `api.scryfall.com/sets`, `/catalog/creature-types`, `/cards/random` | Set list, creature-type filter, random cards without the database | `loadSets()`, filters section, `fetchRandomFromScryfall()` |
 | `svgs.scryfall.io`, `cards.scryfall.io` | Mana symbols and card pictures | `symbolImg()`, `pictureTag()` |

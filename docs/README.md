@@ -64,6 +64,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Change the metagame numbers | `build_meta.py` (this repo); the tab itself is "metagame tab" in `index.html` |
 | Change how a pasted deck list is read | `parseDeckText()`, `IMPORT_PARTS`, `cleanImportName()`, `importRow()`. See [other-pages.md](other-pages.md#reading-and-pricing) |
 | Change the want list (☆, the tray), or where it can be exported | `wantTogHtml()`, `setListText()`, `drawTray()`, `importListText()`, `WANT_SITES`. See [other-pages.md](other-pages.md#want-list-and-deck-price-page-one-list) |
+| Change the − n ＋ and art buttons under the price page's cards, or the art picker | `impCardHtml()`, `openArtPicker()`, `drawArtPicker()`, `lineWithPrint()`, `loadPrintCards()`. See [other-pages.md](other-pages.md#counts-and-art-under-each-card) |
 | Translate a deck name into Japanese | `DECK_NAME_WHOLE` (whole names), `DECK_WORD_JA` (words), `DECK_GUILD_JA`, `DECK_MONO_JA` |
 
 ## Which doc covers which code

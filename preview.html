@@ -1333,6 +1333,34 @@
   .want-bar .deck-tools { margin-left: auto; }
   .want-bar .view-toggle { height: 34px; }
   .want-bar .deck-cost { margin: 0; }
+  /* the deck price page's picture view: − n ＋ and the art button under each card */
+  .imp-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .deck-flow .imp-card { width: 128px; }
+  .deck-flow .imp-card .deck-card { width: auto; }
+  .imp-act { display: flex; align-items: center; gap: 4px; margin-top: auto; }
+  .imp-act .want-step { flex: 1; min-width: 0; justify-content: space-between; }
+  .imp-act .want-step button { width: 30px; height: 30px; font-size: 16px; flex: none; }
+  .imp-act .want-step .want-c { flex: 1; min-width: 0; font-size: 13px; white-space: nowrap; }
+  .imp-art { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 0;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text-2); cursor: pointer; }
+  .imp-art svg { width: 17px; height: 17px; }
+  .imp-art:hover, .imp-art:focus-visible { border-color: var(--accent); color: var(--accent); }
+  /* the art picker: every printing of the card, over the page (a sheet from the bottom on phones) */
+  .art-bg { position: fixed; inset: 0; z-index: 62; background: rgba(0, 0, 0, 0.5); }
+  .art-bg[hidden], .art-picker[hidden] { display: none; }
+  .art-picker { position: fixed; z-index: 63; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(900px, calc(100vw - 32px));
+    max-height: min(86vh, 920px); display: flex; flex-direction: column; background: var(--page); color: var(--text);
+    border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+  html.art-open { overflow: hidden; }
+  .art-picker .wt-sub { border-bottom: 0; padding-bottom: 0; }
+  .ap-note { margin: 0; padding: 2px 16px 10px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .ap-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 12px 16px 16px; }
+  .ap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+  .ap-item { cursor: pointer; font: inherit; min-width: 0; }
+  .ap-item .print-set { overflow-wrap: anywhere; }
+  .ap-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ap-noimg { display: block; aspect-ratio: 488 / 680; border-radius: 4.75% / 3.5%; background: var(--surface-2); }
+  .print-tag.cur { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
   /* the tray: the top bar's ☆ opens the list from the right, over the page (like MTGGoldfish's card tray) */
   .want-tray-bg { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.45); }
   .want-tray-bg[hidden], .want-tray[hidden] { display: none; }
@@ -1401,6 +1429,16 @@
     .want-bar-l { flex: 1 1 auto; }
     .want-bar .deck-cost { flex: 1 1 0; min-width: 0; }
     .want-bar .dcst { flex-wrap: wrap; white-space: normal; min-width: 0; }
+    /* three cards across: the buttons under each card get narrower */
+    .deck-flow .imp-card { width: auto; }
+    .imp-act { gap: 3px; }
+    .imp-act .want-step button { width: 24px; height: 28px; }
+    .imp-act .want-step .want-c { font-size: 12px; }
+    .imp-art { width: 30px; height: 30px; }
+    .imp-art svg { width: 16px; height: 16px; }
+    .art-picker { left: 0; right: 0; top: auto; bottom: 0; transform: none; width: auto; max-height: 90vh; border-radius: 14px 14px 0 0; }
+    .ap-body { padding: 10px 12px calc(14px + env(safe-area-inset-bottom, 0px)); }
+    .ap-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     /* the card page's narrow picture column: the language buttons are 26px tall there */
     .cp-want { --want-h: 26px; }
     .cp-want .want-tog svg { width: 15px; height: 15px; }
@@ -2030,6 +2068,7 @@
 <div class="want-toast" id="wantToast" role="status" aria-live="polite" hidden></div>
 <div class="want-tray-bg" id="wantTrayBg" hidden></div>
 <aside class="want-tray" id="wantTray" role="dialog" aria-labelledby="wantTrayH" hidden></aside>
+<div class="art-bg" id="artPickerBg" hidden></div><div class="art-picker" id="artPicker" role="dialog" aria-modal="true" aria-labelledby="artPickerH" hidden></div>
 
 <footer class="attribution">
   <div class="attribution-inner">
@@ -2297,6 +2336,19 @@ const STR = {
   'imp.sample': ['例を入れてみる', 'Try an example'],
   'imp.untitled': ['ウォントリスト', 'Want list'],
   'imp.replaced': ['リストを入れ替えました', 'The list was replaced'],
+  'imp.n.aria': ['{name}の枚数', 'Copies of {name}'],
+  'pick.btn': ['絵柄を変える', 'Change the art'],
+  'pick.btn.aria': ['{name}の絵柄を変える', 'Change the art of {name}'],
+  'pick.title': ['絵柄を選ぶ', 'Choose the art'],
+  'pick.n': ['{n}種類の版', '{n} printings'],
+  'pick.note': ['選んだ版がリストに入り、Moxfield・Archidektへの書き出しにも付きます。価格の合計はいちばん安い版のままです。',
+    'The printing you pick goes into the list and its Moxfield and Archidekt exports. The total still counts the cheapest printing.'],
+  'pick.loading': ['版を読み込み中…', 'Loading the printings…'],
+  'pick.error': ['版を読み込めませんでした。', "The printings couldn't be loaded."],
+  'pick.retry': ['もう一度', 'Try again'],
+  'pick.current': ['選択中', 'Chosen'],
+  'pick.close': ['閉じる', 'Close'],
+  'pick.done': ['絵柄を変えました', 'Art changed'],
   'imp.f.main': ['メイン {n}枚', 'Main deck {n}'],
   'imp.f.side': ['サイドボード {n}枚', 'Sideboard {n}'],
   'imp.f.commander': ['統率者 {n}枚', 'Commander {n}'],
@@ -6257,16 +6309,17 @@ function goldfishUrl(card) {
   return en ? `https://www.mtggoldfish.com/q?query_string=${encodeURIComponent(en).replace(/%20/g, '+')}` : '';
 }
 
+// a Scryfall search, page after page (each request in the queue, 100 ms apart: scryfallTurn())
 async function fetchAllPages(url, maxPages = 3) {
   let out = [], next = url, pages = 0;
   while (next && pages < maxPages) {
+    await scryfallTurn();
     const res = await fetch(next, { headers: { 'Accept': 'application/json' } });
     if (!res.ok) break;
     const data = await res.json();
     out = out.concat(data.data || []);
     next = data.has_more ? data.next_page : null;
     pages++;
-    if (next) await sleep(100);
   }
   return out;
 }
@@ -6282,15 +6335,14 @@ function printsSearchUrl(card, extra) {
   return u.toString();
 }
 
-// Shows every printing - all sets and treatments (borderless, showcase,
-// extended art, ...). Japanese versions are used where they exist; prices
-// come from the matching English printing.
-async function loadPrintings(card) {
-  const hideBox = () => { const b = document.getElementById('versionsBox'); if (b) b.style.display = 'none'; };
-  if (!document.getElementById('versionMenuHeading') || !card.oracle_id) { hideBox(); return; }
-
-  try {
-    if (!card._printEntries) {
+// Every printing of a card, one entry per set and number: { en, ja, other } (the default search
+// and the Japanese one), the Japanese printing knowing its English one (_enCard, _enPrices).
+// For the card page's printings and the deck price page's art picker; remembered for the visit.
+const PRINT_ENTRIES = new Map();   // oracle id -> Promise of the entries
+function printEntries(card) {
+  const key = card.oracle_id;
+  if (!PRINT_ENTRIES.has(key)) {
+    const job = (async () => {
       const [defaultPrints, jaPrints] = await Promise.all([
         fetchAllPages(printsSearchUrl(card)),
         fetchAllPages(printsSearchUrl(card, 'lang:ja')).catch(() => []),
@@ -6303,12 +6355,27 @@ async function loadPrintings(card) {
         entry.ja = p;
         byKey.set(key, entry);
       });
-      card._printEntries = [...byKey.values()].map(e => {
+      return [...byKey.values()].map(e => {
         if (e.ja && e.en) { e.ja._enPrices = e.en.prices || {}; e.ja._enCard = e.en; }
         if (e.other && e.en) { e.other._enPrices = e.en.prices || {}; e.other._enCard = e.en; }
         return e;
       });
-    }
+    })();
+    // a failed or empty answer is asked again next time
+    job.then(list => { if (!list.length) PRINT_ENTRIES.delete(key); }, () => PRINT_ENTRIES.delete(key));
+    PRINT_ENTRIES.set(key, job);
+  }
+  return PRINT_ENTRIES.get(key);
+}
+// Shows every printing - all sets and treatments (borderless, showcase,
+// extended art, ...). Japanese versions are used where they exist; prices
+// come from the matching English printing.
+async function loadPrintings(card) {
+  const hideBox = () => { const b = document.getElementById('versionsBox'); if (b) b.style.display = 'none'; };
+  if (!document.getElementById('versionMenuHeading') || !card.oracle_id) { hideBox(); return; }
+
+  try {
+    if (!card._printEntries) card._printEntries = await printEntries(card);
     if (shownCard !== card) return; // navigated away
     // Japanese printings where they exist (English ones in English mode);
     // prices always come from the English printing.
@@ -10041,10 +10108,10 @@ function deckSort(items, byType) {
     || ((y.count || 0) - (x.count || 0)) || x.label.localeCompare(y.label, LANG === 'en' ? 'en' : 'ja'));
 }
 // Main deck: one block per card type. Sideboard: one block, in card-type order.
-function deckGroupsHtml(items, view, grouped) {
+function deckGroupsHtml(items, view, grouped, cardHtml = deckCardHtml) {
   const body = list => view === 'list'
     ? `<ul class="dl">${list.map(deckRowHtml).join('')}</ul>`
-    : `<div class="deck-grid">${list.map(deckCardHtml).join('')}</div>`;
+    : `<div class="deck-grid">${list.map(it => cardHtml(it)).join('')}</div>`;
   if (!grouped) return view === 'list' ? body(deckSort(items, true)) : `<div class="deck-flow">${body(deckSort(items, true))}</div>`;
   const sorted = deckSort(items, false);
   const html = DECK_GROUPS.map(g => {
@@ -10396,7 +10463,7 @@ function cleanImportName(s) {
     .replace(/\s+\[[^\]]*\]\s*$/, '')                                         // [Removal]
     .replace(/\s+\*[A-Za-z]+\*\s*$/, '')                                      // *F*
     .replace(/\s+\((?:f|foil|e|etched)\)\s*$/i, '')
-    .replace(/\s+\([A-Za-z0-9]{2,8}\)(?:\s+[A-Za-z0-9★†\-]+)?\s*$/, '')      // (M10) 146
+    .replace(/\s+\([A-Za-z0-9]{2,8}\)(?:\s+[^\s()*]+)?\s*$/, '')             // (M10) 146
     .replace(/\s+\*[A-Za-z]+\*\s*$/, '')
     .replace(/\s*\/\/?\s*/g, ' // ')                                          // Fire/Ice, Fire // Ice
     .trim();
@@ -10430,8 +10497,8 @@ function parseDeckText(text) {
     let count = 1, m;
     if ((m = /^(\d{1,3})\s*(?:[xX×*](?=\s)|枚)?\s*(\S.*)$/.exec(s))) { count = Number(m[1]); s = m[2]; }
     else if ((m = /^(.+?)\s*[xX×]\s*(\d{1,3})$/.exec(s))) { s = m[1]; count = Number(m[2]); }
-    // the printing, when the line names one: "(MH2) 138"
-    const pm = /\s\(([A-Za-z0-9]{2,8})\)\s+([A-Za-z0-9★†\-]+)(?:\s+\*[A-Za-z]+\*)?\s*$/.exec(s);
+    // the printing, when the line names one: "(MH2) 138", also before Archidekt's "[Removal]" or "^Tag^"
+    const pm = /\s\(([A-Za-z0-9]{2,8})\)\s+([^\s()*]+)(?:\s+\*[A-Za-z]+\*)?\s*$/.exec(s.replace(/\s+\^[^^]*\^\s*$/, '').replace(/\s+\[[^\]]*\]\s*$/, ''));
     const name = cleanImportName(s);
     if (!name || !count) return;
     cards = true;
@@ -10494,7 +10561,7 @@ function importCheapName(name) {
   }
   return IMPORT_CHEAP.m.get(nameKey(name)) || '';
 }
-// the parsed list against the database: the cards by part (the same card added up) and the lines not found
+// the parsed list against the database: the cards by part (the same card added up, with its lines) and the lines not found
 function readImport(text) {
   const parsed = parseDeckText(text);
   const parts = { commander: [], main: [], side: [], companion: [] };
@@ -10508,12 +10575,76 @@ function readImport(text) {
     const name = row ? exportName(row.name_en) : other;
     const list = parts[l.part] || parts.main;
     const got = list.find(x => x.name === name);
-    if (got) { got.count += l.count; if (!got.s && l.s) { got.s = l.s; got.cn = l.cn; } }
-    else list.push({ name, count: l.count, row, s: l.s, cn: l.cn });
+    if (got) { got.count += l.count; got.lines.push({ i: l.i, count: l.count }); if (!got.s && l.s) { got.s = l.s; got.cn = l.cn; } }
+    else list.push({ name, count: l.count, row, s: l.s, cn: l.cn, lines: [{ i: l.i, count: l.count }] });
   });
   // MTG Arena writes the companion under Companion and again in the sideboard
   parts.companion.forEach(c => { if (!parts.side.some(x => x.name === c.name)) parts.side.push(c); });
   return { title: parsed.title, commander: parts.commander, main: parts.main, side: parts.side, missing, lines: parsed.lines.length };
+}
+
+// The printing a line names, "4 Lightning Bolt (M10) 146": its own picture on this page and in the
+// tray. PRINT_CARDS: LANG|set|number -> the Scryfall card (in Japanese, the Japanese printing where
+// there is one), null when Scryfall has none. Filled by the art picker, by the cards already fetched
+// for the pictures (rememberPrint()) and by loadPrintCards() for the rest.
+const PRINT_CARDS = new Map();
+function printKey(s, cn) { return `${LANG}|${String(s || '').toLowerCase()}|${String(cn || '').toLowerCase()}`; }
+function printCardFor(s, cn) { return (s && cn && PRINT_CARDS.get(printKey(s, cn))) || null; }
+function rememberPrint(card) {
+  if (card && card.set && card.collector_number && !PRINT_CARDS.get(printKey(card.set, card.collector_number))) PRINT_CARDS.set(printKey(card.set, card.collector_number), card);
+}
+// the printings of these lines ({ s, cn }) not known yet: in Japanese one search for their Japanese
+// printings (25 at a time), then /cards/collection for the English ones (75 at a time) where there is
+// no Japanese one or it has no real picture. True when something new came in.
+async function loadPrintCards(lines) {
+  const need = [], seen = new Set();
+  lines.forEach(l => {
+    if (!l.s || !l.cn) return;
+    const k = printKey(l.s, l.cn);
+    if (PRINT_CARDS.has(k) || seen.has(k)) return;
+    seen.add(k);
+    need.push({ s: l.s.toLowerCase(), cn: l.cn, k });
+  });
+  if (!need.length) return false;
+  const got = new Map(), failed = new Set();
+  if (LANG !== 'en') {
+    for (let i = 0; i < need.length; i += 25) {
+      const chunk = need.slice(i, i + 25);
+      const q = `lang:ja (${chunk.map(p => `(e:${p.s} cn:"${p.cn.replace(/"/g, '')}")`).join(' or ')})`;
+      try {
+        const list = await fetchAllPages(`https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints' })}`, 2);
+        list.forEach(c => got.set(printKey(c.set, c.collector_number), c));
+      } catch (err) { /* the English printings below */ }
+    }
+  }
+  const en = need.filter(p => !got.has(p.k) || imageQuality(got.get(p.k)) <= 1);
+  for (let i = 0; i < en.length; i += 75) {
+    const chunk = en.slice(i, i + 75);
+    try {
+      const data = await scryfallCollection(chunk.map(p => ({ set: p.s, collector_number: p.cn })));
+      data.forEach(c => {
+        const k = printKey(c.set, c.collector_number), ja = got.get(k);
+        if (ja) { ja._enCard = c; ja._enPrices = c.prices || {}; } else got.set(k, c);
+      });
+    } catch (err) { chunk.forEach(p => { if (!got.has(p.k)) failed.add(p.k); }); }   // asked again next time
+  }
+  need.forEach(p => { if (!failed.has(p.k)) PRINT_CARDS.set(p.k, got.get(p.k) || null); });
+  return got.size > 0;
+}
+// the same line naming another printing: "4 稲妻" -> "4 稲妻 (M10) 146"; a "*F*" foil mark, Archidekt's
+// "[Removal]" / "^Tag^" and a count written last ("Bolt x4") stay where they were
+function lineWithPrint(raw, s, cn) {
+  let str = String(raw).normalize('NFKC').replace(/\s+$/, ''), tail = '', foil = '';
+  if (!/^\s*(?:SB:\s*)?\d/i.test(str)) {
+    const m = /\s*[xX×]\s*\d{1,3}$/.exec(str);
+    if (m) { tail = m[0]; str = str.slice(0, m.index); }
+  }
+  const cat = /(?:\s+\^[^^]*\^|\s+\[[^\]]*\])+$/.exec(str);
+  if (cat) { tail = cat[0] + tail; str = str.slice(0, cat.index); }
+  const f = /\s+\*[A-Za-z]+\*$/.exec(str);
+  if (f) { foil = f[0]; str = str.slice(0, f.index); }
+  str = str.replace(/\s+\([A-Za-z0-9]{2,8}\)(?:\s+[^\s()*]+)?$/, '');
+  return `${str} (${String(s).toUpperCase()}) ${cn}${foil}${tail}`;
 }
 
 const importState = {
@@ -10568,6 +10699,10 @@ async function priceImport() {
   }
   if (token !== importState.token) return;
   drawImport();
+  // and the printings the lines name ("(MH2) 345"), where that is not the picture already shown
+  if (LITE) return;
+  importState.pics.forEach((v, k) => { if (k.startsWith(LANG + '|')) rememberPrint(v.card); });
+  if (await loadPrintCards(res.commander.concat(res.main, res.side)) && token === importState.token) drawImport();
 }
 function importEmptyHtml() {
   return `<div class="imp-empty"><p class="imp-empty-h">${t('imp.empty.h')}</p>
@@ -10628,6 +10763,25 @@ function importShareUrl() {
   if (rest.length) text = text.replace(/\n$/, '') + '\n' + rest.join('\n') + '\n';
   return `${location.origin}${location.pathname}?view=import&list=${encodeURIComponent(text.trim())}`;
 }
+// the picture view's card: − n ＋ and the art button under it (owner's request 2026-10-17)
+function impCardHtml(it) {
+  const a = ` data-ip="${it.part}" data-in="${esc(it.name)}"`;
+  const less = t(it.count > 1 ? 'want.less' : 'want.remove');
+  const art = it.info.row && it.info.row.oracle_id
+    ? `<button type="button" class="imp-art" data-imp-act="art"${a} aria-haspopup="dialog" aria-label="${esc(t('pick.btn.aria', { name: it.label }))}" title="${esc(t('pick.btn'))}">${ART_SVG}</button>` : '';
+  return `<div class="imp-card">${deckCardHtml(it)}<div class="imp-act">`
+    + `<span class="want-step" role="group" aria-label="${esc(t('imp.n.aria', { name: it.label }))}">`
+    + `<button type="button" data-imp-act="less"${a} aria-label="${esc(less)}" title="${esc(less)}">−</button>`
+    + `<span class="want-c">${esc(t('want.n', { n: it.count }))}</span>`
+    + `<button type="button" data-imp-act="more"${a} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>${art}</div></div>`;
+}
+function impActSel(act, part, name) {
+  return `[data-imp-act="${act}"][data-ip="${part}"][data-in="${CSS.escape(name || '')}"]`;
+}
+// the card as the list has it now (the box may have changed since the last pricing)
+function impEntry(part, name) {
+  return (readImport(listText)[part] || []).find(x => x.name === name) || null;
+}
 function drawImport() {
   const res = importState.result;
   const body = document.getElementById('importBody');
@@ -10641,8 +10795,15 @@ function drawImport() {
     const row = rowByEnglishName(n);
     infos.set(n, got || { row, card: row ? rowToCard(row) : null });
   });
-  const mk = list => list.map(x => deckItem(x.name, x.count, null, infos));
-  const cmd = mk(res.commander), main = mk(res.main), side = mk(res.side);
+  const mk = (list, part) => list.map(x => {
+    const it = deckItem(x.name, x.count, null, infos);
+    it.part = part;
+    // the printing the line names ("(MH2) 345": the art picked) shows its own picture
+    const pc = LITE ? null : printCardFor(x.s, x.cn);
+    if (pc) it.info = { row: it.info.row, card: pc };
+    return it;
+  });
+  const cmd = mk(res.commander, 'commander'), main = mk(res.main, 'main'), side = mk(res.side, 'side');
   const total = list => list.reduce((s, it) => s + (it.count || 0), 0);
   const all = cmd.concat(main, side);
   const cost = deckCost(all.map(it => [it.count, it.name]));
@@ -10687,13 +10848,17 @@ function drawImport() {
     </div>`;
   }
   html += importMissingHtml(res.missing);
-  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false)}</section>`;
-  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true)}</section>`;
-  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
+  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false, impCardHtml)}</section>`;
+  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml)}</section>`;
+  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml)}</section>`;
   if (main.length) html += deckCurveHtml(cmd.concat(main));
   if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('importExport') || {}).open;
+  // a − / ＋ / art button keeps the focus through the redraw
+  const fa = document.activeElement;
+  const keep = fa && body.contains(fa) && fa.dataset.impAct ? impActSel(fa.dataset.impAct, fa.dataset.ip, fa.dataset.in) : '';
   body.innerHTML = html;
+  if (keep) { const f = body.querySelector(keep); if (f) f.focus({ preventScroll: true }); }
   if (exportOpen && document.getElementById('importExport')) { document.getElementById('importExport').open = true; fitExportMenu(document.getElementById('importExport')); }
   const copied = importState.copied;
   if (copied && Date.now() < copied.until) {
@@ -10728,6 +10893,18 @@ document.getElementById('importClear').addEventListener('click', () => {
 document.getElementById('importBody').addEventListener('click', async (e) => {
   if (e.target.closest('#importSample')) {
     setListText(IMPORT_SAMPLE);
+    return;
+  }
+  const ia = e.target.closest('[data-imp-act]');
+  if (ia) {
+    const { impAct: act, ip: part, in: name } = ia.dataset;
+    if (act === 'art') { openArtPicker(part, name); return; }
+    const x = impEntry(part, name);
+    if (!x) return;
+    // the card's own lines change, the way they were written (wantSetCount())
+    if (act === 'more') wantSetCount(x, Math.min(WANT_MAX_COPIES, x.count + 1));
+    else if (x.count > 1) wantSetCount(x, x.count - 1);
+    else wantUndoToast(t('want.removed'), wantSetCount(x, 0));
     return;
   }
   const fix = e.target.closest('.imp-fix');
@@ -10819,6 +10996,115 @@ document.addEventListener('click', (e) => {
     goTo('?view=import&list=' + encodeURIComponent(text.trim()));
   } else goTo('?view=import');
 });
+
+// ---- art picker: every printing of a card on the deck price page --------------------------------
+// The art button under a card (picture view, impCardHtml()) opens every paper printing of it
+// (printEntries(), as the card page lists them), newest first, with its price. The one picked
+// becomes "(SET) 123" on the card's lines (lineWithPrint()), so this page shows that picture and the
+// list takes that printing to Moxfield and Archidekt. (owner's request 2026-10-17)
+const ART_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="9.5" r="1.6"/><path d="M20.5 15.5l-4.5-4.5-8.5 8.5"/></svg>';
+const artState = { open: false, part: '', name: '', token: 0, items: null, failed: false };
+function artItems(entries) {
+  return entries.map(e => {
+    const display = LANG === 'en' ? (e.en || e.ja || e.other) : (e.ja || e.other || e.en);
+    return { display, priceCard: e.en || display };
+  }).filter(x => x.display && !x.display.digital)
+    .sort((a, b) => (b.display.released_at || '').localeCompare(a.display.released_at || ''));
+}
+async function openArtPicker(part, name) {
+  const x = impEntry(part, name);
+  const row = x && (x.row || rowByEnglishName(name));
+  if (!row || !row.oracle_id) return;
+  Object.assign(artState, { open: true, part, name, items: null, failed: false });
+  const token = ++artState.token;
+  document.getElementById('artPicker').hidden = false;
+  document.getElementById('artPickerBg').hidden = false;
+  document.documentElement.classList.add('art-open');
+  hideDeckPeek();
+  drawArtPicker();
+  document.querySelector('#artPicker .wt-close').focus();
+  try {
+    const entries = await printEntries({ oracle_id: row.oracle_id });
+    if (token !== artState.token) return;
+    artState.items = artItems(entries);
+    artState.failed = !artState.items.length;
+  } catch (err) {
+    if (token !== artState.token) return;
+    artState.failed = true;
+  }
+  drawArtPicker();
+  const cur = document.querySelector('#artPicker .ap-item.current');
+  if (cur && document.activeElement && document.activeElement.closest('#artPicker')) { cur.focus({ preventScroll: true }); cur.scrollIntoView({ block: 'nearest' }); }
+}
+function closeArtPicker(focusBack) {
+  if (!artState.open) return;
+  artState.open = false;
+  artState.token++;
+  document.getElementById('artPicker').hidden = true;
+  document.getElementById('artPickerBg').hidden = true;
+  document.documentElement.classList.remove('art-open');
+  if (focusBack) { const b = document.querySelector('#importBody ' + impActSel('art', artState.part, artState.name)); if (b) b.focus({ preventScroll: true }); }
+}
+function drawArtPicker() {
+  const box = document.getElementById('artPicker');
+  const x = impEntry(artState.part, artState.name);
+  if (!x) { closeArtPicker(); return; }
+  const label = deckItem(x.name, x.count, null, new Map([[x.name, { row: x.row, card: null }]])).label;
+  // the printing shown now: the one the line names, else the card's usual picture
+  const shown = printCardFor(x.s, x.cn) || (importState.pics.get(LANG + '|' + x.name) || {}).card;
+  const cur = (x.s && x.cn ? `${x.s}|${x.cn}` : (shown && shown.collector_number ? `${shown.set}|${shown.collector_number}` : '')).toLowerCase();
+  let body;
+  if (artState.failed) body = `<div class="wt-empty"><p>${esc(t('pick.error'))}</p><button type="button" class="adv-btn" data-ap-retry="1">${esc(t('pick.retry'))}</button></div>`;
+  else if (!artState.items) body = `<div class="status-line"><div class="spinner"></div><span class="serif">${esc(t('pick.loading'))}</span></div>`;
+  else body = `<div class="ap-grid">${artState.items.map(({ display, priceCard }, i) => {
+    const on = `${display.set}|${display.collector_number}`.toLowerCase() === cur;
+    const thumb = faceUris(display)[0];
+    const tags = treatmentLabels(priceCard).map(tag => `<span class="print-tag">${tag}</span>`).join('')
+      + (display.lang === 'ja' ? `<span class="print-tag ja">${t('tag.ja')}</span>` : '')
+      + (on ? `<span class="print-tag cur">${esc(t('pick.current'))}</span>` : '');
+    const pr = priceCard.prices || {};
+    const usd = pr.usd || pr.usd_foil || pr.usd_etched;
+    return `<button type="button" class="print-item ap-item${on ? ' current' : ''}" data-ap="${i}" aria-pressed="${on}" title="${esc(display.set_name || '')}">
+      ${thumb ? pictureTag(thumb, { alt: '', sizes: '(max-width: 820px) 30vw, 150px', use: ['small', 'normal'], main: 'normal' }) : '<span class="ap-noimg"></span>'}
+      <span class="print-set">${esc(display.set_name || display.set.toUpperCase())}</span>
+      <span class="print-meta">${esc(display.set.toUpperCase())} #${esc(display.collector_number)}${LANG === 'en' ? ' · ' : '・'}${rarityLabel(display.rarity)}</span>
+      <span class="print-tags">${tags}</span>
+      ${usd ? `<span class="print-price">$${esc(usd)} <span class="yen-short" data-usd="${esc(usd)}"></span></span>` : ''}
+    </button>`;
+  }).join('')}</div>`;
+  const scroll = (box.querySelector('.ap-body') || {}).scrollTop || 0;
+  box.innerHTML = `<div class="wt-head">
+      <h2 class="wt-h" id="artPickerH">${ART_SVG}<span>${esc(t('pick.title'))}</span></h2>
+      <button type="button" class="wt-close" aria-label="${esc(t('pick.close'))}" title="${esc(t('pick.close'))}">×</button>
+    </div>
+    <div class="wt-sub"><span><b>${esc(label)}</b>${artState.items && artState.items.length ? ` <span class="sep">·</span> ${esc(t('pick.n', { n: fmtNum(artState.items.length) }))}` : ''}</span></div>
+    <p class="ap-note">${esc(t('pick.note'))}</p>
+    <div class="ap-body">${body}</div>`;
+  updateYenLabels(box);
+  const b = box.querySelector('.ap-body');
+  if (b) b.scrollTop = scroll;
+}
+// picked: the card's lines name that printing; its picture is the one already loaded
+function pickArt(card) {
+  const x = impEntry(artState.part, artState.name);
+  if (!x) { closeArtPicker(); return; }
+  PRINT_CARDS.set(printKey(card.set, card.collector_number), card);
+  const before = listText, lines = listText.split(/\r?\n/);
+  x.lines.forEach(l => { lines[l.i] = lineWithPrint(lines[l.i], card.set, card.collector_number); });
+  setListText(lines.join('\n'));
+  closeArtPicker(true);
+  if (listText !== before) wantUndoToast(t('pick.done'), { before, after: listText });
+}
+document.getElementById('artPicker').addEventListener('click', (e) => {
+  if (e.target.closest('.wt-close')) { closeArtPicker(true); return; }
+  if (e.target.closest('[data-ap-retry]')) { openArtPicker(artState.part, artState.name); return; }
+  const b = e.target.closest('[data-ap]');
+  const item = b && artState.items && artState.items[Number(b.dataset.ap)];
+  if (item) pickArt(item.display);
+});
+document.getElementById('artPickerBg').addEventListener('click', () => closeArtPicker(true));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && artState.open) closeArtPicker(true); });
+window.addEventListener('popstate', () => closeArtPicker());
 
 // ---- want list: the list on the deck price page, filled with ☆ from anywhere --------------------
 // One list (owner's request 2026-10-17): the text in the deck price page's box, listText, saved as
@@ -11039,8 +11325,13 @@ function openTray() {
   document.documentElement.classList.add('tray-open');
   document.getElementById('wantBtn').setAttribute('aria-expanded', 'true');
   drawTray();
-  // the cards' names and prices need the card database and the price file
-  dbReady.then(() => { if (trayState.open) drawTray(); });
+  // the cards' names and prices need the card database and the price file; the printings the lines
+  // name ("(MH2) 345": an art picked on the deck price page) bring their own pictures
+  dbReady.then(() => {
+    if (!trayState.open) return;
+    drawTray();
+    if (!LITE) loadPrintCards(wantData().list).then(got => { if (got && trayState.open) drawTray(); });
+  });
   Promise.all([loadCheapest(), fxReady]).then(() => { if (trayState.open) drawTray(); });
   const close = tray.querySelector('.wt-close');
   if (close) close.focus();
@@ -11059,6 +11350,15 @@ function trayPic(row, size) {
   const id = row && row.id;
   return id ? `https://cards.scryfall.io/${size}/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg` : '';
 }
+// the card's picture and page: the printing its line names when that is known, else the usual one
+function trayCard(x, size) {
+  const pc = printCardFor(x.s, x.cn);
+  if (pc && !(x.row && pc.id === x.row.id)) {
+    const u = faceUris(pc)[0];
+    return { id: pc.id, src: u ? u[size] || u.normal || '' : '' };
+  }
+  return { id: x.row ? x.row.id : '', src: trayPic(x.row, size) };
+}
 function trayItems(d) {
   const infos = new Map();
   return d.list.map(x => {
@@ -11067,8 +11367,7 @@ function trayItems(d) {
   });
 }
 function trayRowHtml({ x, it }) {
-  const id = x.row ? x.row.id : '';
-  const src = trayPic(x.row, 'small');
+  const { id, src } = trayCard(x, 'small');
   const href = id ? `?card=${encodeURIComponent(id)}` : '';
   const pic = src && !LITE ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : '';
   const title = href ? `<a class="wt-title" href="${href}" data-card="${esc(id)}">${esc(it.label)}</a>` : `<span class="wt-title">${esc(it.label)}</span>`;
@@ -11079,8 +11378,7 @@ function trayRowHtml({ x, it }) {
     + `${wantStepHtml(x)}${wantTrashHtml(x)}</li>`;
 }
 function trayTileHtml({ x, it }) {
-  const id = x.row ? x.row.id : '';
-  const src = trayPic(x.row, 'normal');
+  const { id, src } = trayCard(x, 'normal');
   const href = id ? `?card=${encodeURIComponent(id)}` : '';
   const pic = `<span class="dc-pic">${src ? `<img src="${esc(src)}" alt="${esc(it.label)}" loading="lazy" onerror="this.remove()">` : ''}<span class="dc-noimg">${esc(it.label)}</span></span>`;
   return `<div class="wt-card" data-want-row="${esc(x.k)}">`

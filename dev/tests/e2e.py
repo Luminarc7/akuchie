@@ -352,6 +352,9 @@ META_DECKS_FIXTURE = {"version": 1, "generated": "2026-10-06T03:00:00Z", "data_t
 
 def search_results(q):
     q = urllib.parse.unquote_plus(q)
+    if q.startswith("lang:ja ("):   # the Japanese printings of many printings at once (loadPrintCards)
+        pairs = set(re.findall(r'e:(\w+) cn:"([^"]+)"', q))
+        return [c for c in CARDS if c["lang"] == "ja" and (c["set"], c["collector_number"]) in pairs]
     m = re.search(r'cn:"([^"]+)"', q)
     if m and "e:" in q:   # one printing in every language (include_multilingual), maybe over two set codes
         sets_ = re.findall(r'e:(\w+)', q)
@@ -3419,6 +3422,112 @@ with sync_playwright() as p:
     check("tray: even clearing can be undone", tray.locator(".wt-row").count() >= 2 and page.input_value("#importText") != "")
     page.keyboard.press("Escape")
     page.evaluate("['warujie-deck-import', 'warujie-want-view'].forEach(k => localStorage.removeItem(k))")
+
+    # ---- 44. the deck price page's picture view: − n ＋ and the art picker under each card ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("['warujie-deck-import', 'akuchie-deck-view', 'akuchie-lang'].forEach(k => localStorage.removeItem(k))")
+    page.evaluate("localStorage.setItem('warujie-deck-import', '4 Ragavan, Nimble Pilferer\\nLightning Bolt x2\\n\\nSideboard\\n1 Lightning Bolt\\n')")
+    page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .want-bar")
+    page.click("#importBody [data-iview='image']"); page.wait_for_selector("#importBody .imp-card")
+    cards = page.locator("#importBody .imp-card")
+    check("picture view: every card has − n ＋ and an art button under it",
+          cards.count() == 3 and page.locator("#importBody .imp-act .want-c").all_inner_texts() == ["4枚", "2枚", "1枚"]
+          and page.locator("#importBody .imp-act .imp-art").count() == 3, page.locator("#importBody .imp-act .want-c").all_inner_texts())
+    check("picture view: the buttons sit under the picture, inside the card's width",
+          page.evaluate("[...document.querySelectorAll('#importBody .imp-card')].every(c => { const p = c.querySelector('.dc-pic').getBoundingClientRect(), a = c.querySelector('.imp-act').getBoundingClientRect(); return a.top >= p.bottom && a.left >= p.left - 1 && a.right <= p.right + 1; })"))
+    rag = "#importBody [data-ip='main'][data-in='Ragavan, Nimble Pilferer']"
+    page.click(rag + "[data-imp-act='more']"); page.wait_for_timeout(250)
+    check("＋ under a card adds one to its line, the box follows, and the focus stays on ＋",
+          page.input_value("#importText").startswith("5 Ragavan, Nimble Pilferer\n") and page.locator(rag + "[data-imp-act='more']").evaluate("b => b === document.activeElement")
+          and "×5" in page.locator("#importBody .imp-card").first.inner_text(), page.input_value("#importText"))
+    page.click("#importBody [data-ip='main'][data-in='Lightning Bolt'][data-imp-act='less']"); page.wait_for_timeout(250)
+    check("− changes that part only, the way the line was written (Bolt x2 → x1; the sideboard's stays)",
+          page.input_value("#importText") == "5 Ragavan, Nimble Pilferer\nLightning Bolt x1\n\nSideboard\n1 Lightning Bolt\n", page.input_value("#importText"))
+    page.click("#importBody [data-ip='side'][data-in='Lightning Bolt'][data-imp-act='less']"); page.wait_for_timeout(250)
+    check("− on the last copy takes the card out, with undo", "Sideboard\n1 Lightning Bolt" not in page.input_value("#importText")
+          and page.locator("#importBody .imp-card").count() == 2 and page.locator("#wantToast button").inner_text() == "元に戻す")
+    page.click("#wantToast button"); page.wait_for_timeout(300)
+    check("undo brings it back", page.input_value("#importText").endswith("Sideboard\n1 Lightning Bolt\n") and page.locator("#importBody .imp-card").count() == 3)
+    n_calls = len(calls)
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    pick = page.locator("#artPicker")
+    check("art button: opens a picker over the page with every printing, newest first",
+          pick.is_visible() and pick.get_attribute("role") == "dialog" and "絵柄を選ぶ" in pick.locator(".wt-h").inner_text()
+          and pick.locator(".ap-item").count() == 3 and "MUL #21" in pick.locator(".ap-item").first.inner_text(), pick.inner_text()[:300])
+    check("art picker: one Scryfall search for the printings and one for the Japanese ones",
+          sum("/cards/search" in c and "oracleid" in urllib.parse.unquote_plus(c) for c in calls[n_calls:]) == 2, calls[n_calls:])
+    check("art picker: Japanese printings say so, prices show, the picture shown now is marked",
+          pick.locator(".ap-item .print-tag.ja").count() == 2 and "$55.00" in pick.inner_text()
+          and pick.locator(".ap-item.current").count() == 1 and "#138" in pick.locator(".ap-item.current").inner_text()
+          and "選択中" in pick.locator(".ap-item.current").inner_text())
+    pick.locator(".ap-item", has_text="#345").click(); page.wait_for_timeout(300)
+    check("picking a printing writes it on the card's line and closes the picker",
+          page.input_value("#importText").startswith("5 Ragavan, Nimble Pilferer (MH2) 345\n") and not pick.is_visible()
+          and not page.evaluate("document.documentElement.classList.contains('art-open')"), page.input_value("#importText"))
+    first = page.locator("#importBody .imp-card").first
+    check("the card shows the picked art and opens that printing, with undo, and the focus is back on its art button",
+          "rag-en-mh2-bl" in first.locator(".dc-pic img").get_attribute("src") and first.locator("a.deck-card").get_attribute("data-card") == "rag-en-mh2-bl"
+          and "絵柄を変えました" in page.locator("#wantToast").inner_text()
+          and page.locator(rag + "[data-imp-act='art']").evaluate("b => b === document.activeElement"))
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item.current")
+    check("art picker: the printing picked is the one marked", "#345" in pick.locator(".ap-item.current").inner_text())
+    page.keyboard.press("Escape"); page.wait_for_timeout(150)
+    check("art picker: Esc closes it and the focus goes back", not pick.is_visible() and page.locator(rag + "[data-imp-act='art']").evaluate("b => b === document.activeElement"))
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    page.mouse.click(5, 5); page.wait_for_timeout(150)
+    check("art picker: a tap beside it closes it", not pick.is_visible())
+    n_calls = len(calls)
+    page.reload(); page.wait_for_selector("#importBody .imp-card")
+    page.wait_for_function("document.querySelector('#importBody .imp-card .dc-pic img') && document.querySelector('#importBody .imp-card .dc-pic img').src.includes('rag-en-mh2-bl')", timeout=8000)
+    later = calls[n_calls:]
+    check("after a reload the card still shows the picked art: the Japanese printings asked in one search, the rest by set and number",
+          sum("/cards/search" in c and "lang%3Aja+%28" in c for c in later) == 1 and sum("/cards/collection" in c for c in later) >= 1, later)
+    page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row")
+    page.wait_for_function("[...document.querySelectorAll('#wantTray .wt-row img')].some(i => i.src.includes('rag-en-mh2-bl'))", timeout=5000)
+    check("tray: the card shows the picked art there too", True)
+    page.keyboard.press("Escape")
+    page.click("#importBody [data-ip='main'][data-in='Lightning Bolt'][data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    check("art picker: a Japanese printing with no real scan shows the English picture",
+          "bolt-en-m10" in (pick.locator(".ap-item img").first.get_attribute("src") or ""), pick.locator(".ap-item img").first.get_attribute("src"))
+    pick.locator(".ap-item").first.click(); page.wait_for_timeout(300)
+    check("picking keeps a count written last: Lightning Bolt (M10) 146 x1", "\nLightning Bolt (M10) 146 x1\n" in page.input_value("#importText")
+          and page.locator("#importBody .imp-act .want-c").all_inner_texts()[:2] == ["5枚", "1枚"], page.input_value("#importText"))
+    ok = page.evaluate("""() => {
+      const cases = [['4 稲妻', 'mh2', '345', '4 稲妻 (MH2) 345'],
+        ['1 Ragavan, Nimble Pilferer (MH2) 138 *F*', 'mul', '21', '1 Ragavan, Nimble Pilferer (MUL) 21 *F*'],
+        ['1x Lightning Bolt (2X2) 117 [Burn]', 'm10', '146', '1x Lightning Bolt (M10) 146 [Burn]'],
+        ['SB: 2 Lightning Bolt', 'sta', '42', 'SB: 2 Lightning Bolt (STA) 42'],
+        ['1 Ragavan, Nimble Pilferer', 'war', '1★', '1 Ragavan, Nimble Pilferer (WAR) 1★']];
+      return cases.map(([raw, s, cn, want]) => {
+        const got = lineWithPrint(raw, s, cn), l = parseDeckText(got).lines[0];
+        return got === want && l.s === s && l.cn === cn ? 'ok' : got + ' / ' + JSON.stringify(l);
+      });
+    }""")
+    check("lineWithPrint: the printing goes on the line, which still reads the same (foil mark, Archidekt category, SB:, ★ numbers)", ok == ["ok"] * 5, ok)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+    check("phone, picture view: three cards across that don't overlap, the buttons fit under each, no sideways scroll",
+          no_hscroll() and page.evaluate("[...document.querySelectorAll('#importBody .imp-act')].every(a => a.scrollWidth <= a.clientWidth + 1 && a.getBoundingClientRect().right <= a.closest('.imp-card').getBoundingClientRect().right + 1)")
+          and page.evaluate("""(() => { const r = [...document.querySelectorAll('#importBody .imp-card')].map(c => c.getBoundingClientRect());
+            const w = (document.documentElement.clientWidth - 32) / 3 + 1;
+            return r.length > 0 && r.every(x => x.width <= w && x.right <= document.documentElement.clientWidth - 8)
+              && r.every((x, i) => r.every((y, j) => i === j || x.right <= y.left || y.right <= x.left || x.bottom <= y.top || y.bottom <= x.top)); })()"""))
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    box = page.evaluate("(() => { const r = document.getElementById('artPicker').getBoundingClientRect(); return [r.left, r.right, r.bottom, innerWidth, innerHeight]; })()")
+    cols = page.evaluate("getComputedStyle(document.querySelector('#artPicker .ap-grid')).gridTemplateColumns.split(' ').length")
+    check("phone: the picker is a sheet from the bottom, three printings across", abs(box[0]) < 1 and abs(box[1] - box[3]) < 1 and abs(box[2] - box[4]) < 1 and cols == 3 and no_hscroll(), [box, cols])
+    page.keyboard.press("Escape")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.click("#langBtn"); page.wait_for_selector("#importBody .imp-card")
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    check("English: the picker and the buttons in English", "Choose the art" in pick.inner_text() and pick.locator(".ap-item .print-tag.ja").count() == 0
+          and page.locator(rag + "[data-imp-act='art']").get_attribute("aria-label") == "Change the art of Ragavan, Nimble Pilferer", pick.inner_text()[:200])
+    page.keyboard.press("Escape")
+    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.evaluate("['warujie-deck-import', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+    str_src = INDEX[INDEX.index("const STR = {"):INDEX.index("\n};", INDEX.index("const STR = {"))]
+    str_keys = re.findall(r"^\s+'([^']+)':\s*\[", str_src, re.M)
+    check("interface strings: no key in STR twice (a later one would win silently)", len(str_keys) > 500 and len(set(str_keys)) == len(str_keys),
+          [k for k in set(str_keys) if str_keys.count(k) > 1])
 
     check("no JavaScript errors", not errors, errors)
     browser.close()
