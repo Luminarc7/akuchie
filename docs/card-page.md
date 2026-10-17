@@ -28,7 +28,7 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Legality | `legalityHtml()` | Scryfall `legalities` |
 | Deck sites | `mtgDecksUrl()`, `goldfishUrl()` | Links only |
 | Price history chart | `showPriceHistory()`, `drawPriceHistory()` | warujie-prices `h/` shards |
-| All printings | `loadPrintings()`, `printEntries()` (shared with the deck price page's art picker, kept for the visit) | Scryfall search `oracleid:<id> unique:prints`, and the same with `lang:ja`, in the request queue (`fetchAllPages()` → `scryfallTurn()`) |
+| All printings | `loadPrintings()`, `printEntries()` (shared with the deck price page's art picker, kept for the visit) | Scryfall search `oracleid:<id> unique:prints`, and the same with `lang:ja` (`fetchAllPages()`) |
 | Combos (preview page only) | `loadCardCombos()` | warujie-prices `c/` shards, `combo_ja.js` for Japanese |
 | Similar cards | `showSimilar()`, `renderSimilar()` | The local similarity index (see [search.md](search.md#similar-cards-似)) |
 | Price notes | `priceNotesHtml()` | Which source each number came from and its date |
