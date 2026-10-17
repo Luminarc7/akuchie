@@ -66,6 +66,8 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Change the want list (☆, the tray), the switch to the pasted deck, or where they can be exported | `wantTogHtml()`, `setList()`, `drawImportHead()`, `drawTray()`, `importListText()`, `WANT_SITES`. See [other-pages.md](other-pages.md#want-list-and-deck-price-page-two-lists-one-page) |
 | Change the − n ＋ and art buttons on the price page's cards and rows, or the art picker | `impCardHtml()`, `impRowHtml()`, `openArtPicker()`, `drawArtPicker()`, `lineWithPrint()`, `loadPrintCards()`. See [other-pages.md](other-pages.md#counts-and-art-under-each-card) |
 | Change the price page's name box | `textWithName()`, `importNameTyped()`, `drawImport()`. See [other-pages.md](other-pages.md#reading-and-pricing) |
+| Change the green ＋ in the name suggestions (what it adds, to which list) | `suggestAdd()`, `suggestAddList()`, `attachNameSuggest()`. See [other-pages.md](other-pages.md#want-list-and-deck-price-page-two-lists-one-page) |
+| Change how a line naming a printing is priced (the art picked, ☆ lines, foil) | `entryYen()`, `pricesYen()`, `printYen()`, `PRINT_PRICES`, `loadPrintPrices()`, `deckCost()`. See [other-pages.md](other-pages.md#reading-and-pricing) |
 | Translate a deck name into Japanese | `DECK_NAME_WHOLE` (whole names), `DECK_WORD_JA` (words), `DECK_GUILD_JA`, `DECK_MONO_JA` |
 
 ## Which doc covers which code

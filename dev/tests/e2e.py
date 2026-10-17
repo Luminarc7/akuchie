@@ -2197,6 +2197,9 @@ with sync_playwright() as p:
     check("suggestions: a role word is offered while typing (ドロ -> ドロー, search by role), before card names",
           first.locator(".s-main").inner_text() == "ドロー" and first.locator(".s-sub").inner_text() == "役割で探す"
           and "ドローンテスト" in page.locator("#searchSuggest").inner_text(), page.locator("#searchSuggest").inner_text())
+    check("suggestions: the role line has no green ＋, the card names under it do",
+          page.locator("#searchSuggest .role-suggest").evaluate("b => !b.closest('li').querySelector('.sug-add')")
+          and page.locator("#searchSuggest .sug-add").count() == page.locator("#searchSuggest .suggest-item:not(.role-suggest)").count() >= 1)
     first.click(); page.wait_for_function(DONE)
     check("suggestions: picking it searches the role", page.evaluate("document.getElementById('searchInput').value") == "ドロー" and names() == ["研究テスト", "熟考漂いテスト", "論争テスト"], names())
     page.fill("#searchInput", ""); page.focus("#searchInput"); page.locator("#searchInput").press_sequentially("ランプ")
@@ -3316,8 +3319,9 @@ with sync_playwright() as p:
           and tray.locator(".wt-row").count() == 2 and tray.locator(".wt-row .want-step").count() == 2 and tray.locator(".wt-row .want-trash").count() == 2,
           tray.inner_text()[:300])
     rrow = tray.locator(".wt-row[data-want-row='rag-oracle']")
-    check("tray: the card's Japanese name, its English name and its cheapest price",
-          "敏捷なこそ泥、ラガバン" in rrow.inner_text() and "Ragavan, Nimble Pilferer" in rrow.inner_text() and "最安" in rrow.inner_text(), rrow.inner_text())
+    page.wait_for_function("document.querySelector(\"#wantTray .wt-row[data-want-row='rag-oracle'] .wt-yen\") && !document.querySelector(\"#wantTray .wt-row[data-want-row='rag-oracle'] .wt-yen\").textContent.includes('最安')", timeout=8000)
+    check("tray: the card's Japanese name, its English name and the price of the printing its ☆ line names (MH2 #138: the lower of $40 and €35)",
+          "敏捷なこそ泥、ラガバン" in rrow.inner_text() and "Ragavan, Nimble Pilferer" in rrow.inner_text() and rrow.locator(".wt-yen").inner_text() == "¥5,600", rrow.inner_text())
     rrow.locator("[data-want-act=more]").click(); page.wait_for_timeout(150)
     rrow = tray.locator(".wt-row[data-want-row='rag-oracle']")
     check("tray: ＋ adds a copy on the card's line", rrow.locator(".want-c").inner_text() == "2枚" and page.locator("#wantN").inner_text() == "3"
@@ -3368,8 +3372,10 @@ with sync_playwright() as p:
           and page.locator("#impWhich a[aria-current=page]").inner_text() == "ウォントリスト" and page.title().startswith("ウォントリスト — ")
           and page.locator("#tabPrices").get_attribute("aria-selected") == "true",
           page.input_value("#importText"))
-    check("deck price page: its total is the cheapest printings', as on deck pages",
-          page.locator("#importBody .want-bar .dcst-v").first.inner_text() == page.evaluate("costText(deckCost([[1,'Lightning Bolt'],[2,'Ragavan, Nimble Pilferer']]))"))
+    # the lines name M10 #146 ($1.20: ¥180) and MH2 #138 (the lower of $40 and €35: ¥5,600)
+    page.wait_for_function("document.querySelector('#importBody .want-bar .dcst-v').textContent === '約¥11,400'", timeout=8000)
+    check("deck price page: its total counts the printings the lines name",
+          page.locator("#importBody .want-bar .dcst-v").first.inner_text() == "約¥11,400" == page.evaluate("costText(deckCost([[1,'Lightning Bolt'],[2,'Ragavan, Nimble Pilferer']], [180, 5600]))"))
     order = page.evaluate("[...document.querySelector('#importBody .want-bar').querySelectorAll('.dcst-price, .view-toggle, [data-hareruya], #importExport')].map(e => Math.round(e.getBoundingClientRect().left))")
     check("deck price page: the total and リスト/画像 on the left, 晴れる屋で買う and 書き出す on the right, in one bar",
           len(order) == 4 and order == sorted(order) and order[2] > 900, order)
@@ -3490,7 +3496,7 @@ with sync_playwright() as p:
     check("art picker: one Scryfall search for the printings and one for the Japanese ones",
           sum("/cards/search" in c and "oracleid" in urllib.parse.unquote_plus(c) for c in calls[n_calls:]) == 2, calls[n_calls:])
     check("art picker: Japanese printings say so, prices show, the picture shown now is marked",
-          pick.locator(".ap-item .print-tag.ja").count() == 2 and "$55.00" in pick.inner_text()
+          pick.locator(".ap-item .print-tag.ja").count() == 2 and "¥8,250" in pick.inner_text()
           and pick.locator(".ap-item.current").count() == 1 and "#138" in pick.locator(".ap-item.current").inner_text()
           and "選択中" in pick.locator(".ap-item.current").inner_text())
     pick.locator(".ap-item", has_text="#345").click(); page.wait_for_timeout(300)
@@ -3653,6 +3659,156 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
     page.click("#langBtn"); page.wait_for_selector("#importBody .imp-row")
     check("English: the name box says Want list until it has a name", nm.get_attribute("placeholder") == "Want list" and nm.get_attribute("aria-label") == "Name of the list")
+    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+
+    # ---- 46. the price follows the printing a line names: the art picked, ☆ lines, Moxfield's foil marks ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view', 'akuchie-lang', 'akuchie-lite'].forEach(k => localStorage.removeItem(k))")
+    page.evaluate("localStorage.setItem('warujie-want-list', '2 Ragavan, Nimble Pilferer\\n1 Lightning Bolt\\n')")
+    page.evaluate("localStorage.setItem('akuchie-deck-view', 'list')")
+    def yen_txt(y): return "¥{:,}".format(max(1, int(round(y))) if y < 1000 else int(round(y / 10) * 10))
+    def total_txt(y, more=False): return ("約¥{:,}" + ("〜" if more else "")).format(int(round(round(y) / 100) * 100))
+    def cheap_yen(name):
+        r = cheap.get(name)
+        opts = [x for x in ((r[0] / 100 * 150.0) if r and r[0] else None, (r[1] / 100 * 160.0) if r and r[1] else None) if x is not None]
+        return min(opts) if opts else None
+    def rowyen(name, part="main"):
+        return page.evaluate("""([n, p]) => { const r = [...document.querySelectorAll('#importBody .imp-row')].find(r => { const b = r.querySelector('[data-imp-act=more]'); return b && b.dataset.in === n && b.dataset.ip === p; });
+          const y = r && r.querySelector('.dl-yen'); return y ? [y.textContent, y.title] : null; }""", [name, part])
+    def total(): return page.locator("#importBody .want-bar .dcst-v").first.inner_text()
+    RAG_N = "Ragavan, Nimble Pilferer"
+    CHEAP_T, PRINT_T = "1枚あたり・いちばん安い版の価格", "1枚あたり・この版の価格（米国と欧州の安いほう）"
+    rag_cheap, bolt_cheap = cheap_yen(RAG_N), cheap_yen("Lightning Bolt")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row .dl-yen:not(:empty)")
+    page.wait_for_function("document.querySelector('#importBody .want-bar .dcst-v')")
+    check("printing prices: a line that names no printing is priced at the card's cheapest, as before",
+          rowyen(RAG_N) == [yen_txt(rag_cheap), CHEAP_T] and total() == total_txt(2 * rag_cheap + bolt_cheap), (rowyen(RAG_N), total()))
+    page.click("#importBody .imp-row [data-ip='main'][data-in='Ragavan, Nimble Pilferer'][data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    pp = page.evaluate("[...document.querySelectorAll('#artPicker .ap-item')].map(b => [b.querySelector('.print-meta').textContent.split('・')[0], (b.querySelector('.print-price') || {}).textContent, (b.querySelector('.print-price') || {}).title])")
+    check("art picker: each printing shows the price it would count at in the list, in yen (the lower of US and EU)",
+          ["MH2 #345", "¥8,250", PRINT_T] in pp and ["MH2 #138", "¥5,600", PRINT_T] in pp and ["MUL #21", "¥6,150", PRINT_T] in pp, pp)
+    check("art picker: its note says the price follows", "価格もその版のものになります" in page.locator("#artPicker .ap-note").inner_text(), page.locator("#artPicker .ap-note").inner_text())
+    n0 = len(calls)
+    page.locator("#artPicker .ap-item", has_text="#345").click(); page.wait_for_timeout(500)
+    check("printing prices: picking an art prices the card at that printing at once, the total too (the user's report, 2026-10-17)",
+          rowyen(RAG_N) == ["¥8,250", PRINT_T] and total() == total_txt(2 * 8250 + bolt_cheap), (rowyen(RAG_N), total()))
+    check("printing prices: the picked printing's price was already in, no new request", not any("/cards/collection" in c for c in calls[n0:]), calls[n0:])
+    page.click("#importBody [data-iview=image]"); page.wait_for_selector("#importBody .imp-card .dc-yen")
+    cy = page.evaluate("[...document.querySelectorAll('#importBody .imp-card')].map(c => { const y = c.querySelector('.dc-yen'); return [c.querySelector('.dc-name').textContent, y && y.textContent, y && y.title]; })")
+    check("printing prices: the picture view shows the same price", ["敏捷なこそ泥、ラガバン", "¥8,250", PRINT_T] in cy, cy)
+    page.click("#importBody [data-iview=list]"); page.wait_for_selector("#importBody .imp-row")
+    page.click("#wantToast button"); page.wait_for_timeout(500)
+    check("printing prices: undo puts the cheapest price back", rowyen(RAG_N) == [yen_txt(rag_cheap), CHEAP_T], rowyen(RAG_N))
+    # a list pasted with printings: foil, a printing Scryfall doesn't have, a Japanese printing with a real scan
+    page.fill("#importText", "Deck\n2 Ragavan, Nimble Pilferer (MH2) 138 *F*\n1 Lightning Bolt (XYZ) 999\n\nSideboard\n1 Ragavan, Nimble Pilferer (MUL) 21\n")
+    page.wait_for_function("""(() => { const r = [...document.querySelectorAll('#importBody .imp-row')].find(r => { const b = r.querySelector('[data-imp-act=more]'); return b && b.dataset.ip === 'side'; });
+      return r && r.querySelector('.dl-yen').textContent === '¥6,150'; })()""", timeout=8000)
+    check("printing prices: a *F* line counts at the foil price", rowyen(RAG_N) == ["¥9,000", PRINT_T], rowyen(RAG_N))
+    check("printing prices: a Japanese printing counts at its English printing's price (same set and number)", rowyen(RAG_N, "side") == ["¥6,150", PRINT_T], rowyen(RAG_N, "side"))
+    check("printing prices: a printing Scryfall doesn't know keeps the cheapest price", rowyen("Lightning Bolt") == [yen_txt(bolt_cheap), CHEAP_T], rowyen("Lightning Bolt"))
+    check("printing prices: the total adds them up, and says which lines count how",
+          total() == total_txt(2 * 9000 + bolt_cheap + 6150) and page.locator("#importBody .want-bar .dcst-v").first.get_attribute("title") == "選んだ版はその版で、ほかはいちばん安い版で・サイドボード込み"
+          and "版を指定した行" in page.locator("#importBody .deck-cost-note").inner_text() and "*F* の行はフォイルの価格" in page.locator("#importBody .deck-cost-note").inner_text(), total())
+    unit = page.evaluate("""() => {
+      const r = [];
+      r.push(parseDeckText('1 Ragavan, Nimble Pilferer (MH2) 138 *F*\\n1 Ragavan, Nimble Pilferer (MH2) 138 *E*\\n1 Ragavan, Nimble Pilferer (MH2) 138\\n1 Bolt *F*').lines.map(l => l.f).join());
+      r.push([pricesYen({ usd: '1.00', eur: '0.50' }, ''), pricesYen({ usd: null, usd_foil: '2.00' }, ''), pricesYen({ usd: '1.00', usd_etched: '3.00' }, 'e'),
+              pricesYen({ usd: '1.00' }, 'f'), pricesYen({ usd: null, eur: null }, ''), pricesYen(null, '')].join());
+      const e = entryYen({ name: 'Ragavan, Nimble Pilferer', lines: [{ s: 'mh2', cn: '345', count: 1, f: '' }, { s: '', cn: '', count: 1, f: '' }] }, rowByEnglishName('Ragavan, Nimble Pilferer'));
+      r.push([Math.round(e.each), e.print].join());
+      r.push(entryYen({ name: 'Mountain', lines: [{ s: 'mh2', cn: '138', count: 4 }] }, rowByEnglishName('Mountain')).each);
+      r.push(deckCost([[2, 'Ragavan, Nimble Pilferer']]).yen);
+      return r;
+    }""")
+    check("printing prices: *F* foil and *E* etched are read; US or EU, whichever is lower; a foil-only printing at its foil price; two lines of one card at their own prices; basic lands free",
+          unit[:4] == ["f,e,,f", "80,300,450,150,,", "{},true".format(round((8250 + rag_cheap) / 2)), None], unit)
+    check("printing prices: the deck pages keep the cheapest printing (no prices of their own)", unit[4] == round(2 * rag_cheap), unit)
+    # the tray: the same prices, 最安 only where it is the cheapest
+    page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row .wt-yen")
+    ty = page.evaluate("[...document.querySelectorAll('#wantTray .wt-row')].map(r => [r.querySelector('.wt-title').textContent, (r.querySelector('.wt-yen') || {}).textContent])")
+    check("tray: a card is priced as its lines' printings (here 2 foil and 1 other), 最安 only where it is the cheapest",
+          ty == [["敏捷なこそ泥、ラガバン", yen_txt((2 * 9000 + 6150) / 3)], ["稲妻", "最安 " + yen_txt(bolt_cheap)]], ty)
+    page.keyboard.press("Escape")
+    # the lightweight mode prices the printings too (no pictures, still the price)
+    page.evaluate("localStorage.setItem('akuchie-lite', '1')")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row .dl-yen:not(:empty)")
+    page.wait_for_function("""(() => { const r = [...document.querySelectorAll('#importBody .imp-row')].find(r => r.querySelector('[data-imp-act=more]').dataset.ip === 'side'); return r && r.querySelector('.dl-yen').textContent === '¥6,150'; })()""", timeout=8000)
+    check("lightweight mode: the printings' prices still count", rowyen(RAG_N) == ["¥9,000", PRINT_T] and page.evaluate("document.documentElement.dataset.lite") == "1", rowyen(RAG_N))
+    page.evaluate("localStorage.removeItem('akuchie-lite')")
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+
+    # ---- 47. a green ＋ beside each card name in the suggestions: one copy into the want list, or into the list on the price page ----
+    page.goto(SITE + "?card=drag-ja"); page.wait_for_selector(".cp-name")
+    page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
+    page.focus("#searchInput"); page.locator("#searchInput").press_sequentially("ラノ")
+    page.wait_for_selector("#searchSuggest .sug-add")
+    sugrow = page.locator("#searchSuggest .sug-row", has_text="ラノワールのエルフ")
+    add = sugrow.locator(".sug-add")
+    look = add.evaluate("b => { const c = getComputedStyle(b), r = b.getBoundingClientRect(), it = b.closest('li').querySelector('.suggest-item').getBoundingClientRect(); return [c.backgroundColor, Math.round(r.width), Math.round(r.height), b.getAttribute('aria-label'), b.dataset.n, Math.round(r.left - it.right), Math.round(b.closest('li').getBoundingClientRect().right - r.right)]; }")
+    check("suggestions: each card name has a green ＋ at its end, saying what it does",
+          look[0] == "rgb(181, 230, 85)" and look[1] == 30 and look[2] == 30 and look[3] == "ウォントリストに1枚追加：ラノワールのエルフ" and look[4] == "0" and 0 <= look[5] <= 8 and look[6] <= 12, look)
+    url0 = page.url
+    add.click(); page.wait_for_timeout(250)
+    check("suggestions: ＋ puts one copy in the want list without opening the card; the menu stays open, the box keeps the focus, and a note says so",
+          listtext() == "1 Llanowar Elves\n" and page.url == url0 and page.locator("#searchSuggest").is_visible()
+          and page.evaluate("document.activeElement.id") == "searchInput" and page.locator("#wantN").inner_text() == "1"
+          and page.locator("#wantToast span").inner_text() == "ラノワールのエルフをウォントリストに追加しました（1枚）" and page.locator("#wantToast button").inner_text() == "リストを見る"
+          and add.get_attribute("data-n") == "1" and add.get_attribute("aria-label") == "ウォントリストに1枚追加：ラノワールのエルフ（いま1枚）", (listtext(), page.url))
+    add.click(); page.wait_for_timeout(250)
+    badge = add.evaluate("b => getComputedStyle(b, '::after').content")
+    check("suggestions: ＋ again adds another copy on the same line, and the ＋ shows how many", listtext() == "2 Llanowar Elves\n" and add.get_attribute("data-n") == "2" and badge == '"2"', (listtext(), badge))
+    check("suggestions: the card's ☆ elsewhere shows it as added", page.evaluate("wantFindFor({ k: 'elf-oracle', n: 'Llanowar Elves' }).count") == 2)
+    sugrow.locator(".suggest-item").click()
+    page.wait_for_function("document.querySelector('.cp-name') && document.querySelector('.cp-name').textContent === 'ラノワールのエルフ'")
+    check("suggestions: the name itself still opens the card", "card=elf-ja" in page.url)
+    # on the price page: into the list on screen
+    page.evaluate("localStorage.setItem('warujie-deck-import', 'Deck\\n4 Lightning Bolt\\n\\nSideboard\\n2 Qasali Pridemage\\n')")
+    page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-section")
+    page.focus("#searchInput"); page.locator("#searchInput").press_sequentially("シヴ")
+    page.wait_for_selector("#searchSuggest .sug-add")
+    add = page.locator("#searchSuggest .sug-row", has_text="シヴ山のドラゴン").locator(".sug-add")
+    check("suggestions on the price page: ＋ adds to the deck shown", add.get_attribute("aria-label") == "デッキに1枚追加：シヴ山のドラゴン", add.get_attribute("aria-label"))
+    add.click(); page.wait_for_function("document.getElementById('importText').value.includes('1 Shivan Dragon')")
+    page.wait_for_function("[...document.querySelectorAll('#importBody .dl-name, #importBody .dc-name')].some(e => e.textContent.includes('シヴ山のドラゴン'))")
+    check("suggestions on the price page: the card goes into the main deck (not the sideboard) and the page prices it; the want list is left alone; undo offered",
+          page.input_value("#importText") == "Deck\n4 Lightning Bolt\n1 Shivan Dragon\n\nSideboard\n2 Qasali Pridemage\n" and listtext() == "2 Llanowar Elves\n"
+          and page.locator("#wantToast span").inner_text() == "シヴ山のドラゴンをデッキに追加しました（1枚）" and page.locator("#wantToast button").inner_text() == "元に戻す", page.input_value("#importText"))
+    page.locator("#searchInput").press_sequentially("x"); page.locator("#searchInput").press("Backspace"); page.wait_for_selector("#searchSuggest .sug-add")
+    add = page.locator("#searchSuggest .sug-row", has_text="シヴ山のドラゴン").locator(".sug-add")
+    add.click(); page.wait_for_function("document.getElementById('importText').value.includes('2 Shivan Dragon')")
+    check("suggestions on the price page: ＋ again counts up the deck's line", "\n2 Shivan Dragon\n" in page.input_value("#importText") and add.get_attribute("data-n") == "2", page.input_value("#importText"))
+    page.click("#wantToast button"); page.wait_for_timeout(300)
+    check("suggestions on the price page: undo takes it back", "1 Shivan Dragon" in page.input_value("#importText"), page.input_value("#importText"))
+    page.press("#searchInput", "Escape")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row")
+    page.focus("#searchInput"); page.locator("#searchInput").press_sequentially("ラノ"); page.wait_for_selector("#searchSuggest .sug-add")
+    add = page.locator("#searchSuggest .sug-row", has_text="ラノワールのエルフ").locator(".sug-add")
+    check("suggestions on the want list page: ＋ adds to the want list, with its count", add.get_attribute("aria-label") == "ウォントリストに1枚追加：ラノワールのエルフ（いま2枚）", add.get_attribute("aria-label"))
+    add.click(); page.wait_for_function("document.getElementById('importText').value === '3 Llanowar Elves\\n'")
+    check("suggestions on the want list page: the list on screen follows, with undo", page.locator("#wantToast button").inner_text() == "元に戻す" and listtext() == "3 Llanowar Elves\n")
+    page.press("#searchInput", "Escape")
+    # phone: the home page's box
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.goto(SITE); page.wait_for_selector("#heroInput")
+    page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
+    page.focus("#heroInput"); page.locator("#heroInput").press_sequentially("ラノ"); page.wait_for_selector("#heroSuggest .sug-add")
+    ph = page.evaluate("(() => { const b = document.querySelector('#heroSuggest .sug-add'), r = b.getBoundingClientRect(), li = b.closest('li'), ul = li.closest('ul'); return [Math.round(r.width), Math.round(r.right), Math.round(li.getBoundingClientRect().right), li.scrollWidth <= li.clientWidth + 1, ul.scrollWidth <= ul.clientWidth + 1, b.dataset.n]; })()")
+    check("phone: the ＋ is big enough to tap and sits inside the menu with its count, no sideways scroll", ph[0] == 34 and ph[1] <= ph[2] and ph[3] and ph[4] and ph[5] == "3" and no_hscroll(), ph)
+    page.locator("#heroSuggest .sug-add").first.click(); page.wait_for_selector("#wantToast:not([hidden])")
+    tw = page.evaluate("(() => { const r = document.getElementById('wantToast').getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), Math.round(r.left), Math.round(r.right)]; })()")
+    check("phone: the note for a longer message uses the screen's width (not a tall narrow box) and stays on screen", tw[0] >= 300 and tw[1] <= 80 and tw[2] >= 0 and tw[3] <= 390, tw)
+    if SHOTS: page.screenshot(path="suggest_add_phone.png")
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.press("#heroInput", "Escape")
+    page.goto(SITE + "?card=drag-ja"); page.wait_for_selector(".cp-name")
+    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.fill("#searchInput", ""); page.focus("#searchInput"); page.locator("#searchInput").press_sequentially("Llano"); page.wait_for_selector("#searchSuggest .sug-add")
+    check("desktop: the ＋ and its count fit in the menu, no sideways scroll there",
+          page.evaluate("(() => { const ul = document.getElementById('searchSuggest'); return ul.scrollWidth <= ul.clientWidth + 1; })()"))
+    check("English: the ＋ says it in English", page.locator("#searchSuggest .sug-add").first.get_attribute("aria-label") == "Add one to your want list: Llanowar Elves (now 4)",
+          page.locator("#searchSuggest .sug-add").first.get_attribute("aria-label"))
+    page.press("#searchInput", "Escape")
     page.click("#langBtn"); page.wait_for_timeout(300)
     page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
 

@@ -209,7 +209,7 @@ card page's toggles (same colours, no higher mana value, same type: `simPasses()
 
 | Feature | Where |
 |---|---|
-| Name suggestions while typing | `nameSuggestions()`, `attachNameSuggest()` |
+| Name suggestions while typing (each card name with a green ＋ that adds it to the want list: other-pages.md) | `nameSuggestions()`, `attachNameSuggest()`, `suggestAdd()` |
 | Highlighting the matched text | `highlightRanges()`, `highlightHtml()` |
 | "No results" help (closest names, closest words, recent searches) | `renderZeroHelp()`, `fuzzyNameRows()`, `closestKnownWord()` |
 | Recent searches (this browser only) | `rememberSearch()`, `akuchie-recent` |
