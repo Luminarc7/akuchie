@@ -43,6 +43,7 @@ here.
 | A card on the deck price page shows the cheapest price, not the printing its line names | Scryfall has no price for that printing (often a Japanese-only one, which has no English printing to borrow from), the exchange rate isn't in yet, or the request failed | `entryYen()` falls back to `cardYen()`; `loadPrintPrices()` asks again after a failure, a printing with no price is remembered as none for the visit |
 | Metagame or deck page prices come out tiny (a deck at ¥300) | Something read the third item of a metagame list's `[count, name, play rate]` as a price | `deckCost()` takes per-card prices only as its own second list (the deck price page's `entryYen()` values), never from the cards' items |
 | A centred note at the bottom (`.want-toast`) wraps a longer message into a tall narrow box on phones | Placed with `left: 50%` and `translateX(-50%)`, a box shrinks to fit the half of the screen right of its left edge | `width: max-content` with `max-width: calc(100vw - 24px)` |
+| On the deck price page a card swaps places with another when its count changes (Flare of Malice passing Baleful Mastery at 5 copies) | Deck pages order cards of the same mana value by copies, most first | The price page passes `byCount` false to `deckGroupsHtml()` / `deckSort()`: mana value, then name |
 | A new interface string shows some other text | `STR` already had that key further down, and the later one wins silently (`art.title` is the picture credit) | Pick another key; `dev/tests/e2e.py` checks `STR` has no key twice |
 
 ## Deploys and hosting

@@ -266,6 +266,8 @@ has the same − n ＋ in place of the count and the art button at its end (`imp
 `deckRowHtml()` with `impStepHtml()` and `impArtHtml()` as its lead and tail; owner's request,
 the same day, "make the UI consistent with the image view").
 
+- **Order:** by card type, then mana value, then name (`deckSort()` with `byCount` false), so a
+  count changed with − / ＋ never moves a card past another; deck pages put most copies first.
 - **− n ＋** change that card's lines in that part only (main, sideboard or commander), the way
   they were written (`impEntry()` reads the list again, then `listSetCount()`); − on the last copy
   takes the card out, with undo. The page is drawn again and the button keeps the focus

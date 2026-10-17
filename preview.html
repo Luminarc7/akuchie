@@ -10228,18 +10228,20 @@ function deckRowHtml(it, lead = null, tail = null) {
     + `<span class="dl-yen"${it.yen ? ` title="${esc(t(it.yenKey || 'deck.yen.title'))}"` : ''}>${it.yen ? esc(yenSmall(it.yen)) : ''}</span>`
     + (tail !== null ? tail : `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span>`) + '</li>';
 }
-function deckSort(items, byType) {
+// by mana value, then most copies first (deck pages), then name. byCount false: the deck price
+// page, where − / ＋ change counts, so a card never jumps past another of the same mana value
+function deckSort(items, byType, byCount = true) {
   const order = it => DECK_GROUPS.indexOf(it.group);
   return items.slice().sort((x, y) => (byType ? order(x) - order(y) : 0) || (x.cmc - y.cmc)
-    || ((y.count || 0) - (x.count || 0)) || x.label.localeCompare(y.label, LANG === 'en' ? 'en' : 'ja'));
+    || (byCount ? (y.count || 0) - (x.count || 0) : 0) || x.label.localeCompare(y.label, LANG === 'en' ? 'en' : 'ja'));
 }
 // Main deck: one block per card type. Sideboard: one block, in card-type order.
-function deckGroupsHtml(items, view, grouped, cardHtml = deckCardHtml, rowHtml = deckRowHtml) {
+function deckGroupsHtml(items, view, grouped, cardHtml = deckCardHtml, rowHtml = deckRowHtml, byCount = true) {
   const body = list => view === 'list'
     ? `<ul class="dl">${list.map(it => rowHtml(it)).join('')}</ul>`
     : `<div class="deck-grid">${list.map(it => cardHtml(it)).join('')}</div>`;
-  if (!grouped) return view === 'list' ? body(deckSort(items, true)) : `<div class="deck-flow">${body(deckSort(items, true))}</div>`;
-  const sorted = deckSort(items, false);
+  if (!grouped) return view === 'list' ? body(deckSort(items, true, byCount)) : `<div class="deck-flow">${body(deckSort(items, true, byCount))}</div>`;
+  const sorted = deckSort(items, false, byCount);
   const html = DECK_GROUPS.map(g => {
     const list = sorted.filter(it => it.group === g);
     if (!list.length) return '';
@@ -11141,9 +11143,9 @@ function drawImport() {
     </div>`;
   }
   html += importMissingHtml(res.missing);
-  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false, impCardHtml, impRowHtml)}</section>`;
-  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml, impRowHtml)}</section>`;
-  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml, impRowHtml)}</section>`;
+  if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false, impCardHtml, impRowHtml, false)}</section>`;
+  if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml, impRowHtml, false)}</section>`;
+  if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml, impRowHtml, false)}</section>`;
   if (main.length) html += deckCurveHtml(cmd.concat(main));
   if (found) html += `<p class="deck-cost-note">${esc(t('imp.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('importExport') || {}).open;
