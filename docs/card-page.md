@@ -94,7 +94,7 @@ none shows the notice instead (`price.jp.none` once ENNDAL's stock is published,
 `price.jp.notice`); the notes give the night it was read in Japan time (`jpNightLabel()`).
 
 **Price history** keeps US dollars and euros, non-foil and foil, daily for 120 days and weekly
-after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`histState`).
+after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`#histFoil`, the same square switch as the listings' フォイル; `histState`).
 
 ## Shop links
 

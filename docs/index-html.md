@@ -21,7 +21,7 @@ grep -n -- '// ---- ' index.html
 
 | Element | What it is |
 |---|---|
-| `header.topbar` | Logo (`#brandLink`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), the want list button (`#wantBtn`, count `#wantN`), which opens the tray, the JP \| EN and ¥ \| $ switches (`#langBtn`, `#curBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
+| `header.topbar` | Logo (`#brandLink`) and tagline (`#brandSub`), the search box (`#searchForm`, `#searchInput`, suggestions `#searchSuggest`), the tabs (`#tabSearch`, `#tabSets`, `#tabMeta`, `#tabPrices`), the want list button (`#wantBtn`, count `#wantN`), which opens the tray, the JP \| EN and ¥ \| $ switches (`#langBtn`, `#curBtn`), theme and lightweight switches (`#themeSwitch`, phones: `#menuBtn`) |
 | `#searchView` | The home page and search results. Inside: `#homeHero` (big search box `#heroInput`, "try this" `#heroTry`, effect examples `#heroExample`), `#homeBoxes` (price risers `#homeMovers`, top decks `#homeMeta`, Secret Lair `#homeShop`, booster boxes `#homeBoxShop`), `#filterPanel`, the result bar (`#resultCount`, `#viewToggle`, `#sortSelect`, `#activeFilters`), search tips `#guidePanel`, notes above results (`#translationNote`, `#comboHint`, `#matchNote`), the results `#cardGrid`, `#loadMoreRow` |
 | `#cardView` | The card page; everything is drawn into `#cardViewCard` |
 | `#setsView` | Set list (`#setListPanel`) and one set (`#setDetailPanel`, `#setGrid`) |
