@@ -347,7 +347,8 @@ names to the front face, except split cards and Rooms, which keep `A // B`. It c
 Reads `movers.json` from warujie-prices (`loadMovers()`): the biggest risers and fallers over
 1, 7 and 30 days, US dollars or euros, with yen. Which cards qualify (at least $2, moved at
 least $0.50) is decided in warujie-prices `build_prices.py` (`MIN_PRICE_CENTS`,
-`MIN_CHANGE_CENTS`).
+`MIN_CHANGE_CENTS`). The market tabs here and in the home page's box follow the card page's
+order (`PRICE_MARKETS`: 日本, 米国, 欧州), with 米国 chosen at first.
 
 ## The installable app
 
