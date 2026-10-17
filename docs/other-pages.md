@@ -190,7 +190,9 @@ whole width), `openTray()` / `closeTray()`; the ☆ again, ×, Esc or a click be
 a trash can (`wantStepHtml()`, `wantTrashHtml()`), as rows with a small picture, the name in the
 site's language, the English name and the cheapest price (`trayRowHtml()`), or as pictures two a
 row with the buttons under each (`trayTileHtml()`). Pictures come straight from Scryfall's image
-server by the database's printing (`trayPic()`). Lines not found link to the price page. At the
+server by the database's printing (`trayPic()`), or show the printing the line names (an art
+picked on the price page, below) once that card is known (`trayCard()`; the tray asks for the
+ones not known yet with `loadPrintCards()` when it opens). Lines not found link to the price page. At the
 bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る・書き出す (this page), and
 晴れる屋で買う as below. A card's name opens its page (on phones the tray closes first).
 
@@ -203,14 +205,16 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
   starts the sideboard (Magic Online), unless the list has card-type headings
   (`IMPORT_TYPE_HEAD`, "Creatures (16)"), and `SB:` lines are sideboard too. Counts as `4`,
   `4x`, `x4` after the name, `4枚`, full-width digits, or none (one copy). The set and number
-  (`(M10) 146`) are kept for the export with printings; `cleanImportName()` drops them from the
-  name with foil marks and `[tags]`, and reads `Fire/Ice` as `Fire // Ice`. At most
-  `IMPORT_MAX_LINES` lines.
+  (`(M10) 146`, also before a foil mark `*F*` or Archidekt's `[Removal]` / `^Tag^`; a number is
+  anything without spaces, brackets or `*`, such as `1★`) are kept for the export with printings
+  and the picture; `cleanImportName()` drops them from the name with foil marks and `[tags]`, and
+  reads `Fire/Ice` as `Fire // Ice`. At most `IMPORT_MAX_LINES` lines.
 - **Finding the cards** (`importRow()`): English name (`rowByEnglishName()`), Japanese name
   (also older names and front faces), or either without punctuation or in the other kana
   (`nameKey()`). Basic lands always count (`IMPORT_BASICS`), and a card too new for the database
   is found by its English name in the price file (`importCheapName()`). `readImport()` adds up
-  the same card on several lines and doesn't count Arena's companion twice. Lines not found are
+  the same card on several lines of one part (keeping which lines, for the buttons below) and
+  doesn't count Arena's companion twice. Lines not found are
   listed with up to three guesses (`importGuesses()`: the name suggestions, else names a few
   letters away with `editDistance()`); picking one rewrites that line, keeping its count.
 - **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
@@ -234,9 +238,38 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
   filled in from a link, so the tap copies the list with printings and opens their page, and a
   line says to paste it into Import).
 - The list is priced as people type (`priceImport()`, 350 ms after the last key), first from the
-  database, then with prices, then with pictures (`importState`, cached per language and name).
-  There is no "price it" button (the owner found it pointless, 2026-10-16). 消す clears the
-  list, with undo.
+  database, then with prices, then with pictures (`importState`, cached per language and name),
+  then with the pictures of the printings the lines name (below). There is no "price it" button
+  (the owner found it pointless, 2026-10-16). 消す clears the list, with undo.
+
+### Counts and art under each card
+
+In the picture view (画像) each card has − n ＋ and an art button under it (`impCardHtml()`,
+passed to `deckGroupsHtml()`; owner's request 2026-10-17). The list view stays as it was.
+
+- **− n ＋** change that card's lines in that part only (main, sideboard or commander), the way
+  they were written (`impEntry()` reads the box again, then `wantSetCount()`); − on the last copy
+  takes the card out, with undo. The page is drawn again and the button keeps the focus
+  (`impActSel()`).
+- **The art button** opens `#artPicker` over a dimmed page (`#artPickerBg`; on phones a sheet from
+  the bottom, three across): every paper printing of the card, newest first, as the card page
+  lists them (`printEntries()`: the default search and the Japanese one, shared and kept for the
+  visit; digital-only printings left out). Each shows its picture (the Japanese printing in
+  Japanese, the English picture when the Japanese one has no real scan), set, number, rarity,
+  treatments, 日本語版 and the English printing's price; the one shown now is marked 選択中.
+  `openArtPicker()`, `drawArtPicker()`, `closeArtPicker()` (×, Esc, a click beside it, Back).
+- **Picking** (`pickArt()`) writes the printing on the card's lines in that part
+  (`lineWithPrint()`: `4 稲妻` → `4 稲妻 (M10) 146`; a foil mark, Archidekt's categories and a
+  count written last stay put), with undo. So the export with printings and the Moxfield and
+  Archidekt copies carry it. The prices don't change: each card and the total stay the cheapest
+  printing's, and the picker says so (`pick.note`).
+- **Pictures of the printings the lines name** (also lines pasted from Moxfield or Arena with
+  `(SET) 123`, and ☆ lines): `PRINT_CARDS` (language, set and number → the Scryfall card) holds
+  the ones picked and the pictures already fetched (`rememberPrint()`); `loadPrintCards()` asks
+  for the rest, in Japanese one search for their Japanese printings 25 at a time, then
+  `/cards/collection` by set and number for the English ones (75 at a time) where there is no
+  Japanese printing or it has no real scan. A printing Scryfall doesn't know (an Arena-only set
+  code) keeps the card's usual picture. Not in lightweight mode (no pictures there).
 
 ## Export (MTG Arena / Magic Online)
 
