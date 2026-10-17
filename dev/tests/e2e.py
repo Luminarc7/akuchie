@@ -2538,7 +2538,7 @@ with sync_playwright() as p:
     jp = lambda: page.evaluate("[...document.querySelectorAll('#cardViewCard .jp-shop')].filter(a => a.offsetParent).map(a => [a.querySelector('.jp-name').textContent, (a.querySelector('.jp-alt') || {}).textContent || ''])")
     href = lambda name: page.locator("#cardViewCard .jp-shop", has=page.locator(".jp-name", has_text=name)).first.get_attribute("href")
     g = jp()
-    check("JP tab: all 19 Japanese shops in one list, Japanese name first, English in grey", len(g) == 19 and [x[0] for x in g[:6]] == ["晴れる屋", "ビッグマジック", "カードラッシュ", "Tokyo MTG", "シングルスター", "カードショップ セラ"]
+    check("JP tab: all 20 Japanese shops in one list, Japanese name first, English in grey", len(g) == 20 and [x[0] for x in g[:6]] == ["晴れる屋", "ビッグマジック", "カードラッシュ", "Tokyo MTG", "シングルスター", "カードショップ セラ"]
           and g[0][1] == "Hareruya" and dict(g)["ENNDAL GAMES"] == "", g)
     check("JP tab: the old link buttons and the listings column are gone", page.locator("#cardViewCard .shop-links").is_hidden() and page.locator("#offersBox").is_hidden()
           and page.locator("#cardViewCard .price-wip").count() == 0)
@@ -2562,16 +2562,16 @@ with sync_playwright() as p:
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]')
     page.wait_for_function("document.querySelector('#cardViewCard .cp-market').dataset.market === 'jp'")
     page.goto(SITE + "?card=bolt-ja-m10"); page.wait_for_selector("#cardViewCard .jp-shop")
-    check("JP tab: remembered, and the Japanese list with it", page.evaluate("document.querySelector('#cardViewCard .cp-market').dataset.market") == "jp" and len(jp()) == 19)
+    check("JP tab: remembered, and the Japanese list with it", page.evaluate("document.querySelector('#cardViewCard .cp-market').dataset.market") == "jp" and len(jp()) == 20)
     # phone: eight shops, then "Load more"
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     more = page.locator("#cardViewCard .jp-dir-more")
     xs = sorted(set(round(b["x"]) for b in [a.bounding_box() for a in page.locator("#cardViewCard .jp-shop:visible").all()]))
-    check("phone: one column of eight shops, then 'Load more (11 more)'", len(jp()) == 8 and len(xs) == 1 and more.is_visible() and more.inner_text() == "さらに表示（残り11店）", (jp(), xs))
+    check("phone: one column of eight shops, then 'Load more (12 more)'", len(jp()) == 8 and len(xs) == 1 and more.is_visible() and more.inner_text() == "さらに表示（残り12店）", (jp(), xs))
     hs = [a.bounding_box()["height"] for a in page.locator("#cardViewCard .jp-shop:visible").all()]
     check("phone: rows big enough to tap", min(hs) >= 44, hs)
     more.click(); page.wait_for_timeout(100)
-    check("phone: 'Load more' shows the other 11 and goes away", len(jp()) == 19 and more.is_hidden())
+    check("phone: 'Load more' shows the other 12 and goes away", len(jp()) == 20 and more.is_hidden())
     check("phone: no sideways scrolling", no_hscroll())
     nb = page.locator("#cardViewCard .jp-notice .wip-badge").bounding_box(); np_ = page.locator("#cardViewCard .jp-notice p").bounding_box()
     check("phone: the notice's badge sits above its text", np_["y"] >= nb["y"] + nb["height"] - 1, (nb, np_))
@@ -2585,7 +2585,7 @@ with sync_playwright() as p:
     check("English: English names first, the Japanese name in grey", g[0] == ["Hareruya", "晴れる屋"] and ["Single Star", "シングルスター"] in g and ["Tokyo MTG", ""] in g
           and "ENNDAL GAMES has no copies of this printing" in page.locator("#cardViewCard .jp-notice").inner_text() and page.locator("#cardViewCard .jp-dir-head").inner_text().startswith("Find it in shops"), g)
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
-    check("English phone: 'Load more (11 more)'", page.locator("#cardViewCard .jp-dir-more").inner_text() == "Load more (11 more)")
+    check("English phone: 'Load more (12 more)'", page.locator("#cardViewCard .jp-dir-more").inner_text() == "Load more (12 more)")
     page.set_viewport_size({"width": 1280, "height": 900})
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]')
     page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
