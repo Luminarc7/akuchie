@@ -3490,14 +3490,24 @@ with sync_playwright() as p:
     check("home: › and ‹ move the row one product", x1 > 100 and page.evaluate(f"document.querySelector('{strip}').scrollLeft") < 5, x1)
     page.mouse.move(0, 0); page.evaluate(f"document.querySelector('{strip}').scrollLeft = 0"); page.evaluate("document.activeElement && document.activeElement.blur()")
     page.locator(strip).scroll_into_view_if_needed(); page.mouse.move(0, 0)
+    # Watch every scroll, so a step that moves and then wraps between two polls still counts, and allow
+    # several motion periods: on a busy machine the page's timer can fire late.
+    page.evaluate(f"""(() => {{ const s = document.querySelector('{strip}'); window.__stripMax = 0; window.__stripWrapped = false;
+        s.addEventListener('scroll', () => {{ window.__stripMax = Math.max(window.__stripMax, s.scrollLeft);
+          if (window.__stripMax > 100 && s.scrollLeft < 5) window.__stripWrapped = true; }}, {{ passive: true }}); }})()""")
+    period = page.evaluate("SHOP_MOTION_MS")
     try:
-        page.wait_for_function(f"document.querySelector('{strip}').scrollLeft > 100", timeout=10000); moved = True
+        page.wait_for_function("window.__stripMax > 100", timeout=period * 4 + 5000); moved = True
     except Exception:
         moved = False
-    check("home: the row moves on by itself, like Rakuten's motion widget", moved)
-    page.wait_for_function(f"document.querySelector('{strip}').scrollLeft < 5", timeout=10000)
-    check("home: at the end it goes back to the first product", True)
-    page.hover(strip); x0 = page.evaluate(f"document.querySelector('{strip}').scrollLeft"); page.wait_for_timeout(4800)
+    check("home: the row moves on by itself, like Rakuten's motion widget", moved, page.evaluate("window.__stripMax"))
+    try:
+        page.wait_for_function("window.__stripWrapped", timeout=period * 8 + 5000); wrapped = True
+    except Exception:
+        wrapped = False
+    check("home: at the end it goes back to the first product", wrapped)
+    page.hover(strip); page.wait_for_timeout(700)  # let a step already under way finish first
+    x0 = page.evaluate(f"document.querySelector('{strip}').scrollLeft"); page.wait_for_timeout(period + 400)
     check("home: it stops while the pointer is on it", page.evaluate(f"document.querySelector('{strip}').scrollLeft") == x0)
     page.mouse.move(0, 0)
     check("home: the Rakuten credit (required by Rakuten's API rules) is under the products, small",
