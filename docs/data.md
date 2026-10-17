@@ -2,7 +2,8 @@
 
 | File | What | Made by | When |
 |---|---|---|---|
-| `ja_cards.json.gz` | The card database | `tools/build_ja_database.py`, then the Name readings workflow | By hand after new sets; the workflow runs on every change |
+| `ja_cards.json.gz` | The card database | `tools/update_database.py` (the builder, the name fixes, the readings, the check) via `update-cards.yml` | Mondays 02:30 UTC, committed to `staging` when cards changed; by hand any time |
+| `printings.json.gz` | Every printing's languages, rarity and treatments (card page language buttons) | the same builder, with the database | With the database |
 | `ja_cards.json.br` | The same, brotli-compressed (not in git) | `tools/brotli_db.mjs` | At every Cloudflare deploy |
 | `meta.json`, `meta_decks.json`, `meta_lists/*.json` | Metagame tab, deck pages, sample lists | `build_meta.py` via `update-meta.yml` | Daily 18:40 UTC, committed to `main` |
 | `combo_ja.js` | Japanese wording for combo results | by hand | When combo wording needs fixing |
@@ -18,11 +19,11 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 
 | Field | Meaning |
 |---|---|
-| `id` | The Scryfall printing shown in results: a Japanese printing with a real scan where possible, else an English one (another language only for cards never printed in English); when the builder's preferences are level, the ordinary frame over a showcase or borderless one (`picture_rank()`) |
+| `id` | The Scryfall printing shown in results: a Japanese printing with a real scan where possible, else an English one (another language only for cards never printed in English); when the builder's preferences are level, the ordinary frame over a showcase or borderless one (`picture_rank()`). When the chosen Japanese printing has no sharp scan, a Japanese one that has, at the same rarity in a regular set (`CardEntry.picture()`) |
 | `oracle_id` | Scryfall's id for the card across printings |
 | `name_en`, `name_ja` | Names; two-part cards as `A // B` |
-| `type_en`, `type_ja` | Type lines |
-| `oracle_en`, `oracle_ja` | Rules text (Japanese from the newest Japanese printing that has it) |
+| `type_en`, `type_ja` | Type lines; `type_ja` from another Japanese printing when the one with the text has an English type line (`ja_type` in `CardEntry`), empty when no Japanese printing has a Japanese one |
+| `oracle_en`, `oracle_ja` | Rules text (Japanese from the newest Japanese printing whose text has Japanese in it: since 2.5 an English text on a Japanese printing, as Scryfall has for most of Edge of Eternities, doesn't count) |
 | `mana_cost`, `cmc` | `{2}{W}{B}`, mana value |
 | `colors` | Letters, e.g. `GR`; empty for colourless |
 | `power`, `toughness` | Strings or `null` |
@@ -33,29 +34,67 @@ Each card is an array in the order of `fields` (smaller than objects). One row p
 | `alt_names_ja` | Older Japanese names, `|`-separated (they still match in search) |
 | `legal` | One letter per format where legal: `s` standard, `p` pioneer, `m` modern, `l` legacy, `v` vintage, `a` pauper, `c` commander (`FORMAT_CODE` in `index.html`) |
 | `layout` | The card's shape from Scryfall when it isn't an ordinary one-faced card: `split`, `transform`, `modal_dfc`, `meld`, `flip`, `adventure` (Omens too), `prepare`, `saga`, `class`, `case`, `leveler`, `mutate`, `prototype`, `host`, `augment` (`SHAPE_LAYOUTS` in the builder); empty otherwise. Searched by 分割カード, 両面カード… (`CARD_SHAPES`) |
+| `sets` | Every set the card was printed in (any language, promos included, digital-only and memorabilia not), space-separated, oldest first: `lea 4bb m10 …`. `e:` / `セット:` search it, so `e:mh3` finds reprints too, as Scryfall does; a file without it falls back to `set` |
+| `treatments` | One letter per treatment any printing has, in the order `b s x f o u t e n` (borderless, showcase, extended art, full art, old frame 1993/1997, future frame, textless, etched, serialized: `treatment_letters()`), then the same letters in upper case for those a Japanese printing has (bsoS: borderless, showcase and old-frame printings, the showcase one also in Japanese). ボーダーレス, 旧枠, `is:showcase`… search it (`TREATMENTS` in `index.html`); beside 日本語版 or `lang:ja`, the upper-case letter |
 | `name_kana` | Reading of the Japanese name in hiragana: the あいうえお order, and names typed in hiragana (いなずま finds 稲妻); never shown. Made by `tools/name_readings.py`: printed furigana, else SudachiDict, else pykakasi for kanji Sudachi doesn't know, so no reading keeps a kanji |
 
 When the page loads it, `indexRow()` adds computed fields starting with `_` (lowercased names,
-type and text, colour string, keyword set…). To add a database field: add it in
+type and text, colour string, keyword set…). It also empties a `type_ja` or `oracle_ja` with no
+Japanese in it (files built before 2.5 have about 410), so the type line is translated and the
+card is found through its English text. To add a database field: add it in
 `build_ja_database.py`, in `LOCAL_FIELDS` (the fallback field list) and, if needed, in
 `indexRow()`; old files without it must still work.
 
-### Rebuilding it
+### Rebuilding it (every week, by itself)
 
 The builder reads Scryfall's `all_cards` bulk file (every language of every printing; served as
-gzipped JSON Lines since September 2026). Claude's sandbox can't download it, so it runs on a
-GitHub runner (CLAUDE.md, "Reaching other websites"; the `warujie-outside-data` skill). A
-developer with normal internet can run `python3 tools/build_ja_database.py` in the repo folder.
+gzipped JSON Lines since September 2026). `.github/workflows/update-cards.yml` runs
+`tools/update_database.py` every Monday at 02:30 UTC (11:30 in Japan) on a GitHub runner; the
+Actions tab's "Run workflow" starts it by hand. The schedule is read from `main`, the job works
+on `staging`. It:
 
-After a rebuild:
+1. builds `ja_cards.json.gz` and `printings.json.gz` (`tools/build_ja_database.py --out …
+   --printings …`, about a minute);
+2. applies `tools/name_fixes_ja.json` (`tools/fix_names.py`) and writes the readings
+   (`tools/name_readings.py`): the push it makes doesn't start the Name readings workflow, so it
+   does both itself;
+3. compares the new files with the ones in the repository (`tools/check_database.py`) and
+   **refuses** the build when something looks lost: more than 30 cards gone, more than 30
+   Japanese names or 60 Japanese texts gone (a text counts only with Japanese in it), any rarity down by more than 3%, more than 2% of
+   Japanese names changed, more than 1% of printings gone, readings for fewer than 95% of
+   Japanese names, or a well-known card (`SPOT_CHECKS`) without its Japanese name. A refused
+   build changes nothing and the run goes red;
+4. replaces the files only when their cards changed (the date alone is not a change), and
+   commits them to `staging` with a what's-new note (new cards, cards that got a Japanese name or
+   text, renamed, gone, fields changed). The note is also on the run's summary page.
 
-1. Commit `ja_cards.json.gz` to `staging`. The **Name readings** workflow then runs
-   `tools/fix_names.py` and `tools/name_readings.py` and commits back. Pull before your next
-   commit.
-2. Redo the one-off improvements a rebuild undoes, with `tools/audits/db_updates.py`
-   (888 Japanese type lines taken from other Japanese printings; 51 rows switched to a Japanese
-   printing with a real scan).
-3. Run both test suites; the searchbench uses the real database.
+The update reaches warujie.jp only when the owner says "publish", like any other change. The
+fixes once made by hand after a rebuild (Japanese type lines from other printings, a Japanese
+printing with a real scan) are made by the builder since 2.4, so `tools/audits/db_updates.py` is
+no longer needed after a rebuild.
+
+Claude's sandbox can't download the bulk file; a developer with normal internet can run
+`python3 tools/update_database.py --work some/folder` in the repo folder (it needs
+`pip install sudachipy sudachidict_full pykakasi`). Run both test suites after a rebuild by
+hand; the searchbench uses the real database.
+
+### The printings file (`printings.json.gz`)
+
+Gzipped JSON, about 0.3 MB, one entry per printing (set and collector number, about 100,000):
+
+```
+{ "version": 1, "generated": "YYYY-MM-DD", "fields": ["langs", "rarity", "treatments"],
+  "sets": { "mh3": { "1": ["en ja zhs fr de it es pt", "u", ""], … }, "4bb": { "4": ["ja de en@4ed", "r", ""] }, … } }
+```
+
+- `langs`: the languages that set and number exists in, in the card page's order. A language
+  Scryfall files under the twin set code (`SET_TWIN`: `4bb`↔`4ed`, `bchr`↔`chr`, `fbb`↔`3ed`) is
+  written `lang@set`, only when it is the same card.
+- `rarity`: the English printing's (else the first seen), one letter as in `rarities`.
+- `treatments`: the letters of `treatments` above, for that printing.
+
+Made by the builder's `Printings` class. The card page reads it the first time it needs language
+buttons (`loadPrintingsFile()`; see card-page.md); `sw.js` keeps it for offline use.
 
 ### How the counts compare with Scryfall
 

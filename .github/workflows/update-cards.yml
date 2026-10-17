@@ -1,0 +1,58 @@
+# Every week: rebuilds the card database (ja_cards.json.gz) and the printings file
+# (printings.json.gz) from Scryfall's bulk data, with the Japanese name fixes and the
+# name readings, checks them against the files in use (tools/check_database.py refuses a
+# build that lost cards, Japanese names, texts or printings) and, when cards changed,
+# commits them to staging with a what's-new note. They reach warujie.jp only when the
+# owner says "publish", like any other change.
+#
+# The schedule runs from main (GitHub reads schedules there); the job works on staging.
+# "Run workflow" on the Actions tab starts it by hand.
+name: Update card database
+
+on:
+  schedule:
+    - cron: "30 2 * * 1"   # Mondays 02:30 UTC (11:30 in Japan)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-cards
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: staging }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -q sudachipy sudachidict_full pykakasi
+
+      - name: Rebuild and check
+        id: build
+        run: |
+          set +e
+          python3 tools/update_database.py --work "$RUNNER_TEMP/cards" --note "$RUNNER_TEMP/note.md"
+          code=$?
+          cat "$RUNNER_TEMP/note.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
+          if [ $code -eq 3 ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ $code -ne 0 ]; then exit $code; fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit to staging
+        if: steps.build.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ja_cards.json.gz printings.json.gz
+          { echo "Card database: weekly update from Scryfall"; echo; cat "$RUNNER_TEMP/note.md"; } > "$RUNNER_TEMP/msg.txt"
+          git commit -q -F "$RUNNER_TEMP/msg.txt"
+          for i in 1 2 3 4; do
+            git pull -q --rebase origin staging && git push -q origin HEAD:staging && exit 0
+            sleep $((i * 10))
+          done
+          exit 1

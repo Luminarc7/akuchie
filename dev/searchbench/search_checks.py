@@ -254,6 +254,39 @@ with sync_playwright() as p:
       return { both: n(['mythic', 'rare']), m: n(['mythic']), r: n(['rare']), want: all.filter(x => hasRarity(x, 'mythic') || hasRarity(x, 'rare')).length, all: all.length }; })()""")
     check("rarity buttons combine: R + M with ドラゴン finds every dragon with a rare or a mythic printing, more than either alone",
           mr["both"] == mr["want"] and mr["both"] > max(mr["m"], mr["r"]) and mr["both"] < mr["all"], mr)
+    # the database's printings (2026-10-16 build: 309 cards printed in MH3, 3,736 with a borderless printing,
+    # 2,317 with a Japanese one, 7,289 with an old frame, 292 serialized, 3,655 extended art, 30,840 printed in Japanese)
+    pr = page.evaluate("""(() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+      manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
+      const rows = q => searchRows(q, st).rows, names = q => rows(q).map(r => r.name_en);
+      return { mh3: rows('e:mh3').length, mh3ja: rows('セット:モダンホライゾン3').length, bolt2x2: names('e:2x2 稲妻'), shown: LOCAL_DB.filter(r => r.set === 'mh3').length,
+        bl: rows('ボーダーレス').length, blJa: rows('日本語版 ボーダーレス').length, blIs: rows('is:borderless').length, old: rows('旧枠').length,
+        oldBolt: names('日本語版 旧枠 稲妻'), ja: rows('lang:ja').length, notJa: rows('-日本語版').length, all: LOCAL_DB.length, named: LOCAL_DB.filter(r => r.name_ja).length,
+        serial: rows('シリアルナンバー').length, ext: rows('extended art').length, ext2: rows('拡張アート').length, sc: rows('ショーケース').length }; })()""")
+    check("printings: e:mh3 finds every card printed in Modern Horizons 3 (reprints too), セット:モダンホライゾン3 the same; e:2x2 稲妻 finds Lightning Bolt",
+          290 <= pr["mh3"] <= 360 and pr["mh3"] > pr["shown"] and pr["mh3ja"] == pr["mh3"] and "Lightning Bolt" in pr["bolt2x2"], pr)
+    check("printings: ボーダーレス, is:borderless, 旧枠, シリアルナンバー, extended art / 拡張アート, ショーケース find about as many cards as the build counted",
+          3500 <= pr["bl"] <= 4200 and pr["blIs"] == pr["bl"] and 7000 <= pr["old"] <= 7600 and 250 <= pr["serial"] <= 400
+          and pr["ext"] == pr["ext2"] and 3400 <= pr["ext"] <= 4000 and 2000 <= pr["sc"] <= 2600, pr)
+    check("printings: 日本語版 narrows to Japanese printings (日本語版 ボーダーレス fewer than ボーダーレス; 日本語版 旧枠 稲妻 is the Japanese 4th Edition Bolt)",
+          1500 <= pr["blJa"] < pr["bl"] and "Lightning Bolt" in pr["oldBolt"], pr)
+    check("printings: lang:ja finds every card printed in Japanese, -日本語版 the rest", pr["ja"] == pr["named"] and pr["notJa"] == pr["all"] - pr["named"], pr)
+    # 2026-10-17: printing words as players write them, set names in part, reminder text after the cards' own words
+    pf = page.evaluate("""(() => { const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
+      manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
+      const rows = q => searchRows(q, st).rows, reach = rows('到達'), at = n => reach.findIndex(r => r.name_en === n);
+      return { ban: rows('ボーダーレス版').length, bl: rows('ボーダーレス').length, of: rows('ボーダーレスのドラゴン').length, sp: rows('ボーダーレス ドラゴン').length,
+        jaCard: rows('日本語版のカード').length, ja: rows('日本語版').length, serial: rows('シリアル番号').length, serial2: rows('シリアルナンバー').length,
+        inn: rows('セット:イニストラード').length, innSets: Object.keys(SET_NAME_JA).filter(c => SET_NAME_JA[c].includes('イニストラード')).length,
+        innAll: new Set(Object.keys(SET_NAME_JA).filter(c => SET_NAME_JA[c].includes('イニストラード')).flatMap(c => rows('e:' + c).map(r => r.oracle_id))).size, hawk: at("Healer's Hawk"), angel: at('Dazzling Angel'),
+        lastReach: reach.reduce((m, r, i) => (r._kw.has('reach') ? i : m), -1),
+        english: LOCAL_DB.filter(r => (r.oracle_ja && !JA_CHARS.test(r.oracle_ja)) || (r.type_ja && !JA_CHARS.test(r.type_ja))).length }; })()""")
+    check("printing words: ボーダーレス版, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号 find what the plain words find; セット:イニストラード finds every Innistrad set",
+          pf["ban"] == pf["bl"] and pf["of"] == pf["sp"] > 0 and pf["jaCard"] == pf["ja"] and pf["serial"] == pf["serial2"] > 0
+          and pf["innSets"] >= 2 and pf["inn"] == pf["innAll"] > 0, pf)
+    check("reminder text: 到達 lists every card with reach before flyers whose reminder mentions it (Healer's Hawk, Dazzling Angel)",
+          pf["lastReach"] >= 0 and pf["hawk"] > pf["lastReach"] and pf["angel"] > pf["lastReach"], pf)
+    check("no English text is kept as a card's Japanese text or type line (Edge of Eternities)", pf["english"] == 0, pf)
     # every card found by its own words: one sentence of its Japanese text typed plainly (no 、, half-width numbers),
     # and its English name in lower case without punctuation (a fixed sample of 300 cards)
     import random, re as _re

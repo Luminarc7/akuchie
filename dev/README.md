@@ -14,7 +14,7 @@ Everything in `dev/` (and `tools/`) stays out of the website: `.assetsignore` li
     python3 dev/tests/e2e.py            # tests ./index.html and ./preview.html
     WARUJIE_PAGES=/some/build python3 dev/tests/e2e.py   # tests pages in another folder
 
-About 660 checks. Every network request is answered from fixtures (Scryfall, the exchange
+About 860 checks. Every network request is answered from fixtures (Scryfall, the exchange
 rate, the card database, price and combo data, metagame files), so it runs offline and
 gives the same result every time. It covers search, filters, suggestions, card pages
 (language buttons, prices, listings, history), sets, metagame and deck pages, export,

@@ -52,7 +52,7 @@ bug.
 ## Commit and push to `staging`
 
 ```sh
-git pull --no-rebase origin staging      # bots commit too (name readings)
+git pull --no-rebase origin staging      # bots commit too (name readings, weekly card update)
 git add -A && git commit -m "What changed for users, in plain words"
 git push origin staging
 ```

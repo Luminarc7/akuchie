@@ -18,7 +18,7 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Part | Function(s) | Data from |
 |---|---|---|
 | Picture | `cardArtHtml()`, `pictureTag()` | Scryfall images. Placeholder Japanese scans are swapped for the same printing's English picture with a note |
-| Language buttons (JP EN CS…) under the picture | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()` | One Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
+| Language buttons (JP EN CS…) under the picture | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()`, `openPrinting()` | The printings file (`printings.json.gz`, `loadPrintingsFile()`); for a printing it doesn't have yet, one Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
 | Name, cost, type line, text | `cardPageNames()`, `cardPageType()`, `cardPageText()` | Scryfall card, Japanese from the database where Scryfall lacks it |
 | Roles row | `showCardRoles()` | Tag file |
 | Set, number, Scryfall link | inline in `renderCardViewContent()` | |
@@ -43,7 +43,19 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
   another.
 - `?print=<lang>` shows that printing in its own language (`printChoice()`); without it the
   site language decides which name is big.
-- Results of the languages search are cached per printing in `PRINTINGS`.
+- In English, a link to another language's printing without `?print=` (the database's Japanese
+  printings are behind the home page's examples, the metagame lists, the zero-results help and
+  links shared by Japanese visitors) opens the English card of that same printing when the
+  printings file lists one (`siteLanguagePrinting()`, one `/cards/<set>/<number>/en` request);
+  the URL is then the English printing's. A printing with no English version stays as it is.
+- The languages come from the printings file (`printings.json.gz`, made with the card database;
+  [data.md](data.md#the-printings-file-printingsjsongz)), loaded once per visit by
+  `loadPrintingsFile()`, so opening a card page no longer asks Scryfall which languages exist.
+  A language other than the one shown is then only its set and number (`_stub`); pressing its
+  button fetches that one printing (`/cards/<set>/<number>/<lang>`, after `scryfallTurn()`) and
+  opens it (`openPrinting()`; the button dims while it loads).
+- A printing the file doesn't have yet (a set newer than the last rebuild), or a page without the
+  file, asks Scryfall as before; those results are cached per printing in `PRINTINGS`.
 - Two-part cards read in their own language on both halves (呪文嘲りの集会 // お返し).
 
 ## Prices
