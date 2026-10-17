@@ -315,6 +315,13 @@
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mana-c); flex: none; }
   .dot.common { background: var(--rar-common); } .dot.uncommon { background: var(--rar-uncommon); }
   .dot.rare { background: var(--rar-rare); }   .dot.mythic { background: var(--rar-mythic); }
+  /* the arrow beside a rarity the search asked for when the picture is another rarity's printing
+     (神話レア ↓ = the picture is a lower-rarity printing); the disc takes the picture's rarity colour */
+  .shift-icon { width: 13px; height: 13px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    flex: none; margin-left: -1px; background: var(--mana-c); cursor: help; }
+  .shift-icon svg { width: 10px; height: 10px; fill: none; stroke: #17151d; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .shift-icon.common { background: var(--rar-common); } .shift-icon.uncommon { background: var(--rar-uncommon); }
+  .shift-icon.rare { background: var(--rar-rare); }     .shift-icon.mythic { background: var(--rar-mythic); }
   .tile-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
   .tile-price .yen { color: var(--text); font-weight: 500; margin-left: 4px; }
 
@@ -365,6 +372,7 @@
   .print-lang:hover { border-color: var(--accent); color: var(--accent); }
   .print-lang[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); cursor: default; }
   .print-lang:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .print-lang.loading { opacity: .55; cursor: progress; }
   .cp-cost { display: flex; align-items: center; gap: 8px; flex: none; padding-top: 6px; }
   .pips { display: flex; gap: 2px; }
   .pip {
@@ -798,7 +806,6 @@
     .meta-bar .meta-head > .seg::-webkit-scrollbar { display: none; }
     .meta-bar .meta-head > .seg .seg-btn { flex: none; }
     .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
-    #pricesView .meta-controls { flex-wrap: wrap; } /* the deck price button drops below the periods on narrow phones */
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
     .meta-decklink { order: 4; }
     .meta-price .meta-cost { font-size: 11px; }
@@ -1262,9 +1269,28 @@
   .deck-cost-note { margin: 6px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted); }
   /* the deck price page: paste a list, see what it costs */
   /* the price tab's way in to the deck price page */
-  .imp-open { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
-    font-size: 12.5px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  /* a button of its own between the price movers bar and the lists, bigger and squarer than the bar's toggles */
+  .imp-open { display: inline-flex; align-items: center; gap: 12px; margin: 0 0 12px; padding: 7px 16px 7px 12px; border-radius: 10px;
+    background: var(--accent); color: var(--accent-ink); text-decoration: none; box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.6); }
   .imp-open:hover { filter: brightness(1.07); }
+  .imp-open-ic { flex: none; width: 24px; height: 24px; }
+  .imp-open-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .imp-open-txt b { font-size: 15px; font-weight: 800; line-height: 1.3; }
+  .imp-open-txt small { font-size: 11.5px; font-weight: 500; line-height: 1.35; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .imp-open-go { flex: none; margin-left: 6px; font-size: 18px; font-weight: 800; }
+  @media (max-width: 640px) { .imp-open { display: flex; } .imp-open-go { margin-left: auto; } }
+  /* wide screens: its own box right of the price movers bar, the two staying under the top bar together;
+     narrower, the wrapper steps aside so the bar sticks alone and the button sits below it */
+  .mv-top { display: contents; }
+  /* the dates and count sit under the price movers box, so the box is one row as tall as the button */
+  #moverSummary { margin: -2px 4px 10px; font-size: 12.5px; }
+  #moverSummary:empty { display: none; }
+  @media (min-width: 761px) {
+    .mv-top { position: sticky; top: var(--stick-top, 0px); z-index: 30; display: flex; gap: 12px; align-items: stretch; margin-bottom: 12px; }
+    .mv-top > .meta-bar { position: relative; top: auto; flex: 1 1 auto; min-width: 0; margin: 0; }
+    .mv-top > .imp-open { flex: 0 0 auto; margin: 0; gap: 10px; }
+    .mv-top > .imp-open .imp-open-go { margin-left: auto; }
+  }
   .deck-edit, .imp-buy { text-decoration: none; }
   .imp-buy-note { margin: 2px 0 0; font-size: 12.5px; color: var(--ok); font-weight: 700; }
   .deck-export-menu { max-width: calc(100vw - 16px); }
@@ -2097,17 +2123,23 @@
 
 
 <div id="pricesView" class="wrap" style="display:none;">
+  <div class="mv-top">
   <div class="meta-bar">
     <div class="meta-head">
       <h1 class="meta-title" data-i18n="prices.title">価格の動き</h1>
       <div class="seg" id="moverMarkets" role="tablist" aria-label="市場" data-i18n-aria="prices.markets.aria"></div>
       <div class="meta-controls">
         <div class="seg" id="moverWindows" role="group" aria-label="期間" data-i18n-aria="prices.windows.aria"></div>
-        <a class="imp-open" href="?view=import" data-import="1" data-i18n="imp.open">デッキの価格を調べる</a>
       </div>
     </div>
-    <p class="result-count" id="moverSummary"></p>
   </div>
+  <a class="imp-open" href="?view=import" data-import="1">
+    <svg class="imp-open-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <span class="imp-open-txt"><b data-i18n="imp.open">デッキの価格を調べる</b><small data-i18n="imp.open.sub">リストを貼り付けて合計を円で</small></span>
+    <span class="imp-open-go" aria-hidden="true">→</span>
+  </a>
+  </div>
+  <p class="result-count" id="moverSummary"></p>
   <div id="moverBody"></div>
   <p class="meta-note" id="moverNote"></p>
 </div>
@@ -2288,6 +2320,7 @@ const STR = {
   'rarity.mythic': ['神話レア', 'Mythic'],
   'rarity.special': ['スペシャル', 'Special'],
   'rarity.bonus': ['ボーナス', 'Bonus'],
+  'rarity.alsoTip': ['この絵は{r}の版です。{w}の版もあります', 'This picture is the {r} printing; the card was also printed as {w}'],
   'color.W': ['白', 'White'], 'color.U': ['青', 'Blue'], 'color.B': ['黒', 'Black'],
   'color.R': ['赤', 'Red'], 'color.G': ['緑', 'Green'], 'color.C': ['無色', 'Colorless'],
   'chip.W': ['白', 'W'], 'chip.U': ['青', 'U'], 'chip.B': ['黒', 'B'],
@@ -2381,6 +2414,7 @@ const STR = {
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
   'imp.open': ['デッキの価格を調べる', 'Price a deck list'],
+  'imp.open.sub': ['リストを貼り付けて合計を円で', 'Paste a list, see the total in yen'],
   'deck.edit': ['編集して計算', 'Edit & price'],
   'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
   'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
@@ -2669,6 +2703,9 @@ const STR = {
   'tr.stamped': ['スタンプ', 'Stamped'],
   'tr.regular': ['通常', 'Regular'],
   'tr.foilonly': ['フォイルのみ', 'Foil only'],
+  'tr.find': ['{t}版のあるカード', 'cards with {a} {t} printing'],
+  'tr.find.ja': ['日本語の{t}版のあるカード', 'cards with a Japanese {t} printing'],
+  'print.ja.find': ['日本語版のあるカード', 'cards printed in Japanese'],
   'sets.loading': ['セット一覧を読み込み中…', 'Loading sets…'],
   'sets.fail': ['セット一覧を読み込めませんでした', 'The set list could not be loaded'],
   'retry.later': ['時間をおいて再度お試しください。', 'Please try again in a little while.'],
@@ -2933,7 +2970,7 @@ const CREATURE_TYPE_JA = {
 
 const state = {
   query: '', colors: new Set(), types: new Set(), creatureTypes: new Set(),
-  keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name',
+  keywords: new Set(), manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: 'name',
   view: (() => { if (document.documentElement.dataset.lite === '1') return 'text'; try { return localStorage.getItem('akuchie-view') === 'text' ? 'text' : 'image'; } catch (e) { return 'image'; } })(),
   showLoose: false,   // also show cards that contain the search words only separately
 };
@@ -2956,7 +2993,7 @@ const JA_KEYWORDS = {
   '警戒':'vigilance', 'トランプル':'trample', '先制攻撃':'first strike',
   '二段攻撃':'double strike', '到達':'reach', '防衛':'defender',
   '呪禁':'hexproof', '護法':'ward', '破壊不能':'indestructible',
-  '果敢':'prowess', '威迫':'menace', '瞬速':'flash', '被覆':'shroud',
+  '果敢':'prowess', '威迫':'menace', '瞬速':'flash', '被覆':'shroud', '共闘':'partner',
   '畏怖':'fear', '側面攻撃':'flanking', 'プロテクション':'protection',
   '再生':'regenerate', '沼渡り':'swampwalk', '島渡り':'islandwalk',
   '山渡り':'mountainwalk', '森渡り':'forestwalk', '平地渡り':'plainswalk',
@@ -3062,8 +3099,12 @@ function indexRow(arr, fields) {
   const o = {};
   fields.forEach((f, i) => { o[f] = arr[i] === undefined ? null : arr[i]; });
   ['id','oracle_id','name_en','name_ja','type_en','type_ja','oracle_en','oracle_ja',
-   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout'].forEach(f => { if (o[f] == null) o[f] = ''; });
+   'mana_cost','colors','rarity','set','keywords','released_at','alt_names_ja','name_kana','layout','rarities','sets','treatments'].forEach(f => { if (o[f] == null) o[f] = ''; });
   ['name_ja', 'type_ja', 'oracle_ja', 'alt_names_ja'].forEach(f => { if (o[f]) o[f] = stripRuby(o[f]); });
+  // a "Japanese" type line or text that is English (Scryfall has the English one on some Japanese
+  // printings, e.g. Edge of Eternities): treated as none, so the type is translated and the
+  // card is found through its English text
+  ['type_ja', 'oracle_ja'].forEach(f => { if (o[f] && !JA_CHARS.test(o[f])) o[f] = ''; });
   o._nameJa = normJa(o.name_ja);
   // older Japanese names the card was printed under, '|'-separated
   o._altJa = o.alt_names_ja ? o.alt_names_ja.split('|').map(normJa).filter(Boolean) : [];
@@ -3077,7 +3118,80 @@ function indexRow(arr, fields) {
   o._colors = String(o.colors || '').toUpperCase();
   o._cmc = Number(o.cmc) || 0;
   o._hasX = /\{X\}/i.test(o.mana_cost || '');
+  o._rarities = o.rarities || RARITY_CODE[o.rarity] || '';
+  o._sets = ' ' + String(o.sets || o.set).toLowerCase() + ' ';
+  o._tr = o.treatments;
   return o;
+}
+
+// Rarity filters find a card by every rarity it was printed at (the database's "rarities",
+// c u r m s b), as Scryfall's r: does: Sengir Vampire is uncommon, rare and mythic. The tile
+// still shows the rarity of the printing in its picture. Files without the field have only that one.
+const RARITY_CODE = { common: 'c', uncommon: 'u', rare: 'r', mythic: 'm', special: 's', bonus: 'b' };
+const RARITY_ORDER = ['common', 'uncommon', 'rare', 'special', 'mythic', 'bonus'];   // Scryfall's order, lowest first
+const RARITY_ALIASES = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic', s: 'special', b: 'bonus',
+  'コモン': 'common', 'アンコモン': 'uncommon', 'レア': 'rare', '神話レア': 'mythic', 'スペシャル': 'special' };
+function rarityName(val) {
+  const v = normText(val).trim();
+  return RARITY_ALIASES[v] || RARITY_ALIASES[String(val).trim()] || v;
+}
+function hasRarity(row, rarity) { return !!RARITY_CODE[rarity] && row._rarities.includes(RARITY_CODE[rarity]); }
+
+// Printings: the database's "sets" (every set the card was printed in) and "treatments"
+// (one letter per treatment any printing has, upper case where a Japanese printing has it).
+// e:mh3 finds every card printed in the set, as Scryfall does; ボーダーレス, 旧枠, is:showcase find
+// the cards with such a printing, and beside 日本語版 (or lang:ja) a Japanese one. A file without
+// the fields knows only the shown printing's set, and no treatments.
+const TREATMENTS = [
+  { letter: 'b', key: 'borderless', is: ['borderless'], words: ['ボーダーレス', 'borderless'] },
+  { letter: 's', key: 'showcase', is: ['showcase'], words: ['ショーケース', 'showcase'] },
+  { letter: 'x', key: 'extended', is: ['extendedart', 'extended'], words: ['拡張アート', 'extendedart'] },
+  { letter: 'f', key: 'fullart', is: ['fullart', 'full'], words: ['フルアート', 'fullart'] },
+  { letter: 'o', key: 'oldframe', is: ['oldframe', 'old'], words: ['旧枠', 'oldframe'] },
+  { letter: 'u', key: 'future', is: ['futureframe', 'future'], words: ['未来予知枠'] },
+  { letter: 't', key: 'textless', is: ['textless'], words: ['テキストレス', 'textless'] },
+  { letter: 'e', key: 'etched', is: ['etched'], words: ['エッチング', 'エッチング・フォイル', 'エッチングフォイル'] },
+  { letter: 'n', key: 'serialized', is: ['serialized'], words: ['シリアルナンバー', 'シリアル番号', 'シリアル', 'serialized'] },
+];
+const TREATMENT_BY_IS = new Map(TREATMENTS.flatMap(tr => tr.is.map(w => [w, tr])));
+const TREATMENT_BY_WORD = new Map(TREATMENTS.flatMap(tr => tr.words.map(w => [normText(w), tr])));
+const TREATMENT_PHRASE_RE = /(^|\s)(extended|full|old)[-\s](art|frame)(?=\s|$)/gi;   // "extended art" is one word
+const JA_PRINT_WORDS = new Set(['日本語版', '日本語版あり', '日本語のカード'].map(normText));
+// ボーダーレス版, 旧枠のカード, ショーケース版あり, 日本語版のカード: the printing word alone;
+// ボーダーレスのドラゴン, 日本語版のショーケース: the printing word, then the rest as a word of its own
+const PRINT_FORM_RE = new RegExp('^(-?)(' + TREATMENTS.flatMap(tr => tr.words).concat('日本語').filter(w => /[^\x00-\x7f]/.test(w))
+  .sort((a, b) => b.length - a.length).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(版)?(.*)$');
+function printWordForms(tok) {
+  const m = tok.match(PRINT_FORM_RE);
+  if (!m || (m[2] === '日本語' && !m[3])) return [tok];
+  const word = m[2] === '日本語' ? '日本語版' : m[2], rest = m[4];
+  if (/^(?:の|が)?(?:ある|あり)?(?:カード)?$/.test(rest)) return m[3] || rest ? [m[1] + word] : [tok];
+  if (!m[1] && rest.length > 1 && rest.startsWith('の')) return [word, rest.slice(1)];
+  return [tok];
+}
+const JA_LANG_VALUES = new Set(['ja', 'jp', 'japanese', '日本語']);
+const EN_LANG_VALUES = new Set(['en', 'english', '英語']);   // every card has an English printing (near enough)
+function hasJaPrinting(row) { return !!row.name_ja; }
+function treatmentTest(tr, ja) { const ch = ja ? tr.letter.toUpperCase() : tr.letter; return row => row._tr.includes(ch); }
+function treatmentFindLabel(tr, ja) {
+  const name = t('tr.' + tr.key);
+  return t(ja ? 'tr.find.ja' : 'tr.find', { t: LANG === 'en' ? name.toLowerCase() : name, a: /^[aeiou]/i.test(name) ? 'an' : 'a' });
+}
+// e:mh3, e:MH3, セット:モダンホライゾン3: a set code, or the Japanese name of a set; part of a
+// Japanese name finds every set it is part of (セット:イニストラード, セット:ホライゾン)
+const SET_CODES_MEMO = new Map();
+function setCodesOf(val) {
+  const v = normText(val).trim();
+  if (SET_CODES_MEMO.has(v)) return SET_CODES_MEMO.get(v);
+  let codes = [v];
+  if (typeof SET_NAME_JA !== 'undefined') {
+    const key = nameKey(v), names = Object.keys(SET_NAME_JA).map(code => [code, nameKey(SET_NAME_JA[code])]);
+    const exact = names.filter(([, k]) => k === key);
+    const part = exact.length || !JA_CHARS.test(v) || key.length < 2 ? [] : names.filter(([, k]) => k.includes(key));
+    if (exact.length || part.length) codes = (exact.length ? exact : part).map(([code]) => code);
+  }
+  SET_CODES_MEMO.set(v, codes);
+  return codes;
 }
 
 // Fetches a JSON file that may be gzip-compressed. GitHub Pages serves .gz
@@ -3428,6 +3542,8 @@ function localOperatorMatch(row, op, sep, val) {
   const v = info.v;
   switch (op) {
     case 'is': {
+      const tr = TREATMENT_BY_IS.get(v);
+      if (tr) return row._tr.includes(tr.letter);
       const sh = SHAPE_BY_ID.get(v === 'modal_dfc' ? 'mdfc' : v);
       return sh ? shapeTest(sh)(row) : (CARD_SHAPES.some(x => x.layouts.includes(v)) ? row.layout === v : null);
     }
@@ -3457,13 +3573,12 @@ function localOperatorMatch(row, op, sep, val) {
       if (sep === '<=') return rowColors.every(c => wanted.includes(c));   // within these colors (colorless too)
       return wanted.every(c => rowColors.includes(c));
     }
-    case 'r': {
-      const aliases = { c: 'common', u: 'uncommon', r: 'rare', m: 'mythic',
-        'コモン':'common', 'アンコモン':'uncommon', 'レア':'rare', '神話レア':'mythic' };
-      return row.rarity === (aliases[v] || aliases[val] || v);
-    }
+    case 'r':
+      return hasRarity(row, rarityName(val));
     case 'e': case 'set': case 's':
-      return String(row.set).toLowerCase() === v;
+      return setCodesOf(val).some(code => row._sets.includes(' ' + code + ' '));   // any printing in the set
+    case 'lang': case 'in':
+      return JA_LANG_VALUES.has(v) ? hasJaPrinting(row) : EN_LANG_VALUES.has(v) ? true : null;
     case 'kw': {
       const ja = JA_KEYWORDS[String(val).normalize('NFKC').trim()];
       return row._kw.has(ja || v);
@@ -3518,7 +3633,7 @@ function localFilterRow(row, st = state) {
     st.keywords.forEach(k => { if (row._kw.has(normText(k))) hit = true; });
     if (!hit) return false;
   }
-  if (st.rarity && row.rarity !== st.rarity) return false;
+  if (st.rarity && st.rarity.size && ![...st.rarity].some(r => hasRarity(row, r))) return false;   // any chosen rarity
   if (st.format && row.legal != null && !String(row.legal).includes(FORMAT_CODE[st.format])) return false;
   if (st.roles && st.roles.size) {
     let hit = false;
@@ -3676,7 +3791,7 @@ const ROLE_LIST = [
   ['exile-removal', '追放除去', 'Exile removal', ['removal'], { also: 'exileRemoval', sub: true }, '', 'exile removal'],
   ['pw-removal', 'プレインズウォーカー除去', 'Planeswalker removal', ['removal'], { also: 'pwRemoval', sub: true }, 'PW除去|PW対策', 'planeswalker removal|pw removal'],
   ['pseudo-removal', '疑似除去', 'Pseudo-removal', [], { rule: 'pseudo' }, '擬似除去', 'pseudo removal|pseudoremoval'],
-  ['boardwipe', '全体除去', 'Board wipe', ['boardwipe'], null, '全除去|全体破壊|ワイプ|ボードワイプ|リセット', 'board wipe|boardwipe|boardwipes|wrath|wraths|sweeper|sweepers|mass removal'],
+  ['boardwipe', '全体除去', 'Board wipe', ['boardwipe'], null, '全除去|全体破壊|ワイプ|ボードワイプ|リセット', 'board wipe|boardwipe|boardwipes|wipe|wipes|wrath|wraths|sweeper|sweepers|mass removal'],
   ['damage-sweeper', '全体火力', 'Damage sweeper', [], { rule: 'sweeperDamage' }, '', 'damage sweeper|damage sweepers'],
   ['bounce', 'バウンス', 'Bounce', ['bounce'], { minus: ['bounce-land'] }, '', 'bounce'],
   ['edict', '生け贄要求', 'Edict', ['edict'], null, 'エディクト|生贄要求', 'edict|edicts'],
@@ -3966,7 +4081,7 @@ function derivedFromWord(word) {
       test: row => row.legal == null || String(row.legal).includes(FORMAT_CODE[fmt]) };
   }
   const rar = RARITY_WORDS[w] || RARITY_WORDS[lw];
-  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), test: row => row.rarity === rar };
+  if (rar) return { label: t('role.d.rarity', { r: t('rarity.' + rar) }), notAlone: w === '神話' || !JA_CHARS.test(w), rarity: rar, test: row => hasRarity(row, rar) };
   // パワー3以上, タフネス2以下, power 5
   let st = w.match(/^(パワー|タフネス|power|toughness)(\d{1,2})(以上|以下)?$/i);
   if (st) {
@@ -4060,11 +4175,13 @@ function findRoleWords(tokens) {
   // with a color or mana value beside it (青 カウンター) the slang word is the role, as in 青のカウンター
   const narrowed = plain.some((q, j) => !out.used.has(j) && !q.isOp && !q.quoted && !q.negate && q.bare
     && (d => !!d && d.kind !== 'role.d.type')(derivedFromWord(q.bare)));
+  // エルフ ロード, goblin lord: with a creature type beside it ロード is the role (the type stays a word)
+  const tribal = i => plain.some((q, j) => j !== i && !out.used.has(j) && !q.isOp && !q.quoted && !q.negate && isCreatureTypeWord(q.bare));
   plain.forEach((p, i) => {
     if (out.used.has(i) || p.isOp || p.negate || /\s/.test(p.bare)) return;
     const k = roleKey(p.bare);
     const id = p.quoted ? ROLE_BY_WORD.get(k) : AMBIG_ROLE_WORDS.get(k);
-    if (id && !p.quoted && narrowed) {
+    if (id && !p.quoted && (narrowed || (id === 'lord' && tribal(i)))) {
       out.used.add(i); out.roleIdx.add(i);
       out.roles.push({ id, negate: false, word: p.bare, idx: [i] });
       return;
@@ -4341,7 +4458,7 @@ function roleFromOperator(op, val, negate, i) {
 }
 // Operators the search knows. One with nothing after it (o:, t:, 色:) is being typed:
 // it is left out instead of being searched as the letter o.
-const KNOWN_OPS = new Set(['is', 'o', 't', 'c', 'r', 'e', 's', 'set', 'kw', 'cmc', 'mv', 'pow', 'power', 'tou', 'toughness', 'name', 'n', '名前', 'カード名']
+const KNOWN_OPS = new Set(['is', 'o', 't', 'c', 'r', 'e', 's', 'set', 'lang', 'in', 'kw', 'cmc', 'mv', 'pow', 'power', 'tou', 'toughness', 'name', 'n', '名前', 'カード名']
   .concat(Object.keys(JA_OPERATORS)));
 function emptyOperator(body) {
   const m = String(body).match(/^([^\s:<>=!"]+)(:|>=|<=|>|<|=)("?"?)$/);
@@ -4400,7 +4517,7 @@ function narrowingWord(bare) {
   const lw = s.toLowerCase();
   if (ja || EN_NARROW_WORDS.has(lw) || COLOR_GROUP_WORDS[lw] || FORMAT_WORDS[lw] || RARITY_WORDS[lw]) {
     const d = derivedFromWord(s);
-    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone };
+    if (d && d.kind !== 'role.d.type') return { test: d.test, label: label(s, d), rest: null, notAlone: !!d.notAlone, rarity: d.rarity };
   }
   const m = ja && s.match(/^([白青黒赤緑]+|無色|多色|\d{1,2}マナ(?:以下|以上)?)の?(.+)$/);
   if (m && jaTypeWords().has(m[2])) {
@@ -4431,6 +4548,20 @@ function wordsInOneName(tokens) {
   return LOCAL_DB.some(row => words.every((w, k) => (JA_CHARS.test(w) ? (row._nameJa.includes(ja[k]) || row._altJa.some(n => n.includes(ja[k]))) : row._nameEn.includes(en[k]))));
 }
 const EN_WORD_ALIAS = { unblockable: "can't be blocked", flyer: 'flying', flyers: 'flying', sac: 'sacrifice', sacs: 'sacrifice', lifeloss: 'lose life' };
+// creature types (エルフ, ゴブリン, elf, goblin), from the database's type lines
+let CREATURE_TYPE_WORDS = null;
+function isCreatureTypeWord(w) {
+  if (!CREATURE_TYPE_WORDS) {
+    if (!LOCAL_DB) return false;
+    CREATURE_TYPE_WORDS = new Set();
+    LOCAL_DB.forEach(row => [[row.type_en, /Creature|Kindred|Tribal/], [row.type_ja, /クリーチャー|部族/]].forEach(([line, re]) =>
+      String(line || '').split(' // ').forEach(face => {
+        const [main, sub] = face.split(/\s*[—―]\s*/);
+        if (sub && re.test(main)) sub.split(/[\s・]+/).forEach(x => { if (x) CREATURE_TYPE_WORDS.add(x.toLowerCase()); });
+      })));
+  }
+  return CREATURE_TYPE_WORDS.has(String(w || '').normalize('NFKC').toLowerCase());
+}
 function parseSearch(raw) {
   const out = { filters: [], words: [], ja: [], phrases: [], roles: [], derived: [], sim: null, quotedRoles: [], tokens: [], rolesOff: false, aliases: [] };
   // split card, double-faced card...: one word (is:split) before the search is split into words
@@ -4441,11 +4572,18 @@ function parseSearch(raw) {
     if (!p) return m;
     shapeWords.push({ from: w, to: LANG === 'en' ? p.sh.en : p.sh.ja });
     return sp + 'is:' + p.sh.id;
-  });
+  }).replace(TREATMENT_PHRASE_RE, '$1$2$3');
   // パワー 3以上: one word, as パワー3以上
-  const tokens = tokenizeQuery(text.replace(/(^|\s)(パワー|タフネス)\s+(\d{1,2}(?:以上|以下)?)(?=\s|$)/g, '$1$2$3'));
+  const typed = new Map();   // ボーダーレス -> ボーダーレス版, as typed (for the note)
+  const tokens = tokenizeQuery(text.replace(/(^|\s)(パワー|タフネス)\s+(\d{1,2}(?:以上|以下)?)(?=\s|$)/g, '$1$2$3')
+    // エルフロード, エルフのロード: the type and the role word, as エルフ ロード
+    .replace(/(^|\s)([\u30a1-\u30fc\u3400-\u9fff]+?)の?ロード(?=\s|$)/g, (m, sp, w) => (isCreatureTypeWord(w) ? sp + w + ' ロード' : m)))
+    .flatMap(tok => { const ws = printWordForms(tok); if (ws.length === 1 && ws[0] !== tok) typed.set(ws[0], tok); return ws; });
   out.tokens = tokens;
   shapeWords.forEach(a => out.aliases.push(Object.assign(a, { replaced: true })));
+  // 日本語版 or lang:ja beside a treatment: a Japanese printing with it (日本語版 ショーケース)
+  const jaPrint = tokens.some(tok => !tok.startsWith('-') && (JA_PRINT_WORDS.has(normText(tok.replace(/^"|"$/g, '')))
+    || /^(?:lang|in):(.+)$/i.test(tok) && JA_LANG_VALUES.has(normText(tok.replace(/^[^:]+:/, '')))));
   let found = { roles: [], derived: [], used: new Set(), roleIdx: new Set(), quotedRoles: [] };
   if (tagsState !== 'absent') {
     found = findRoleWords(tokens);
@@ -4485,6 +4623,8 @@ function parseSearch(raw) {
       const val = m[3].replace(/^"|"$/g, '');
       if (ROLE_OPS.has(op) && m[2] === ':') { out.roles.push(roleFromOperator(op, val, negate, i)); return; }
       if (SIM_OPS.has(op) && m[2] === ':') { if (!negate) out.sim = { val, idx: i }; return; }
+      const tr = op === 'is' && TREATMENT_BY_IS.get(normText(val));
+      if (tr) { out.filters.push({ negate, test: treatmentTest(tr, jaPrint && !negate), text: body }); return; }
       out.filters.push({ negate, op, sep: m[2], val, text: body.replace(/^"|"$/g, '') });
       return;
     }
@@ -4498,6 +4638,18 @@ function parseSearch(raw) {
         out.aliases.push({ from: bare, to: t('narrow.type', { t: ty.label }), narrow: true });
         return;
       }
+      // ボーダーレス, 旧枠: cards with such a printing; 日本語版: cards printed in Japanese
+      const tr = TREATMENT_BY_WORD.get(normText(bare));
+      if (tr) {
+        out.filters.push({ negate, test: treatmentTest(tr, jaPrint && !negate) });
+        out.aliases.push({ from: (typed.get(token) || bare).replace(/^-/, ''), to: treatmentFindLabel(tr, jaPrint && !negate), narrow: true });
+        return;
+      }
+      if (JA_PRINT_WORDS.has(normText(bare))) {
+        out.filters.push({ negate, test: hasJaPrinting });
+        out.aliases.push({ from: (typed.get(token) || bare).replace(/^-/, ''), to: t('print.ja.find'), narrow: true });
+        return;
+      }
       // PW, 置物: a kind of card; unblockable, flyer, sac: the card's own wording
       const wf = WORD_FILTERS[normText(bare)];
       if (wf) {
@@ -4508,7 +4660,7 @@ function parseSearch(raw) {
       const nw = narrowingWord(bare);
       if (nw && !(negate && nw.rest) && (nameLike === null ? (nameLike = tokens.length > 1 && rolesLookLikeAName(tokens)) : nameLike) === false
           && !(nw.notAlone && (tokens.length < 2 ? nameStartsWith(bare) : wordsInOneName(tokens)))) {
-        out.filters.push({ negate, test: nw.test });
+        out.filters.push({ negate, test: nw.test, rarity: nw.rarity });
         if (normText(nw.label) !== normText(nw.word || bare)) out.aliases.push({ from: nw.word || bare, to: nw.label, narrow: true });
         if (!nw.rest) return;
         bare = nw.rest;
@@ -4659,11 +4811,24 @@ function rowJaText(row) {
     return f;
   }).join(' // ');
 }
+// Reminder text, （…）: a word found only there is a weaker match (到達 in 飛行's reminder,
+// 攻撃してもタップしない in 警戒's), so those cards come after the ones whose own text says it.
+const JA_REMINDER_RE = /[（(][^（）()]*[）)]/g;
 function rowJaLines(row) {
   if (!row._jaLines) {
     const names = [row.name_ja].concat(row.alt_names_ja ? row.alt_names_ja.split('|') : []).filter(Boolean).join('|');
-    row._jaLines = [names, row.type_ja].concat(rowJaText(row).split('\n')).map(l => normJaSearch(l));
+    const text = rowJaText(row).split('\n');
+    row._jaLines = [names, row.type_ja].concat(text).map(l => normJaSearch(l));
     row._jaBare = row._jaLines.map(line => line.replace(JA_PARTICLE_RE, ''));
+    // the same lines without reminder text (the same arrays when the card has none)
+    const plain = text.map(l => l.replace(JA_REMINDER_RE, ''));
+    if (plain.some((l, i) => l !== text[i])) {
+      row._jaPlain = row._jaLines.slice(0, 2).concat(plain.map(l => normJaSearch(l)));
+      row._jaPlainBare = row._jaPlain.map(line => line.replace(JA_PARTICLE_RE, ''));
+    } else {
+      row._jaPlain = row._jaLines;
+      row._jaPlainBare = row._jaBare;
+    }
   }
   return row._jaLines;
 }
@@ -4705,14 +4870,27 @@ const JA_KW_SLANG = {
   'フライヤー': '飛行', 'ダブルストライク': '二段攻撃', 'ファーストストライク': '先制攻撃', 'ライフリンク': '絆魂', 'デスタッチ': '接死',
   'ヘイスト': '速攻', 'ヴィジランス': '警戒', 'ビジランス': '警戒', 'リーチ': '到達', 'フラッシュ': '瞬速', 'インデストラクティブル': '破壊不能',
   'ヘクスプルーフ': '呪禁', 'ヘックスプルーフ': '呪禁', 'メナス': '威迫', 'プロウェス': '果敢', 'ディフェンダー': '防衛', 'シュラウド': '被覆',
-  'アンブロッカブル': 'ブロックされない',
+  'アンブロッカブル': 'ブロックされない', 'パートナー': '共闘', 'インスタントタイミング': '瞬速', 'インスタンスタイミング': '瞬速',
 };
 const JA_PERMS = '(クリーチャー|パーマネント|アーティファクト|エンチャント|土地|プレインズウォーカー|トークン)';
 const JA_SLANG = [
   [/山札|デッキ/g, 'ライブラリー'],
   [/^トップ$|ライブラリー(?:の)?(?:トップ|上)/g, 'ライブラリーの一番上'],
   [/^ボトム$|ライブラリー(?:の)?ボトム/g, 'ライブラリーの一番下'],
-  [/死んだ/g, '死亡した'], [/死ぬ/g, '死亡する'],
+  [/死んだ/g, '死亡した'], [/死ぬ/g, '死亡する'], [/死亡したら|死亡時に?/g, '死亡したとき'],
+  // ETBでカードを引く, LTBで…: on their own ETB and LTB are roles; in a phrase, the cards' words
+  [/etb(?:したとき|したら|した時|で|時に?|のとき)?|cip(?:で|時に?)?/g, '戦場に出たとき'], [/ltb(?:したとき|したら|した時|で|時に?|のとき)?/g, '戦場を離れたとき'],
+  [/(?<![\u30a1-\u30fc])ドレイン(?:する|して)?(?![\u30a1-\u30fc])/g, 'ライフを失'],
+  [/^シャッフル(?:する)?$/, 'ライブラリーを切り直す'], [/シャッフル(?:して|し)?/g, '切り直'],
+  [/ディスカード(?:する)?$/, '捨てる'], [/ディスカード(?:させ|して|し)?/g, '捨て'],
+  // ミル, 3枚ミル: 切削 (not ミルコ, ヴァドミル)
+  [/(?<![\u30a1-\u30fc])ミル(?:する|させる)?(?![\u30a1-\u30fc])/g, '切削'],
+  // レジェンド: 伝説の (not the レジェンド・ルール)
+  [/(?<![\u30a1-\u30fc])レジェンド(?![\u30a1-\u30fc])/g, '伝説の'],
+  [/(?:奪|パク)(?:う|る|って|った|われる|られる)$/, 'コントロールを得る'], [/(?:奪|パク)(?:って|った|い|り)/g, 'コントロールを得'],
+  // コストが1少なくなる, 1マナ安く, 2軽く: the cards say {1}少なくなる
+  [/(\d+|x)(?:マナ)?(?:少なく|安く|軽く)/g, '{$1}少なく'],
+  [/ドロー(?:を)?禁止|ドロー(?:でき|させ)ない/g, '引くことができない'],
   [/サク(?:る|り|って|った|れる)/g, '生け贄に捧げ'],
   [/^(\d+|x)ドロー$/, 'カードを$1枚引く'],
   [/^(\d+|x)点?火力$/, '$1点のダメージ'],
@@ -4737,6 +4915,9 @@ function jaSlangForm(n) {
   let out = n;
   const base = n.replace(/持ち$/, ''), kw = JA_KW_SLANG[base] || base;
   if (JA_KW_SLANG[base] || JA_KEYWORDS[kw]) out = kw;   // フライヤー, 飛行持ち, 接死持ち
+  // トランプル付与, 飛行を与える: the cards say トランプルを得る
+  const grant = n.match(/^(.+?)を?(?:付与|与え)(?:する|る)?$/), gk = grant && (JA_KW_SLANG[grant[1]] || grant[1]);
+  if (gk && JA_KEYWORDS[gk]) out = gk + 'を得る';
   JA_SLANG.forEach(([re, to]) => { out = out.replace(re, to); });
   let spelled = out;
   JA_ORTHO.forEach(([re, to]) => { spelled = spelled.replace(re, to); });
@@ -4801,8 +4982,9 @@ const JA_WORD_EN = {
   'ターン': 'turn', '終了': 'end', 'アップキープ': 'upkeep', '置': 'put', 'カウンター': 'counter', '打ち消': 'counter', '支払': 'pay',
 };
 function jaForm(n) {
-  // a lone kana left by the split (と in とき) says nothing
-  let chunks = n.split(JA_SPLIT_RE).filter(c => c && !/^[\u3041-\u3096]$/.test(c));
+  // a lone kana left by the split (と in とき) says nothing; とき and たび end a part, so
+  // 戦場に出たときトークン is 戦場・出・トークン, not 戦場・出・きトークン
+  let chunks = n.replace(/(とき|たび)(?=[^\s、,])/g, '$1、').split(JA_SPLIT_RE).filter(c => c && !/^[\u3041-\u3096]$/.test(c));
   n = n.replace(JA_PUNCT_RE, '');   // the parts keep the typed 、 as a break; the whole word drops it
   if (chunks.length > 1) chunks = chunks.map(c => { const m = c.match(JA_VERB_END_RE); return m ? (m[1] || m[2]) : c; });
   // 墓地から手札 has a direction (Japanese word order is free otherwise: 2つのパーマネント = パーマネント2つ)
@@ -4838,25 +5020,32 @@ function prepareJapanese(tokens) {
 // quick: only whether the word is there and whether it's in the name (one search word),
 // so the English lines are not read when a Japanese line already has it
 function locateJa(row, u, quick) {
-  const out = { kw: !!(u.kw && row._kw.has(u.kw)), lines: new Set(), head: false };
-  const lines = rowJaLines(row), bare = row._jaBare;
+  const out = { kw: !!(u.kw && row._kw.has(u.kw)), lines: new Set(), head: false, plain: false };
+  const lines = rowJaLines(row), bare = row._jaBare, plain = row._jaPlain, plainBare = row._jaPlainBare;
   const forms = u._forms || (u._forms = [u].concat(u.alts || []));
+  const has = (line, b) => forms.some(f => (f.n && line.includes(f.n)) || (f.bare && b.includes(f.bare)));
   lines.forEach((line, i) => {
-    if (forms.some(f => (f.n && line.includes(f.n)) || (f.bare && bare[i].includes(f.bare)))) { out.lines.add('j' + i); if (i < 2) out.head = true; }
+    if (has(line, bare[i])) {
+      out.lines.add('j' + i);
+      if (i < 2) out.head = true;
+      // plain: outside reminder text too
+      if (!out.plain && (plain === lines || has(plain[i], plainBare[i]))) out.plain = true;
+    }
   });
   if (u.fold && !out.lines.has('j0') && rowNameFold(row).includes(u.fold)) { out.lines.add('j0'); out.head = true; }
   if (u.key && u.key.length >= 3 && !out.lines.has('j0') && rowNameKey(row).includes(u.key)) { out.lines.add('j0'); out.head = true; }
   if (u.yomi && !out.lines.has('j0') && rowYomi(row).includes(u.yomi)) { out.lines.add('j0'); out.head = true; }
+  if (out.head) out.plain = true;
   if (quick && (out.kw || out.lines.size)) return out;
   if (u.en && u.en.length && rowEnAll(row).includes(u.en[0].slice(0, 3))) {
-    rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); if (i < 2) out.head = true; } });
+    rowEnLines(row).forEach((line, i) => { if (findSeq(line, u.en)) { out.lines.add('e' + i); out.plain = true; if (i < 2) out.head = true; } });
   }
   return out;
 }
 function japaneseWordTier(row, u) {
   if (!jaMayHave(row, u)) return null;
   const loc = locateJa(row, u, true);
-  if (loc.kw || loc.lines.size) return { tier: 1, score: loc.lines.has('j0') ? 0.5 : 1 };
+  if (loc.kw || loc.lines.size) return { tier: 1, score: loc.lines.has('j0') ? 0.5 : loc.kw || loc.plain ? 1 : 1.5 };
   // after the cards whose Japanese text has the words in the typed order
   if (u.enParts && !row.oracle_ja && enPartsLine(row, u.enParts)) return { tier: 2, score: 2.5 };
   const split = [u].concat(u.alts || []).filter(f => f.chunks.length > 1);
@@ -4927,7 +5116,8 @@ function evaluateRow(row, plan) {
       const locs = plan.ja.map(u => locateJa(row, u));
       if (locs.some(l => !l.kw && !l.lines.size)) return null;
       const t = unitsTier(locs);
-      r = { tier: t, score: t };
+      // a word only in reminder text: after the cards whose own text has every word
+      r = { tier: t, score: t + (locs.some(l => !l.kw && !l.plain) ? 0.5 : 0) };
     }
     if (!r) return null;
     tier = Math.max(tier, r.tier); score += r.score;
@@ -5420,7 +5610,7 @@ function buildSearchQuery() {
   if (state.creatureTypes.size) parts.push('(' + [...state.creatureTypes].map(t => `t:${t}`).join(' or ') + ')');
   if (state.keywords.size) parts.push('(' + [...state.keywords].map(k => `kw:"${k}"`).join(' or ') + ')');
   if (state.roles.size) parts.push('(' + [...state.roles].map(roleScryfallClause).join(' or ') + ')');
-  if (state.rarity) parts.push(`r:${state.rarity}`);
+  if (state.rarity.size) parts.push('(' + [...state.rarity].map(r => `r:${r}`).join(' or ') + ')');
   if (state.manaCosts.size) {
     const clauses = [...state.manaCosts].map(m => {
       if (m === 'X') return 'mana:{X}';
@@ -5729,7 +5919,7 @@ function displayTypeJa(card) { return stripRuby(displayTypeJaRaw(card)); }
 function displayTypeJaRaw(card) {
   if (card.lang && card.lang !== 'en') {
     const t = card.printed_type_line || (card.card_faces || []).map(f => f.printed_type_line).filter(Boolean).join(' // ');
-    if (t) return t;
+    if (t && (card.lang !== 'ja' || HAS_JA.test(t))) return t;
   }
   const row = dbRowFor(card);
   if (row && row.type_ja) return row.type_ja;
@@ -5805,6 +5995,32 @@ function treatmentLabels(p) {
   return keys.map(k => t('tr.' + k));
 }
 
+// The rarities a search asks for (the rarity buttons, r:m, 神話レア ドラゴン), or [].
+function wantedRarities() {
+  const want = new Set(state.rarity);
+  currentPlan().filters.forEach(f => { if (!f.negate && (f.rarity || f.op === 'r')) want.add(f.rarity || rarityName(f.val)); });   // derived words are filters too
+  return [...want];
+}
+// The tile's rarity: its printing's. When the search asks for another rarity the card was also
+// printed at (a mythic Secret Lair Sengir Vampire), the tile says that rarity (神話レア) with an
+// arrow beside it: ↓ the picture is a lower-rarity printing, ↑ a higher one. The tooltip says which.
+const SHIFT_ICON = { down: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2v7M2.8 6.2 6 9.4l3.2-3.2"/></svg>',
+  up: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8v-7M2.8 5.8 6 2.6l3.2 3.2"/></svg>' };
+function tileRarityHtml(card) {
+  const want = wantedRarities();
+  if (want.length && card.rarity && !want.includes(card.rarity)) {
+    const row = dbRowFor(card);
+    const w = RARITY_ORDER.filter(r => want.includes(r) && (!row || hasRarity(row, r))).pop();   // the rarest one asked for
+    if (w) {
+      const tip = t('rarity.alsoTip', { r: rarityLabel(card.rarity), w: rarityLabel(w) });
+      const dir = RARITY_ORDER.indexOf(card.rarity) < RARITY_ORDER.indexOf(w) ? 'down' : 'up';
+      return `<span class="rarity-dot rarity-shift" title="${esc(tip)}"><span class="dot ${w}"></span>${rarityLabel(w)}` +
+        `<span class="shift-icon ${dir} ${card.rarity}" role="img" aria-label="${esc(tip)}">${SHIFT_ICON[dir]}</span></span>`;
+    }
+  }
+  return `<span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>`;
+}
+
 function cardTileHtml(card) {
   const pic = faceUris(card)[0];
   const names = cardNames(card);
@@ -5829,7 +6045,7 @@ function cardTileHtml(card) {
         ${legalityCirclesHtml(card.legalities)}
       </div>
       <div class="card-foot">
-        <span class="rarity-dot"><span class="dot ${card.rarity}"></span>${rarityLabel(card.rarity)}</span>
+        ${tileRarityHtml(card)}
         ${tilePriceHtml(card)}
       </div>
     </a>`;
@@ -6525,8 +6741,11 @@ function cardPageText(card, pl) {
   if (pl) return getText(card, 'printed_text', 'printed_text') || getText(card, 'oracle_text', 'oracle_text');
   return displayText(card);
 }
-// Every language this exact printing exists in (the same set and collector number):
-// one Scryfall search with include_multilingual, remembered for the visit.
+// Every language this exact printing exists in (the same set and collector number): from the
+// printings file (printings.json.gz, built with the card database) without asking Scryfall,
+// or, for a printing the file doesn't have yet, one Scryfall search with include_multilingual,
+// remembered for the visit. From the file, a language other than the one shown is only its
+// set and number; the button fetches that printing when it is pressed (openPrinting()).
 const PRINT_LANGS = ['ja', 'en', 'zhs', 'zht', 'ko', 'fr', 'de', 'it', 'es', 'pt', 'ru', 'ph', 'he', 'la', 'grc', 'ar', 'sa', 'qya'];
 const PRINT_LABEL = { ja: 'JP', en: 'EN', zhs: 'CS', zht: 'CT', ko: 'KO', fr: 'FR', de: 'DE', it: 'IT', es: 'ES', pt: 'PT', ru: 'RU', ph: 'PH', he: 'HE', la: 'LA', grc: 'GR', ar: 'AR', sa: 'SA', qya: 'QY' };
 const PRINT_NAME = {
@@ -6539,9 +6758,27 @@ const PRINTINGS = new Map();   // '<set>|<number>' -> { <lang>: card }
 // Sets whose other-language printings Scryfall files under a set code of their own,
 // with the same collector numbers: the Japanese 4th Edition (4bb) is the English 4ed's.
 const SET_TWIN = { '4bb': '4ed', '4ed': '4bb', bchr: 'chr', chr: 'bchr', fbb: '3ed', '3ed': 'fbb' };
+// The printings file, fetched the first time a card page needs it: { sets: { <set>: { <number>:
+// ["<langs>", "<rarity letter>", "<treatment letters>"] } } }, a language written ja@4bb when
+// Scryfall files it under the twin set. null when it can't be loaded.
+let printingsFile = null;
+function loadPrintingsFile() {
+  if (!printingsFile) printingsFile = fetchFirstData(['printings.json.gz']).then(d => (d && d.sets ? d : null)).catch(() => null);
+  return printingsFile;
+}
 async function printingLanguages(card) {
   if (!card.set || !card.collector_number) return { [card.lang || 'en']: card };
   const key = card.set + '|' + card.collector_number;
+  const file = await loadPrintingsFile();
+  const entry = file && file.sets[card.set] && file.sets[card.set][card.collector_number];
+  if (entry && !PRINTINGS.has(key)) {
+    const out = {};
+    String(entry[0]).split(' ').filter(Boolean).forEach(code => {
+      const [lang, set] = code.split('@');
+      out[lang] = { lang, set: set || card.set, collector_number: card.collector_number, _stub: true };
+    });
+    if (Object.keys(out).length) return Object.assign(out, { [card.lang || 'en']: card });
+  }
   if (!PRINTINGS.has(key)) {
     PRINTINGS.set(key, (async () => {
       const out = {};
@@ -6575,7 +6812,7 @@ function printButtonsHtml(langs, card) {
   const order = PRINT_LANGS.filter(l => langs[l]).concat(Object.keys(langs).filter(l => !PRINT_LANGS.includes(l)));
   return `<div class="print-langs" id="printToggle" role="group" aria-label="${esc(t('print.aria'))}">${order.map(l => {
     const name = (PRINT_NAME[l] || [l, l])[LANG === 'en' ? 1 : 0];
-    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id)}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
+    return `<button type="button" class="print-lang" data-print="${esc(l)}" data-id="${esc(langs[l].id || '')}" aria-pressed="${l === cur}" title="${esc(t('print.title', { lang: name }))}" aria-label="${esc(name)}">${esc(PRINT_LABEL[l] || l.toUpperCase())}</button>`;
   }).join('')}</div>`;
 }
 let shownLangs = null;   // the languages of the printing on the card page
@@ -6590,11 +6827,48 @@ async function fillPrintToggle(card) {
 }
 document.getElementById('cardViewCard').addEventListener('click', (e) => {
   const b = e.target.closest('#printToggle [data-print]');
-  if (!b || b.getAttribute('aria-pressed') === 'true' || !b.dataset.id || !shownCard) return;
+  if (!b || b.getAttribute('aria-pressed') === 'true' || !shownCard) return;
   const c = shownLangs && shownLangs[b.dataset.print];
+  if (c && c._stub) { openPrinting(b, c); return; }
+  if (!b.dataset.id) return;
   if (c && c.id === b.dataset.id) currentCardsExtra.set(c.id, c);
   goTo(`?card=${encodeURIComponent(b.dataset.id)}&print=${b.dataset.print}`);
 });
+// In English, a link to another language's printing (the card database's Japanese printings
+// are behind the home page's examples, the metagame lists and shared links) opens the English
+// card of that same printing when there is one; ?print=<lang> keeps the language asked for.
+async function siteLanguagePrinting(card) {
+  if (LANG !== 'en' || !card || !card.lang || card.lang === 'en' || !card.set || !card.collector_number
+      || new URLSearchParams(location.search).get('print')) return card;
+  const file = await loadPrintingsFile();
+  const entry = file && file.sets[card.set] && file.sets[card.set][card.collector_number];
+  const en = entry && String(entry[0]).split(' ').find(code => code.split('@')[0] === 'en');
+  if (!en) return card;
+  try {
+    await scryfallTurn();
+    const res = await fetch(`https://api.scryfall.com/cards/${encodeURIComponent(en.split('@')[1] || card.set)}/${encodeURIComponent(card.collector_number)}/en`,
+      { headers: { Accept: 'application/json' } });
+    const c = res.ok ? await res.json() : null;
+    return c && c.id && c.lang === 'en' && c.oracle_id === card.oracle_id ? c : card;
+  } catch (err) { return card; }
+}
+// A language known only from the printings file: Scryfall's card for that set, number and
+// language, then the page for it.
+async function openPrinting(button, stub) {
+  if (button.classList.contains('loading')) return;
+  const from = shownCard;
+  button.classList.add('loading');
+  try {
+    await scryfallTurn();
+    const res = await fetch(`https://api.scryfall.com/cards/${encodeURIComponent(stub.set)}/${encodeURIComponent(stub.collector_number)}/${encodeURIComponent(stub.lang)}`,
+      { headers: { Accept: 'application/json' } });
+    const c = res.ok ? await res.json() : null;
+    if (!c || !c.id || shownCard !== from) return;
+    currentCardsExtra.set(c.id, c);
+    goTo(`?card=${encodeURIComponent(c.id)}&print=${stub.lang}`);
+  } catch (err) { /* stays on this printing */ }
+  finally { button.classList.remove('loading'); }
+}
 const currentCardsExtra = new Map();   // printings opened with the switch: shown at once
 function showView(name) {
   document.documentElement.dataset.view = name;
@@ -6884,8 +7158,12 @@ function applyRoute(route) {
     shownCard = null;
     document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><div class="spinner"></div><span class="serif">${t('loading')}</span></div>`;
     // the card database supplies Japanese names for English printings, so wait for it
-    Promise.all([fetchSingleCard(route.id), dbReady])
-      .then(([c]) => { if (getCardIdFromUrl() === route.id) renderCardViewContent(c); })
+    Promise.all([fetchSingleCard(route.id).then(siteLanguagePrinting), dbReady])
+      .then(([c]) => {
+        if (getCardIdFromUrl() !== route.id) return;
+        if (c.id !== route.id) { currentCardsExtra.set(c.id, c); history.replaceState(history.state, '', `?card=${encodeURIComponent(c.id)}`); }
+        renderCardViewContent(c);
+      })
       .catch(() => {
         if (getCardIdFromUrl() !== route.id) return;
         document.getElementById('cardViewCard').innerHTML = `<div class="status-line"><span class="serif">${t('card.notfound')}</span>${t('card.notfound.body')}</div>`;
@@ -6960,7 +7238,7 @@ function resetToHome() {
   searchInput.value = '';
   document.getElementById('heroInput').value = '';
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity.clear(); state.format = '';
   syncFilterUI();
   setFilterDrawer(false);
   if (location.search) history.pushState({ app: true }, '', location.pathname);
@@ -7235,7 +7513,7 @@ const searchInput = document.getElementById('searchInput');
 
 function hasActiveFilters() {
   return !!(state.colors.size || state.types.size || state.creatureTypes.size ||
-            state.keywords.size || state.manaCosts.size || state.roles.size || state.rarity || state.format);
+            state.keywords.size || state.manaCosts.size || state.roles.size || state.rarity.size || state.format);
 }
 // Search when there is something to search for, otherwise show random cards.
 function refreshResults() {
@@ -7315,7 +7593,7 @@ function activeFilterItems() {
   state.colors.forEach(v => items.push({ group: 'colors', value: v, label: t('pill.color', { c: t('color.' + v) }) }));
   state.types.forEach(v => items.push({ group: 'types', value: v, label: chipLabel('types', v) }));
   state.manaCosts.forEach(v => items.push({ group: 'manaCosts', value: v, label: t('pill.mv', { v: chipLabel('manaCosts', v) }) }));
-  if (state.rarity) items.push({ group: 'rarity', value: state.rarity, label: chipLabel('rarity', state.rarity) });
+  RARITY_ORDER.filter(v => state.rarity.has(v)).forEach(v => items.push({ group: 'rarity', value: v, label: chipLabel('rarity', v) }));
   if (state.format) items.push({ group: 'format', value: state.format, label: t('pill.format', { f: formatName(state.format) }) });
   state.creatureTypes.forEach(v => items.push({ group: 'creatureTypes', value: v, label: (!en && CREATURE_TYPE_JA[v]) || titleCase(v) }));
   state.keywords.forEach(v => items.push({ group: 'keywords', value: v, label: (!en && KEYWORD_JA_BY_EN[v]) || titleCase(v) }));
@@ -7332,7 +7610,7 @@ function syncFilterUI() {
   });
   document.querySelectorAll('.opt-chip').forEach(b => {
     const { group, value } = b.dataset;
-    const on = group === 'rarity' ? state.rarity === value : state[group].has(value);
+    const on = state[group].has(value);
     b.setAttribute('aria-pressed', String(on));
   });
   document.querySelectorAll('.check-list').forEach(list => {
@@ -7349,8 +7627,7 @@ function syncFilterUI() {
 }
 
 function removeFilter(group, value) {
-  if (group === 'rarity') state.rarity = '';
-  else if (group === 'format') state.format = '';
+  if (group === 'format') state.format = '';
   else state[group].delete(value);
 }
 
@@ -7361,8 +7638,7 @@ document.getElementById('filterPanel').addEventListener('click', (e) => {
   const chip = e.target.closest('.opt-chip');
   if (!chip) return;
   const { group, value } = chip.dataset;
-  if (group === 'rarity') state.rarity = state.rarity === value ? '' : value;
-  else toggleInSet(state[group], value);
+  toggleInSet(state[group], value);
   syncFilterUI();
   refreshResults();
 });
@@ -7375,7 +7651,7 @@ document.getElementById('activeFilters').addEventListener('click', (e) => {
 });
 document.getElementById('clearBtn').addEventListener('click', () => {
   state.colors.clear(); state.types.clear(); state.creatureTypes.clear();
-  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity = ''; state.format = '';
+  state.keywords.clear(); state.manaCosts.clear(); state.roles.clear(); state.rarity.clear(); state.format = '';
   syncFilterUI();
   refreshResults();
 });
@@ -7887,8 +8163,8 @@ async function renderZeroHelp(myToken) {
   for (const it of panel) {
     if (!query && panel.length === 1) continue;   // that would be every card
     const st = Object.assign({}, state, { colors: new Set(state.colors), types: new Set(state.types), creatureTypes: new Set(state.creatureTypes),
-      keywords: new Set(state.keywords), manaCosts: new Set(state.manaCosts), roles: new Set(state.roles) });
-    if (it.group === 'rarity') st.rarity = ''; else if (it.group === 'format') st.format = ''; else st[it.group].delete(it.value);
+      keywords: new Set(state.keywords), manaCosts: new Set(state.manaCosts), roles: new Set(state.roles), rarity: new Set(state.rarity) });
+    if (it.group === 'format') st.format = ''; else st[it.group].delete(it.value);
     const n = count(query, st);
     if (n) filterGroup.items.push(`<button type="button" class="zh-btn" data-group="${esc(it.group)}" data-value="${esc(it.value)}">${esc(t('help.unfilter', { f: it.label }))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
     await helpYield();
@@ -7904,7 +8180,7 @@ async function renderZeroHelp(myToken) {
   }
   if (nFilters >= 2) {
     const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(), manaCosts: new Set(),
-      roles: new Set(), rarity: '', format: '' });
+      roles: new Set(), rarity: new Set(), format: '' });
     const q = tokens.filter((tok, k) => !opIdx.includes(k)).join(' ');
     const n = q.trim() ? count(q, st) : 0;
     if (n) filterGroup.items.push(`<button type="button" class="zh-btn zh-all" data-clear="1" data-q="${esc(q)}">${esc(t('help.unfilter.all'))}<span class="zh-n">${esc(helpCountLabel(n))}</span></button>`);
@@ -7923,7 +8199,7 @@ document.getElementById('cardGrid').addEventListener('click', (e) => {
   }
   if (b.dataset.clear) {
     state.colors.clear(); state.types.clear(); state.creatureTypes.clear(); state.keywords.clear(); state.manaCosts.clear();
-    state.roles.clear(); state.rarity = ''; state.format = '';
+    state.roles.clear(); state.rarity.clear(); state.format = '';
     syncFilterUI();
   }
   if (b.dataset.group) {
@@ -7978,6 +8254,8 @@ const GUIDE_ROWS = {
     ['タイプ:ドラゴン', 'タイプ（<code>t:</code> も可）'],
     ['マナ総量>=4', 'マナ総量の比較（<code>cmc</code> も可）'],
     ['パワー>3', 'パワー・タフネスの比較（<code>タフネス&lt;=2</code>）'],
+    ['セット:モダンホライゾン3', 'そのセットで印刷されたカード（再録も。<code>e:mh3</code> も可）'],
+    ['ボーダーレス', 'その版のあるカード（ショーケース・旧枠・拡張アート・フルアート・シリアルナンバーも。<code>日本語版 ボーダーレス</code> で日本語の版）'],
     ['-飛行', '先頭に <code>-</code> を付けると除外'],
   ],
   en: [
@@ -7992,6 +8270,8 @@ const GUIDE_ROWS = {
     ['t:dragon', 'Type'],
     ['cmc>=4', 'Compare mana value (<code>mv</code> also works)'],
     ['pow>3', 'Compare power or toughness (<code>tou&lt;=2</code>)'],
+    ['e:mh3', 'Cards printed in the set (reprints too)'],
+    ['borderless', 'Cards with such a printing (also showcase, old frame, extended art, full art, serialized; <code>lang:ja borderless</code> for a Japanese one)'],
     ['-flying', 'Put <code>-</code> in front to exclude'],
   ],
 };
@@ -8357,6 +8637,13 @@ function artFallback(e) {
   img.remove();
 }
 
+// a deck's finish as the event lists it, with the ordinal put right (the sources write 2st, 3st, 22th)
+function placeText(result) {
+  return String(result || '').replace(/^(\s*)(\d+)(?:st|nd|rd|th)\b/i, (m, sp, n) => {
+    const k = Number(n) % 100, j = k % 10;
+    return sp + n + (k >= 11 && k <= 13 ? 'th' : j === 1 ? 'st' : j === 2 ? 'nd' : j === 3 ? 'rd' : 'th');
+  });
+}
 // the deck's weekly share of the field (meta.json trends), as a small line
 function metaTrend(format, a) {
   const tr = metaState.data && metaState.data.trends && metaState.data.trends[format];
@@ -8459,7 +8746,7 @@ function metaRowHtml(a, index, maxShare, costs) {
 
   const s = a.sample;
   const sample = (s && /^https:\/\//.test(s.url || ''))
-    ? `<div class="meta-sample">${t('meta.sample')}<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc([s.result, s.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・'))}${s.date ? `（${esc(s.date)}）` : ''} ↗</a></div>`
+    ? `<div class="meta-sample">${t('meta.sample')}<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc([placeText(s.result), s.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・'))}${s.date ? `（${esc(s.date)}）` : ''} ↗</a></div>`
     : '';
 
   return `<li class="meta-row${a.unclassified ? ' unclassified' : ''}">
@@ -9788,7 +10075,7 @@ const HERO_SLANG = [
   ['ライフ回復', 'life gain', 'ライフを得る', 'gain life'],
 ];
 const HERO_STATE = () => Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
-  manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: 'name', showLoose: false });
+  manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: 'name', showLoose: false });
 const SEARCH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
 const heroFx = { entries: [], lang: '', token: 0 };
 function effectOf(fx) {
@@ -9850,9 +10137,10 @@ function heroEntryHtml(entry, card) {
   const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
   const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : '';
   const pic = card ? faceUris(card)[0] : null;
+  const id = (card && card.id) || row.id;   // the printing pictured (in English, an English one)
   return `<div class="hx-entry">
       <button type="button" class="hx-effect" data-q="${esc(q)}" title="${esc(t('hx.search', { q: label }))}">${SEARCH_ICON}<span>${esc(label)}</span>${entry.slang ? `<span class="hx-role">${esc(t('hx.role'))}</span>` : ''}</button>
-      <a class="hx-item" href="?card=${encodeURIComponent(row.id)}" data-card="${esc(row.id)}">
+      <a class="hx-item" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}">
         <span class="hx-thumb">${pic ? pictureTag(pic, { alt: '', sizes: '46px', use: ['small'], main: 'small' }) : '<span class="hx-noimg"></span>'}</span>
         <span class="hx-body"><span class="hx-name">${esc(main)}${sub ? `<small>${esc(sub)}</small>` : ''}</span><span class="hx-text">${highlightHtml(heroText(row), plan)}</span></span>
       </a>
@@ -10427,13 +10715,13 @@ function drawDeck() {
   document.title = t('deck.title', { name, fmt: formatName(format) });
   const pips = String(a.colors || '').split('').filter(c => 'WUBRG'.includes(c)).map(c => symbolImg(c, 'sym')).join('');
   const played = (a.wins || 0) + (a.losses || 0);
-  const facts = [`${esc(formatName(format))}・${esc(t('meta.window', { n: days }))}`,
+  const facts = [`${esc(formatName(format))}${LANG === 'en' ? ' · ' : '・'}${esc(t('meta.window', { n: days }))}`,
     esc(t('deck.share', { v: a.share.toFixed(1), n: tn('meta.decks', a.decks) }))];
   if (typeof a.winrate === 'number' && played >= META_MIN_MATCHES) facts.push(esc(t('deck.wr', { v: a.winrate.toFixed(1), n: tn('meta.matches', played) })));
   // a space before each · so a phone can wrap the line there (English has no other break between the facts)
   const factHtml = facts.map(f => `<span class="fact">${f}</span>`).join(' <span class="sep">·</span>');
   const src = entry && entry.list;
-  const srcText = src ? [src.result, src.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (src.date ? `（${src.date}）` : '') : '';
+  const srcText = src ? [placeText(src.result), src.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (src.date ? `（${src.date}）` : '') : '';
   const srcHtml = !src ? '' : `<p class="deck-src">${t('deck.src')}${/^https:\/\//.test(src.url || '')
     ? `<a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(srcText)} ↗</a>` : esc(srcText)}</p>`;
   const toggle = `<div class="view-toggle" role="tablist" aria-label="${esc(t('deck.view.aria'))}">
@@ -10449,7 +10737,7 @@ function drawDeck() {
       </div></details>` : '';
   const listPicker = choices && choices.length > 1 ? `<label class="deck-pick"><span>${t('deck.lists')}</span><select id="deckListSel">${choices.map((c, i) => {
       const l = c.list || {};
-      const label = `${i + 1}. ` + [l.result, l.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (l.date ? `（${l.date}）` : '');
+      const label = `${i + 1}. ` + [placeText(l.result), l.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (l.date ? `（${l.date}）` : '');
       return `<option value="${i}"${i === pick ? ' selected' : ''}>${esc(label)}</option>`;
     }).join('')}</select><span class="deck-pick-n">${t('deck.lists.n', { n: choices.length })}</span></label>` : '';
   const main = lists.main.map(x => deckItem(x[1], x[0], x[2], infos));

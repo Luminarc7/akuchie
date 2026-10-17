@@ -39,6 +39,8 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | `"two words"` | `phrases` (exact phrase) | `"draw a card"` |
 | A word in `WORD_FILTERS` | a type test | PW, 置物, X呪文 |
 | A card shape (`CARD_SHAPES`; English names of several words are read first, `SHAPE_PHRASE_RE`) | a layout test, also `is:<id>` | 分割カード, 両面, MDFC, 変身カード, 反転カード, 出来事カード, split card, `is:mdfc` |
+| A treatment (`TREATMENTS`; extended art, full art, old frame are joined into one word first, `TREATMENT_PHRASE_RE`) | a test of the database's `treatments` (`treatmentTest()`), also `is:<treatment>`; beside 日本語版 or `lang:ja`, a Japanese printing with it. A note says so (`treatmentFindLabel()`). The word as players write it reads the same (`printWordForms()`, `PRINT_FORM_RE`): ボーダーレス版, 旧枠のカード, ショーケース版あり; ボーダーレスのドラゴン and 日本語版のショーケース are the printing word plus the rest as its own word | ボーダーレス, ショーケース, 旧枠, 拡張アート, フルアート, 未来予知枠, テキストレス, エッチング, シリアルナンバー, シリアル番号, borderless, extended art, `is:showcase`, 日本語版 ボーダーレス, ボーダーレス版 |
+| 日本語版 (`JA_PRINT_WORDS`), `lang:ja` / `in:ja` (`JA_LANG_VALUES`) | cards printed in Japanese (`hasJaPrinting()`: the card has a Japanese name); `-日本語版` the rest; `lang:en` every card | 日本語版 ドラゴン, 日本語版のカード, `lang:ja` |
 | A color or mana value alone, or before a type word (`narrowingWord()`) | a color / mana value filter; not inside a card name (`rolesLookLikeAName()`) or in quotes | 白 天使, 白の天使, 3マナ ゴブリン, 黒のクリーチャー, red goblin |
 | A guild, shard or wedge (`COLOR_GROUP_WORDS`), a format (`FORMAT_WORDS`) or a rarity (`RARITY_WORDS`) beside other words | the same kind of filter (a guild = the cards a deck of its colors can play, a format = legal in it). These words are often part of names, so they narrow only beside other words that aren't one card's name (`wordsInOneName()`), or alone when no name starts with them (`nameStartsWith()`) | ボロス 除去, ゴルガリ 墓地, モダン 除去, パウパー 火力, 神話レア ドラゴン, レア 土地, boros removal |
 | パワーN, タフネスN (以上/以下) | a power / toughness filter (`derivedFromWord()`; パワー 5以上 is joined first) | パワー3以上 クリーチャー |
@@ -48,7 +50,24 @@ tokens (`tokenizeQuery()`, which keeps `"quoted phrases"` together). Each token 
 | Symbols only | a literal text filter | `%`, `🔥` |
 | Anything else | `words` (English) | lightning, bolt |
 
-**Operators** are `KNOWN_OPS` (including `is:` for card shapes) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
+**Rarity** (`r:m`, `r:rare`, the rarity buttons, 神話レア/レア/コモン as narrowing words) matches
+every rarity the card was printed at, as Scryfall does (`hasRarity()` over the database's
+`rarities`; `rarityName()` reads c/u/r/m/s/b, the English names and the Japanese ones). The
+rarity buttons can be combined and find a card with any of the chosen rarities (`state.rarity`
+is a set). A card found through another printing keeps its own picture; its tile still says the
+rarity that was asked for (神話レア), with a small arrow beside it in the picture's rarity colour:
+↓ when the picture is a lower-rarity printing, ↑ a higher one. The tooltip names the picture's
+rarity (`tileRarityHtml()`, `wantedRarities()`, `RARITY_ORDER`; with several rarities asked
+for, the rarest one the card has).
+
+**Sets** (`e:mh3`, `set:`, `セット:モダンホライゾン3`: a code, or a Japanese set name from `SET_NAME_JA`
+read by `setCodesOf()`) match every set the card was printed in, as Scryfall does, so reprints
+are found too (the database's `sets`, kept as `_sets` by `indexRow()`). Part of a Japanese name
+finds every set it is part of (セット:イニストラード, セット:ホライゾン). Only the sets in `SET_NAME_JA`
+have a Japanese name; others are found by their code. The tile keeps the card's usual picture.
+An older database without `sets` matches the shown printing's set.
+
+**Operators** are `KNOWN_OPS` (including `is:` for card shapes and treatments, and `lang:`/`in:`) plus the Japanese names in `JA_OPERATORS` (効果→o, タイプ→t,
 色→c, マナ総量→cmc, セット→e…). They are matched against a row in `localOperatorMatch()`;
 an unknown operator returns `null` and the token is searched as text. To add an operator: add
 its names to `KNOWN_OPS`/`JA_OPERATORS`, a `case` in `localOperatorMatch()`, a line in the search
@@ -83,6 +102,12 @@ Each row gets a **tier** (1 best) and a **score** (lower is better within a tier
 Tier 3 is hidden behind "show loose matches" (`state.showLoose`) whenever tier 1 or 2 found
 anything. English is graded by `englishTier()` / `englishWordTier()`, Japanese by
 `japaneseWordTier()` / `unitsTier()` with `locateJa()`.
+
+**Reminder text.** A Japanese word found only inside reminder text, （…） (`JA_REMINDER_RE`),
+scores half a step lower, so 到達 lists the cards with reach before flyers whose reminder text
+mentions it, and 追放 the cards that exile before adventures and foretell. Those cards are still
+found. `rowJaLines()` keeps the lines without reminder text as `_jaPlain`; `locateJa()` says
+whether a word is outside it (`plain`). Scryfall's `o:` leaves reminder text out altogether.
 
 Speed matters: `englishMayHave()` and `jaMayHave()` are quick pre-checks that throw out most
 rows before the slower line-by-line tests. Keep any new test behind such a pre-check.
@@ -164,14 +189,16 @@ slang step also tries このオーラ for このエンチャント and この装
 
 | Table | What it does | Examples |
 |---|---|---|
-| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ, キャストする→唱える (キャストしたとき→唱えたとき・唱えるたび), ハンド→手札, トークンを作る/出す→トークンを生成, 兵士トークン→兵士・クリーチャー・トークン, ギルドゲート→ギルド門 |
-| `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻 |
+| `JA_SLANG` | Rewrites Japanese slang to the cards' wording (regular expressions, applied in `jaSlangForm()`) | 山札→ライブラリー, 3ダメージ→3点のダメージ, 2ドロー, サクる→生け贄に捧げ, キャストする→唱える (キャストしたとき→唱えたとき・唱えるたび), ハンド→手札, トークンを作る/出す→トークンを生成, 兵士トークン→兵士・クリーチャー・トークン, ギルドゲート→ギルド門; inside a phrase ETB/CIP→戦場に出たとき, LTB→戦場を離れたとき, 死亡時に→死亡したとき, ドレイン→ライフを失 (on their own these are roles); シャッフル→ライブラリーを切り直す, ディスカード→捨てる, ミル→切削 (not ミルコ), レジェンド→伝説の, 奪う/パクる→コントロールを得る, 1マナ安く/コストが1少なくなる→{1}少なく, ドローを禁止→引くことができない |
+| `JA_KW_SLANG` | Katakana English keyword names to the official Japanese | フライヤー→飛行, ヘイスト→速攻, パートナー→共闘, インスタントタイミング→瞬速; a keyword with 付与/を与える reads as the cards' を得る (トランプル付与→トランプルを得る, in `jaSlangForm()`) |
 | `JA_ORTHO` | Spelling variants | 全て→すべて, 時→とき, 飛行をもつ→飛行を持つ |
 | `EN_WORD_ALIAS` | English slang to card wording | unblockable, flyer, sac, lifeloss |
 | `WORD_FILTERS` | A word that means a kind of card | PW, 置物, X呪文 (X in the mana cost) |
-| `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム |
+| `AMBIG_ROLE_WORDS` | Words that are only sometimes slang; searched as text, the note offers the role | カウンター, ロード, ラス, ティム; with a color or mana value beside them they are the role, and ロード also with a creature type (エルフ ロード, エルフロード, elf lord: `isCreatureTypeWord()`) |
 
 When a word is read as something else, the note above the results says so (`plan.aliases`).
+A phrase is also searched in parts (`jaForm()`); とき and たび end a part, so
+戦場に出たときトークン is 戦場・出・トークン rather than 戦場・出・きトークン.
 To add slang: add the entry, then a check in `dev/searchbench/search_checks.py` with a real card
 that should (and one that should not) be found.
 
@@ -222,7 +249,8 @@ card page's toggles (same colours, no higher mana value, same type: `simPasses()
 - `dev/searchbench/search_checks.py` runs real searches against the real database and role
   tags. `dev/searchbench/common_searches.py` lists the 100 searches Japanese players type most
   (names, readings, typos, nicknames, rules text, slang, land nicknames, colors/guilds/formats/
-  rarities) with what each must find; each is one check. A search that should work and doesn't
+  rarities) with what each must find, and `EVERYDAY_SEARCHES` the everyday words that once found
+  nothing (slang inside a sentence, シャッフル, パートナー, エルフ ロード…); each is one check. A search that should work and doesn't
   belongs on that list. **Add a check for every search change**, including one that proves a wrong card is
   *not* found. One check types a sentence of 300 random cards' own text plainly (no 、,
   half-width numbers) and their English names in lower case without punctuation, and expects

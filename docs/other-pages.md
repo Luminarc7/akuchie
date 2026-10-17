@@ -49,7 +49,8 @@ weekly trend (sparklines from `trends`) and key cards. A win rate from fewer tha
 `META_MIN_MATCHES` matches is hidden as noise; when most decks are below it, a note offers the
 period with more matches. The ⓘ button (`#metaHelpBtn`, text in `STR` `meta.help`) explains how to
 read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited with
-`creditDeckArt()`).
+`creditDeckArt()`). A sample list's finish comes from the source as written; `placeText()` puts a
+wrong ordinal right (the sources write 2st, 3st, 22th), here and on deck pages.
 
 - **Deck names in Japanese.** Archetype names arrive in English from MTGOFormatData.
   `deckNameJa()` translates them: whole names first (`DECK_NAME_WHOLE`), then guild and mono-colour
@@ -113,8 +114,10 @@ deck price page to become one, in the deck price page's style, with the top bar'
 tray of the list (MTGGoldfish's card tray was the example), and then chose to keep the two lists
 apart (2026-10-17): a ☆ never touches a pasted deck, and a deck page's list never replaces the
 want list. The page belongs to the price tab (the tab bar marks 価格 while it is open). Ways in:
-the tray's 価格を見る・書き出す (`?view=want`), the デッキの価格を調べる button in the price tab's bar
-(`.imp-open`, `a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the
+the tray's 価格を見る・書き出す (`?view=want`), the デッキの価格を調べる button right of the price tab's bar
+(`.imp-open`, `a[data-import]`; bigger than the bar's toggles at the owner's request, the same height
+as the bar, the dates and count `#moverSummary` under both; `.mv-top` holds both on wide screens and
+under 761px steps aside with `display: contents`, so the button sits between the bar and the lists), and 編集して計算 on a deck page (`.deck-edit`), which opens the
 shown list as the pasted deck (with the deck's name) so cards can be swapped and the price
 follows.
 

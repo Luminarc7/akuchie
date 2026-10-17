@@ -86,7 +86,7 @@ def open_page(p, html, wait_tags=True):
 
 RUN = """(qs) => {
   const st = Object.assign({}, state, { colors: new Set(), types: new Set(), creatureTypes: new Set(), keywords: new Set(),
-    manaCosts: new Set(), roles: new Set(), rarity: '', format: '', sort: '', showLoose: false });
+    manaCosts: new Set(), roles: new Set(), rarity: new Set(), format: '', sort: '', showLoose: false });
   return qs.map(q => { const t = performance.now(); try { const r = searchRows(q, st);
     return { q, ms: performance.now() - t, n: r.rows.length, top: r.rows.slice(0, 8).map(x => x.name_ja || x.name_en), fixes: (r.info.fixes || []).map(f => f.from + '>' + f.to) };
   } catch (e) { return { q, err: String(e && e.stack || e).slice(0, 400) }; } });

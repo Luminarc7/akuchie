@@ -5,7 +5,7 @@
 // network cannot answer, so it never keeps visitors on an old version of the site.
 // The card database (about 22 MB once unpacked) is stored again only when it changed.
 const CACHE = 'warujie-v2';
-const KEEP = ['/ja_cards.json', '/meta.json', '/meta_decks.json', '/combo_ja.js', '/manifest.webmanifest'];
+const KEEP = ['/ja_cards.json', '/printings.json.gz', '/meta.json', '/meta_decks.json', '/combo_ja.js', '/manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

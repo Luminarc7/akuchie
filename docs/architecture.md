@@ -72,8 +72,8 @@ translation layer"). That path is weaker and only a safety net.
 | Service | Used for | In the code |
 |---|---|---|
 | `api.scryfall.com/cards/collection` | Pictures, prices, details of result cards; the printings a want list's lines name, by set and number | `scryfallCollection()`, `loadPrintCards()` |
-| `api.scryfall.com/cards/search` | All printings of a card (card page, art picker); language buttons; set pages; the fallback search | `printEntries()`, `loadPrintCards()`, `printingLanguages()`, `setSearchUrl()`, `runSearch()` |
-| `api.scryfall.com/cards/<id>`, `/cards/<set>/<number>/en` | Opening a card page directly; the English twin of a Japanese printing (for prices) | `fetchSingleCard()`, `priceHistoryId()` |
+| `api.scryfall.com/cards/search` | All printings of a card (card page, art picker); language buttons; set pages; the fallback search | `loadPrintings()`, `printEntries()`, `loadPrintCards()`, `printingLanguages()`, `setSearchUrl()`, `runSearch()` |
+| `api.scryfall.com/cards/<id>`, `/cards/<set>/<number>/en`, `/cards/<set>/<number>/<lang>` | Opening a card page directly; the English twin of a Japanese printing (for prices); a language button known only from the printings file | `fetchSingleCard()`, `priceHistoryId()`, `openPrinting()` |
 | `api.scryfall.com/sets`, `/catalog/creature-types`, `/cards/random` | Set list, creature-type filter, random cards without the database | `loadSets()`, filters section, `fetchRandomFromScryfall()` |
 | `svgs.scryfall.io`, `cards.scryfall.io` | Mana symbols and card pictures | `symbolImg()`, `pictureTag()` |
 | `warujie.github.io/warujie-prices/` | Price history `h/`, shop prices and listings `q/`, movers, combos `c/`, role tags `t/` | `PRICE_DATA_URL` |
@@ -88,7 +88,7 @@ about which outside data may be used are in CLAUDE.md, rule 3.
 | Branch | Goes to | Who pushes |
 |---|---|---|
 | `main` | **warujie.jp** (live) | Publishing only, plus the daily metagame commit and the name-readings bot |
-| `staging` | `https://staging-warujie.warujie-mtg.workers.dev` (test site, noindex) | All normal work |
+| `staging` | `https://staging-warujie.warujie-mtg.workers.dev` (test site, noindex) | All normal work, plus the weekly card database update |
 | any other branch | `https://<branch>-warujie.warujie-mtg.workers.dev` | Feature branches, backups |
 | `backup-<date>-before-<what>` | a copy of the live site as it was before a publish | Made before each publish |
 | `probe-shops` | none: a scratch branch whose workflow fetches outside data on GitHub's runners | See CLAUDE.md, "Reaching other websites" |
@@ -104,11 +104,12 @@ Cloudflare Workers Builds deploys every push. Before each deploy it runs
 |---|---|---|---|
 | Update metagame data (`.github/workflows/update-meta.yml`) | daily 18:40 | this one, on `main` | Runs `build_meta.py`, commits `meta.json`, `meta_decks.json`, `meta_lists/` to `main` (which redeploys the site) |
 | Name readings (`.github/workflows/name-readings.yml`) | when `ja_cards.json.gz` or the name tools change on `main`/`staging` | this one | Applies the Japanese name fixes and readings, commits back to that branch |
+| Update card database (`.github/workflows/update-cards.yml`) | Mondays 02:30 (read from `main`), or "Run workflow" | this one, on `staging` | Rebuilds `ja_cards.json.gz` and `printings.json.gz` from Scryfall, refuses a build that lost cards, commits to `staging` with a what's-new note ([data.md](data.md#rebuilding-it-every-week-by-itself)) |
 | Update price history (`update-prices.yml`) | daily 12:17 | warujie-prices | Builds prices, combos (weekly) and role tags (weekly), publishes to GitHub Pages without committing |
 
 Every push to `staging` or `main` also runs **Docs match the code**
 (`.github/workflows/check-docs.yml`), which only reads files (see
 [workflow.md](workflow.md#keeping-these-docs-true)).
 
-Because two bots commit to this repo, **pull before you commit** (`git pull --no-rebase` on
+Because three bots commit to this repo, **pull before you commit** (`git pull --no-rebase` on
 `staging`; publishing merges, never force-pushes `main`).

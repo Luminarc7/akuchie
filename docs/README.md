@@ -83,6 +83,6 @@ When you change code, update the doc that covers it in the same commit (see
 | `STR`, themes, language switch, lightweight mode, phone menu, `localStorage` keys | interface.md |
 | any new or renamed `// ---- section ----` or top-level function that others call | index-html.md |
 | `worker.js`, `sw.js`, `wrangler.jsonc`, `.assetsignore`, `manifest.webmanifest` | hosting.md |
-| `ja_cards.json.gz` fields, `tools/*.py`, `build_meta.py`, workflows, the warujie-prices file formats | data.md |
+| `ja_cards.json.gz` fields, `printings.json.gz`, `tools/*.py`, `build_meta.py`, workflows, the warujie-prices file formats | data.md |
 | `dev/` tests, branches, publishing steps | workflow.md |
 | a bug you fixed that could come back | troubleshooting.md |

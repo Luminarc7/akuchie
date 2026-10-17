@@ -88,7 +88,7 @@ A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is
   - it serves the card database brotli-compressed (`ja_cards.json.br`, made at deploy by
     `tools/brotli_db.mjs`);
   - for link-preview bots it rewrites the og/title tags of card, deck, set, meta and price pages.
-- **`ja_cards.json.gz`** is the card database (below).
+- **`ja_cards.json.gz`** is the card database and **`printings.json.gz`** its printings (below).
 - **`meta.json`, `meta_decks.json`, `meta_lists/`** hold the metagame data, rebuilt daily by
   `.github/workflows/update-meta.yml` (`build_meta.py`). That job commits to `main` at 18:40 UTC.
 - **`combo_ja.js`** has the Japanese wording for combo results.
@@ -107,12 +107,24 @@ results, a Japanese one where possible), `oracle_id`, `name_en`, `name_ja`, `typ
 `oracle_en`, `oracle_ja`, `mana_cost`, `colors`, `cmc`, `power`, `toughness`, `rarity`, `set`,
 `keywords`, `released_at` (first release), `alt_names_ja` (older Japanese names, `|`-separated),
 `legal` (letters s p m l v a c), `layout` (the card's shape from Scryfall when not an ordinary
-one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード), and
-`name_kana` (the reading: the あいうえお sort, and names typed in hiragana; never shown).
+one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カード, 両面カード),
+`name_kana` (the reading: the あいうえお sort, and names typed in hiragana; never shown),
+`rarities` (every rarity the card was printed at, `c u r m s b`, for the rarity filters), `sets`
+(every set it was printed in, oldest first, for `e:`) and `treatments` (`b s x f o u t e n`:
+borderless, showcase, extended art, full art, old frame, future frame, textless, etched,
+serialized; upper case where a Japanese printing has it).
 
-- **Built by `tools/build_ja_database.py`** from Scryfall's `all_cards` bulk file. Scryfall
-  serves bulk files as gzipped JSON Lines (`jsonl_download_uri`) since September 2026; the builder
-  and `warujie-prices` already handle that. Rebuild after new sets.
+- **Built by `tools/build_ja_database.py`** (2.5) from Scryfall's `all_cards` bulk file, together
+  with **`printings.json.gz`** (every printing's languages, rarity and treatments, about 0.3 MB,
+  for the card page's language buttons). Scryfall serves bulk files as gzipped JSON Lines
+  (`jsonl_download_uri`) since September 2026; the builder and `warujie-prices` handle that.
+- **Rebuilt every Monday 02:30 UTC** by `.github/workflows/update-cards.yml`
+  (`tools/update_database.py`: build, name fixes, readings, then `tools/check_database.py`,
+  which refuses a build that lost cards, Japanese names or texts, printings or rarity counts).
+  It commits to `staging` only when cards changed, with a what's-new note; it goes live with the
+  next publish. The schedule runs from `main` (it starts after the first publish that carries
+  it); "Run workflow" starts it by hand. Its push doesn't start the Name readings workflow, so it
+  runs both name tools itself.
 - **Whenever the database changes on `main` or `staging`** (or `tools/name_fixes_ja.json`,
   `tools/fix_names.py` or `tools/name_readings.py` changes there),
   `.github/workflows/name-readings.yml` runs and commits back to that branch, so pull before your
@@ -121,9 +133,12 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
     has wrong or missing, read off the real Japanese cards);
   - `tools/name_readings.py`, which writes `name_kana` with SudachiDict, preferring printed
     furigana.
-- **One-off improvements a rebuild would undo** (redo them with `tools/audits/db_updates.py`):
-  - 888 `type_ja` taken from other Japanese printings;
-  - 51 rows switched to a Japanese printing with a real scan (same rarity, regular sets only).
+- **The one-off improvements once made by hand are built in since 2.4:** `type_ja` from another
+  Japanese printing when the chosen one has none (888 cards), and a Japanese printing with a real
+  scan at the same rarity in a regular set (`CardEntry.picture()`). `tools/audits/db_updates.py`
+  is no longer needed after a rebuild. The first full 2.4 rebuild (2026-10-16) changed 933
+  pictures, all by rules already in 2.3: mostly a regular frame over a borderless/etched variant
+  in the same set.
 - **Scryfall data facts learned the hard way:**
   - Some old sets file their non-English printings under another set code with the same
     numbers: `4bb`↔`4ed`, `bchr`↔`chr`, `fbb`↔`3ed`. The language buttons pair these
@@ -138,16 +153,32 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
     Regent`); the builder drops the repeat (`english_name()`).
   - Many old Japanese printings have only a placeholder image. The page then shows the same
     printing's English picture with a note naming the language.
+  - Scryfall's `r:mythic` counts a card once for every rarity any of its printings has
+    (Sengir Vampire: uncommon, rare, mythic). The `rarities` field does the same. Checked
+    2026-10-16: the site matches Scryfall's paper counts within a handful. Scryfall's plain
+    counts are higher by Arena/MTGO-only cards (left out on purpose), and Scryfall hides about
+    825 playtest, joke-promo and withdrawn cards the site keeps (docs/data.md has the detail).
+  - Italian Legends/The Dark printings sometimes carry a rarity their English printing
+    doesn't. The builder used to keep such a printing as the card's picture when the English
+    one ranked level (116 cards showed an Italian picture, 10 a wrong rarity); fixed in 2.3.
+  - Most Edge of Eternities (EOE/EOC) Japanese printings carry the English rules text, and their
+    names print furigana inline (吹（ふ）きさらしの…; the site strips it, `stripRuby()`). Since 2.5
+    a "Japanese" text or type line with no Japanese in it doesn't count (about 410 cards), and
+    the site's `indexRow()` empties such fields in older files.
 
 ## How the card page picks printings and languages
 
 - Language buttons (JP EN CS CT FR DE…) appear under the picture, one per language the **exact
-  printing** exists in. They come from one Scryfall search,
-  `e:<set> cn:"<number>" include_multilingual=true` (plus the twin set code where one exists).
+  printing** exists in. They come from `printings.json.gz` (loaded once per visit); pressing a
+  button fetches that one printing (`openPrinting()`). A printing the file doesn't have yet falls
+  back to one Scryfall search, `e:<set> cn:"<number>" include_multilingual=true` (plus the twin
+  set code where one exists).
 - There is never a jump to another set's printing. A printing that exists only in English shows
   EN alone.
 - The `?print=<lang>` URL parameter shows that printing's own language; otherwise the site
-  language decides.
+  language decides. In English, a link to a Japanese printing (the database's ids are behind the
+  home examples, metagame lists and shared links) opens the English card of the same printing
+  when the printings file lists one (`siteLanguagePrinting()`).
 - Prices for a non-English printing come from the English printing with the same set and
   number. Price history is kept for English printings.
 
@@ -166,7 +197,11 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
   ignored. 墓地から手札 matches the two words in one ability, in that order first. A note
   above the results says what a word was read as. Words that are slang only sometimes
   (カウンター, ロード, ラス, ティム) stay text and the note offers the role
-  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role.
+  (`AMBIG_ROLE_WORDS`); with a color or mana value (青のカウンター) they are the role, and ロード
+  with a creature type too (エルフ ロード). Slang works inside a sentence (ETBでカードを引く,
+  死亡時にカードを引く), and words the cards say differently are read their way: シャッフル →
+  切り直す, ディスカード → 捨てる, ミル → 切削, パートナー → 共闘, トランプル付与 → トランプルを得る,
+  1マナ安く → {1}少なく, 奪う → コントロールを得る.
 - **Hiragana game words** (typed before converting, on phones) are read as kanji/katakana
   (`JA_READINGS`, longest word first): はかい → 破壊, くりーちゃーをはかい, じょきょ (the role).
   Names in hiragana still match by kana folding.
@@ -192,6 +227,17 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
 - **Cards with no Japanese text** (about 4,000) are reached by Japanese phrases through
   `JA_WORD_EN`: 墓地から手札 finds an English line with graveyard and hand. They come after
   the Japanese matches in the same group.
+- **Rarity** (the C U R M buttons, several at once, `r:m`, 神話レア ドラゴン) finds a card by any
+  rarity it was printed at, as Scryfall does; a tile whose shown printing is another rarity still
+  says the rarity asked for (神話レア), with a ↓/↑ arrow beside it (owner's choice over 神話レア版あり).
+- **Printings:** `e:mh3` / セット:モダンホライゾン3 finds every card printed in the set, reprints
+  too (`sets`); ボーダーレス, ショーケース, 旧枠, 拡張アート, フルアート, シリアルナンバー, `is:showcase`
+  find cards with such a printing (`TREATMENTS`), and beside 日本語版 or `lang:ja` a Japanese one
+  (日本語版 ボーダーレス); 日本語版 alone finds cards printed in Japanese. Written the way players
+  write them too: ボーダーレス版, 旧枠のカード, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号
+  (`printWordForms()`). Part of a Japanese set name finds every set it is in (セット:イニストラード).
+- **Reminder text** （…） still matches, but a word found only there comes after the cards whose
+  own text has it (到達 lists reach before flyers; `JA_REMINDER_RE`).
 - **Also in place:**
   - spelling correction against words that exist on cards;
   - role words via the tag file from warujie-prices (`t/`);
@@ -207,10 +253,10 @@ one-faced card: split, transform, modal_dfc, adventure…; searched by 分割カ
    The remote moved to `https://github.com/warujie/Warujie.git`.
 2. **Edit** `index.html` (and the other files), then run `python3 tools/make_preview.py`.
    Update the matching doc in `docs/` (see "Documentation" above).
-3. **Test** with `python3 dev/tests/e2e.py` (about 660 offline checks; needs a warujie-prices
+3. **Test** with `python3 dev/tests/e2e.py` (about 860 offline checks; needs a warujie-prices
    clone next to this repo) and `cd dev/searchbench && python3 search_checks.py ../../index.html`
-   (about 210 real-data search checks, including the 100 common Japanese searches in
-   `dev/searchbench/common_searches.py`), and `python3 dev/check_docs.py` (the docs still match the code).
+   (about 240 real-data search checks, including the 100 common Japanese searches and the
+   everyday words in `dev/searchbench/common_searches.py`), and `python3 dev/check_docs.py` (the docs still match the code).
    Add checks for every new feature or fix. Look at it too:
    screenshot desktop (1280px) and phone (390px) with Playwright.
 4. **Commit to `staging`** with a message that says what changed for users, then push.
@@ -244,6 +290,7 @@ commits the results back. The branch `probe-shops` was used for this;
 | `audit_text.py`, `db_updates.py` | Japanese type, text and picture gaps, and the fixes |
 | `missing_ja.py`, `set_langs.py` | languages each set has, and missing Japanese printings |
 | `face_sheets.py` | crops of Japanese card name bars, to read names Scryfall lacks |
+| `rarity_audit.py` | per-rarity counts against Scryfall's search, every printing's rarity, a fresh build to compare |
 
 Note: warujie.jp shows a Cloudflare challenge to unverified bots (including GitHub runners).
 Check the live site through the `*.workers.dev` address, which runs the same Worker.
