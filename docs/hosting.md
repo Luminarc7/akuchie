@@ -71,7 +71,7 @@ When you add a page type, add its share tags in `shareTags()` and a check in
 5. **The pink icon on the test sites** (`isTestSite()`, `testIcons()`). On a branch preview
    (`<branch>-warujie.warujie-mtg.workers.dev`, staging included) the page's icon,
    apple-touch-icon and manifest links are pointed at the pink files (`TEST_ICONS`:
-   `icons/*-v3-test.png`, `manifest-test.webmanifest`), so a test site saved to a phone's home
+   `icons/*-v4-test.png`, `manifest-test.webmanifest`), so a test site saved to a phone's home
    screen is easy to tell from warujie.jp. warujie.jp and `warujie.warujie-mtg.workers.dev` keep
    the green icon. Tests: `dev/tests/worker_icons.mjs`.
 

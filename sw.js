@@ -9,7 +9,7 @@ const KEEP = ['/ja_cards.json', '/printings.json.gz', '/meta.json', '/meta_decks
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icons/icon-192-v3.png'])).catch(() => {}));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/', '/manifest.webmanifest', '/icons/icon-192-v4.png'])).catch(() => {}));
 });
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
