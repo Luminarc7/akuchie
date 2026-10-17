@@ -9252,7 +9252,7 @@ function renderMovers() {
   const note = document.getElementById('moverNote');
   const winBox = document.getElementById('moverWindows');
   const market = moverState.market;
-  document.getElementById('moverMarkets').innerHTML = ['us', 'eu', 'jp'].map(m =>
+  document.getElementById('moverMarkets').innerHTML = PRICE_MARKETS.map(m =>   // 日本 first, as on card pages
     `<button type="button" class="seg-btn" role="tab" data-market="${m}" aria-pressed="${m === market}" aria-selected="${m === market}">${t('market.' + m)}${m === 'jp' ? `<span class="wip-dot" title="${esc(t('market.wip'))}"></span>` : ''}</button>`).join('');
   if (market === 'jp') {
     winBox.innerHTML = summary.textContent = note.textContent = '';
@@ -10241,7 +10241,7 @@ async function renderHomeMovers() {
   const body = document.getElementById('homeMoversBody');
   const title = document.getElementById('homeMoversTitle');
   const more = document.getElementById('homeMoversMore');
-  document.getElementById('homeMoversTabs').innerHTML = ['us', 'eu', 'jp'].map(m =>
+  document.getElementById('homeMoversTabs').innerHTML = PRICE_MARKETS.map(m =>   // 日本 first, as on card pages
     `<button type="button" class="seg-btn" role="tab" data-market="${m}" aria-pressed="${m === homeMarket}" aria-selected="${m === homeMarket}">${esc(t('home.market.' + m))}</button>`).join('');
   title.textContent = t('home.movers', { w: t('prices.win.7') });
   if (homeMarket === 'jp') {
