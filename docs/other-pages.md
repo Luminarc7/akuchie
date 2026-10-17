@@ -179,11 +179,22 @@ the pasted deck (with the deck's name) so cards can be swapped and the price fol
   `document` in the capture phase handles every want button first (`.want-tog`,
   `[data-want-act]`), so a ☆ inside a result's link doesn't open the card. Another printing's
   page shows the ☆ pressed too (the list is per card).
+- **The green ＋ in the name suggestions** (owner's request 2026-10-17, `.sug-add` beside each
+  card name under the search boxes, `attachNameSuggest()`): adds one copy without opening the card
+  (`suggestAdd()`). On the deck price page it goes into the list on screen (`suggestAddList()`: the
+  want list, or the pasted deck's main deck, `1 Card Name`), anywhere else into the want list (a
+  card already there gets one more copy, `listSetCount()`). The line names no printing (the
+  database has no collector numbers), so it is priced at the cheapest. The menu stays open
+  (`mousedown` is cancelled, so the box keeps the focus) for the next card; each ＋ shows the copies
+  its list has as a badge (`data-n`, its label and title too, `suggestAddLabel()`), and the note
+  says so (リストを見る elsewhere, 元に戻す on the price page). Role and recent-search lines have none.
+  The top bar's menu is at least 340px wide (`#searchSuggest`), so under its narrow box the name, the
+  English name and the ＋ still fit; the ＋ keeps room on its right for its badge.
 - **Counts.** ＋ adds to the card's first line, − takes from its last (`listSetCount()`,
   rewriting the count the way the line wrote it, `lineWithCount()`: `4 稲妻`, `4x`, `x4`,
   `SB: 2 …`). Undo (`wantUndoToast()`) puts the list's text back unless it changed again since.
 - **The note** at the bottom of the screen (`wantToast()`, `#wantToast`) confirms, with
-  リストを見る (opens the tray) after adding and 元に戻す after taking a card out, clearing the
+  リストを見る (opens the tray) after adding (a ☆, or a ＋ in the name suggestions) and 元に戻す after taking a card out, clearing the
   list, or when a deck page or a shared link replaced the pasted deck (`imp.replaced`).
 - A list kept the old way (`warujie-want`, staging only, 2026-10-16) moves into the want list
   once (`WANT_OLD_KEY`). The ☆ cards saved on the test site between 2026-10-17's merge of the
@@ -197,11 +208,13 @@ whole width), `openTray()` / `closeTray()`; the ☆ again, ×, Esc or a click be
 `drawTray()`: the title (the want list's name when it has one, `wantData().title`) and how many cards; a リスト / 画像 switch (remembered as
 `WANT_VIEW_KEY`, `warujie-want-view`; no pictures in lightweight mode); each card with − n ＋ and
 a trash can (`wantStepHtml()`, `wantTrashHtml()`), as rows with a small picture, the name in the
-site's language, the English name and the cheapest price (`trayRowHtml()`), or as pictures two a
+site's language, the English name and the price (`trayRowHtml()`: the printing the line names, as
+on the price page below, else 最安 and the cheapest), or as pictures two a
 row with the buttons under each (`trayTileHtml()`). Pictures come straight from Scryfall's image
 server by the database's printing (`trayPic()`), or show the printing the line names (an art
 picked on the price page, below) once that card is known (`trayCard()`; the tray asks for the
-ones not known yet with `loadPrintCards()` when it opens). Lines not found link to the price page. At the
+ones not known yet with `loadPrintCards()` when it opens, then their prices with
+`loadPrintPrices()`, also after a ☆ while it is open, `refreshWant()`). Lines not found link to the price page. At the
 bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る・書き出す (`?view=want`), and
 晴れる屋で買う as below. A card's name opens its page (on phones the tray closes first).
 
@@ -216,8 +229,9 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
   (`IMPORT_TYPE_HEAD`, "Creatures (16)"), and `SB:` lines are sideboard too. Counts as `4`,
   `4x`, `x4` after the name, `4枚`, full-width digits, or none (one copy). The set and number
   (`(M10) 146`, also before a foil mark `*F*` or Archidekt's `[Removal]` / `^Tag^`; a number is
-  anything without spaces, brackets or `*`, such as `1★`) are kept for the export with printings
-  and the picture; `cleanImportName()` drops them from the name with foil marks and `[tags]`, and
+  anything without spaces, brackets or `*`, such as `1★`) are kept for the export with printings,
+  the picture and the price, and so is Moxfield's finish mark (`f`: `*F*` foil, `*E*` etched);
+  `cleanImportName()` drops them from the name with foil marks and `[tags]`, and
   reads `Fire/Ice` as `Fire // Ice`. At most `IMPORT_MAX_LINES` lines.
 - **Finding the cards** (`importRow()`): English name (`rowByEnglishName()`), Japanese name
   (also older names and front faces), or either without punctuation or in the other kana
@@ -228,9 +242,26 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
   listed with up to three guesses (`importGuesses()`: the name suggestions, else names a few
   letters away with `editDistance()`); picking one rewrites that line, keeping its count.
 - **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
-  worked out" above), with lines not found counted as missing (so the total reads 「〜」).
-  Arena wildcards show when every card is on Arena. Each card shows the price of one copy, as
-  on the deck pages; then the mana curve (`deckCurveHtml()`). An empty want list (or one with
+  worked out" above), with lines not found counted as missing (so the total reads 「〜」), except
+  that **a line naming a printing counts at that printing's price** (owner's request 2026-10-17,
+  "the price doesn't update when you change the printing"): an art picked below, a ☆ line (it
+  names the printing the ☆ was on) or a pasted Moxfield or Arena line with `(SET) 123`.
+  `entryYen()` prices each of a card's lines: `printYen()` from `PRINT_PRICES` (set and number →
+  that printing's Scryfall prices; a Japanese printing has none, so its English printing's, as on
+  the card page), the lower of USD and EUR in yen as `cardYen()` does (`pricesYen()`; a `*F*` line
+  at the foil price, `*E*` etched, a printing made only in foil at that), else the card's cheapest
+  printing. `drawImport()` passes those to `deckCost()` as its second list, one per card (deck pages
+  pass none, so they keep the cheapest; not as a third item of each card, where the metagame's
+  lists keep the play rate), and the card's price title says この版の価格 (`imp.yen.print`); the
+  total's title and the note at the foot say which lines count how (`imp.cost.sub`,
+  `imp.cost.note`). The prices come with the English printings `loadPrintCards()` fetches (now
+  for every printing, not only those without a Japanese scan), from the cards fetched for the
+  pictures (`rememberPrint()` → `notePrintPrices()`), from the art picker, and for the rest
+  (also in lightweight mode) from `loadPrintPrices()`: `/cards/collection` by set and number, 75
+  at a time, each asked once (`PRINT_PRICES_ASKED` while in flight; a printing Scryfall has no
+  English price for keeps the cheapest). Arena wildcards show when every card is on Arena. Each
+  card shows the price of one copy, as on the deck pages; then the mana curve
+  (`deckCurveHtml()`). An empty want list (or one with
   only its name left) says how to fill it with ☆ (`tray.empty`); an empty deck shows the formats
   it reads and an example.
 - **The name** (owner's request 2026-10-17) is a text box with a pen in place of the title
@@ -261,7 +292,8 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
   line says to paste it into Import).
 - The list is priced as people type (`priceImport()`, 350 ms after the last key), first from the
   database, then with prices, then with pictures (`importState`, cached per language and name),
-  then with the pictures of the printings the lines name (below). There is no "price it" button
+  then with the pictures of the printings the lines name (below), then with those printings'
+  prices (`loadPrintPrices()`). There is no "price it" button
   (the owner found it pointless, 2026-10-16). 消す clears the list shown, with undo.
 
 ### Counts and art under each card
@@ -281,13 +313,16 @@ the same day, "make the UI consistent with the image view").
   lists them (`printEntries()`: the default search and the Japanese one, shared and kept for the
   visit, here in the request queue, `scryfallTurn()`; digital-only printings left out). Each shows its picture (the Japanese printing in
   Japanese, the English picture when the Japanese one has no real scan), set, number, rarity,
-  treatments, 日本語版 and the English printing's price; the one shown now is marked 選択中.
+  treatments, 日本語版 and the price it would count at in the list (`pricesYen()` of the English
+  printing's prices, foil when the card's first line is, in the ¥ | $ switch's currency through
+  `yenSmall()`; the US price, `curHtml()`, until the exchange rate is in);
+  the one shown now is marked 選択中.
   `openArtPicker()`, `drawArtPicker()`, `closeArtPicker()` (×, Esc, a click beside it, Back).
 - **Picking** (`pickArt()`) writes the printing on the card's lines in that part
   (`lineWithPrint()`: `4 稲妻` → `4 稲妻 (M10) 146`; a foil mark, Archidekt's categories and a
   count written last stay put), with undo. So the export with printings and the Moxfield and
-  Archidekt copies carry it. The prices don't change: each card and the total stay the cheapest
-  printing's, and the picker says so (`pick.note`).
+  Archidekt copies carry it, and the card and the total are priced at it at once: the picked
+  printing's prices go into `PRINT_PRICES` (`pick.note` says so).
 - **Pictures of the printings the lines name** (also lines pasted from Moxfield or Arena with
   `(SET) 123`, and ☆ lines): `PRINT_CARDS` (language, set and number → the Scryfall card) holds
   the ones picked and the pictures already fetched (`rememberPrint()`); `loadPrintCards()` asks

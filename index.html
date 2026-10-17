@@ -930,6 +930,8 @@
     background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: var(--shadow);
     max-height: min(360px, 60vh); overflow-y: auto;
   }
+  /* the top bar's box is narrow: room for the name, the English name and the ＋ */
+  #searchSuggest { min-width: min(340px, calc(100vw - 32px)); }
   .suggest-list[hidden] { display: none; }
   .suggest-item {
     width: 100%; min-height: 40px; display: flex; align-items: baseline; gap: 10px; padding: 8px 10px; border: 0; border-radius: 6px;
@@ -1173,6 +1175,18 @@
   .recent-icon { flex: none; color: var(--muted); }
   .recent-remove { flex: none; width: 36px; border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; border-radius: 6px; }
   .recent-remove:hover { color: var(--text); background: var(--surface-2); }
+  /* the green ＋ beside a card name: one copy into the list (suggestAdd()) */
+  .sug-row { display: flex; align-items: center; gap: 4px; }
+  .sug-row .suggest-item { flex: 1; min-width: 0; }
+  .sug-add { flex: none; position: relative; width: 30px; height: 30px; margin: 0 9px 0 2px; padding: 0; border: 0; border-radius: 50%;
+    display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); cursor: pointer; transition: transform .12s; }
+  .sug-add svg { width: 16px; height: 16px; }
+  .sug-add:hover { transform: scale(1.08); }
+  .sug-add:active { transform: scale(0.94); }
+  .sug-add:not([data-n="0"])::after { content: attr(data-n); position: absolute; top: -5px; right: -7px; min-width: 17px; height: 17px; padding: 0 4px;
+    box-sizing: border-box; border-radius: 9px; border: 1.5px solid var(--accent); background: var(--surface); color: var(--text);
+    font-size: 10.5px; font-weight: 800; line-height: 14px; text-align: center; }
+  @media (max-width: 820px) { .sug-add { width: 34px; height: 34px; } .sug-add svg { width: 18px; height: 18px; } }
   .app-install { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
   .app-install[hidden], .app-ios[hidden] { display: none; }
   .app-ios { font-size: 12px; color: var(--muted); }
@@ -1367,7 +1381,7 @@
   .want-step button:hover { background: var(--surface-2); color: var(--accent); }
   .want-step .want-c { min-width: 38px; text-align: center; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
   .want-toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 80;
-    display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 24px); padding: 10px 12px 10px 16px; border-radius: 10px;
+    display: flex; align-items: center; gap: 14px; width: max-content; max-width: calc(100vw - 24px); padding: 10px 12px 10px 16px; border-radius: 10px;
     background: var(--text); color: var(--field); font-size: 13.5px; box-shadow: var(--shadow); }
   .want-toast[hidden] { display: none; }
   .want-toast button, .want-toast a { flex: none; border: 0; background: none; color: inherit; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; padding: 6px 4px; }
@@ -2382,6 +2396,10 @@ const STR = {
   'deck.cost.note': ['金額は目安です：それぞれのカードのいちばん安い版の価格（米国の TCGplayer と欧州の Cardmarket の安いほう）を今日の為替レートで換算して、枚数分を足しました。基本土地は含みません。日本のショップの価格とは異なります。',
     "An estimate: for each card, the price of its cheapest printing (the lower of TCGplayer in the US and Cardmarket in Europe), converted at today's rate and multiplied by the number of copies. Basic lands are left out. Prices in Japanese shops differ."],
   'deck.yen.title': ['1枚あたり・いちばん安い版の価格', 'Per copy, cheapest printing'],
+  'imp.yen.print': ['1枚あたり・この版の価格（米国と欧州の安いほう）', 'Per copy, this printing (the lower of the US and European price)'],
+  'imp.cost.sub': ['選んだ版はその版で、ほかはいちばん安い版で・サイドボード込み', 'Chosen printings at their price, the rest at the cheapest; sideboard included'],
+  'imp.cost.note': ['金額は目安です：版を指定した行（絵柄を選んだカード、☆で追加したカード、「(MH2) 345」のような行）はその版の価格、ほかの行はそのカードのいちばん安い版の価格を、米国の TCGplayer と欧州の Cardmarket の安いほうで今日の為替レートで換算して、枚数分を足しました。日本語版は同じセット・番号の英語版の価格、*F* の行はフォイルの価格です。基本土地は含みません。日本のショップの価格とは異なります。',
+    "An estimate: lines naming a printing (art you picked, cards you ☆, lines like “(MH2) 345”) at that printing's price, other lines at the card's cheapest printing; each the lower of TCGplayer in the US and Cardmarket in Europe, converted at today's rate and multiplied by the number of copies. A Japanese printing counts at its English printing's price (same set and number), a *F* line at the foil price. Basic lands are left out. Prices in Japanese shops differ."],
   'meta.more.aria': ['{name}：カードと数字を表示', '{name}: show cards and numbers'],
   'meta.hint.few': ['勝率は{min}試合以上のデッキだけ表示しています（{total}デッキ中{n}）。', 'Win rates are shown only for decks with {min}+ matches ({n} of {total}). '],
   'meta.hint.longer': ['直近{days}日で見ると{n}デッキに増えます', 'The last {days} days have {n}'],
@@ -2421,13 +2439,13 @@ const STR = {
   'title.import': ['デッキの価格を調べる — 悪知恵', 'Price a deck list — 悪知恵'],
   'title.want': ['ウォントリスト — 悪知恵', 'Want list — 悪知恵'],
   'imp.title': ['デッキの価格を調べる', 'Price a deck list'],
-  'imp.lead': ['デッキリストを貼り付けると、いちばん安い版でそろえた金額を出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも読めます。',
-    'Paste a deck list to see what it costs in each card’s cheapest printing. MTG Arena or Magic Online lists work, and so do typed lines like “4 Lightning Bolt”.'],
+  'imp.lead': ['デッキリストを貼り付けると、いちばん安い版（版を選んだカードはその版）でそろえた金額を出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも読めます。',
+    'Paste a deck list to see what it costs in each card’s cheapest printing (or the printing you chose). MTG Arena or Magic Online lists work, and so do typed lines like “4 Lightning Bolt”.'],
   'imp.label': ['デッキリスト', 'Deck list'],
   'imp.which.aria': ['リスト', 'Lists'],
   'imp.tab.deck': ['デッキの価格', 'Deck prices'],
-  'want.lead': ['☆を押したカードがここに入ります。枚数や絵柄を変えて、いちばん安い版でそろえた金額を見たり、晴れる屋・Moxfield・Archidektに持っていったりできます。貼り付けたデッキとは別のリストです。',
-    'Cards you ☆ land here. Change counts or art, see what they cost in their cheapest printings, and take the list to Hareruya, Moxfield or Archidekt. It is kept apart from the deck you paste.'],
+  'want.lead': ['☆を押したカードがここに入ります。枚数や絵柄を変えて、その版でそろえた金額を見たり、晴れる屋・Moxfield・Archidektに持っていったりできます。貼り付けたデッキとは別のリストです。',
+    'Cards you ☆ land here. Change counts or art, see what they cost in the printings shown, and take the list to Hareruya, Moxfield or Archidekt. It is kept apart from the deck you paste.'],
   'imp.removed': ['デッキから外しました', 'Taken out of the deck'],
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
@@ -2443,7 +2461,7 @@ const STR = {
   'imp.empty.h': ['こんなリストが読めます', 'Lists it reads'],
   'imp.empty.arena': ['MTGアリーナの「書き出し」（デッキ・サイドボード・統率者・相棒。日本語版のアリーナでも）', 'MTG Arena’s Export (Deck, Sideboard, Commander, Companion; the Japanese client too)'],
   'imp.empty.mtgo': ['MTGOや海外のデッキサイトのテキスト（空行のあとがサイドボード、SB: の行も）', 'Magic Online and deck-site text (after a blank line comes the sideboard; SB: lines too)'],
-  'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。セット記号や (M10) 146 は無視します', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. Set codes like (M10) 146 are ignored'],
+  'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。(M10) 146 のように版を書いた行はその版の価格で数えます', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. A line naming a printing, like (M10) 146, counts at that printing’s price'],
   'imp.sample': ['例を入れてみる', 'Try an example'],
   'imp.untitled': ['貼り付けたデッキ', 'Your deck'],
   'imp.name.aria': ['リストの名前', 'Name of the list'],
@@ -2454,8 +2472,8 @@ const STR = {
   'pick.btn.aria': ['{name}の絵柄を変える', 'Change the art of {name}'],
   'pick.title': ['絵柄を選ぶ', 'Choose the art'],
   'pick.n': ['{n}種類の版', '{n} printings'],
-  'pick.note': ['選んだ版がリストに入り、Moxfield・Archidektへの書き出しにも付きます。価格の合計はいちばん安い版のままです。',
-    'The printing you pick goes into the list and its Moxfield and Archidekt exports. The total still counts the cheapest printing.'],
+  'pick.note': ['選んだ版がリストに入り、価格もその版のものになります。Moxfield・Archidektへの書き出しにも付きます。',
+    'The printing you pick goes into the list, the price follows it, and it goes with Moxfield and Archidekt exports.'],
   'pick.loading': ['版を読み込み中…', 'Loading the printings…'],
   'pick.error': ['版を読み込めませんでした。', "The printings couldn't be loaded."],
   'pick.retry': ['もう一度', 'Try again'],
@@ -2478,6 +2496,12 @@ const STR = {
   'want.add': ['ウォントリストに追加', 'Add to want list'],
   'want.remove': ['ウォントリストから外す', 'Remove from want list'],
   'want.added': ['ウォントリストに追加しました', 'Added to your want list'],
+  'sug.add.want': ['ウォントリストに1枚追加：{name}', 'Add one to your want list: {name}'],
+  'sug.add.want.n': ['ウォントリストに1枚追加：{name}（いま{n}枚）', 'Add one to your want list: {name} (now {n})'],
+  'sug.add.deck': ['デッキに1枚追加：{name}', 'Add one to the deck: {name}'],
+  'sug.add.deck.n': ['デッキに1枚追加：{name}（いま{n}枚）', 'Add one to the deck: {name} (now {n})'],
+  'sug.added.want': ['{name}をウォントリストに追加しました（{n}枚）', 'Added {name} to your want list ({n})'],
+  'sug.added.deck': ['{name}をデッキに追加しました（{n}枚）', 'Added {name} to the deck ({n})'],
   'want.removed': ['ウォントリストから外しました', 'Removed from your want list'],
   'want.cleared': ['ウォントリストを空にしました', 'Your want list is empty now'],
   'want.undo': ['元に戻す', 'Undo'],
@@ -9866,6 +9890,44 @@ function boldMatch(name, q) {
 }
 const suggestBoxes = [];
 function hideSuggest() { suggestBoxes.forEach(s => s.close()); }
+// The green ＋ beside a card name (owner's request 2026-10-17): one copy into the list on screen on
+// the deck price page (the want list or the pasted deck), anywhere else into the want list. The
+// menu stays open, so more cards can follow; the ＋ shows how many the list has.
+const PLUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+function suggestAddList() { return routeFromUrl().view === 'import' ? importState.which : 'want'; }
+function suggestWantEntry(row) { return { k: row.oracle_id || 'n:' + nameKey(row.name_en), n: row.name_en, s: '', cn: '' }; }
+// how many copies the list has: the want list's card, or the pasted deck's main deck
+function suggestAddCount(which, row, deck) {
+  if (which === 'want') { const x = wantFindFor(suggestWantEntry(row)); return x ? x.count : 0; }
+  const x = (deck || readImport(lists[which])).main.find(y => y.name === exportName(row.name_en));
+  return x ? x.count : 0;
+}
+function suggestAddLabel(which, row, n) {
+  const name = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+  return t(`sug.add.${which === 'want' ? 'want' : 'deck'}${n ? '.n' : ''}`, { name, n });
+}
+function suggestAdd(row) {
+  const which = suggestAddList(), name = exportName(row.name_en);
+  let snap = null;
+  if (which === 'want') {
+    const e = suggestWantEntry(row), x = wantFindFor(e);
+    snap = x ? listSetCount('want', x, Math.min(WANT_MAX_COPIES, x.count + 1)) : wantAdd(e);
+  } else {
+    const x = readImport(lists[which]).main.find(y => y.name === name);
+    if (x) snap = listSetCount(which, x, Math.min(WANT_MAX_COPIES, x.count + 1));
+    else if (parseDeckText(lists[which]).lines.length < IMPORT_MAX_LINES - 1) {
+      const before = lists[which];
+      setList(which, withLineAdded(before, `1 ${name}`));
+      snap = { which, before, after: lists[which] };
+    }
+  }
+  if (!snap) return;
+  const label = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
+  const msg = t(which === 'want' ? 'sug.added.want' : 'sug.added.deck', { name: label, n: suggestAddCount(which, row) });
+  // on the price page the list is in view: undo; elsewhere the way to the tray, as a ☆ does
+  if (routeFromUrl().view === 'import') wantUndoToast(msg, snap);
+  else wantToast(msg, trayState.open ? null : { label: t('want.see'), run: () => openTray() });
+}
 function attachNameSuggest(input, list) {
   let items = [], active = -1, timer = null;
   const close = () => { list.hidden = true; list.innerHTML = ''; items = []; active = -1; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); };
@@ -9909,11 +9971,24 @@ function attachNameSuggest(input, list) {
       }
       const main = (LANG !== 'en' && row.name_ja) ? row.name_ja : row.name_en;
       const sub = (LANG !== 'en' && row.name_ja) ? row.name_en : row.name_ja;
-      return `<li role="presentation"><button type="button" class="suggest-item" role="option" id="${list.id}-${i}" aria-selected="false" data-i="${i}" tabindex="-1">
-        <span class="s-main">${boldMatch(main, q)}</span>${sub ? `<span class="s-sub">${esc(sub)}</span>` : ''}</button></li>`;
+      return `<li role="presentation" class="sug-row"><button type="button" class="suggest-item" role="option" id="${list.id}-${i}" aria-selected="false" data-i="${i}" tabindex="-1">
+        <span class="s-main">${boldMatch(main, q)}</span>${sub ? `<span class="s-sub">${esc(sub)}</span>` : ''}</button><button type="button" class="sug-add" data-add="${i}" tabindex="-1">${PLUS_SVG}</button></li>`;
     }).join('');
+    drawAdds();
     list.hidden = false;
     input.setAttribute('aria-expanded', 'true');
+  };
+  // each ＋: what it adds to, and the copies the list has
+  const drawAdds = () => {
+    const which = suggestAddList(), deck = which === 'want' ? null : readImport(lists[which]);
+    list.querySelectorAll('.sug-add').forEach(b => {
+      const row = items[Number(b.dataset.add)];
+      if (!row) return;
+      const n = suggestAddCount(which, row, deck), label = suggestAddLabel(which, row, n);
+      b.dataset.n = String(n);
+      b.setAttribute('aria-label', label);
+      b.title = label;
+    });
   };
   input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 60); });
   input.addEventListener('focus', () => startDbLoad());
@@ -9932,6 +10007,8 @@ function attachNameSuggest(input, list) {
     const rm = e.target.closest('[data-remove]');
     if (rm) { forgetSearch(items[Number(rm.dataset.remove)].recent); update(); input.focus(); return; }
     if (e.target.closest('[data-clear]')) { saveRecent([]); close(); input.focus(); return; }
+    const add = e.target.closest('[data-add]');
+    if (add) { const row = items[Number(add.dataset.add)]; if (row) { suggestAdd(row); drawAdds(); } return; }
     const b = e.target.closest('.suggest-item');
     if (b) pick(items[Number(b.dataset.i)]);
   });
@@ -10619,15 +10696,18 @@ function isBasicLand(name, row) {
 }
 const RARITY_LETTER = { common: 'c', uncommon: 'u', rare: 'r', mythic: 'm' };
 // [[count, name], ...] -> { yen, missing (copies with no price), priced, wc: wildcards by rarity, or null }
-function deckCost(cards) {
+// (each, beside it: one copy's price per card where the deck price page knows it, entryYen(); else
+// the cheapest printing. Not a third item in the lists: the metagame's lists have the play rate there)
+function deckCost(cards, each = null) {
   const priced = !!cheapStore.data && !!(USD_JPY || EUR_JPY);
   let yen = 0, missing = 0, arena = true;
   const wc = { m: 0, r: 0, u: 0, c: 0 };
-  cards.forEach(([n, name]) => {
+  cards.forEach(([n, name], i) => {
     n = Number(n) || 0;
     const row = rowByEnglishName(name);
     if (!n || isBasicLand(name, row)) return;
-    const y = cardYen(name, row);
+    const own = each ? each[i] : undefined;
+    const y = own !== undefined ? own : cardYen(name, row);
     if (y === null) missing += n; else yen += y * n;
     const cr = cheapRow(name, row);
     const r = cheapStore.data ? (cr ? cr[2] : '') : (row ? RARITY_LETTER[row.rarity] || '' : '');
@@ -10729,7 +10809,7 @@ function deckCardHtml(it) {
   const inner = `<span class="dc-pic">${pic
       ? pictureTag(pic, { alt: it.label, sizes: '(max-width: 820px) 31vw, 150px', use: ['small', 'normal'], main: 'normal' })
       : `<span class="dc-noimg">${esc(it.label)}</span>`}${it.count ? `<span class="dc-count">×${it.count}</span>` : ''}</span>
-    <span class="dc-name">${esc(it.label)}</span>${rate}${it.yen ? `<span class="dc-yen" title="${esc(t('deck.yen.title'))}">${esc(yenSmall(it.yen))}</span>` : ''}`;
+    <span class="dc-name">${esc(it.label)}</span>${rate}${it.yen ? `<span class="dc-yen" title="${esc(t(it.yenKey || 'deck.yen.title'))}">${esc(yenSmall(it.yen))}</span>` : ''}`;
   return id
     ? `<a class="deck-card" href="?card=${encodeURIComponent(id)}" data-card="${esc(id)}" title="${esc(it.name)}">${inner}</a>`
     : `<div class="deck-card" title="${esc(it.name)}">${inner}</div>`;
@@ -10749,7 +10829,7 @@ function deckRowHtml(it, lead = null, tail = null) {
     : (it.avg !== undefined ? t('deck.more.rate', { v: it.pct, a: it.avg }) : t('deck.rate.short', { v: it.pct }));
   return `<li class="dl-row${it.avg !== undefined ? ' more' : ''}${lead !== null ? ' imp-row' : ''}">${lead !== null ? lead : `<span class="dl-count">${it.count || ''}</span>`}${nameHtml}`
     + `<span class="dl-cost">${cost ? renderPips(cost.split(' // ')[0]) : ''}</span>`
-    + `<span class="dl-yen"${it.yen ? ` title="${esc(t('deck.yen.title'))}"` : ''}>${it.yen ? esc(yenSmall(it.yen)) : ''}</span>`
+    + `<span class="dl-yen"${it.yen ? ` title="${esc(t(it.yenKey || 'deck.yen.title'))}"` : ''}>${it.yen ? esc(yenSmall(it.yen)) : ''}</span>`
     + (tail !== null ? tail : `<span class="dl-rate"${rate ? ` title="${esc(t('deck.rate.title'))}"` : ''}>${esc(rate)}</span>`) + '</li>';
 }
 function deckSort(items, byType) {
@@ -10794,13 +10874,13 @@ async function copyText(text) {
 }
 
 // the box under a deck's title: its price, Arena wildcards and mana curve
-function deckCostHtml(main, side, format, tried = deckState.costTried, notFound = 0) {
-  const all = main.concat(side).map(it => [it.count, it.name]);
-  const cost = deckCost(all);
+function deckCostHtml(main, side, format, tried = deckState.costTried, notFound = 0, sub = 'deck.cost.sub') {
+  const items = main.concat(side);
+  const cost = deckCost(items.map(it => [it.count, it.name]), items.map(it => it.each));
   cost.missing += notFound;   // the deck price page: lines it could not find
   let price;
   if (cost.priced) {
-    price = `<b class="dcst-v" title="${esc(t('deck.cost.sub'))}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`;
+    price = `<b class="dcst-v" title="${esc(t(sub))}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`;
   } else {
     price = `<span class="dcst-s">${esc(t(tried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`;
   }
@@ -11124,7 +11204,7 @@ function cleanImportName(s) {
     .replace(/\s*\/\/?\s*/g, ' // ')                                          // Fire/Ice, Fire // Ice
     .trim();
 }
-// text -> { title, lines: [{ i (line number), count, name, part, s (set), cn (collector number) }] }
+// text -> { title, lines: [{ i (line number), count, name, part, s (set), cn (collector number), f (finish: 'f' *F* foil, 'e' *E* etched, '') }] }
 function parseDeckText(text) {
   const out = { title: '', lines: [] };
   let part = 'main', named = false, typeHeads = false, cards = false, gap = false;
@@ -11154,11 +11234,13 @@ function parseDeckText(text) {
     if ((m = /^(\d{1,3})\s*(?:[xX×*](?=\s)|枚)?\s*(\S.*)$/.exec(s))) { count = Number(m[1]); s = m[2]; }
     else if ((m = /^(.+?)\s*[xX×]\s*(\d{1,3})$/.exec(s))) { s = m[1]; count = Number(m[2]); }
     // the printing, when the line names one: "(MH2) 138", also before Archidekt's "[Removal]" or "^Tag^"
-    const pm = /\s\(([A-Za-z0-9]{2,8})\)\s+([^\s()*]+)(?:\s+\*[A-Za-z]+\*)?\s*$/.exec(s.replace(/\s+\^[^^]*\^\s*$/, '').replace(/\s+\[[^\]]*\]\s*$/, ''));
+    const bare = s.replace(/\s+\^[^^]*\^\s*$/, '').replace(/\s+\[[^\]]*\]\s*$/, '');
+    const pm = /\s\(([A-Za-z0-9]{2,8})\)\s+([^\s()*]+)(?:\s+\*[A-Za-z]+\*)?\s*$/.exec(bare);
+    const fm = /\s\*([A-Za-z]+)\*\s*$/.exec(bare);   // Moxfield's *F* (foil) and *E* (etched)
     const name = cleanImportName(s);
     if (!name || !count) return;
     cards = true;
-    out.lines.push({ i, count, name, part: to, s: pm ? pm[1].toLowerCase() : '', cn: pm ? pm[2] : '' });
+    out.lines.push({ i, count, name, part: to, s: pm ? pm[1].toLowerCase() : '', cn: pm ? pm[2] : '', f: fm ? (/^e/i.test(fm[1]) ? 'e' : /^f/i.test(fm[1]) ? 'f' : '') : '' });
   });
   return out;
 }
@@ -11231,8 +11313,9 @@ function readImport(text) {
     const name = row ? exportName(row.name_en) : other;
     const list = parts[l.part] || parts.main;
     const got = list.find(x => x.name === name);
-    if (got) { got.count += l.count; got.lines.push({ i: l.i, count: l.count }); if (!got.s && l.s) { got.s = l.s; got.cn = l.cn; } }
-    else list.push({ name, count: l.count, row, s: l.s, cn: l.cn, lines: [{ i: l.i, count: l.count }] });
+    const ref = { i: l.i, count: l.count, s: l.s, cn: l.cn, f: l.f };
+    if (got) { got.count += l.count; got.lines.push(ref); if (!got.s && l.s) { got.s = l.s; got.cn = l.cn; } }
+    else list.push({ name, count: l.count, row, s: l.s, cn: l.cn, lines: [ref] });
   });
   // MTG Arena writes the companion under Companion and again in the sideboard
   parts.companion.forEach(c => { if (!parts.side.some(x => x.name === c.name)) parts.side.push(c); });
@@ -11248,10 +11331,12 @@ function printKey(s, cn) { return `${LANG}|${String(s || '').toLowerCase()}|${St
 function printCardFor(s, cn) { return (s && cn && PRINT_CARDS.get(printKey(s, cn))) || null; }
 function rememberPrint(card) {
   if (card && card.set && card.collector_number && !PRINT_CARDS.get(printKey(card.set, card.collector_number))) PRINT_CARDS.set(printKey(card.set, card.collector_number), card);
+  notePrintPrices(card);
 }
 // the printings of these lines ({ s, cn }) not known yet: in Japanese one search for their Japanese
-// printings (25 at a time), then /cards/collection for the English ones (75 at a time) where there is
-// no Japanese one or it has no real picture. True when something new came in.
+// printings (25 at a time), then /cards/collection for the English ones (75 at a time): the picture
+// where there is no Japanese one or it has no real picture, and the price (notePrintPrices()).
+// True when something new came in.
 async function loadPrintCards(lines) {
   const need = [], seen = new Set();
   lines.forEach(l => {
@@ -11263,6 +11348,7 @@ async function loadPrintCards(lines) {
   });
   if (!need.length) return false;
   const got = new Map(), failed = new Set();
+  need.forEach(p => PRINT_PRICES_ASKED.add(priceKey(p.s, p.cn)));   // their prices come with the English printings below
   if (LANG !== 'en') {
     for (let i = 0; i < need.length; i += 25) {
       const chunk = need.slice(i, i + 25);
@@ -11273,19 +11359,97 @@ async function loadPrintCards(lines) {
       } catch (err) { /* the English printings below */ }
     }
   }
-  const en = need.filter(p => !got.has(p.k) || imageQuality(got.get(p.k)) <= 1);
-  for (let i = 0; i < en.length; i += 75) {
-    const chunk = en.slice(i, i + 75);
+  for (let i = 0; i < need.length; i += 75) {
+    const chunk = need.slice(i, i + 75);
     try {
       const data = await scryfallCollection(chunk.map(p => ({ set: p.s, collector_number: p.cn })));
       data.forEach(c => {
+        notePrintPrices(c);
         const k = printKey(c.set, c.collector_number), ja = got.get(k);
         if (ja) { ja._enCard = c; ja._enPrices = c.prices || {}; } else got.set(k, c);
       });
+      // Scryfall has no English printing there: no price either
+      chunk.forEach(p => { const k = priceKey(p.s, p.cn); if (!PRINT_PRICES.has(k)) PRINT_PRICES.set(k, null); });
     } catch (err) { chunk.forEach(p => { if (!got.has(p.k)) failed.add(p.k); }); }   // asked again next time
   }
-  need.forEach(p => { if (!failed.has(p.k)) PRINT_CARDS.set(p.k, got.get(p.k) || null); });
+  need.forEach(p => { PRINT_PRICES_ASKED.delete(priceKey(p.s, p.cn)); if (!failed.has(p.k)) PRINT_CARDS.set(p.k, got.get(p.k) || null); });
   return got.size > 0;
+}
+// The price of the printing a line names (owner's request 2026-10-17: the price follows the art
+// picked, and a ☆ line or a Moxfield list is priced as the printing it names). PRINT_PRICES:
+// set|number -> that printing's Scryfall prices (a Japanese printing: its English printing's, as on
+// the card page), null when Scryfall has none. Filled by the art picker, by the cards fetched for the
+// pictures (rememberPrint(), loadPrintCards()) and by loadPrintPrices() for the rest.
+const PRINT_PRICES = new Map();
+const PRINT_PRICES_ASKED = new Set();   // set|number asked for and not answered yet
+function priceKey(s, cn) { return `${String(s || '').toLowerCase()}|${String(cn || '').toLowerCase()}`; }
+function notePrintPrices(card) {
+  if (!card || !card.set || !card.collector_number) return;
+  const p = card._enPrices || (card.lang === 'en' ? card.prices : null);
+  if (p) PRINT_PRICES.set(priceKey(card.set, card.collector_number), p);
+}
+// one copy in yen from a printing's prices: the cheaper of the US and the European price, as
+// cardYen(); a foil line at the foil price, a printing only made in foil at that
+function pricesYen(p, finish) {
+  if (!p) return null;
+  const yen = (usd, eur) => {
+    const o = [], u = parseFloat(usd), e = parseFloat(eur);
+    if (u > 0 && USD_JPY) o.push(u * USD_JPY);
+    if (e > 0 && EUR_JPY) o.push(e * EUR_JPY);
+    return o.length ? Math.min(...o) : null;
+  };
+  const plain = yen(p.usd, p.eur), foil = yen(p.usd_foil, p.eur_foil), etched = yen(p.usd_etched, p.eur_etched);
+  const order = finish === 'e' ? [etched, foil, plain] : finish === 'f' ? [foil, etched, plain] : [plain, foil, etched];
+  const y = order.find(v => v !== null);
+  return y === undefined ? null : y;
+}
+function printYen(s, cn, finish) {
+  return s && cn ? pricesYen(PRINT_PRICES.get(priceKey(s, cn)), finish) : null;
+}
+// one copy of a card in the list: each line at the printing it names when that price is known, else
+// the cheapest printing (cardYen()). { each, print: some line is priced as its printing }
+function entryYen(x, row) {
+  if (isBasicLand(x.name, row)) return { each: null, print: false };
+  const cheap = cardYen(x.name, row);
+  let sum = 0, n = 0, print = false;
+  for (const l of x.lines || []) {
+    const p = printYen(l.s, l.cn, l.f);
+    const y = p !== null ? p : cheap;
+    if (y === null) return { each: null, print: false };
+    if (p !== null) print = true;
+    sum += y * l.count;
+    n += l.count;
+  }
+  return { each: n ? sum / n : cheap, print };
+}
+// the prices of the printings these lines ({ s, cn }) name that are not known yet: /cards/collection,
+// 75 at a time (for set and number Scryfall answers with the English printing). True when some came in.
+async function loadPrintPrices(lines) {
+  const need = [], seen = new Set();
+  lines.forEach(l => {
+    if (!l || !l.s || !l.cn) return;
+    const k = priceKey(l.s, l.cn);
+    if (PRINT_PRICES.has(k) || PRINT_PRICES_ASKED.has(k) || seen.has(k)) return;
+    seen.add(k);
+    need.push({ s: l.s.toLowerCase(), cn: String(l.cn), k });
+  });
+  if (!need.length) return false;
+  let got = false;
+  need.forEach(p => PRINT_PRICES_ASKED.add(p.k));
+  for (let i = 0; i < need.length; i += 75) {
+    const chunk = need.slice(i, i + 75);
+    try {
+      const data = await scryfallCollection(chunk.map(p => ({ set: p.s, collector_number: p.cn })));
+      const by = new Map(data.map(c => [priceKey(c.set, c.collector_number), c]));
+      chunk.forEach(p => {
+        const c = by.get(p.k);
+        PRINT_PRICES.set(p.k, (c && c.prices) || null);
+        if (c && c.prices) got = true;
+      });
+    } catch (err) { /* asked again next time */ }
+    chunk.forEach(p => PRINT_PRICES_ASKED.delete(p.k));
+  }
+  return got;
 }
 // the same line naming another printing: "4 稲妻" -> "4 稲妻 (M10) 146"; a "*F*" foil mark, Archidekt's
 // "[Removal]" / "^Tag^" and a count written last ("Bolt x4") stay where they were
@@ -11407,10 +11571,11 @@ async function priceImport() {
   }
   if (token !== importState.token) return;
   drawImport();
-  // and the printings the lines name ("(MH2) 345"), where that is not the picture already shown
-  if (LITE) return;
+  // and the printings the lines name ("(MH2) 345"), where that is not the picture already shown, and their prices
   importState.pics.forEach((v, k) => { if (k.startsWith(LANG + '|')) rememberPrint(v.card); });
-  if (await loadPrintCards(res.commander.concat(res.main, res.side)) && token === importState.token) drawImport();
+  const entries = res.commander.concat(res.main, res.side);
+  if (!LITE && await loadPrintCards(entries) && token === importState.token) drawImport();
+  if (await loadPrintPrices(entries.flatMap(x => x.lines)) && token === importState.token) drawImport();
 }
 function importEmptyHtml() {
   if (importState.which === 'want') return `<div class="imp-empty"><p class="imp-empty-h">${esc(t('tray.empty'))}</p><p>${esc(t('tray.empty.body'))}</p></div>`;
@@ -11525,12 +11690,17 @@ function drawImport() {
     // the printing the line names ("(MH2) 345": the art picked) shows its own picture
     const pc = LITE ? null : printCardFor(x.s, x.cn);
     if (pc) it.info = { row: it.info.row, card: pc };
+    // and its price (entryYen()): a card whose lines name no printing stays at the cheapest
+    const { each, print } = entryYen(x, it.info.row);
+    it.yen = each;
+    it.each = each;
+    if (print) it.yenKey = 'imp.yen.print';
     return it;
   });
   const cmd = mk(res.commander, 'commander'), main = mk(res.main, 'main'), side = mk(res.side, 'side');
   const total = list => list.reduce((s, it) => s + (it.count || 0), 0);
   const all = cmd.concat(main, side);
-  const cost = deckCost(all.map(it => [it.count, it.name]));
+  const cost = deckCost(all.map(it => [it.count, it.name]), all.map(it => it.each));
   const notFound = res.missing.reduce((n, l) => n + l.count, 0);
   cost.missing += notFound;
   const colors = new Set();
@@ -11572,7 +11742,7 @@ function drawImport() {
   // the price, リスト / 画像, Hareruya and export in one bar that stays in view (owner's request 2026-10-16)
   if (found) {
     html += `<div class="want-bar">
-      <div class="want-bar-l">${deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound)}${toggle}</div>
+      <div class="want-bar-l">${deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound, 'imp.cost.sub')}${toggle}</div>
       <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-hareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${copy}</div>
     </div>`;
   }
@@ -11581,7 +11751,7 @@ function drawImport() {
   if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true, impCardHtml, impRowHtml)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false, impCardHtml, impRowHtml)}</section>`;
   if (main.length) html += deckCurveHtml(cmd.concat(main));
-  if (found) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
+  if (found) html += `<p class="deck-cost-note">${esc(t('imp.cost.note'))}</p>`;
   const exportOpen = !!(document.getElementById('importExport') || {}).open;
   // a − / ＋ / art button keeps the focus through the redraw
   const fa = document.activeElement;
@@ -11815,6 +11985,7 @@ function drawArtPicker() {
   // the printing shown now: the one the line names, else the card's usual picture
   const shown = printCardFor(x.s, x.cn) || (importState.pics.get(LANG + '|' + x.name) || {}).card;
   const cur = (x.s && x.cn ? `${x.s}|${x.cn}` : (shown && shown.collector_number ? `${shown.set}|${shown.collector_number}` : '')).toLowerCase();
+  const finish = (x.lines[0] || {}).f || '';
   let body;
   if (artState.failed) body = `<div class="wt-empty"><p>${esc(t('pick.error'))}</p><button type="button" class="adv-btn" data-ap-retry="1">${esc(t('pick.retry'))}</button></div>`;
   else if (!artState.items) body = `<div class="status-line"><div class="spinner"></div><span class="serif">${esc(t('pick.loading'))}</span></div>`;
@@ -11824,14 +11995,18 @@ function drawArtPicker() {
     const tags = treatmentLabels(priceCard).map(tag => `<span class="print-tag">${tag}</span>`).join('')
       + (display.lang === 'ja' ? `<span class="print-tag ja">${t('tag.ja')}</span>` : '')
       + (on ? `<span class="print-tag cur">${esc(t('pick.current'))}</span>` : '');
-    const pr = priceCard.prices || {};
+    // the price this printing would count at in the list (pricesYen(), foil when the line is): in yen,
+    // else the US price before the exchange rate is in
+    const pr = priceCard.prices || {}, y = pricesYen(pr, finish);
     const usd = pr.usd || pr.usd_foil || pr.usd_etched;
+    const price = y !== null ? `<span class="print-price" title="${esc(t('imp.yen.print'))}">${esc(yenSmall(y))}</span>`
+      : usd ? `<span class="print-price">${curHtml(usd, 'usd')}</span>` : '';
     return `<button type="button" class="print-item ap-item${on ? ' current' : ''}" data-ap="${i}" aria-pressed="${on}" title="${esc(display.set_name || '')}">
       ${thumb ? pictureTag(thumb, { alt: '', sizes: '(max-width: 820px) 30vw, 150px', use: ['small', 'normal'], main: 'normal' }) : '<span class="ap-noimg"></span>'}
       <span class="print-set">${esc(display.set_name || display.set.toUpperCase())}</span>
       <span class="print-meta">${esc(display.set.toUpperCase())} #${esc(display.collector_number)}${LANG === 'en' ? ' · ' : '・'}${rarityLabel(display.rarity)}</span>
       <span class="print-tags">${tags}</span>
-      ${usd ? `<span class="print-price">${curHtml(usd, 'usd')}</span>` : ''}
+      ${price}
     </button>`;
   }).join('')}</div>`;
   const scroll = (box.querySelector('.ap-body') || {}).scrollTop || 0;
@@ -11846,11 +12021,12 @@ function drawArtPicker() {
   const b = box.querySelector('.ap-body');
   if (b) b.scrollTop = scroll;
 }
-// picked: the card's lines name that printing; its picture is the one already loaded
-function pickArt(card) {
+// picked: the card's lines name that printing; its picture and price are the ones already loaded
+function pickArt(card, priceCard) {
   const x = impEntry(artState.part, artState.name);
   if (!x) { closeArtPicker(); return; }
   PRINT_CARDS.set(printKey(card.set, card.collector_number), card);
+  PRINT_PRICES.set(priceKey(card.set, card.collector_number), (priceCard && priceCard.prices) || card._enPrices || null);
   const which = importState.which, before = lists[which], lines = before.split(/\r?\n/);
   x.lines.forEach(l => { lines[l.i] = lineWithPrint(lines[l.i], card.set, card.collector_number); });
   setList(which, lines.join('\n'));
@@ -11862,7 +12038,7 @@ document.getElementById('artPicker').addEventListener('click', (e) => {
   if (e.target.closest('[data-ap-retry]')) { openArtPicker(artState.part, artState.name); return; }
   const b = e.target.closest('[data-ap]');
   const item = b && artState.items && artState.items[Number(b.dataset.ap)];
-  if (item) pickArt(item.display);
+  if (item) pickArt(item.display, item.priceCard);
 });
 document.getElementById('artPickerBg').addEventListener('click', () => closeArtPicker(true));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && artState.open) closeArtPicker(true); });
@@ -11934,7 +12110,7 @@ function wantData() {
       byKey.set(k, x); byName.set(nameKey(name), x); list.push(x);
     }
     x.count += l.count;
-    x.lines.push({ i: l.i, count: l.count });
+    x.lines.push({ i: l.i, count: l.count, s: l.s, cn: l.cn, f: l.f });
     if (!x.s && l.s) { x.s = l.s; x.cn = l.cn; }
   });
   wantMemo = { key, list, byKey, byName, total, missing, title: parsed.title };
@@ -12023,7 +12199,11 @@ function refreshWant() {
     b.setAttribute('aria-label', label);
     b.title = label;
   });
-  if (trayState.open) drawTray();
+  if (trayState.open) {
+    drawTray();
+    // a card ☆'d with the tray open: its printing's price
+    loadPrintPrices(wantData().list.flatMap(x => x.lines)).then(got => { if (got && trayState.open) drawTray(); });
+  }
 }
 
 // a short note at the bottom of the screen, with "see the list" or "undo"
@@ -12084,11 +12264,13 @@ function openTray() {
   document.getElementById('wantBtn').setAttribute('aria-expanded', 'true');
   drawTray();
   // the cards' names and prices need the card database and the price file; the printings the lines
-  // name ("(MH2) 345": an art picked on the deck price page) bring their own pictures
-  dbReady.then(() => {
+  // name ("(MH2) 345": an art picked on the deck price page) bring their own pictures and prices
+  dbReady.then(async () => {
     if (!trayState.open) return;
     drawTray();
-    if (!LITE) loadPrintCards(wantData().list).then(got => { if (got && trayState.open) drawTray(); });
+    const list = wantData().list;
+    if (!LITE && await loadPrintCards(list) && trayState.open) drawTray();
+    if (await loadPrintPrices(list.flatMap(x => x.lines)) && trayState.open) drawTray();
   });
   Promise.all([loadCheapest(), fxReady]).then(() => { if (trayState.open) drawTray(); });
   const close = tray.querySelector('.wt-close');
@@ -12121,7 +12303,11 @@ function trayItems(d) {
   const infos = new Map();
   return d.list.map(x => {
     infos.set(x.name, { row: x.row, card: x.row ? rowToCard(x.row) : null });
-    return { x, it: deckItem(x.name, x.count, null, infos) };
+    const it = deckItem(x.name, x.count, null, infos);
+    const { each, print } = entryYen(x, x.row);
+    it.yen = each;
+    it.print = print;
+    return { x, it };
   });
 }
 function trayRowHtml({ x, it }) {
@@ -12132,7 +12318,7 @@ function trayRowHtml({ x, it }) {
   return `<li class="wt-row" data-want-row="${esc(x.k)}">`
     + (href ? `<a class="wt-pic" href="${href}" data-card="${esc(id)}" tabindex="-1" aria-hidden="true">${pic}</a>` : `<span class="wt-pic">${pic}</span>`)
     + `<span class="wt-name">${title}${it.sub ? `<span class="wt-en">${esc(it.sub)}</span>` : ''}`
-    + `${it.yen ? `<span class="wt-yen">${esc(t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>` : ''}</span>`
+    + `${it.yen ? `<span class="wt-yen" title="${esc(t(it.print ? 'imp.yen.print' : 'deck.yen.title'))}">${esc(it.print ? yenSmall(it.yen) : t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>` : ''}</span>`
     + `${wantStepHtml(x)}${wantTrashHtml(x)}</li>`;
 }
 function trayTileHtml({ x, it }) {

@@ -99,14 +99,14 @@ In file order. "Key names" are what to search for.
 | `highlighting…` | Marks the matching part of a card's text. | `highlightRanges()`, `highlightHtml()` |
 | `the text view of the results` | Text-only results. | `textRowHtml()`, `renderViewToggle()` |
 | `more results load by themselves…` | Auto "load more" near the bottom. | `watchAutoLoad()` |
-| `card name suggestions under the search boxes…` | The dropdown of card names while typing. | `nameSuggestions()`, `attachNameSuggest()` |
+| `card name suggestions under the search boxes…` | The dropdown of card names while typing, each with a green ＋ that adds one copy to the want list (or the list on the deck price page). | `nameSuggestions()`, `attachNameSuggest()`, `suggestAdd()`, `suggestAddList()` |
 | `install as an app` | Registers `sw.js` (HTTPS only, not on github.io) and shows the install button in the footer. | `installButton`, `#appInstall` |
 | `home: …` (three sections) | Example searches, three effects to try, price risers and top decks on the home page. | `HERO_TRY`, `HERO_EFFECTS`, `HERO_SLANG`, `pickHeroEffects()`, `renderHomeMovers()`, `renderHomeMeta()` |
 | `shops: …` | Rakuten Books products on the home page and set pages, Amazon search links, affiliate IDs, the footer's affiliate wording. | `AFFILIATE`, `loadShopItems()`, `renderHomeShop()`, `renderShopBox()`, `startStripMotion()`, `renderSetShop()`, `rakutenLink()`, `amazonSearchUrl()` |
 | `phones: the theme buttons sit in a small menu` | The phone menu. | `setMenu()` |
 | `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
 | `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
-| `deck price page…` | The page of the two lists (the pasted deck, the want list) and the switch between them: see what a list costs; the list's name box; − n ＋ and the art button on each card and row; the pictures of the printings the lines name. | `setList()`, `drawImportHead()`, `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()`, `textWithName()`, `impCardHtml()`, `impRowHtml()`, `PRINT_CARDS`, `loadPrintCards()`, `lineWithPrint()` |
+| `deck price page…` | The page of the two lists (the pasted deck, the want list) and the switch between them: see what a list costs; the list's name box; − n ＋ and the art button on each card and row; the pictures and prices of the printings the lines name. | `setList()`, `drawImportHead()`, `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()`, `textWithName()`, `impCardHtml()`, `impRowHtml()`, `PRINT_CARDS`, `loadPrintCards()`, `PRINT_PRICES`, `entryYen()`, `loadPrintPrices()`, `lineWithPrint()` |
 | `art picker…` | Every printing of a card, to pick the one the list names. | `openArtPicker()`, `drawArtPicker()`, `pickArt()` |
 | `want list…` | ☆ on results and card pages, the want list's cards and counts, the tray. | `wantTogHtml()`, `wantCardHtml()`, `listSetCount()`, `wantData()`, `refreshWant()`, `drawTray()` |
 | `the search box follows the page` | Sticky search bar when the hero scrolls away. | `updateHeroOut()`, `updateBarTop()` |
