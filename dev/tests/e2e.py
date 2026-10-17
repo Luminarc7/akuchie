@@ -3084,7 +3084,7 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importText")
     page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
     check("deck price page: opens with an empty box and help on what it reads", page.locator(".imp-empty").count() == 1 and page.locator("#importSample").count() == 1
-          and page.title().startswith("デッキの価格を調べる") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
+          and page.title().startswith("ウォントリスト・デッキの価格") and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
     parsed = page.evaluate("""(() => { const P = s => parseDeckText(s).lines.map(l => [l.count, l.name, l.part]);
       return {
         arena: (() => { const r = parseDeckText('About\\nName Gruul Smash\\n\\nCommander\\n1 Ragavan, Nimble Pilferer\\n\\nCompanion\\n1 Qasali Pridemage\\n\\nDeck\\n4 Lightning Bolt (M10) 146\\n2 Shivan Dragon (M10) 156 *F*\\n\\nSideboard\\n1 Qasali Pridemage\\n3 Llanowar Elves'); return [r.title, r.lines.map(l => [l.count, l.name, l.part])]; })(),
@@ -3220,8 +3220,8 @@ with sync_playwright() as p:
     page.click("#deckExport summary")
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-cost")
     page.click("#langBtn"); page.wait_for_timeout(400)
-    check("deck price page in English", page.locator(".imp-title").inner_text() == "Price a deck list" and "Main deck" in page.locator("#importBody").inner_text()
-          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list"), page.locator("#importBody").inner_text()[:200])
+    check("deck price page in English", page.locator(".imp-title").inner_text() == "Want list & deck prices" and "Main deck" in page.locator("#importBody").inner_text()
+          and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Want list & deck prices"), page.locator("#importBody").inner_text()[:200])
     page.click("#langBtn"); page.wait_for_timeout(300)
     check("footer: the privacy note says pasted deck lists stay in the browser", "貼り付けたデッキリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
