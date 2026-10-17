@@ -63,7 +63,7 @@ for, the rarest one the card has).
 **Sets** (`e:mh3`, `set:`, `セット:モダンホライゾン3`: a code, or a Japanese set name from `SET_NAME_JA`
 read by `setCodesOf()`) match every set the card was printed in, as Scryfall does, so reprints
 are found too (the database's `sets`, kept as `_sets` by `indexRow()`). Part of a Japanese name
-finds every set it is part of (セット:マーベル, セット:タルキール). Only the sets in `SET_NAME_JA`
+finds every set it is part of (セット:イニストラード, セット:ホライゾン). Only the sets in `SET_NAME_JA`
 have a Japanese name; others are found by their code. The tile keeps the card's usual picture.
 An older database without `sets` matches the shown printing's set.
 

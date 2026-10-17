@@ -232,7 +232,7 @@ serialized; upper case where a Japanese printing has it).
   find cards with such a printing (`TREATMENTS`), and beside 日本語版 or `lang:ja` a Japanese one
   (日本語版 ボーダーレス); 日本語版 alone finds cards printed in Japanese. Written the way players
   write them too: ボーダーレス版, 旧枠のカード, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号
-  (`printWordForms()`). Part of a Japanese set name finds every set it is in (セット:マーベル).
+  (`printWordForms()`). Part of a Japanese set name finds every set it is in (セット:イニストラード).
 - **Reminder text** （…） still matches, but a word found only there comes after the cards whose
   own text has it (到達 lists reach before flyers; `JA_REMINDER_RE`).
 - **Also in place:**

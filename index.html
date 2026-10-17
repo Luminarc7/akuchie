@@ -2905,7 +2905,7 @@ function treatmentFindLabel(tr, ja) {
   return t(ja ? 'tr.find.ja' : 'tr.find', { t: LANG === 'en' ? name.toLowerCase() : name, a: /^[aeiou]/i.test(name) ? 'an' : 'a' });
 }
 // e:mh3, e:MH3, セット:モダンホライゾン3: a set code, or the Japanese name of a set; part of a
-// Japanese name finds every set it is part of (セット:マーベル, セット:イニストラード)
+// Japanese name finds every set it is part of (セット:イニストラード, セット:ホライゾン)
 const SET_CODES_MEMO = new Map();
 function setCodesOf(val) {
   const v = normText(val).trim();
