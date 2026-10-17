@@ -60,6 +60,8 @@ here.
 | Link previews show the site's default card | The bot isn't matched by `PREVIEW_BOTS`, or `shareTags()` failed | Test with that bot's User-Agent against the `workers.dev` address |
 | Visitors see an old version | Unlikely (the service worker is network-first); usually a slow deploy | Check the deployment in Cloudflare; a hard reload confirms |
 | A file that should be private is downloadable from warujie.jp | Not listed in `.assetsignore` | Add it and push |
+| A deck page's "other popular cards" rows show buttons, or lose their share | `deckRowHtml()` takes optional `lead` / `tail`; `.map(deckRowHtml)` passes the index as `lead` | Call it as `.map(it => deckRowHtml(it))` |
+| Typing a list's name in Japanese drops letters or closes the phone keyboard | The name box was drawn again while the word was being converted | Keep `drawImport()`'s rule: a focused `#impName` stays in place, and `isComposing` input waits for `compositionend` |
 
 ## Getting at outside data
 

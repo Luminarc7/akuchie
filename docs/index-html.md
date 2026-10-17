@@ -106,7 +106,7 @@ In file order. "Key names" are what to search for.
 | `phones: the theme buttons sit in a small menu` | The phone menu. | `setMenu()` |
 | `deck pages` | One deck: sample lists, card groups, trend. | `loadMetaDecks()`, `loadMetaLists()`, `renderDeck()`, `drawDeck()` |
 | `export…` | Copy or download a list for MTG Arena or Magic Online. | `exportName()`, `deckExportText()`, `saveTextFile()` |
-| `deck price page…` | The page of the two lists (the pasted deck, the want list) and the switch between them: see what a list costs; − n ＋ and the art button under each card; the pictures of the printings the lines name. | `setList()`, `drawImportHead()`, `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()`, `impCardHtml()`, `PRINT_CARDS`, `loadPrintCards()`, `lineWithPrint()` |
+| `deck price page…` | The page of the two lists (the pasted deck, the want list) and the switch between them: see what a list costs; the list's name box; − n ＋ and the art button on each card and row; the pictures of the printings the lines name. | `setList()`, `drawImportHead()`, `parseDeckText()`, `importRow()`, `readImport()`, `priceImport()`, `drawImport()`, `textWithName()`, `impCardHtml()`, `impRowHtml()`, `PRINT_CARDS`, `loadPrintCards()`, `lineWithPrint()` |
 | `art picker…` | Every printing of a card, to pick the one the list names. | `openArtPicker()`, `drawArtPicker()`, `pickArt()` |
 | `want list…` | ☆ on results and card pages, the want list's cards and counts, the tray. | `wantTogHtml()`, `wantCardHtml()`, `listSetCount()`, `wantData()`, `refreshWant()`, `drawTray()` |
 | `the search box follows the page` | Sticky search bar when the hero scrolls away. | `updateHeroOut()`, `updateBarTop()` |

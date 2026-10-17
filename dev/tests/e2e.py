@@ -3334,7 +3334,7 @@ with sync_playwright() as p:
     page.wait_for_function("!document.querySelector('.imp-miss')")
     check("deck price page: picking the suggestion fixes that line (count kept) and the price follows",
           "4 Lightning Bolt" in page.input_value("#importText").split("\n") and page.locator(".imp-miss").count() == 0
-          and page.locator("#importBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first.locator(".dl-count").inner_text() == "8", page.input_value("#importText"))
+          and page.locator("#importBody .dl-row", has=page.locator(".dl-name", has_text="稲妻")).first.locator(".want-c").inner_text() == "8枚", page.input_value("#importText"))
     page.click("#importExport summary"); page.click("#importExport [data-iexport=arena]")
     page.wait_for_function("document.querySelector('#importExport [data-iexport=arena]').textContent === 'コピーしました'")
     clip = page.evaluate("navigator.clipboard.readText()")
@@ -3397,7 +3397,7 @@ with sync_playwright() as p:
     deck_cost = page.locator("#deckBody .deck-cost .dcst-v").inner_text()
     page.click("#deckBody .deck-edit"); page.wait_for_selector("#importBody .deck-cost .dcst-v")
     check("deck page: 編集して計算 opens the shown list on the deck price page, with the deck's name and the same price",
-          page.locator("#importBody .deck-cost .dcst-v").inner_text() == deck_cost and page.locator(".imp-deck-title").inner_text().strip().startswith("グルール・ドラゴン")
+          page.locator("#importBody .deck-cost .dcst-v").inner_text() == deck_cost and page.input_value("#impName").startswith("グルール・ドラゴン")
           and "Unknown New Card" in page.locator(".imp-miss").inner_text(), (page.locator("#importBody .deck-cost").inner_text(), deck_cost))
     page.goto(SITE + "?view=import"); page.fill("#importText", "4 稲妻\n2 Shivan Dragon\n\nSideboard\n2 Lightning Bolt\n1 Qasali Pridemage"); page.wait_for_selector("#importBody .imp-buy")
     buy = page.locator("#importBody .imp-buy")
@@ -3687,7 +3687,7 @@ with sync_playwright() as p:
     tray.locator(".wt-go").click(); page.wait_for_selector("#importBody .want-bar .dcst-v")
     check("tray: 価格を見る・書き出す opens the want list on the deck price page, and closes the tray",
           page.url.endswith("?view=want") and not tray.is_visible() and page.input_value("#importText") == "1 Lightning Bolt (M10) 146\n2 Ragavan, Nimble Pilferer (MH2) 138\n"
-          and page.locator(".imp-deck-title").inner_text().strip() == "ウォントリスト" and page.locator(".imp-title").inner_text() == "ウォントリスト"
+          and page.input_value("#impName") == "" and page.get_attribute("#impName", "placeholder") == "ウォントリスト" and page.locator(".imp-title").inner_text() == "ウォントリスト"
           and page.locator("#impWhich a[aria-current=page]").inner_text() == "ウォントリスト" and page.title().startswith("ウォントリスト — ")
           and page.locator("#tabPrices").get_attribute("aria-selected") == "true",
           page.input_value("#importText"))
@@ -3730,7 +3730,7 @@ with sync_playwright() as p:
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
     want_now = listtext()
     check("want list: none of it touched the pasted deck", decktext() == "2 Shivan Dragon\n", decktext())
-    page.click("#impWhich a[data-which=deck]"); page.wait_for_function("document.querySelector('#importBody .imp-deck-title') && document.querySelector('#importBody .imp-deck-title').textContent.includes('貼り付けたデッキ')")
+    page.click("#impWhich a[data-which=deck]"); page.wait_for_function("document.querySelector('#impName') && document.querySelector('#impName').placeholder === '貼り付けたデッキ'")
     check("switch: デッキの価格 shows the pasted deck, its title and words, on ?view=import",
           page.url.endswith("?view=import") and page.input_value("#importText") == "2 Shivan Dragon\n" and page.locator(".imp-title").inner_text() == "デッキの価格を調べる"
           and page.locator("#impWhich a[aria-current=page]").inner_text() == "デッキの価格" and page.title().startswith("デッキの価格を調べる")
@@ -4099,7 +4099,92 @@ with sync_playwright() as p:
     page.keyboard.press("Escape")
     page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
-    # ---- 49. page cleanup (2026-10-17): JP | EN and ¥ | $ in the top bar, every price in the chosen currency ----
+    # ---- 49. the list's name in a box to type in; − n ＋ and the art button in the list view too ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view', 'akuchie-lang'].forEach(k => localStorage.removeItem(k))")
+    page.evaluate("localStorage.setItem('warujie-want-list', '1 Lightning Bolt (M10) 146\\n2 Ragavan, Nimble Pilferer (MH2) 138\\n')")
+    page.evaluate("localStorage.setItem('akuchie-deck-view', 'list')")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row")
+    nm = page.locator("#impName")
+    box = page.evaluate("(() => { const i = document.getElementById('impName'), c = getComputedStyle(i); return [i.tagName, i.type, c.borderTopStyle, parseFloat(c.borderTopWidth), document.querySelector('.imp-name svg') ? 1 : 0, i.getBoundingClientRect().height]; })()")
+    check("name box: the list's name is a text box with a border and a pen, showing ウォントリスト until it has a name",
+          box[:3] == ["INPUT", "text", "solid"] and box[3] >= 1 and box[4] == 1 and box[5] >= 40 and nm.input_value() == "" and nm.get_attribute("placeholder") == "ウォントリスト"
+          and nm.get_attribute("aria-label") == "リストの名前", box)
+    nm.click(); page.keyboard.type("モダン用"); page.wait_for_timeout(900)
+    check("name box: typing writes the name on top of the list, as MTG Arena does (About / Name), and the box keeps the focus through the redraw",
+          page.input_value("#importText") == "About\nName モダン用\n\n1 Lightning Bolt (M10) 146\n2 Ragavan, Nimble Pilferer (MH2) 138\n"
+          and page.evaluate("document.activeElement && document.activeElement.id") == "impName" and nm.input_value() == "モダン用"
+          and page.evaluate("localStorage.getItem('warujie-want-list')").startswith("About\nName モダン用\n"), page.input_value("#importText"))
+    check("name box: the cards still read the same with the name on top", page.locator("#importBody .imp-row").count() == 2 and page.locator("#wantN").inner_text() == "3")
+    # Japanese input: nothing changes while a word is being converted, the whole word goes in at the end
+    page.evaluate("""(() => { const i = document.getElementById('impName'); i.value = 'モダン用の'; i.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true })); })()""")
+    page.wait_for_timeout(150)
+    composing = page.input_value("#importText").split("\n")[1]
+    page.evaluate("(() => { const i = document.getElementById('impName'); i.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: 'の' })); })()")
+    page.wait_for_timeout(150)
+    check("name box: while Japanese is being converted the list waits, then takes the word", composing == "Name モダン用" and page.input_value("#importText").split("\n")[1] == "Name モダン用の", composing)
+    page.keyboard.press("Enter"); page.wait_for_timeout(800)
+    check("name box: Enter finishes, and the name stays after the page is drawn again",
+          page.evaluate("document.activeElement && document.activeElement.id") != "impName" and nm.input_value() == "モダン用の")
+    page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row")
+    check("tray: its title is the want list's name", tray.locator(".wt-h").inner_text().strip() == "モダン用の", tray.locator(".wt-h").inner_text())
+    page.keyboard.press("Escape")
+    page.goto(SITE + "?card=elf-ja"); page.wait_for_selector("#cpWant .want-tog")
+    page.click("#cpWant .want-tog"); page.wait_for_timeout(200)
+    check("name box: a ☆ adds the card under the name, not into it", listtext().startswith("About\nName モダン用の\n\n1 Lightning Bolt") and "Llanowar Elves" in listtext()
+          and page.locator("#wantN").inner_text() == "4", listtext())
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row")
+    page.click("#importExport summary"); page.click("#importExport [data-iexport=link]")
+    page.wait_for_function("document.querySelector('#importExport [data-iexport=link]').textContent === 'コピーしました'")
+    link = page.evaluate("navigator.clipboard.readText()")
+    check("name box: the link that carries the list carries its name", "About%0AName%20%E3%83%A2%E3%83%80%E3%83%B3" in link, link[:160])
+    page.wait_for_timeout(1300)
+    nm.fill(""); page.wait_for_timeout(800)
+    check("name box: emptying it takes the name lines out and shows ウォントリスト again",
+          page.input_value("#importText").startswith("1 Lightning Bolt (M10) 146\n") and "About" not in page.input_value("#importText") and nm.get_attribute("placeholder") == "ウォントリスト")
+    ok = page.evaluate("""() => {
+      const r = [];
+      r.push(textWithName('4 稲妻\\n', 'Burn') === 'About\\nName Burn\\n\\n4 稲妻\\n');
+      r.push(textWithName('About\\nName Burn\\n\\n4 稲妻\\n', 'Red') === 'About\\nName Red\\n\\n4 稲妻\\n');
+      r.push(textWithName('About\\nName Burn\\n\\nDeck\\n4 稲妻\\n', '') === 'Deck\\n4 稲妻\\n');
+      const p = parseDeckText('About\\nName Burn\\n\\n4 Lightning Bolt\\n20 Mountain\\n\\n2 Shivan Dragon');
+      r.push(p.title === 'Burn' && p.lines.map(l => l.part).join() === 'main,main,side');
+      const w = parseDeckText(withLineAdded('About\\nName Burn\\n', '1 Lightning Bolt'));
+      r.push(w.title === 'Burn' && w.lines.length === 1 && w.lines[0].part === 'main');
+      return r;
+    }""")
+    check("name lines: written and taken out as Arena writes them; a name on top keeps the MTGO sideboard rule; a ☆ on a list with only a name lands under it",
+          ok == [True] * 5, ok)
+    # the list view: the same buttons as under the pictures
+    rows = page.locator("#importBody .imp-row")
+    check("list view: every row has − n ＋ in place of the count, and the art button at the end",
+          rows.count() == 3 and page.locator("#importBody .imp-row .want-step").count() == 3 and page.locator("#importBody .imp-row .imp-art").count() == 3
+          and page.locator("#importBody .imp-row .dl-count").count() == 0
+          and page.evaluate("[...document.querySelectorAll('#importBody .imp-row')].every(r => r.firstElementChild.classList.contains('want-step') && r.lastElementChild.classList.contains('imp-art'))"))
+    rag = "#importBody .imp-row [data-ip='main'][data-in='Ragavan, Nimble Pilferer']"
+    page.click(rag + "[data-imp-act='more']"); page.wait_for_timeout(250)
+    check("list view: ＋ adds a copy on the card's line and keeps the focus", "\n3 Ragavan, Nimble Pilferer (MH2) 138\n" in page.input_value("#importText")
+          and page.locator(rag + "[data-imp-act='more']").evaluate("b => b === document.activeElement") and page.locator("#wantN").inner_text() == "5", page.input_value("#importText"))
+    page.click("#importBody .imp-row [data-ip='main'][data-in='Lightning Bolt'][data-imp-act='less']"); page.wait_for_timeout(250)
+    check("list view: − on the last copy takes the card out, with undo", "Lightning Bolt" not in page.input_value("#importText") and page.locator("#wantToast button").inner_text() == "元に戻す")
+    page.click("#wantToast button"); page.wait_for_timeout(250)
+    page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
+    check("list view: the art button opens the same picker", page.locator("#artPicker").is_visible() and page.locator("#artPicker .ap-item").count() == 3)
+    page.keyboard.press("Escape")
+    yen_right = page.evaluate("[...document.querySelectorAll('#importBody .imp-row .imp-art')].map(b => Math.round(b.getBoundingClientRect().right))")
+    check("list view: the art buttons line up at the right of each column", len(set(yen_right)) <= 2, yen_right)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
+    nb = page.evaluate("(() => { const r = document.getElementById('impName').getBoundingClientRect(); return [r.left, r.right, innerWidth, parseFloat(getComputedStyle(document.getElementById('impName')).fontSize)]; })()")
+    check("phone: the name box and the list rows fit, no sideways scroll, a box big enough not to zoom",
+          no_hscroll() and nb[1] <= nb[2] - 8 and nb[3] >= 16
+          and page.evaluate("[...document.querySelectorAll('#importBody .imp-row')].every(r => r.scrollWidth <= r.clientWidth + 1)"), nb)
+    page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_selector("#importBody .imp-row")
+    check("English: the name box says Want list until it has a name", nm.get_attribute("placeholder") == "Want list" and nm.get_attribute("aria-label") == "Name of the list")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+
+    # ---- 50. page cleanup (2026-10-17): JP | EN and ¥ | $ in the top bar, every price in the chosen currency ----
     PRICE_SITE["dir"] = PRICES_FULL
     page.set_viewport_size({"width": 1280, "height": 900})
     page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
