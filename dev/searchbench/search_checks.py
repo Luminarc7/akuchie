@@ -277,11 +277,13 @@ with sync_playwright() as p:
       const rows = q => searchRows(q, st).rows, reach = rows('到達'), at = n => reach.findIndex(r => r.name_en === n);
       return { ban: rows('ボーダーレス版').length, bl: rows('ボーダーレス').length, of: rows('ボーダーレスのドラゴン').length, sp: rows('ボーダーレス ドラゴン').length,
         jaCard: rows('日本語版のカード').length, ja: rows('日本語版').length, serial: rows('シリアル番号').length, serial2: rows('シリアルナンバー').length,
-        marvel: rows('セット:マーベル').length, spm: new Set(rows('e:spm').concat(rows('e:msh'))).size, hawk: at("Healer's Hawk"), angel: at('Dazzling Angel'),
+        inn: rows('セット:イニストラード').length, innSets: Object.keys(SET_NAME_JA).filter(c => SET_NAME_JA[c].includes('イニストラード')).length,
+        innAll: new Set(Object.keys(SET_NAME_JA).filter(c => SET_NAME_JA[c].includes('イニストラード')).flatMap(c => rows('e:' + c).map(r => r.oracle_id))).size, hawk: at("Healer's Hawk"), angel: at('Dazzling Angel'),
         lastReach: reach.reduce((m, r, i) => (r._kw.has('reach') ? i : m), -1),
         english: LOCAL_DB.filter(r => (r.oracle_ja && !JA_CHARS.test(r.oracle_ja)) || (r.type_ja && !JA_CHARS.test(r.type_ja))).length }; })()""")
-    check("printing words: ボーダーレス版, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号 find what the plain words find; セット:マーベル finds both Marvel sets",
-          pf["ban"] == pf["bl"] and pf["of"] == pf["sp"] > 0 and pf["jaCard"] == pf["ja"] and pf["serial"] == pf["serial2"] > 0 and pf["marvel"] == pf["spm"] > 0, pf)
+    check("printing words: ボーダーレス版, ボーダーレスのドラゴン, 日本語版のカード, シリアル番号 find what the plain words find; セット:イニストラード finds every Innistrad set",
+          pf["ban"] == pf["bl"] and pf["of"] == pf["sp"] > 0 and pf["jaCard"] == pf["ja"] and pf["serial"] == pf["serial2"] > 0
+          and pf["innSets"] >= 2 and pf["inn"] == pf["innAll"] > 0, pf)
     check("reminder text: 到達 lists every card with reach before flyers whose reminder mentions it (Healer's Hawk, Dazzling Angel)",
           pf["lastReach"] >= 0 and pf["hawk"] > pf["lastReach"] and pf["angel"] > pf["lastReach"], pf)
     check("no English text is kept as a card's Japanese text or type line (Edge of Eternities)", pf["english"] == 0, pf)

@@ -3764,6 +3764,8 @@ with sync_playwright() as p:
 
     # ---- 45. the printings in the database: e: finds every card printed in a set; ボーダーレス, 旧枠, 日本語版 ----
     DB_MODE["variant"] = "prints"
+    # earlier sections leave the text view (and other choices) saved; these checks count picture tiles
+    page.evaluate("['akuchie-view', 'akuchie-lite', 'akuchie-lang', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
     home()
     names_on = lambda: sorted(page.locator("#cardGrid .card-name-main").all_inner_texts())
     def found(q, n):
