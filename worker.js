@@ -11,6 +11,8 @@
 // - /ja_cards.json, the card database: sent brotli-compressed (ja_cards.json.br, made
 //   at deploy by tools/brotli_db.mjs, about half the size of the .gz), or as the .gz
 //   to a browser without brotli. The browser unpacks either one itself.
+// - The test sites (staging and every other branch's preview) get the pink app icon, so a
+//   test site saved to a phone's home screen is easy to tell from warujie.jp (TEST_ICONS).
 // - /shop/rakuten: Secret Lairs and booster boxes on sale at Rakuten Books (楽天ブックス),
 //   asked from Rakuten's API here (the keys are Cloudflare secrets) and kept an hour.
 export default {
@@ -27,6 +29,7 @@ export default {
         if (tags) res = rewriteTags(res, tags);
       } catch (err) { /* the page's own tags stay */ }
     }
+    if (res.status === 200 && isTestSite(url.hostname)) res = testIcons(res);
     const headers = new Headers(res.headers);
     headers.set('Cache-Control', 'public, max-age=0, must-revalidate, no-transform');
     const etag = headers.get('ETag');
@@ -118,6 +121,26 @@ async function rakutenItems(env, url) {
     if (items.length >= 12) break;
   }
   return answer({ ok: true, items }, 200, 1800);
+}
+
+// ---- test-site icon ----------------------------------------------------------------------
+// Branch previews are served at <branch>-warujie.warujie-mtg.workers.dev; warujie.jp and the
+// live Worker's own address (warujie.warujie-mtg.workers.dev) keep the green icon.
+function isTestSite(hostname) {
+  return /-warujie\.warujie-mtg\.workers\.dev$/i.test(hostname);
+}
+// The page's icon links, pointed at the pink files (tools/make_icons.py makes both colours).
+const TEST_ICONS = {
+  'link[rel="icon"]': ['href', /(-v\d+)\.png$/, '$1-test.png'],
+  'link[rel="apple-touch-icon"]': ['href', /(-v\d+)\.png$/, '$1-test.png'],
+  'link[rel="manifest"]': ['href', /^manifest\.webmanifest$/, 'manifest-test.webmanifest'],
+};
+function testIcons(res) {
+  let rw = new HTMLRewriter();
+  for (const [selector, [attr, from, to]] of Object.entries(TEST_ICONS)) {
+    rw = rw.on(selector, { element(el) { const v = el.getAttribute(attr); if (v) el.setAttribute(attr, v.replace(from, to)); } });
+  }
+  return rw.transform(res);
 }
 
 // ---- link previews -------------------------------------------------------------------------
