@@ -1,8 +1,9 @@
 # 悪知恵 (Warujie) — working notes for Claude
 
 **What this is:** the handover for anyone (human or Claude) working on this repository. Claude Code
-reads this file automatically. It is public (the repository is public), so it holds no private
-details: those live in the owner's private notes.
+reads this file automatically. The repository is private (the owner's choice, 2026-10-17), but
+this file still holds no private details: those live in the owner's private notes, and the
+site's own files are public on warujie.jp anyway.
 
 **The site:** warujie.jp, a free Japanese Magic: The Gathering card search. It lets people:
 - search Japanese and English names and rules text, by role ("removal", 「除去」), with filters;
@@ -74,12 +75,16 @@ fuller technical detail.
 
 | What | Where |
 |---|---|
-| Site code + data | `warujie/Warujie` (this repo, public) |
+| Site code + data | `warujie/Warujie` (this repo, private) |
 | Price history, combos, role tags | `warujie/warujie-prices`, published by GitHub Pages at `https://warujie.github.io/warujie-prices/` |
 | Hosting | Cloudflare Workers (static assets + `worker.js`), Workers Builds deploys each push: `main` → warujie.jp, any other branch → `https://<branch>-warujie.warujie-mtg.workers.dev` |
 | Domain | warujie.jp (registrar XServer Domain; DNS on Cloudflare) |
 
-A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is harmless.
+**Keep `warujie-prices` public.** On GitHub's free plan, Pages (every price, combo and tag file the
+site reads) and unlimited Actions minutes need a public repository, and the price history exists
+only in the published Pages files. This repository is private, so its Actions share the free
+plan's 2,000 minutes a month (the free plan never charges; jobs pause when they run out). The old
+GitHub Pages copy of the site switched off when it went private; nothing used it.
 
 ### Files in this repo
 
@@ -288,8 +293,15 @@ are blocked. GitHub, package registries and the web-search/fetch tools work.
 
 To fetch or process outside data (Scryfall bulk files, card images, a site's terms page), use a
 throwaway branch with a workflow that runs on push, does the fetch on GitHub's runners and
-commits the results back. The branch `probe-shops` was used for this;
-`tools/audits/probe-workflow.example.yml` is the template.
+commits the results back. `tools/audits/probe-workflow.example.yml` is the template.
+
+- **Run probes from a throwaway branch in `warujie-prices`** (public, so its Actions minutes are
+  free), not here: this repository is private and its minutes are limited. Checking the test
+  site, fetching a terms page or a bulk file needs nothing from this repository. Copy in only the
+  probe script itself, never the site's `tools/` or `dev/` wholesale, and delete the branch when
+  done.
+- Only a probe that needs this repository's own code or data (a full database rebuild, the e2e
+  suite against the real database) runs here, on a branch like `probe-shops`.
 
 - Run steps inside `( … ) > log 2>&1 || true` so a failure still commits the log.
 - Use `actions/setup-python` before `pip install`.

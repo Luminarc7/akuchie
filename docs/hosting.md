@@ -20,15 +20,19 @@ repository is served as it is, except what `.assetsignore` lists. Configuration:
   Bot Fight Mode is on, so warujie.jp challenges bots, including GitHub runners and Claude's
   sandbox. To check the live site from a script, use `https://warujie.warujie-mtg.workers.dev/`
   (same Worker, same files).
-- **A legacy GitHub Pages build** of this repo still runs on `main` from before Cloudflare. It is
-  harmless; the page notices `github.io` in a few places (`PRICE_DATA_URL`, no service worker).
+- **The repository is private** (2026-10-17), so GitHub's free plan gives its Actions 2,000
+  minutes a month and the old GitHub Pages copy of the site is off. Cloudflare Workers Builds
+  reads private repositories, so deploys are unchanged. `warujie-prices` stays public: the site
+  reads its GitHub Pages files. The page still notices `github.io` in a few places
+  (`PRICE_DATA_URL`, no service worker), which local tests use.
 
 ### What is published
 
 `.assetsignore` keeps these out of the public site: `.git`, `.github`, `.assetsignore`,
 `wrangler.jsonc`, `build_meta.py`, `README.md`, `worker.js`, `_headers`, `tools`, `.gitignore`,
 `dev`, `docs`, `CLAUDE.md`. **Anything new that shouldn't be downloadable from warujie.jp goes
-there.** (The repository itself is public on GitHub, so never put secrets in any file.)
+there.** (The repository is private on GitHub, but never put secrets in any file anyway: it may be made
+public again, and everything the site serves is public.)
 
 ## `worker.js`
 

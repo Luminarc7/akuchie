@@ -72,5 +72,6 @@ here.
 Claude's sandbox can't reach Scryfall's API, warujie.jp or shop sites, and warujie.jp
 challenges GitHub runners. Use the `workers.dev` address for the live site, and a GitHub
 Actions workflow on a scratch branch for outside downloads (CLAUDE.md, "Reaching other
-websites"; template `tools/audits/probe-workflow.example.yml`). Only fetch what the owner has
-allowed.
+websites"; template `tools/audits/probe-workflow.example.yml`), in warujie-prices unless the
+probe needs this repository's code (this one is private, with limited Actions minutes). Only
+fetch what the owner has allowed.

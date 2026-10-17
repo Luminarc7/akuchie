@@ -91,7 +91,7 @@ about which outside data may be used are in CLAUDE.md, rule 3.
 | `staging` | `https://staging-warujie.warujie-mtg.workers.dev` (test site, noindex) | All normal work, plus the weekly card database update |
 | any other branch | `https://<branch>-warujie.warujie-mtg.workers.dev` | Feature branches, backups |
 | `backup-<date>-before-<what>` | a copy of the live site as it was before a publish | Made before each publish |
-| `probe-shops` | none: a scratch branch whose workflow fetches outside data on GitHub's runners | See CLAUDE.md, "Reaching other websites" |
+| `probe-shops` | none: a scratch branch whose workflow fetches outside data on GitHub's runners (only for probes that need this repository's code; others run from a branch in the public warujie-prices, whose minutes are free) | See CLAUDE.md, "Reaching other websites" |
 
 Cloudflare Workers Builds deploys every push. Before each deploy it runs
 `node tools/brotli_db.mjs` (the `build` command in `wrangler.jsonc`), which makes
@@ -108,7 +108,8 @@ Cloudflare Workers Builds deploys every push. Before each deploy it runs
 | Update price history (`update-prices.yml`) | daily 12:17 | warujie-prices | Builds prices, combos (weekly) and role tags (weekly), publishes to GitHub Pages without committing |
 
 Every push to `staging` or `main` also runs **Docs match the code**
-(`.github/workflows/check-docs.yml`), which only reads files (see
+(`.github/workflows/check-docs.yml`), which only reads files and also runs warujie-prices'
+docs check against this code, since that repository can't read this private one (see
 [workflow.md](workflow.md#keeping-these-docs-true)).
 
 Because three bots commit to this repo, **pull before you commit** (`git pull --no-rebase` on

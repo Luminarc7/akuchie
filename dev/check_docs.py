@@ -4,11 +4,16 @@
 must still exist. A renamed function or a deleted file then shows up at once.
 
 usage: python3 dev/check_docs.py            (in the repository folder)
+       python3 dev/check_docs.py --partial  (on GitHub, when the other repository can't be read)
 
 It reads docs/*.md. Names are looked up in this repository and, when it is cloned next to
 this one, the other repository (Warujie <-> warujie-prices), because the docs mention both.
 It can't tell whether a description is still right: reread the paragraphs around what you
 changed. The same script is in both repositories; keep them alike.
+
+With --partial and the other repository missing (the site repository is private, so
+warujie-prices' GitHub check can't read it), names that aren't found are listed as not
+checked and the check passes. The site's own check runs both repositories' checks in full.
 """
 import os
 import re
@@ -108,11 +113,15 @@ def main():
                 why = check_span(span, name, in_table)
                 if why:
                     problems.append(f"docs/{name}:{no}: `{span}`: {why}")
+    partial = "--partial" in sys.argv[1:] and not SIBLINGS
     for p in problems:
-        print(p)
+        print(("not checked: " if partial else "") + p)
     print(f"{checked - len(problems)}/{checked} names in docs/ found in the code"
           + ("" if SIBLINGS else " (the other repository isn't cloned next to this one: its names count as missing)"))
-    sys.exit(1 if problems else 0)
+    if partial and problems:
+        print(f"::warning::{len(problems)} names in docs/ weren't checked: the other repository "
+              "couldn't be read. The site repository's own check covers them on its next push.")
+    sys.exit(1 if problems and not partial else 0)
 
 
 if __name__ == "__main__":

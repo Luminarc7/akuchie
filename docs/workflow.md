@@ -94,7 +94,9 @@ The docs are only useful if they match the code, so they change with it:
 - Name things by function, constant or section marker, never by line number.
 - GitHub runs the same checker on every push to `staging` and `main` and on pull requests
   (`.github/workflows/check-docs.yml`, check "Docs match the code"). A red check means a doc
-  names something that no longer exists: fix the doc.
+  names something that no longer exists: fix the doc. It runs warujie-prices' checker too
+  (that repository's own check can't read this private one and runs it with `--partial`, which
+  lists the site's names as not checked), so a red step there means a doc in warujie-prices.
 - Run `python3 dev/check_docs.py` before pushing. It lists every name in backticks in `docs/`
   that no longer exists in the code (a renamed function, a deleted file), so stale docs show up
   at once. It can't tell whether a description is still right; reread the paragraphs around

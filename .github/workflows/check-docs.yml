@@ -2,6 +2,8 @@
 # element id, file and index.html section the docs name must still exist (dev/check_docs.py).
 # A red check means a doc mentions something that was renamed or removed; update the doc.
 # The docs also mention warujie-prices, so that repository is checked out next to this one.
+# This repository is private, so warujie-prices' own check can't read it and leaves the names
+# only this site has unchecked; its check therefore runs here too, in full.
 name: Docs match the code
 on:
   push:
@@ -20,3 +22,5 @@ jobs:
       - uses: actions/checkout@v6
         with: { repository: warujie/warujie-prices, path: warujie-prices }
       - run: python3 Warujie/dev/check_docs.py
+      - name: warujie-prices' docs against this site's code
+        run: python3 warujie-prices/dev/check_docs.py
