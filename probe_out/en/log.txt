@@ -1,0 +1,7 @@
++ mkdir -p probe_out/en
++ pip install -q playwright==1.56.0
++ python3 -m playwright install --with-deps chromium
++ python3 dbprobe/en_audit.py
+staging -> https://staging-warujie.warujie-mtg.workers.dev/
+live -> https://warujie.warujie-mtg.workers.dev/
+views: {'staging': 47, 'live': 47} printings looked up: 1175
