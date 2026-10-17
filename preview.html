@@ -6614,17 +6614,18 @@ function goldfishUrl(card) {
   return en ? `https://www.mtggoldfish.com/q?query_string=${encodeURIComponent(en).replace(/%20/g, '+')}` : '';
 }
 
-// a Scryfall search, page after page (each request in the queue, 100 ms apart: scryfallTurn())
-async function fetchAllPages(url, maxPages = 3) {
+// a Scryfall search, page after page; `queued`: each request waits its turn (scryfallTurn())
+async function fetchAllPages(url, maxPages = 3, queued = false) {
   let out = [], next = url, pages = 0;
   while (next && pages < maxPages) {
-    await scryfallTurn();
+    if (queued) await scryfallTurn();
     const res = await fetch(next, { headers: { 'Accept': 'application/json' } });
     if (!res.ok) break;
     const data = await res.json();
     out = out.concat(data.data || []);
     next = data.has_more ? data.next_page : null;
     pages++;
+    if (next && !queued) await sleep(100);
   }
   return out;
 }
@@ -6642,15 +6643,16 @@ function printsSearchUrl(card, extra) {
 
 // Every printing of a card, one entry per set and number: { en, ja, other } (the default search
 // and the Japanese one), the Japanese printing knowing its English one (_enCard, _enPrices).
-// For the card page's printings and the deck price page's art picker; remembered for the visit.
+// For the card page's printings and the deck price page's art picker (`queued`: its requests wait
+// their turn in the Scryfall queue); remembered for the visit.
 const PRINT_ENTRIES = new Map();   // oracle id -> Promise of the entries
-function printEntries(card) {
+function printEntries(card, queued = false) {
   const key = card.oracle_id;
   if (!PRINT_ENTRIES.has(key)) {
     const job = (async () => {
       const [defaultPrints, jaPrints] = await Promise.all([
-        fetchAllPages(printsSearchUrl(card)),
-        fetchAllPages(printsSearchUrl(card, 'lang:ja')).catch(() => []),
+        fetchAllPages(printsSearchUrl(card), 3, queued),
+        fetchAllPages(printsSearchUrl(card, 'lang:ja'), 3, queued).catch(() => []),
       ]);
       const byKey = new Map();
       defaultPrints.forEach(p => byKey.set(`${p.set}|${p.collector_number}`, { en: p.lang === 'en' ? p : null, other: p.lang === 'en' ? null : p }));
@@ -11133,7 +11135,7 @@ async function loadPrintCards(lines) {
       const chunk = need.slice(i, i + 25);
       const q = `lang:ja (${chunk.map(p => `(e:${p.s} cn:"${p.cn.replace(/"/g, '')}")`).join(' or ')})`;
       try {
-        const list = await fetchAllPages(`https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints' })}`, 2);
+        const list = await fetchAllPages(`https://api.scryfall.com/cards/search?${new URLSearchParams({ q, unique: 'prints' })}`, 2, true);
         list.forEach(c => got.set(printKey(c.set, c.collector_number), c));
       } catch (err) { /* the English printings below */ }
     }
@@ -11545,7 +11547,7 @@ async function openArtPicker(part, name) {
   drawArtPicker();
   document.querySelector('#artPicker .wt-close').focus();
   try {
-    const entries = await printEntries({ oracle_id: row.oracle_id });
+    const entries = await printEntries({ oracle_id: row.oracle_id }, true);
     if (token !== artState.token) return;
     artState.items = artItems(entries);
     artState.failed = !artState.items.length;

@@ -254,7 +254,7 @@ passed to `deckGroupsHtml()`; owner's request 2026-10-17). The list view stays a
 - **The art button** opens `#artPicker` over a dimmed page (`#artPickerBg`; on phones a sheet from
   the bottom, three across): every paper printing of the card, newest first, as the card page
   lists them (`printEntries()`: the default search and the Japanese one, shared and kept for the
-  visit; digital-only printings left out). Each shows its picture (the Japanese printing in
+  visit, here in the request queue, `scryfallTurn()`; digital-only printings left out). Each shows its picture (the Japanese printing in
   Japanese, the English picture when the Japanese one has no real scan), set, number, rarity,
   treatments, 日本語版 and the English printing's price; the one shown now is marked 選択中.
   `openArtPicker()`, `drawArtPicker()`, `closeArtPicker()` (×, Esc, a click beside it, Back).
