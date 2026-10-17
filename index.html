@@ -1314,7 +1314,7 @@
     #importBody .deck-title { font-size: 19px; }
     #importText { font-size: 16px; height: 220px; }
   }
-  /* want list: the star on cards, the top bar's list button, the list page */
+  /* want list: the star on cards, the top bar's button, the tray */
   .card-thumb-wrap { position: relative; }
   .want-tog { position: absolute; top: 6px; right: 6px; z-index: 2; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
@@ -1327,9 +1327,9 @@
   .text-row .want-tog { position: static; flex: none; align-self: flex-start; background: var(--surface-2); color: var(--text-2); box-shadow: none; border: 1px solid var(--line); }
   .text-row .want-tog[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .want-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 30px; padding: 0 10px; border: 1px solid var(--line);
-    border-radius: 999px; background: var(--field); color: var(--text); text-decoration: none; font-size: 12px; white-space: nowrap; }
+    border-radius: 999px; background: var(--field); color: var(--text); text-decoration: none; font: inherit; font-size: 12px; white-space: nowrap; cursor: pointer; }
   .want-btn svg { width: 16px; height: 16px; flex: none; }
-  .want-btn:hover, .want-btn[aria-current="page"] { border-color: var(--accent); color: var(--accent); }
+  .want-btn:hover, .want-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
   .want-btn .want-n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800;
     display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
   .want-btn .want-n[hidden] { display: none; }
@@ -1350,31 +1350,6 @@
     background: var(--text); color: var(--field); font-size: 13.5px; box-shadow: var(--shadow); }
   .want-toast[hidden] { display: none; }
   .want-toast button, .want-toast a { flex: none; border: 0; background: none; color: inherit; font: inherit; font-weight: 800; text-decoration: underline; cursor: pointer; padding: 6px 4px; }
-  #wantBody .deck-title { font-size: 27px; }
-  .want-list { list-style: none; margin: 14px 0 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
-  .wl-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto auto; gap: 6px 14px; align-items: center; padding: 10px 14px; }
-  .wl-row + .wl-row { border-top: 1px solid var(--line); }
-  .wl-pic { width: 46px; aspect-ratio: 488 / 680; border-radius: 3px; overflow: hidden; background: var(--surface-2); display: block; }
-  .wl-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .wl-name { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .wl-name a.wl-title { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 700; font-size: 15.5px; line-height: 1.35; color: var(--text); text-decoration: none; overflow-wrap: anywhere; }
-  .wl-name a.wl-title:hover { color: var(--accent); }
-  .wl-sub { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
-  .wl-print { font-size: 11.5px; color: var(--muted); }
-  .wl-prices { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .wl-prices b { color: var(--text); font-size: 13.5px; }
-  .wl-prices .wl-cheaper { color: var(--ok); font-weight: 700; }
-  .want-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px 14px; margin-top: 14px; }
-  .wl-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .wl-card-pic { display: block; text-decoration: none; color: inherit; }
-  .wl-card-pic:hover .dc-pic { box-shadow: 0 0 0 2px var(--accent); }
-  .wl-card .dc-pic img { position: relative; z-index: 1; }
-  .wl-card .dc-name { font-size: 13px; margin-top: 2px; }
-  .wl-card .wl-title { color: var(--text); text-decoration: none; font-family: inherit; font-size: inherit; }
-  .wl-card .wl-title:hover { color: var(--accent); }
-  .wl-card .wl-prices { flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 0 8px; }
-  .wl-card .wl-prices b { font-size: 12.5px; }
-  .wl-card .want-step { margin-top: auto; width: 100%; justify-content: space-between; }
   /* the total, the リスト/画像 switch, Hareruya and export: one bar that stays in view while scrolling */
   .want-bar { position: sticky; top: var(--stick-top, 0px); z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
     gap: 8px 12px; margin: 8px -6px 0; padding: 8px 6px; background: var(--page); border-bottom: 1px solid var(--line); }
@@ -1382,11 +1357,62 @@
   .want-bar .dcst { flex-direction: row; align-items: center; gap: 2px 8px; min-height: 34px; padding: 3px 10px; white-space: nowrap; }
   .want-bar .deck-tools { margin-left: auto; }
   .want-bar .view-toggle { height: 34px; }
-  .want-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; }
-  .want-foot .adv-btn { cursor: pointer; text-decoration: none; min-height: 36px; }
-  .want-foot .want-clear[data-armed="1"] { border-color: var(--bad); color: var(--bad); }
-  .want-empty { max-width: 640px; }
-  .want-empty .adv-btn { text-decoration: none; }
+  .want-bar .deck-cost { margin: 0; }
+  /* the tray: the top bar's ☆ opens the list from the right, over the page (like MTGGoldfish's card tray) */
+  .want-tray-bg { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, 0.45); }
+  .want-tray-bg[hidden], .want-tray[hidden] { display: none; }
+  .want-tray { position: fixed; top: 0; right: 0; bottom: 0; z-index: 61; width: min(420px, 100vw); display: flex; flex-direction: column;
+    background: var(--page); color: var(--text); border-left: 1px solid var(--line); box-shadow: var(--shadow); }
+  html.tray-open { overflow: hidden; }
+  .wt-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px 4px; }
+  .wt-h { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 18px; font-weight: 800; }
+  .wt-h svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
+  .wt-h svg path { fill: currentColor; }
+  .wt-close { flex: none; width: 32px; height: 32px; padding: 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--text);
+    font: inherit; font-size: 20px; line-height: 1; cursor: pointer; }
+  .wt-close:hover, .wt-close:focus-visible { border-color: var(--accent); color: var(--accent); }
+  .wt-sub { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 34px; padding: 4px 16px 12px; border-bottom: 1px solid var(--line);
+    font-size: 13px; color: var(--muted); }
+  .wt-sub b { color: var(--text); }
+  .wt-sub .view-toggle { height: 30px; }
+  .wt-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 10px 16px 14px; }
+  .wt-list { list-style: none; margin: 0; padding: 0; }
+  .wt-row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto auto; align-items: center; gap: 4px 10px; padding: 8px 0; }
+  .wt-row + .wt-row { border-top: 1px solid var(--line); }
+  html[data-lite="1"] .wt-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+  html[data-lite="1"] .wt-pic { display: none; }
+  .wt-pic { width: 36px; aspect-ratio: 488 / 680; border-radius: 3px; overflow: hidden; background: var(--surface-2); display: block; }
+  .wt-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .wt-name { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .wt-title { color: var(--text); font-weight: 700; font-size: 13.5px; line-height: 1.35; text-decoration: none; overflow-wrap: anywhere; }
+  a.wt-title:hover { color: var(--accent); }
+  .wt-en, .wt-yen { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+  .wt-yen { font-variant-numeric: tabular-nums; }
+  .want-tray .want-step button { width: 30px; height: 30px; font-size: 16px; }
+  .want-tray .want-step .want-c { min-width: 34px; font-size: 13px; }
+  .want-trash { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid transparent;
+    border-radius: 8px; background: none; color: var(--muted); cursor: pointer; }
+  .want-trash svg { width: 17px; height: 17px; }
+  .want-trash:hover, .want-trash:focus-visible { border-color: var(--bad); color: var(--bad); }
+  .wt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+  .wt-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .wt-card-pic { display: block; text-decoration: none; color: inherit; }
+  .wt-card-pic:hover .dc-pic { box-shadow: 0 0 0 2px var(--accent); }
+  .wt-card .dc-pic img { position: relative; z-index: 1; }
+  .wt-card-act { display: flex; align-items: center; gap: 2px; }
+  .wt-card-act .want-step { flex: 1; min-width: 0; justify-content: space-between; }
+  .wt-empty { padding: 36px 8px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.7; }
+  .wt-empty-h { margin: 0 0 6px; color: var(--text); font-size: 15px; font-weight: 700; }
+  .wt-miss { margin: 12px 0 0; font-size: 12.5px; }
+  .wt-miss a { color: var(--accent); }
+  .wt-foot { display: flex; flex-direction: column; gap: 8px; padding: 10px 16px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--surface); }
+  .wt-foot-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 26px; }
+  .wt-clear { border: 0; background: none; color: var(--bad); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; padding: 4px 0; }
+  .wt-clear[data-armed="1"] { text-decoration: underline; }
+  .wt-go { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 8px; background: var(--accent); color: var(--accent-ink);
+    font-size: 14.5px; font-weight: 800; text-decoration: none; }
+  .wt-go:hover { filter: brightness(1.06); }
+  .wt-buy { display: flex; align-items: center; justify-content: center; min-height: 40px; text-decoration: none; }
   .deck-export-menu a[role="menuitem"] { display: block; text-align: left; padding: 9px 10px; border-radius: 6px; color: var(--text); font-size: 13px; text-decoration: none; }
   .deck-export-menu a[role="menuitem"]:hover, .deck-export-menu a[role="menuitem"]:focus-visible { background: var(--surface-2); color: var(--accent); }
   .deck-export-h { margin: 8px 10px 2px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 11px; font-weight: 700; color: var(--muted); }
@@ -1396,12 +1422,10 @@
     .want-btn { height: 36px; padding: 0 9px; }
     html[data-home="true"] .want-tog { width: 26px; height: 26px; top: 4px; right: 4px; }
     html[data-home="true"] .want-tog svg { width: 15px; height: 15px; }
-    #wantBody .deck-title { font-size: 21px; }
-    .wl-row { grid-template-columns: 40px minmax(0, 1fr) auto; padding: 10px 12px; gap: 6px 10px; }
-    .wl-pic { width: 40px; }
-    .wl-prices { grid-column: 2; grid-row: 2; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 2px 10px; }
-    .wl-row .want-step { grid-column: 3; grid-row: 1 / span 2; }
-    .want-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
+    /* the price bar: the price box gives way (its note goes under the price) before anything leaves the screen */
+    .want-bar-l { flex: 1 1 auto; }
+    .want-bar .deck-cost { flex: 1 1 0; min-width: 0; }
+    .want-bar .dcst { flex-wrap: wrap; white-space: normal; min-width: 0; }
     /* the card page's narrow picture column: the language buttons are 26px tall there */
     .cp-want { --want-h: 26px; }
     .cp-want .want-tog svg { width: 15px; height: 15px; }
@@ -1794,7 +1818,7 @@
       <button type="button" class="top-tab" id="tabPrices" role="tab" aria-selected="false" data-i18n="tab.prices">価格</button>
     </div>
     <div class="top-controls">
-      <a class="want-btn" id="wantBtn" href="?view=want" title="ウォントリスト" data-i18n-title="want.title" aria-label="ウォントリスト" data-i18n-aria="want.title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.03.98 5.69L12 16.67l-5.1 2.68.98-5.69L3.75 9.63l5.7-.83z"/></svg><span class="want-l" data-i18n="want.short">ウォント</span><span class="want-n" id="wantN" hidden></span></a>
+      <button type="button" class="want-btn" id="wantBtn" aria-expanded="false" aria-controls="wantTray" title="ウォントリスト" data-i18n-title="want.title" aria-label="ウォントリスト" data-i18n-aria="want.title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.03.98 5.69L12 16.67l-5.1 2.68.98-5.69L3.75 9.63l5.7-.83z"/></svg><span class="want-l" data-i18n="want.short">ウォント</span><span class="want-n" id="wantN" hidden></span></button>
       <button type="button" class="lang-btn" id="langBtn" lang="en" aria-label="Switch to English">English</button>
       <button type="button" class="menu-btn" id="menuBtn" aria-label="メニュー" data-i18n-aria="menu.aria" aria-expanded="false" aria-controls="themeSwitch">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -2060,9 +2084,9 @@
 <div id="importView" class="wrap" style="display:none;">
   <div class="imp-layout">
     <form class="imp-form" id="importForm">
-      <h1 class="imp-title" data-i18n="imp.title">デッキの価格を調べる</h1>
-      <p class="imp-lead" data-i18n="imp.lead">デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。</p>
-      <label class="imp-label" for="importText" data-i18n="imp.label">デッキリスト</label>
+      <h1 class="imp-title" data-i18n="imp.title">ウォントリスト・デッキの価格</h1>
+      <p class="imp-lead" data-i18n="imp.lead">☆を押したカードはこのリストに入ります。デッキリストを貼り付けても読めます（MTGアリーナ・MTGOのリスト、「4 稲妻」のように打った行、日本語名・英語名どちらでも）。それぞれのカードのいちばん安い版でそろえた金額を円で出します。</p>
+      <label class="imp-label" for="importText" data-i18n="imp.label">リスト</label>
       <textarea id="importText" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="4 稲妻&#10;4 Ragavan, Nimble Pilferer&#10;20 山&#10;&#10;サイドボード&#10;2 Pyroblast" data-i18n-ph="imp.ph"></textarea>
       <div class="imp-actions">
         <button type="button" class="adv-btn" id="importClear" data-i18n="imp.clear">消す</button>
@@ -2073,9 +2097,6 @@
   </div>
 </div>
 
-<div id="wantView" class="wrap" style="display:none;">
-  <div id="wantBody"></div>
-</div>
 
 <div id="pricesView" class="wrap" style="display:none;">
   <div class="mv-top">
@@ -2100,6 +2121,8 @@
 </div>
 
 <div class="want-toast" id="wantToast" role="status" aria-live="polite" hidden></div>
+<div class="want-tray-bg" id="wantTrayBg" hidden></div>
+<aside class="want-tray" id="wantTray" role="dialog" aria-labelledby="wantTrayH" hidden></aside>
 
 <footer class="attribution">
   <div class="attribution-inner">
@@ -2348,11 +2371,10 @@ const STR = {
   'deck.export.file': ['MTGO用ファイル（.txt）を保存', 'Save a Magic Online file (.txt)'],
   'deck.export.done': ['コピーしました', 'Copied'],
   'deck.export.note': ['カード名は英語です。両面カードや出来事のカードは表の面の名前、分割カードと部屋は「A // B」で書き出します。', 'Card names are in English: double-faced and adventure cards by their front face, split cards and Rooms as “A // B”.'],
-  'title.import': ['デッキの価格を調べる — 悪知恵', 'Price a deck list — 悪知恵'],
-  'imp.title': ['デッキの価格を調べる', 'Price a deck list'],
-  'imp.lead': ['デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。',
-    'Paste a deck list to see what it costs in yen with each card’s cheapest printing. Lists from MTG Arena or Magic Online work, and so do typed lines like “4 Lightning Bolt”, with English or Japanese names.'],
-  'imp.label': ['デッキリスト', 'Deck list'],
+  'title.import': ['ウォントリスト・デッキの価格 — 悪知恵', 'Want list & deck prices — 悪知恵'],
+  'imp.title': ['ウォントリスト・デッキの価格', 'Want list & deck prices'],
+  'imp.lead': ['☆を押したカードはこのリストに入ります。デッキリストを貼り付けても読めます（MTGアリーナ・MTGOのリスト、「4 稲妻」のように打った行、日本語名・英語名どちらでも）。それぞれのカードのいちばん安い版でそろえた金額を円で出します。', 'Cards you ☆ go into this list, and you can paste a deck list too (MTG Arena or Magic Online lists, typed “4 Lightning Bolt” lines, Japanese or English names). It shows what the cards cost in yen in their cheapest printings.'],
+  'imp.label': ['リスト', 'List'],
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
@@ -2369,7 +2391,8 @@ const STR = {
   'imp.empty.mtgo': ['MTGOや海外のデッキサイトのテキスト（空行のあとがサイドボード、SB: の行も）', 'Magic Online and deck-site text (after a blank line comes the sideboard; SB: lines too)'],
   'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。セット記号や (M10) 146 は無視します', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. Set codes like (M10) 146 are ignored'],
   'imp.sample': ['例を入れてみる', 'Try an example'],
-  'imp.untitled': ['貼り付けたデッキ', 'Your deck'],
+  'imp.untitled': ['ウォントリスト', 'Want list'],
+  'imp.replaced': ['リストを入れ替えました', 'The list was replaced'],
   'imp.f.main': ['メイン {n}枚', 'Main deck {n}'],
   'imp.f.side': ['サイドボード {n}枚', 'Sideboard {n}'],
   'imp.f.commander': ['統率者 {n}枚', 'Commander {n}'],
@@ -2383,7 +2406,6 @@ const STR = {
   'imp.share': ['このリストのリンクをコピー', 'Copy a link to this list'],
   'want.title': ['ウォントリスト', 'Want list'],
   'want.short': ['ウォント', 'Want list'],
-  'title.want': ['ウォントリスト — 悪知恵', 'Want list — 悪知恵'],
   'want.add': ['ウォントリストに追加', 'Add to want list'],
   'want.remove': ['ウォントリストから外す', 'Remove from want list'],
   'want.added': ['ウォントリストに追加しました', 'Added to your want list'],
@@ -2398,28 +2420,22 @@ const STR = {
   'want.f.cards': ['{n}枚', '{n} cards'],
   'want.f.cards.one': ['{n}枚', '1 card'],
   'want.f.kinds': ['{n}種類', '{n} different'],
-  'want.cost.picked': ['選んだ版で', 'Printings you picked'],
-  'want.cost.picked.sub': ['リストに入れた版のままそろえた場合', 'If you buy the printings in your list'],
-  'want.p.this': ['この版 {y}', 'This printing {y}'],
   'want.p.cheap': ['最安 {y}', 'Cheapest {y}'],
-  'want.p.none': ['価格なし', 'No price'],
-  'want.p.basic': ['基本土地', 'Basic land'],
-  'want.ja': ['日本語版', 'Japanese'],
-  'want.empty.h': ['ウォントリストはまだ空です', 'Your want list is empty'],
-  'want.empty.body': ['カード検索の結果やカードのページで ☆ を押すと、そのカードがここに集まります。集めたリストは、MTGアリーナ・MTGO・Moxfield・Archidekt に入れたり、晴れる屋でまとめて探したり、デッキの価格ページで計算したりできます。リストはこのブラウザにだけ保存されます。', 'Tap ☆ on a search result or a card page and the card is gathered here. You can then take the list to MTG Arena, Magic Online, Moxfield or Archidekt, look for all of it at Hareruya, or price it on the deck price page. The list is kept only in this browser.'],
-  'want.empty.go': ['カードを探す', 'Find cards'],
   'want.clear': ['全部消す', 'Clear the list'],
   'want.clear.sure': ['もう一度押すと全部消えます', 'Tap again to clear it'],
-  'want.import': ['デッキの価格ページで開く', 'Open on the deck price page'],
-  'want.import.title': ['このリストをデッキの価格ページに入れます（そこに貼り付けてあったリストと入れ替わります）。サイドボードを分けたり、テキストで直したりできます。', 'Puts this list on the deck price page (in place of the list pasted there), where you can split off a sideboard or edit it as text.'],
   'want.export.print': ['版つきでコピー（Moxfield・Archidekt など）', 'Copy with printings (Moxfield, Archidekt…)'],
+  'want.note.print': ['「版つき」はセット記号と番号がある行にそれもつけるので、Moxfield や Archidekt でその版のまま読み込めます。', '“With printings” adds the set code and number where a line has them, so Moxfield and Archidekt load those printings.'],
+  'tray.close': ['閉じる', 'Close'],
+  'tray.go': ['価格を見る・書き出す', 'See prices and export'],
+  'tray.empty': ['☆を押したカードがここに入ります', 'Cards you ☆ show up here'],
+  'tray.empty.body': ['カード検索の結果やカードのページで ☆ を押してください。デッキリストを貼り付けるなら「価格を見る・書き出す」から。', 'Tap ☆ on a search result or a card page. To paste a deck list, use “See prices and export”.'],
+  'tray.missing': ['見つからないカード {n}枚（価格のページで直せます）', '{n} cards not found (fix them on the price page)'],
+  'tray.missing.one': ['見つからないカード {n}枚（価格のページで直せます）', '1 card not found (fix it on the price page)'],
   'want.sites': ['デッキサイトに入れる', 'Add to a deck site'],
   'want.site.moxfield': ['Moxfield（ログインが必要）', 'Moxfield (sign-in needed)'],
   'want.site.archidekt': ['Archidekt（ログインなしで試せます）', 'Archidekt (no sign-in needed)'],
   'want.site.title': ['リストを版つきでコピーして {site} を開きます。開いたページの「Import」に貼り付けてください。', 'Copies the list with printings and opens {site}. Paste it into Import there.'],
   'want.site.done': ['リストをコピーしました。開いた {site} のページで「Import」を選んで貼り付けてください。', 'The list is copied. On the {site} page that opened, choose Import and paste it.'],
-  'want.note': ['カード名は英語で書き出します（両面カードや出来事のカードは表の面、分割カードは「A // B」）。「版つき」はセット記号と番号もつけるので、Moxfield や Archidekt でリストに入れた版のまま読み込めます。', 'Card names are in English (double-faced and adventure cards by their front face, split cards as “A // B”). “With printings” adds the set code and number, so Moxfield and Archidekt load the printings in your list.'],
-  'want.price.note': ['金額は目安です：米国の TCGplayer と欧州の Cardmarket の安いほうを今日の為替レートで円にしました。「この版」はリストに入れた版（非フォイル。なければフォイル）、「最安」はそのカードのいちばん安い版の価格で、この版より安いときに出します。基本土地は含みません。日本のショップの価格とは異なります。', 'Prices are a guide: the cheaper of TCGplayer (US) and Cardmarket (EU), in yen at today’s rate. “This printing” is the printing in your list (non-foil, or foil when there is no non-foil); “cheapest” is the card’s cheapest printing, shown when it costs less. Basic lands are left out. Japanese shops’ prices differ.'],
   'app.install': ['アプリとして使う（ホーム画面に追加）', 'Use as an app (add to home screen)'],
   'app.ios': ['iPhone・iPad：Safariの共有ボタン（□↑）から「ホーム画面に追加」を選んでください。', 'iPhone / iPad: in Safari, tap Share (□↑) and choose “Add to Home Screen”.'],
   'sort.cmc_asc': ['マナ総量が低い順', 'Mana value: low to high'],
@@ -6753,9 +6769,6 @@ function showView(name) {
   document.getElementById('pricesView').style.display = name === 'prices' ? '' : 'none';
   document.getElementById('deckView').style.display = name === 'deck' ? '' : 'none';
   document.getElementById('importView').style.display = name === 'import' ? '' : 'none';
-  document.getElementById('wantView').style.display = name === 'want' ? '' : 'none';
-  if (name === 'want') document.getElementById('wantBtn').setAttribute('aria-current', 'page');
-  else document.getElementById('wantBtn').removeAttribute('aria-current');
   if (name !== 'search') setFilterDrawer(false);
   if (name !== 'deck' && name !== 'import') hideDeckPeek();
   if (name !== 'card') {
@@ -7026,8 +7039,8 @@ function routeFromUrl() {
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
   if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '', market: p.get('market') || '' };
-  if (p.get('view') === 'import') return { view: 'import', list: p.get('list') || '' };
-  if (p.get('view') === 'want') return { view: 'want' };
+  // ?view=want was the want list's own page (staging only): it is this page now
+  if (p.get('view') === 'import' || p.get('view') === 'want') return { view: 'import', list: p.get('list') || '' };
   if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1', list: Math.max(0, parseInt(p.get('list') || '0', 10) || 0) };
   return { view: 'search' };
 }
@@ -7075,9 +7088,6 @@ function applyRoute(route) {
   } else if (route.view === 'import') {
     showView('import');
     renderImport(route);
-  } else if (route.view === 'want') {
-    showView('want');
-    renderWant();
   } else if (route.view === 'prices') {
     showView('prices');
     if (['1', '7', '30'].includes(route.win)) moverState.win = route.win;
@@ -8288,9 +8298,6 @@ function setLang(lang, save) {
   } else if (route.view === 'import') {
     document.title = t('title.import');
     priceImport();   // names, pictures and set names in the other language
-  } else if (route.view === 'want') {
-    document.title = t('title.want');
-    drawWant();
   } else if (route.view === 'prices') {
     renderMovers();
   } else {
@@ -10869,7 +10876,7 @@ function cleanImportName(s) {
     .replace(/\s*\/\/?\s*/g, ' // ')                                          // Fire/Ice, Fire // Ice
     .trim();
 }
-// text -> { title, lines: [{ i (line number), count, name, part }] }
+// text -> { title, lines: [{ i (line number), count, name, part, s (set), cn (collector number) }] }
 function parseDeckText(text) {
   const out = { title: '', lines: [] };
   let part = 'main', named = false, typeHeads = false, cards = false, gap = false;
@@ -10898,10 +10905,12 @@ function parseDeckText(text) {
     let count = 1, m;
     if ((m = /^(\d{1,3})\s*(?:[xX×*](?=\s)|枚)?\s*(\S.*)$/.exec(s))) { count = Number(m[1]); s = m[2]; }
     else if ((m = /^(.+?)\s*[xX×]\s*(\d{1,3})$/.exec(s))) { s = m[1]; count = Number(m[2]); }
+    // the printing, when the line names one: "(MH2) 138"
+    const pm = /\s\(([A-Za-z0-9]{2,8})\)\s+([A-Za-z0-9★†\-]+)(?:\s+\*[A-Za-z]+\*)?\s*$/.exec(s);
     const name = cleanImportName(s);
     if (!name || !count) return;
     cards = true;
-    out.lines.push({ i, count, name, part: to });
+    out.lines.push({ i, count, name, part: to, s: pm ? pm[1].toLowerCase() : '', cn: pm ? pm[2] : '' });
   });
   return out;
 }
@@ -10974,7 +10983,8 @@ function readImport(text) {
     const name = row ? exportName(row.name_en) : other;
     const list = parts[l.part] || parts.main;
     const got = list.find(x => x.name === name);
-    if (got) got.count += l.count; else list.push({ name, count: l.count, row });
+    if (got) { got.count += l.count; if (!got.s && l.s) { got.s = l.s; got.cn = l.cn; } }
+    else list.push({ name, count: l.count, row, s: l.s, cn: l.cn });
   });
   // MTG Arena writes the companion under Companion and again in the sideboard
   parts.companion.forEach(c => { if (!parts.side.some(x => x.name === c.name)) parts.side.push(c); });
@@ -10982,7 +10992,7 @@ function readImport(text) {
 }
 
 const importState = {
-  token: 0, result: null, tried: false, copied: null,
+  token: 0, result: null, tried: false, copied: null, note: null,
   pics: new Map(),     // LANG|name -> { row, card } with pictures
   view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })(),
 };
@@ -10990,20 +11000,24 @@ function loadImportText() { try { return localStorage.getItem(IMPORT_SAVE_KEY) |
 function saveImportText(text) {
   try { if (text.trim()) localStorage.setItem(IMPORT_SAVE_KEY, text.slice(0, 20000)); else localStorage.removeItem(IMPORT_SAVE_KEY); } catch (e) { /* private mode */ }
 }
+// the list itself: the box's text, which the ☆ buttons and the tray change too (setListText())
+let listText = loadImportText();
 function renderImport(route) {
   document.title = t('title.import');
   const ta = document.getElementById('importText');
   if (route.list) {
-    ta.value = route.list;
-    saveImportText(ta.value);
+    // a deck page's list or a shared link takes the place of the list, with undo
+    const before = listText;
+    setListText(route.list, 'route');
+    if (before.trim() && before !== listText) wantUndoToast(t('imp.replaced'), { before, after: listText });
     // the list is in the box (and kept) now: a reload shows what was edited, not the link's list again
     history.replaceState(history.state, '', '?view=import');
-  } else if (!ta.value.trim()) ta.value = loadImportText();
+  } else if (ta.value !== listText) ta.value = listText;
   priceImport();
 }
 async function priceImport() {
   const token = ++importState.token;
-  const text = document.getElementById('importText').value;
+  const text = listText;
   const body = document.getElementById('importBody');
   if (!text.trim()) { importState.result = null; body.innerHTML = importEmptyHtml(); return; }
   if (!LOCAL_DB) {
@@ -11049,7 +11063,8 @@ function importMissingHtml(missing) {
 }
 // the list as text: English names, as both games import them (Commander and Companion as Arena writes them)
 function importListText(res, kind) {
-  const line = x => `${x.count} ${x.name}`;
+  // "with printings" adds the set code and number where the list has them (Moxfield, Archidekt)
+  const line = x => `${x.count} ${x.name}` + (kind === 'print' && x.s && x.cn ? ` (${x.s.toUpperCase()}) ${x.cn}` : '');
   if (kind === 'arena') {
     return (res.commander.length ? ['Commander'].concat(res.commander.map(line), ['']) : []).concat(['Deck'], res.main.map(line),
       res.side.length ? ['', 'Sideboard'].concat(res.side.map(line)) : []).join('\n') + '\n';
@@ -11125,18 +11140,27 @@ function drawImport() {
         <button type="button" role="menuitem" data-iexport="arena">${t('deck.export.arena')}</button>
         <button type="button" role="menuitem" data-iexport="mtgo">${t('deck.export.mtgo')}</button>
         <button type="button" role="menuitem" data-iexport="file">${t('deck.export.file')}</button>
+        <button type="button" role="menuitem" data-iexport="print">${t('want.export.print')}</button>
         <button type="button" role="menuitem" data-iexport="link">${t('imp.share')}</button>
-        <p class="deck-export-note">${t('deck.export.note')}</p>
+        <p class="deck-export-h">${t('want.sites')}</p>
+        ${WANT_SITES.map(([name, url, key]) => `<a role="menuitem" href="${url}" target="_blank" rel="noopener" data-isite="${name}" title="${esc(t('want.site.title', { site: name }))}">${esc(t(key))} ↗</a>`).join('')}
+        <p class="deck-export-note">${t('deck.export.note')} ${t('want.note.print')}</p>
       </div></details>` : '';
+  const note = importState.note && Date.now() < importState.note.until ? `<p class="imp-buy-note" role="status">${esc(importState.note.text)}</p>` : '';
   let html = `<div class="deck-head">
       <div class="deck-title-row">
         <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t('imp.untitled'))}</span></h2>
-        <div class="deck-tools">${found ? `<a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-hareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>` : ''}${copy}${found ? toggle : ''}</div>
       </div>
       <p class="deck-meta">${facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>')}</p>
-      ${found ? deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound) : ''}
-      ${importState.bought && Date.now() < importState.bought ? `<p class="imp-buy-note" role="status">${esc(t('imp.hareruya.done'))}</p>` : ''}
+      ${note}
     </div>`;
+  // the price, リスト / 画像, Hareruya and export in one bar that stays in view (owner's request 2026-10-16)
+  if (found) {
+    html += `<div class="want-bar">
+      <div class="want-bar-l">${deckCostHtml(cmd.concat(main), side, cost.wc ? 'standard' : '', importState.tried, notFound)}${toggle}</div>
+      <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-hareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${copy}</div>
+    </div>`;
+  }
   html += importMissingHtml(res.missing);
   if (cmd.length) html += `<section class="deck-section"><h2>${t('imp.commander')}<span class="dg-n">${tn('deck.cards', total(cmd))}</span></h2>${deckGroupsHtml(cmd, view, false)}</section>`;
   if (main.length) html += `<section class="deck-section"><h2>${t('deck.main')}<span class="dg-n">${tn('deck.cards', total(main))}</span></h2>${deckGroupsHtml(main, view, true)}</section>`;
@@ -11152,44 +11176,44 @@ function drawImport() {
     if (btn) btn.textContent = t('deck.export.done');
   }
 }
+// a line under the title for a while (Hareruya, a deck site: where to paste the list)
+function importNote(text) {
+  importState.note = { text, until: Date.now() + 15000 };
+  setTimeout(drawImport, 0);   // after the tap, so the link still opens
+}
 // a few cards to show how it works: Japanese and English names, a sideboard
 const IMPORT_SAMPLE = ['デッキ', '4 稲妻', '4 Monastery Swiftspear', '4 ゴブリンの先達', '4 Lava Spike', '4 Rift Bolt', '4 批判家刺殺',
   '4 Eidolon of the Great Revel', '4 炎の印章', '4 Skullcrack', '4 Light Up the Stage', '4 Inspiring Vantage', '16 山', '',
   'サイドボード', '3 Smash to Smithereens', '2 Path to Exile'].join('\n');
 let importTimer = null;
 document.getElementById('importText').addEventListener('input', (e) => {
-  saveImportText(e.target.value);
+  setListText(e.target.value, 'box');
   clearTimeout(importTimer);
   importTimer = setTimeout(priceImport, 350);
 });
 document.getElementById('importForm').addEventListener('submit', (e) => e.preventDefault());
 document.getElementById('importClear').addEventListener('click', () => {
-  const ta = document.getElementById('importText');
-  ta.value = '';
-  saveImportText('');
+  const before = listText;
+  setListText('', 'box');
+  document.getElementById('importText').value = '';
   priceImport();
-  ta.focus();
+  document.getElementById('importText').focus();
+  if (before.trim()) wantUndoToast(t('want.cleared'), { before, after: listText });
 });
 document.getElementById('importBody').addEventListener('click', async (e) => {
   if (e.target.closest('#importSample')) {
-    const ta = document.getElementById('importText');
-    ta.value = IMPORT_SAMPLE;
-    saveImportText(ta.value);
-    priceImport();
+    setListText(IMPORT_SAMPLE);
     return;
   }
   const fix = e.target.closest('.imp-fix');
   if (fix) {
     // the line keeps its count; the name becomes the one picked
-    const ta = document.getElementById('importText');
-    const lines = ta.value.split(/\r?\n/);
+    const lines = listText.split(/\r?\n/);
     const i = Number(fix.dataset.line);
     if (lines[i] !== undefined) {
       const m = /^(\s*(?:SB:\s*)?\d{1,3}\s*(?:[xX×*](?=\s)|枚)?\s*)/i.exec(lines[i].normalize('NFKC'));
       lines[i] = (m ? m[1] : '1 ') + fix.dataset.name;
-      ta.value = lines.join('\n');
-      saveImportText(ta.value);
-      priceImport();
+      setListText(lines.join('\n'));
     }
     return;
   }
@@ -11197,9 +11221,15 @@ document.getElementById('importBody').addEventListener('click', async (e) => {
   if (buy && importState.result) {
     // the link opens Hareruya's page as usual; the list is on the clipboard to paste there
     // read the box again: the tap may come before the last change was priced
-    copyTextNow(hareruyaText(readImport(document.getElementById('importText').value)));
-    importState.bought = Date.now() + 15000;
-    setTimeout(drawImport, 0);   // after the tap, so the link still opens
+    copyTextNow(hareruyaText(readImport(listText)));
+    importNote(t('imp.hareruya.done'));
+    return;
+  }
+  const site = e.target.closest('[data-isite]');
+  if (site && importState.result) {
+    // Moxfield and Archidekt: the list with printings on the clipboard, their page opens as usual
+    copyTextNow(importListText(readImport(listText), 'print'));
+    importNote(t('want.site.done', { site: site.dataset.isite }));
     return;
   }
   const vb = e.target.closest('[data-iview]');
@@ -11227,7 +11257,7 @@ document.getElementById('importBody').addEventListener('click', async (e) => {
     setTimeout(() => {
       importState.copied = null;
       const btn = document.querySelector(`#importExport [data-iexport="${kind}"]`);
-      if (btn) btn.textContent = kind === 'link' ? t('imp.share') : t('deck.export.' + kind);
+      if (btn) btn.textContent = kind === 'link' ? t('imp.share') : kind === 'print' ? t('want.export.print') : t('deck.export.' + kind);
       const d = document.getElementById('importExport'); if (d) d.open = false;
     }, 1200);
     return;
@@ -11265,150 +11295,182 @@ document.addEventListener('click', (e) => {
   } else goTo('?view=import');
 });
 
-// ---- want list: cards to get, kept only in this browser ----------------------------------------
-// ?view=want. A ☆ on every search result (wantTogHtml() in cardTileHtml() and textRowHtml()) and a
-// button on the card page (wantCardHtml()) add a card. The list page (drawWant()) shows each card
-// with the printing it was added from, that printing's price and the card's cheapest price, and
-// takes the list elsewhere: MTG Arena / Magic Online text, text with set codes for Moxfield and
-// Archidekt (wantText()), Hareruya's buy-from-a-list page, or the deck price page.
-// Saved in localStorage (WANT_KEY) as
-// [{ o: oracle id, n: English name, c: copies, id: printing, s: set, cn: collector number, l: language }].
-const WANT_KEY = 'warujie-want';
-const WANT_MAX = 300, WANT_MAX_COPIES = 99;
+// ---- want list: the list on the deck price page, filled with ☆ from anywhere --------------------
+// One list (owner's request 2026-10-17): the text in the deck price page's box, listText, saved as
+// IMPORT_SAVE_KEY. A ☆ on a search result (wantTogHtml() in cardTileHtml() and textRowHtml()) or on
+// a card page (wantCardHtml()) adds a "1 Card Name (SET) 123" line to it, and pressed again takes
+// the card's lines out. The top bar's ☆ (#wantBtn) opens the tray (#wantTray, drawTray()): the
+// cards in the list with − n ＋ and a trash can, as rows or pictures, and the way to the deck
+// price page, which prices the same list and takes it elsewhere.
+const WANT_OLD_KEY = 'warujie-want';   // the separate list this replaced (staging only, 2026-10-16): moved into the text once
+const WANT_MAX_COPIES = 99;
 const STAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.03.98 5.69L12 16.67l-5.1 2.68.98-5.69L3.75 9.63l5.7-.83z"/></svg>';
+const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12.2A2 2 0 0 0 8.5 21h7a2 2 0 0 0 2-1.8l1-12.2M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></svg>';
 // deck sites that import pasted text (a link only; the list goes on the clipboard)
 const WANT_SITES = [
   ['Moxfield', 'https://moxfield.com/decks/personal', 'want.site.moxfield'],
   ['Archidekt', 'https://archidekt.com/sandbox', 'want.site.archidekt'],
 ];
-function loadWant() {
-  try {
-    const v = JSON.parse(localStorage.getItem(WANT_KEY) || '[]');
-    if (!Array.isArray(v)) return [];
-    return v.filter(x => x && typeof x.n === 'string' && x.n.trim()).slice(0, WANT_MAX).map(x => ({
-      o: String(x.o || ''), n: x.n, c: Math.min(WANT_MAX_COPIES, Math.max(1, Math.floor(Number(x.c)) || 1)),
-      id: String(x.id || ''), s: String(x.s || ''), cn: String(x.cn || ''), l: String(x.l || ''),
-    }));
-  } catch (e) { return []; }
+// the line a ☆ adds: English name, and the printing when it is known (Moxfield and Archidekt read it)
+function wantLineFor(e) {
+  return `1 ${exportName(e.n)}` + (e.s && e.cn ? ` (${e.s.toUpperCase()}) ${e.cn}` : '');
 }
-let wantList = loadWant();
-function saveWant() {
-  try { if (wantList.length) localStorage.setItem(WANT_KEY, JSON.stringify(wantList)); else localStorage.removeItem(WANT_KEY); } catch (e) { /* private mode: the list lasts for this visit */ }
-  refreshWant();
+// a new card goes after the last main-deck line, so it never lands in the sideboard
+function withLineAdded(text, line) {
+  if (!text.trim()) return line + '\n';
+  const lines = text.split(/\r?\n/);
+  const parsed = parseDeckText(text);
+  const mains = parsed.lines.filter(l => l.part === 'main');
+  if (mains.length) lines.splice(mains[mains.length - 1].i + 1, 0, line);
+  else if (parsed.lines.length) lines.unshift(line);
+  else { while (lines.length && !lines[lines.length - 1].trim()) lines.pop(); lines.push(line, ''); }
+  return lines.join('\n');
 }
-// one entry per card (oracle id), whichever printing it was added from
-const wantKeyOf = x => x.o || 'n:' + x.n;
-function wantFind(k) { return wantList.find(x => wantKeyOf(x) === k) || null; }
+// the same line with another count, written the way it was ("4 稲妻", "4x Bolt", "Bolt x4", "SB: 2 …")
+function lineWithCount(raw, n) {
+  const s = String(raw).normalize('NFKC');
+  let m = /^(\s*(?:SB:\s*)?)(\d{1,3})(\s*(?:[xX×*](?=\s)|枚)?\s*\S.*)$/i.exec(s);
+  if (m) return m[1] + n + m[3];
+  m = /^(.+?\s*[xX×]\s*)(\d{1,3})(\s*)$/.exec(s);
+  if (m) return m[1] + n + m[3];
+  m = /^(\s*SB:\s*)(.*)$/i.exec(s);
+  return m ? `${m[1]}${n} ${m[2]}` : `${n} ${s.trim()}`;
+}
+// the list as cards: the same card's lines added up, by oracle id (or English name)
+let wantMemo = null;
+function wantData() {
+  const key = `${LOCAL_DB ? 1 : 0}${cheapStore.data ? 1 : 0}|${listText}`;
+  if (wantMemo && wantMemo.key === key) return wantMemo;
+  const parsed = parseDeckText(listText);
+  const list = [], byKey = new Map(), byName = new Map();
+  let total = 0, missing = 0;
+  parsed.lines.forEach(l => {
+    total += l.count;
+    const row = importRow(l.name);
+    const name = row ? row.name_en : (IMPORT_BASICS[normJa(l.name)] || importCheapName(l.name));
+    if (!name) { missing += l.count; return; }
+    const k = (row && row.oracle_id) || 'n:' + nameKey(name);
+    let x = byKey.get(k);
+    if (!x) {
+      x = { k, name, row, count: 0, lines: [], s: '', cn: '' };
+      byKey.set(k, x); byName.set(nameKey(name), x); list.push(x);
+    }
+    x.count += l.count;
+    x.lines.push({ i: l.i, count: l.count });
+    if (!x.s && l.s) { x.s = l.s; x.cn = l.cn; }
+  });
+  wantMemo = { key, list, byKey, byName, total, missing };
+  return wantMemo;
+}
+// what a ☆ carries: the card's key, English name and printing
 function wantEntryOf(card) {
   if (!card) return null;
   const row = dbRowFor(card);
   const n = (row && row.name_en) || card.name || '';
   if (!n) return null;
-  return { o: oracleIdOf(card), n, c: 1, id: card.id || '', s: card.set || '', cn: card.collector_number || '', l: card.lang || '' };
+  return { k: oracleIdOf(card) || 'n:' + nameKey(n), n, s: card.set || '', cn: card.collector_number || '' };
 }
-// the card a button acts on, carried on the button itself (so it works on any page)
-function wantAttrs(e) { return ` data-want="${esc(wantKeyOf(e))}" data-wc="${esc(JSON.stringify(e))}"`; }
+function wantFindFor(e) {
+  const d = wantData();
+  return (e && (d.byKey.get(e.k) || d.byName.get(nameKey(e.n)))) || null;
+}
+// every change to the list: kept, the box on the deck price page, every ☆, the tray
+function setListText(text, from) {
+  text = String(text || '');
+  if (text === listText) return;
+  listText = text;
+  saveImportText(text);
+  const ta = document.getElementById('importText');
+  if (ta && from !== 'box' && ta.value !== text) ta.value = text;
+  refreshWant();
+  if (!from && routeFromUrl().view === 'import') priceImport();
+}
 function wantAdd(e) {
-  const got = wantFind(wantKeyOf(e));
-  if (got) got.c = Math.min(WANT_MAX_COPIES, got.c + 1);
-  else if (wantList.length >= WANT_MAX) return false;
-  else wantList.push(Object.assign({}, e, { c: 1 }));
-  saveWant();
-  return true;
+  if (parseDeckText(listText).lines.length >= IMPORT_MAX_LINES - 1) return null;
+  const before = listText;
+  setListText(withLineAdded(listText, wantLineFor(e)));
+  return { before, after: listText };
 }
-// a new count (0 takes the card out); returns what was there, for undo
-function wantSetCount(k, c) {
-  const i = wantList.findIndex(x => wantKeyOf(x) === k);
-  if (i < 0) return null;
-  const before = Object.assign({}, wantList[i]);
-  if (c <= 0) wantList.splice(i, 1); else wantList[i].c = Math.min(WANT_MAX_COPIES, c);
-  saveWant();
-  return { before, i };
+// a new count for a card (0 takes all its lines out): ＋ goes on its first line, − comes off its last
+function wantSetCount(x, c) {
+  const before = listText, lines = listText.split(/\r?\n/);
+  let diff = c - x.count;
+  if (c <= 0) x.lines.slice().sort((a, b) => b.i - a.i).forEach(l => lines.splice(l.i, 1));
+  else if (diff > 0) {
+    const l = x.lines[0];
+    lines[l.i] = lineWithCount(lines[l.i], Math.min(WANT_MAX_COPIES, l.count + diff));
+  } else {
+    for (const l of x.lines.slice().sort((a, b) => b.i - a.i)) {
+      if (!diff) break;
+      const take = Math.min(l.count, -diff);
+      diff += take;
+      if (l.count - take <= 0) lines.splice(l.i, 1); else lines[l.i] = lineWithCount(lines[l.i], l.count - take);
+    }
+  }
+  setListText(lines.join('\n'));
+  return { before, after: listText };
 }
-function wantPrintLabel(x) {
-  return [x.s ? x.s.toUpperCase() : '', x.cn ? '#' + x.cn : '', x.l === 'ja' ? t('want.ja') : ''].filter(Boolean).join(' ');
-}
-// "4 Card Name" lines in English: for MTG Arena (under "Deck"), Magic Online, or with the set
-// code and number "4 Card Name (MH3) 123", which Moxfield and Archidekt read as that printing
-function wantText(kind, list = wantList) {
-  const lines = list.map(x => `${x.c} ${exportName(x.n)}` + (kind === 'print' && x.s && x.cn ? ` (${x.s.toUpperCase()}) ${x.cn}` : ''));
-  return (kind === 'arena' ? ['Deck'].concat(lines) : lines).join('\n') + '\n';
-}
-// one copy of a printing in yen: the cheaper of the US and the European price (non-foil, else foil)
-function printingYen(card) {
-  if (!card || !(card.prices || card._enPrices)) return null;
-  const p = effectivePrices(card);
-  const pick = (a, b) => { const v = parseFloat(a); return v > 0 ? v : parseFloat(b) || 0; };
-  const usd = pick(p.usd, p.usd_foil || p.usd_etched), eur = pick(p.eur, p.eur_foil);
-  const opts = [];
-  if (usd && USD_JPY) opts.push(usd * USD_JPY);
-  if (eur && EUR_JPY) opts.push(eur * EUR_JPY);
-  return opts.length ? Math.min(...opts) : null;
+// undo puts the text back, unless the list changed again since
+function wantUndoToast(msg, snap) {
+  if (!snap) return;
+  wantToast(msg, { label: t('want.undo'), run: () => { if (listText === snap.after) setListText(snap.before); } });
 }
 
-// the ☆ on a search result
+// the ☆ on a search result and on the card page
 function wantTogHtml(card) {
   const e = wantEntryOf(card);
   if (!e) return '';
-  const on = !!wantFind(wantKeyOf(e)), label = esc(t(on ? 'want.remove' : 'want.add'));
-  return `<button type="button" class="want-tog"${wantAttrs(e)} aria-pressed="${on}" aria-label="${label}" title="${label}">${STAR_SVG}</button>`;
+  const on = !!wantFindFor(e), label = esc(t(on ? 'want.remove' : 'want.add'));
+  return `<button type="button" class="want-tog" data-wc="${esc(JSON.stringify(e))}" aria-pressed="${on}" aria-label="${label}" title="${label}">${STAR_SVG}</button>`;
 }
-function wantStepHtml(x) {
-  const attrs = ` data-want="${esc(wantKeyOf(x))}"`;
-  return `<span class="want-step" role="group" aria-label="${esc(t('want.n.aria'))}">`
-    + `<button type="button" data-want-act="less"${attrs} aria-label="${esc(t(x.c > 1 ? 'want.less' : 'want.remove'))}" title="${esc(t(x.c > 1 ? 'want.less' : 'want.remove'))}">−</button>`
-    + `<span class="want-c">${esc(t('want.n', { n: x.c }))}</span>`
-    + `<button type="button" data-want-act="more"${attrs} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>`;
-}
-// the card page: the same ☆ as on search results, one row under the picture as tall as the
-// language buttons (filled while the card is in the list; how many copies is set on the list page)
+// the card page: the same ☆, one row under the picture as tall as the language buttons
 function wantCardHtml(card) {
   return wantTogHtml(card);
 }
-// after any change: the count in the top bar, every ☆ on the page, the card page, the list page
+function wantStepHtml(x) {
+  const attrs = ` data-want="${esc(x.k)}"`;
+  return `<span class="want-step" role="group" aria-label="${esc(t('want.n.aria'))}">`
+    + `<button type="button" data-want-act="less"${attrs} aria-label="${esc(t(x.count > 1 ? 'want.less' : 'want.remove'))}" title="${esc(t(x.count > 1 ? 'want.less' : 'want.remove'))}">−</button>`
+    + `<span class="want-c">${esc(t('want.n', { n: x.count }))}</span>`
+    + `<button type="button" data-want-act="more"${attrs} aria-label="${esc(t('want.more'))}" title="${esc(t('want.more'))}">＋</button></span>`;
+}
+function wantTrashHtml(x) {
+  return `<button type="button" class="want-trash" data-want-act="remove" data-want="${esc(x.k)}" aria-label="${esc(t('want.remove'))}" title="${esc(t('want.remove'))}">${TRASH_SVG}</button>`;
+}
+// after any change: the count in the top bar, every ☆ on the page, the tray
 function refreshWant() {
-  const total = wantList.reduce((s, x) => s + x.c, 0);
+  const total = wantData().total;
   const n = document.getElementById('wantN');
   n.hidden = !total;
   n.textContent = total > 999 ? '999+' : String(total);
   document.getElementById('wantBtn').dataset.n = String(total);
   document.querySelectorAll('.want-tog').forEach(b => {
-    const on = !!wantFind(b.dataset.want);
+    let e = null;
+    try { e = JSON.parse(b.dataset.wc || 'null'); } catch (err) { e = null; }
+    const on = !!wantFindFor(e);
     if (b.getAttribute('aria-pressed') === String(on)) return;
     const label = t(on ? 'want.remove' : 'want.add');
     b.setAttribute('aria-pressed', String(on));
     b.setAttribute('aria-label', label);
     b.title = label;
   });
-  const cp = document.getElementById('cpWant');
-  if (cp && shownCard) cp.innerHTML = wantCardHtml(shownCard);
-  if (routeFromUrl().view === 'want') drawWant();
+  if (trayState.open) drawTray();
 }
 
 // a short note at the bottom of the screen, with "see the list" or "undo"
 let wantToastTimer = null;
 function wantToast(msg, action) {
   const el = document.getElementById('wantToast');
-  el.innerHTML = `<span>${esc(msg)}</span>` + (!action ? '' : action.href
-    ? `<a href="${esc(action.href)}">${esc(action.label)}</a>` : `<button type="button">${esc(action.label)}</button>`);
+  el.innerHTML = `<span>${esc(msg)}</span>` + (action ? `<button type="button">${esc(action.label)}</button>` : '');
   el.hidden = false;
-  const b = el.querySelector('button, a');
+  const b = el.querySelector('button');
   if (b) b.addEventListener('click', (ev) => {
-    if (action.href && (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey)) return;
     ev.preventDefault();
     el.hidden = true;
-    if (action.href) goTo(action.href); else action.run();
+    action.run();
   });
   clearTimeout(wantToastTimer);
   wantToastTimer = setTimeout(() => { el.hidden = true; }, 5000);
-}
-function wantRemoved(k, r) {
-  if (!r) return;
-  wantToast(t('want.removed'), { label: t('want.undo'), run: () => {
-    if (wantFind(k)) return;
-    wantList.splice(Math.min(r.i, wantList.length), 0, r.before);
-    saveWant();
-  } });
 }
 // every want button, wherever it is: first, so a ☆ inside a result's link doesn't open the card
 document.addEventListener('click', (e) => {
@@ -11416,267 +11478,189 @@ document.addEventListener('click', (e) => {
   if (!b) return;
   e.preventDefault();
   e.stopPropagation();
-  const k = b.dataset.want;
-  const x = wantFind(k);
-  let entry = null;
-  try { entry = JSON.parse(b.dataset.wc || 'null'); } catch (err) { entry = null; }
-  const act = b.classList.contains('want-tog') ? (x ? 'remove' : 'add') : b.dataset.wantAct;
-  if (act === 'add' && entry) {
-    if (wantAdd(entry)) wantToast(t('want.added'), routeFromUrl().view === 'want' ? null : { label: t('want.see'), href: '?view=want' });
-  } else if (act === 'more' && x) {
-    wantSetCount(k, x.c + 1);
-  } else if ((act === 'less' || act === 'remove') && x) {
-    const c = act === 'remove' ? 0 : x.c - 1;
-    const r = wantSetCount(k, c);
-    if (c <= 0) wantRemoved(k, r);
+  if (b.classList.contains('want-tog')) {
+    let entry = null;
+    try { entry = JSON.parse(b.dataset.wc || 'null'); } catch (err) { entry = null; }
+    if (!entry) return;
+    const x = wantFindFor(entry);
+    if (x) wantUndoToast(t('want.removed'), wantSetCount(x, 0));
+    else if (wantAdd(entry)) wantToast(t('want.added'), trayState.open ? null : { label: t('want.see'), run: () => openTray() });
+    return;
   }
+  const x = wantData().byKey.get(b.dataset.want);
+  if (!x) return;
+  const act = b.dataset.wantAct;
+  if (act === 'more') wantSetCount(x, x.count + 1);
+  else if (act === 'less' && x.count > 1) wantSetCount(x, x.count - 1);
+  else wantUndoToast(t('want.removed'), wantSetCount(x, 0));
 }, true);
-// the top bar's button
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('#wantBtn');
-  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
-  e.preventDefault();
-  goTo('?view=want');
-});
 // the list changed in another tab
 window.addEventListener('storage', (e) => {
-  if (e.key !== WANT_KEY && e.key !== null) return;
-  wantList = loadWant();
-  refreshWant();
+  if (e.key !== IMPORT_SAVE_KEY && e.key !== null) return;
+  setListText(loadImportText());
 });
 
-// the list page
+// the tray: the top bar's ☆ opens it from the right, over the page
 const WANT_VIEW_KEY = 'warujie-want-view';
-const wantState = { token: 0, cards: new Map(), tried: false, printsTried: false, armed: 0, copied: null, note: null,
-  // list (rows) or pictures (cards with − n ＋ under each); remembered
+const trayState = { open: false, armed: 0,
+  // rows, or pictures with − n ＋ under each; remembered
   view: (() => { try { return localStorage.getItem(WANT_VIEW_KEY) === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })() };
-async function renderWant() {
-  const token = ++wantState.token;
-  document.title = t('title.want');
-  drawWant();
-  await dbReady;
-  if (token !== wantState.token) return;
-  drawWant();
-  await Promise.all([loadCheapest(), fxReady]);
-  wantState.tried = true;
-  if (token !== wantState.token) return;
-  drawWant();
-  await wantFetchPrintings();
-  wantState.printsTried = true;
-  if (token !== wantState.token) return;
-  drawWant();
+const trayPhone = window.matchMedia('(max-width: 820px)');
+function openTray() {
+  trayState.open = true;
+  const tray = document.getElementById('wantTray');
+  tray.hidden = false;
+  document.getElementById('wantTrayBg').hidden = false;
+  document.documentElement.classList.add('tray-open');
+  document.getElementById('wantBtn').setAttribute('aria-expanded', 'true');
+  drawTray();
+  // the cards' names and prices need the card database and the price file
+  dbReady.then(() => { if (trayState.open) drawTray(); });
+  Promise.all([loadCheapest(), fxReady]).then(() => { if (trayState.open) drawTray(); });
+  const close = tray.querySelector('.wt-close');
+  if (close) close.focus();
 }
-// the printings in the list, from Scryfall: their pictures and prices
-async function wantFetchPrintings() {
-  const ids = [...new Set(wantList.map(x => x.id).filter(Boolean))];
-  const need = [];
-  ids.forEach(id => {
-    if (wantState.cards.has(id)) return;
-    const c = CARD_CACHE.get('id:' + id);
-    if (c) wantState.cards.set(id, c); else need.push(id);
-  });
-  for (let i = 0; i < need.length; i += 75) {
-    try {
-      const data = await scryfallCollection(need.slice(i, i + 75).map(id => ({ id })));
-      data.forEach(c => { cacheCard('id:' + c.id, c); wantState.cards.set(c.id, c); });
-    } catch (err) { /* the names and the cheapest prices still show */ }
-  }
-  await ensureEnglishPrices(ids.map(id => wantState.cards.get(id)).filter(Boolean));
+function closeTray(focusButton) {
+  if (!trayState.open) return;
+  trayState.open = false;
+  document.getElementById('wantTray').hidden = true;
+  document.getElementById('wantTrayBg').hidden = true;
+  document.documentElement.classList.remove('tray-open');
+  const btn = document.getElementById('wantBtn');
+  btn.setAttribute('aria-expanded', 'false');
+  if (focusButton) btn.focus();
 }
-function wantItems() {
+function trayPic(row, size) {
+  const id = row && row.id;
+  return id ? `https://cards.scryfall.io/${size}/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg` : '';
+}
+function trayItems(d) {
   const infos = new Map();
-  return wantList.map(x => {
-    const row = (x.o && ORACLE_MAP && ORACLE_MAP.get(x.o)) || rowByEnglishName(x.n);
-    const card = wantState.cards.get(x.id) || null;
-    infos.set(x.n, { row, card: card || (row ? rowToCard(row) : null) });
-    return { x, row, card, it: deckItem(x.n, x.c, null, infos), basic: isBasicLand(x.n, row) };
+  return d.list.map(x => {
+    infos.set(x.name, { row: x.row, card: x.row ? rowToCard(x.row) : null });
+    return { x, it: deckItem(x.name, x.count, null, infos) };
   });
 }
-function wantRowHtml({ x, row, card, it, basic }) {
-  const id = x.id || (row && row.id) || '';
-  const uris = card ? faceUris(card)[0] : null;
-  const src = uris ? (uris.small || uris.normal) : (id ? `https://cards.scryfall.io/small/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg` : '');
+function trayRowHtml({ x, it }) {
+  const id = x.row ? x.row.id : '';
+  const src = trayPic(x.row, 'small');
   const href = id ? `?card=${encodeURIComponent(id)}` : '';
-  const pic = src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : '';
-  const prices = [];
-  if (basic) prices.push(esc(t('want.p.basic')));
-  else {
-    const mine = card ? printingYen(card) : null;
-    if (mine !== null) prices.push(`<b>${esc(t('want.p.this', { y: yenSmall(mine) }))}</b>`);
-    // the cheapest printing, when it is cheaper than this one (or this one has no price)
-    if (it.yen && (mine === null || it.yen < mine * 0.95)) prices.push(`<span${mine !== null ? ' class="wl-cheaper"' : ''}>${esc(t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>`);
-    if (!prices.length && wantState.tried && (wantState.printsTried || !x.id)) prices.push(esc(t('want.p.none')));
-  }
-  const title = href ? `<a class="wl-title" href="${href}" data-card="${esc(id)}">${esc(it.label)}</a>` : `<span class="wl-title">${esc(it.label)}</span>`;
-  return `<li class="wl-row" data-want-row="${esc(wantKeyOf(x))}">`
-    + (href ? `<a class="wl-pic" href="${href}" data-card="${esc(id)}" tabindex="-1" aria-hidden="true">${pic}</a>` : `<span class="wl-pic">${pic}</span>`)
-    + `<div class="wl-name">${title}${it.sub ? `<span class="wl-sub">${esc(it.sub)}</span>` : ''}${x.s ? `<span class="wl-print">${esc(wantPrintLabel(x))}</span>` : ''}</div>`
-    + `<div class="wl-prices">${prices.join('')}</div>${wantStepHtml(x)}</li>`;
+  const pic = src && !LITE ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : '';
+  const title = href ? `<a class="wt-title" href="${href}" data-card="${esc(id)}">${esc(it.label)}</a>` : `<span class="wt-title">${esc(it.label)}</span>`;
+  return `<li class="wt-row" data-want-row="${esc(x.k)}">`
+    + (href ? `<a class="wt-pic" href="${href}" data-card="${esc(id)}" tabindex="-1" aria-hidden="true">${pic}</a>` : `<span class="wt-pic">${pic}</span>`)
+    + `<span class="wt-name">${title}${it.sub ? `<span class="wt-en">${esc(it.sub)}</span>` : ''}`
+    + `${it.yen ? `<span class="wt-yen">${esc(t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>` : ''}</span>`
+    + `${wantStepHtml(x)}${wantTrashHtml(x)}</li>`;
 }
-// picture view: the card, its name and printing, the price, and − n ＋ under it
-function wantTileHtml({ x, row, card, it, basic }) {
-  const id = x.id || (row && row.id) || '';
-  const uris = card ? faceUris(card)[0] : null;
-  const src = uris ? (uris.normal || uris.small) : (id ? `https://cards.scryfall.io/normal/front/${id.charAt(0)}/${id.charAt(1)}/${encodeURIComponent(id)}.jpg` : '');
+function trayTileHtml({ x, it }) {
+  const id = x.row ? x.row.id : '';
+  const src = trayPic(x.row, 'normal');
   const href = id ? `?card=${encodeURIComponent(id)}` : '';
   const pic = `<span class="dc-pic">${src ? `<img src="${esc(src)}" alt="${esc(it.label)}" loading="lazy" onerror="this.remove()">` : ''}<span class="dc-noimg">${esc(it.label)}</span></span>`;
-  let price = '';
-  if (basic) price = esc(t('want.p.basic'));
-  else {
-    const mine = card ? printingYen(card) : null;
-    if (mine !== null) price = `<b>${esc(t('want.p.this', { y: yenSmall(mine) }))}</b>`;
-    if (it.yen && (mine === null || it.yen < mine * 0.95)) price += `<span${mine !== null ? ' class="wl-cheaper"' : ''}>${esc(t('want.p.cheap', { y: yenSmall(it.yen) }))}</span>`;
-    if (!price && wantState.tried && (wantState.printsTried || !x.id)) price = esc(t('want.p.none'));
-  }
-  return `<div class="wl-card" data-want-row="${esc(wantKeyOf(x))}">`
-    + (href ? `<a class="wl-card-pic" href="${href}" data-card="${esc(id)}" title="${esc(it.label)}">${pic}</a>` : `<span class="wl-card-pic">${pic}</span>`)
-    + `<span class="dc-name">${href ? `<a class="wl-title" href="${href}" data-card="${esc(id)}">${esc(it.label)}</a>` : esc(it.label)}</span>`
-    + (x.s ? `<span class="wl-print">${esc(wantPrintLabel(x))}</span>` : '')
-    + `<span class="wl-prices">${price}</span>${wantStepHtml(x)}</div>`;
+  return `<div class="wt-card" data-want-row="${esc(x.k)}">`
+    + (href ? `<a class="wt-card-pic" href="${href}" data-card="${esc(id)}" title="${esc(it.label)}">${pic}</a>` : `<span class="wt-card-pic">${pic}</span>`)
+    + `<span class="wt-card-act">${wantStepHtml(x)}${wantTrashHtml(x)}</span></div>`;
 }
-// the total for the printings in the list (each card's 最安 stays on its own row)
-function wantCostHtml(items) {
-  let yen = 0, missing = 0;
-  items.forEach(({ x, card, basic }) => {
-    if (basic) return;
-    const y = card ? printingYen(card) : null;
-    if (y === null) missing += x.c; else yen += y * x.c;
-  });
-  const cost = { priced: yen > 0, yen: Math.round(yen), missing };
-  return `<div class="dcst dcst-price"><span class="dcst-l">${esc(t('want.cost.picked'))}</span>${cost.priced
-      ? `<b class="dcst-v" title="${esc(t('want.cost.picked.sub'))}">${esc(costText(cost))}</b>${cost.missing ? `<span class="dcst-s">${esc(t('deck.cost.missing', { n: cost.missing }))}</span>` : ''}`
-      : `<span class="dcst-s">${esc(t(wantState.printsTried ? 'deck.cost.none' : 'deck.cost.wait'))}</span>`}</div>`;
-}
-function drawWant() {
-  const body = document.getElementById('wantBody');
-  if (!body || routeFromUrl().view !== 'want') return;
-  const title = `<h1 class="deck-title"><span>${esc(t('want.title'))}</span></h1>`;
-  const note = wantState.note && Date.now() < wantState.note.until ? `<p class="imp-buy-note" role="status">${esc(wantState.note.text)}</p>` : '';
-  if (!wantList.length) {
-    body.innerHTML = `<div class="deck-head"><div class="deck-title-row">${title}</div>${note}</div>
-      <div class="imp-empty want-empty"><p class="imp-empty-h">${esc(t('want.empty.h'))}</p><p>${esc(t('want.empty.body'))}</p>
-      <a class="adv-btn" href="./" data-want-home="1">${esc(t('want.empty.go'))}</a></div>`;
-    return;
-  }
-  const items = wantItems();
-  const total = wantList.reduce((s, x) => s + x.c, 0);
-  const exportOpen = !!(document.getElementById('wantExport') || {}).open;
-  const menu = `<details class="deck-export" id="wantExport"><summary class="adv-btn">${t('deck.export')}</summary>
-      <div class="deck-export-menu" role="menu">
-        <button type="button" role="menuitem" data-wexport="arena">${t('deck.export.arena')}</button>
-        <button type="button" role="menuitem" data-wexport="mtgo">${t('deck.export.mtgo')}</button>
-        <button type="button" role="menuitem" data-wexport="print">${t('want.export.print')}</button>
-        <button type="button" role="menuitem" data-wexport="file">${t('deck.export.file')}</button>
-        <p class="deck-export-h">${t('want.sites')}</p>
-        ${WANT_SITES.map(([name, url, key]) => `<a role="menuitem" href="${url}" target="_blank" rel="noopener" data-wsite="${name}" title="${esc(t('want.site.title', { site: name }))}">${esc(t(key))} ↗</a>`).join('')}
-        <p class="deck-export-note">${t('want.note')}</p>
-      </div></details>`;
-  const view = wantState.view;
+function drawTray() {
+  const tray = document.getElementById('wantTray');
+  if (!trayState.open) return;
+  const d = wantData();
+  const view = trayState.view;
+  const focused = document.activeElement && tray.contains(document.activeElement) ? document.activeElement : null;
+  const refocus = focused ? (focused.classList.contains('wt-close') ? '.wt-close' : focused.dataset.wantAct
+    ? `[data-want="${CSS.escape(focused.dataset.want || '')}"][data-want-act="${focused.dataset.wantAct}"]` : '') : '';
   const toggle = LITE ? '' : `<div class="view-toggle" role="tablist" aria-label="${esc(t('deck.view.aria'))}">
-      <button type="button" class="view-btn" role="tab" data-wview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
-      <button type="button" class="view-btn" role="tab" data-wview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
+      <button type="button" class="view-btn" role="tab" data-tview="list" aria-selected="${view === 'list'}">${t('deck.view.list')}</button>
+      <button type="button" class="view-btn" role="tab" data-tview="image" aria-selected="${view === 'image'}">${t('deck.view.image')}</button>
     </div>`;
-  body.innerHTML = `<div class="deck-head">
-      <div class="deck-title-row">${title}</div>
-      <p class="deck-meta"><span class="fact">${esc(tn('want.f.cards', total))}</span> <span class="sep">·</span> <span class="fact">${esc(t('want.f.kinds', { n: fmtNum(wantList.length) }))}</span></p>
-      ${note}
-    </div>
-    <div class="want-bar">
-      <div class="want-bar-l">${wantCostHtml(items)}${toggle}</div>
-      <div class="deck-tools"><a class="adv-btn imp-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-whareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>${menu}</div>
-    </div>
-    ${view === 'image' ? `<div class="want-grid">${items.map(wantTileHtml).join('')}</div>` : `<ul class="want-list">${items.map(wantRowHtml).join('')}</ul>`}
-    <div class="want-foot">
-      <a class="adv-btn" href="?view=import" data-want-import="1" title="${esc(t('want.import.title'))}">${esc(t('want.import'))}</a>
-      <button type="button" class="adv-btn want-clear" data-armed="${Date.now() < wantState.armed ? 1 : 0}">${esc(t(Date.now() < wantState.armed ? 'want.clear.sure' : 'want.clear'))}</button>
-      <span class="imp-saved">${esc(t('imp.saved'))}</span>
-    </div>
-    <p class="deck-cost-note">${esc(t('want.price.note'))}</p>`;
-  const d = document.getElementById('wantExport');
-  if (exportOpen && d) { d.open = true; fitExportMenu(d); }
-  const copied = wantState.copied;
-  if (copied && Date.now() < copied.until) {
-    const btn = document.querySelector(`#wantExport [data-wexport="${copied.kind}"]`);
-    if (btn) btn.textContent = t('deck.export.done');
+  const items = trayItems(d);
+  const scroll = (tray.querySelector('.wt-body') || {}).scrollTop || 0;
+  let body;
+  if (!d.total) body = `<div class="wt-empty"><p class="wt-empty-h">${esc(t('tray.empty'))}</p><p>${esc(t('tray.empty.body'))}</p></div>`;
+  else {
+    body = view === 'image' && !LITE ? `<div class="wt-grid">${items.map(trayTileHtml).join('')}</div>` : `<ul class="wt-list">${items.map(trayRowHtml).join('')}</ul>`;
+    if (d.missing) body += `<p class="wt-miss"><a href="?view=import" data-tray-go="1">${esc(tn('tray.missing', d.missing))}</a></p>`;
   }
+  const armed = Date.now() < trayState.armed;
+  tray.innerHTML = `<div class="wt-head">
+      <h2 class="wt-h" id="wantTrayH">${STAR_SVG}<span>${esc(t('want.title'))}</span></h2>
+      <button type="button" class="wt-close" aria-label="${esc(t('tray.close'))}" title="${esc(t('tray.close'))}">×</button>
+    </div>
+    <div class="wt-sub"><span class="wt-count">${d.total ? `<b>${esc(tn('want.f.cards', d.total))}</b>` : ''}${d.list.length ? ` <span class="sep">·</span> ${esc(t('want.f.kinds', { n: fmtNum(d.list.length) }))}` : ''}</span>${d.list.length ? toggle : ''}</div>
+    <div class="wt-body">${body}</div>
+    <div class="wt-foot">
+      <div class="wt-foot-row"><span class="imp-saved">${esc(t('imp.saved'))}</span>${d.total ? `<button type="button" class="wt-clear" data-armed="${armed ? 1 : 0}">${esc(t(armed ? 'want.clear.sure' : 'want.clear'))}</button>` : ''}</div>
+      <a class="wt-go" href="?view=import" data-tray-go="1">${esc(t('tray.go'))}</a>
+      ${d.list.length ? `<a class="adv-btn wt-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-thareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>` : ''}
+    </div>`;
+  const b = tray.querySelector('.wt-body');
+  if (b) b.scrollTop = scroll;
+  if (refocus) { const f = tray.querySelector(refocus); if (f) f.focus(); }
 }
-function wantNote(text) {
-  wantState.note = { text, until: Date.now() + 15000 };
-  setTimeout(drawWant, 0);   // after the tap, so a link still opens
-}
-document.getElementById('wantBody').addEventListener('click', async (e) => {
-  if (e.target.closest('[data-whareruya]')) {
-    // Hareruya reads "4 Card Name" lines (CLAUDE.md rule 3: a link only, the list goes on the clipboard)
-    copyTextNow(wantText('mtgo'));
-    wantNote(t('imp.hareruya.done'));
-    return;
-  }
-  const vb = e.target.closest('[data-wview]');
+document.getElementById('wantBtn').addEventListener('click', () => {
+  if (trayState.open) closeTray(true); else openTray();
+});
+document.getElementById('wantTrayBg').addEventListener('click', () => closeTray(true));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && trayState.open) closeTray(true); });
+document.getElementById('wantTray').addEventListener('click', (e) => {
+  if (e.target.closest('.wt-close')) { closeTray(true); return; }
+  const vb = e.target.closest('[data-tview]');
   if (vb) {
-    wantState.view = vb.dataset.wview === 'image' ? 'image' : 'list';
-    try { localStorage.setItem(WANT_VIEW_KEY, wantState.view); } catch (err) { /* private mode */ }
-    drawWant();
+    trayState.view = vb.dataset.tview === 'image' ? 'image' : 'list';
+    try { localStorage.setItem(WANT_VIEW_KEY, trayState.view); } catch (err) { /* private mode */ }
+    drawTray();
     return;
   }
-  const site = e.target.closest('[data-wsite]');
-  if (site) {
-    copyTextNow(wantText('print'));
-    wantNote(t('want.site.done', { site: site.dataset.wsite }));
-    document.getElementById('wantExport').open = false;
+  if (e.target.closest('[data-thareruya]')) {
+    // Hareruya reads "4 Card Name" lines (CLAUDE.md rule 3: a link only, the list goes on the clipboard)
+    copyTextNow(hareruyaText(readImport(listText)));
+    wantToast(t('imp.hareruya.done'));
     return;
   }
-  const ex = e.target.closest('[data-wexport]');
-  if (ex) {
-    const kind = ex.dataset.wexport;
-    if (kind === 'file') {
-      saveTextFile(`${t('want.title')}.txt`, wantText('mtgo'));
-      document.getElementById('wantExport').open = false;
-      return;
-    }
-    const ok = await copyText(wantText(kind));
-    ex.textContent = ok ? t('deck.export.done') : ex.textContent;
-    wantState.copied = ok ? { kind, until: Date.now() + 1200 } : null;
-    setTimeout(() => {
-      wantState.copied = null;
-      const btn = document.querySelector(`#wantExport [data-wexport="${kind}"]`);
-      if (btn) btn.textContent = kind === 'print' ? t('want.export.print') : t('deck.export.' + kind);
-      const d = document.getElementById('wantExport'); if (d) d.open = false;
-    }, 1200);
-    return;
-  }
-  const clear = e.target.closest('.want-clear');
+  const clear = e.target.closest('.wt-clear');
   if (clear) {
-    if (Date.now() >= wantState.armed) {
-      wantState.armed = Date.now() + 4000;
-      drawWant();
-      setTimeout(drawWant, 4100);
+    if (Date.now() >= trayState.armed) {
+      trayState.armed = Date.now() + 4000;
+      drawTray();
+      setTimeout(drawTray, 4100);
       return;
     }
-    wantState.armed = 0;
-    const before = wantList.slice();
-    wantList = [];
-    saveWant();
-    wantToast(t('want.cleared'), { label: t('want.undo'), run: () => { if (!wantList.length) { wantList = before; saveWant(); } } });
+    trayState.armed = 0;
+    const before = listText;
+    setListText('');
+    wantUndoToast(t('want.cleared'), { before, after: listText });
     return;
   }
   if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
-  const imp = e.target.closest('[data-want-import]');
-  if (imp) {
+  if (e.target.closest('[data-tray-go]')) {
     e.preventDefault();
-    goTo('?view=import&list=' + encodeURIComponent(`About\nName ${t('want.title')}\n\n` + wantText('arena').trim()));
+    closeTray();
+    goTo('?view=import');
     return;
   }
-  if (e.target.closest('[data-want-home]')) { e.preventDefault(); goTo(location.pathname); return; }
   const link = e.target.closest('a[data-card]');
   if (!link) return;
   e.preventDefault();
+  if (trayPhone.matches) closeTray();
   goTo(`?card=${encodeURIComponent(link.dataset.card)}`);
 });
-document.addEventListener('click', (e) => {
-  const d = document.getElementById('wantExport');
-  if (d && d.open && !e.target.closest('#wantExport')) d.open = false;
-});
+// the separate list from before (staging only): its cards go into the text once
+(() => {
+  let old = null;
+  try { old = JSON.parse(localStorage.getItem(WANT_OLD_KEY) || 'null'); } catch (e) { old = null; }
+  if (!Array.isArray(old)) return;
+  let text = listText;
+  old.forEach(x => {
+    if (!x || typeof x.n !== 'string' || !x.n.trim()) return;
+    const c = Math.min(WANT_MAX_COPIES, Math.max(1, Math.floor(Number(x.c)) || 1));
+    text = withLineAdded(text, wantLineFor({ n: x.n, s: x.s, cn: x.cn }).replace(/^1 /, `${c} `));
+  });
+  try { localStorage.removeItem(WANT_OLD_KEY); } catch (e) { /* fine */ }
+  setListText(text, 'start');
+})();
 refreshWant();
+dbLoaded.then(refreshWant);
 
 // ---- the search box follows the page -----------------------------------------------------
 // On the home page the big search box is the search. Once it has scrolled out
