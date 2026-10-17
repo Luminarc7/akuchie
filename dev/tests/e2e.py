@@ -1330,7 +1330,7 @@ with sync_playwright() as p:
     page.click("#tabPrices"); page.wait_for_selector("#moverBody .mover-row")
     col_names = lambda d: [x.split("\n")[0] for x in page.locator(f'#moverBody .mover-col[data-dir="{d}"] .mover-name').all_inner_texts()]
     check("price movers: tab opens on the US market, 7 days", "view=prices&market=us&win=7" in page.url
-          and page.locator("#moverMarkets .seg-btn").all_inner_texts() == ["米国", "欧州", "日本"]
+          and page.locator("#moverMarkets .seg-btn").all_inner_texts() == ["日本", "米国", "欧州"]
           and page.get_attribute('#moverMarkets .seg-btn[data-market="us"]', "aria-selected") == "true", page.url)
     check("price movers: winners and losers side by side",
           [re.sub(r"\s", "", x) for x in page.locator("#moverBody .mover-col-head").all_inner_texts()] == ["▲値上がり", "▼値下がり"]
@@ -1378,7 +1378,7 @@ with sync_playwright() as p:
     page.go_back(); page.wait_for_selector("#moverBody .mover-row")
     check("price movers: back returns to the list", "view=prices" in page.url and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
     page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
-    check("price movers in English", page.locator("#moverMarkets .seg-btn").all_inner_texts() == ["US", "Europe", "Japan"] and page.title() == "Price movers — 悪知恵"
+    check("price movers in English", page.locator("#moverMarkets .seg-btn").all_inner_texts() == ["Japan", "US", "Europe"] and page.title() == "Price movers — 悪知恵"
           and [re.sub(r"\s", "", x) for x in page.locator("#moverBody .mover-col-head").all_inner_texts()] == ["▲Winners", "▼Losers"]
           and "Qasali Pridemage" in page.locator("#moverBody").inner_text() and "TCGplayer" in page.locator("#moverNote").inner_text(), page.locator("#moverBody .mover-col-head").all_inner_texts())
     page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
@@ -1533,7 +1533,7 @@ with sync_playwright() as p:
     check("effect examples: clicking a card opens it", f"card={cid}" in page.url, page.url)
     page.goto(SITE); page.wait_for_selector("#homeMoversBody .hb-row")
     hb_names = lambda d: page.locator(f'#homeMoversBody .hb-part[data-dir="{d}"] .hb-name').all_inner_texts()
-    check("home: price box tabs 米国 / 欧州 / 日本, US first", page.locator("#homeMoversTabs .seg-btn").all_inner_texts() == ["米国", "欧州", "日本"]
+    check("home: price box tabs 日本 / 米国 / 欧州 (the card page's order), US chosen", page.locator("#homeMoversTabs .seg-btn").all_inner_texts() == ["日本", "米国", "欧州"]
           and page.get_attribute("#homeMoversTabs .seg-btn[data-market=us]", "aria-selected") == "true", page.locator("#homeMoversTabs").inner_text())
     first_row = page.locator('#homeMoversBody .hb-part[data-dir="up"] .hb-row').first.inner_text()
     check("home: US - 7-day winners and losers in dollars, Japanese names",
