@@ -4,7 +4,7 @@
    "url": "?card=83f510b7-4cbd-4883-9c26-c8824bc668ac",
    "name": "Gloomlake Verge",
    "art": [
-    "https://cards.scryfall.io/large/front/8/3/83f510b7-4cbd-4883-9c26-c8824bc668ac.jpg?1783909428"
+    "https://cards.scryfall.io/normal/front/8/3/83f510b7-4cbd-4883-9c26-c8824bc668ac.jpg?1783909428"
    ],
    "flavor": "Here, the Floodpits languish like a corpse, the clear waters choked by the filthy hands of the bog.",
    "pressed": [
@@ -506,45 +506,88 @@
     "シリアル番号>シリアルナンバー版のあるカード"
    ]
   },
-  "セット:マーベル": {
-   "n": 468,
+  "セット:イニストラード": {
+   "n": 536,
    "top": [
-    "アークリアクター",
-    "アーマー・ウォーズ",
-    "アイアンマン・アーマー",
-    "アイアンマンの遺志、ウォーマシン",
-    "愛のヴィジョン",
-    "悪意ある科学者、ドク・オック",
-    "悪逆な怒り",
-    "悪行の見通し"
+    "愛される物乞い // 気前のいい魂",
+    "哀悼の巡回兵 // 朝焼けの亡霊",
+    "アヴァブルックの世話人 // ホロウヘンジの猟匠",
+    "秋の占い師",
+    "悪運尽きた造反者",
+    "悪魔の取り引き",
+    "頭狙い",
+    "圧倒される文書管理人 // 書庫の憑依者"
    ],
    "last": [
-    "S.H.I.E.L.D.の飛行車",
-    "S.H.I.E.L.D.のヘリキャリア",
-    "USエージェント、ジョン・ウォーカー",
-    "Ｊ・ジョナ・ジェイムソン"
+    "Tapping at the Window",
+    "Tireless Hauler // Dire-Strain Brawler",
+    "Tovolar's Huntmaster // Tovolar's Packleader",
+    "Turn the Earth"
    ],
    "note": []
   },
-  "セット:タルキール": {
-   "n": 276,
+  "e:mid": {
+   "n": 272,
    "top": [
-    "アイノクの旅人",
-    "圧倒的電撃",
-    "孔蹄のビヒモス",
-    "アブザンの碑",
-    "アブザンの信奉者",
-    "アブザンの夜明け、フェロザー",
-    "雨とばりの再生者",
-    "嵐鱗の末裔"
+    "不吉な首領、トヴォラー // 深夜の災い魔、トヴォラー",
+    "愛される物乞い // 気前のいい魂",
+    "哀悼の巡回兵 // 朝焼けの亡霊",
+    "秋の占い師",
+    "圧倒される文書管理人 // 書庫の憑依者",
+    "怪しげな密航者 // 船乗りの人狼",
+    "嵐のスクリーリクス",
+    "嵐の捕縛"
    ],
    "last": [
-    "Bloomvine Regent // Claim Territory",
-    "Clarion Conqueror",
-    "Marang River Regent // Coil and Catch",
-    "Scavenger Regent // Exude Toxin"
+    "Tapping at the Window",
+    "Tireless Hauler // Dire-Strain Brawler",
+    "Tovolar's Huntmaster // Tovolar's Packleader",
+    "Turn the Earth"
    ],
    "note": []
+  },
+  "e:vow": {
+   "n": 272,
+   "top": [
+    "アヴァブルックの世話人 // ホロウヘンジの猟匠",
+    "悪運尽きた造反者",
+    "悪魔の取り引き",
+    "頭狙い",
+    "当て付けの議論",
+    "洗い落とし",
+    "嵐追いのドレイク",
+    "嵐削りの海岸"
+   ],
+   "last": [
+    "霊灯の罠",
+    "レジスタンス部隊",
+    "錬金術師の計略",
+    "錬金術師の挽回"
+   ],
+   "note": []
+  },
+  "日本語版 ボーダーレス": {
+   "n": 2316,
+   "top": [
+    "アークリアクター",
+    "アーケン石 // 精髄探し",
+    "アーマー・ウォーズ",
+    "アールンドの天啓",
+    "哀歌コウモリ",
+    "アヴェルナスの大公、ザリエル",
+    "アウグスティン四世大判事",
+    "アヴリーン・ドゥ・グランプレ"
+   ],
+   "last": [
+    "６代目ドクター",
+    "７代目ドクター",
+    "８代目ドクター",
+    "９代目ドクター"
+   ],
+   "note": [
+    "日本語版>日本語版のあるカード",
+    "ボーダーレス>日本語のボーダーレス版のあるカード"
+   ]
   },
   "追放": {
    "n": 3914,
@@ -573,13 +616,20 @@
   "1st Place · Hex West Standard RCQ  - 9/20（2026-09-20） ↗",
   "1st Place · Standard Challenge 32（2026-09-22） ↗",
   "2nd Place · Standard Challenge 32（2026-09-22） ↗",
-  "1st Place · Standard Challenge 16 Special（2026-10-09） ↗",
   "1st Place · Standard Challenge 32（2026-10-02） ↗",
+  "1st Place · Standard Challenge 16 Special（2026-10-09） ↗",
   "1st Place · ReCQ - Standard - SCG CON Los Angeles - Saturday - 3:00 pm（2026-10-10） ↗",
   "1st Place · Standard Challenge 32 Special（2026-10-09） ↗",
   "1st Place · Standard Challenge 32（2026-09-18） ↗",
   "1st Place · Standard Challenge 16（2026-10-11） ↗",
   "1st Place · ReCQ - Standard - SCG CON Los Angeles - Sunday - 12:30 pm（2026-10-11） ↗"
+ ],
+ "base": "https://warujie.warujie-mtg.workers.dev/",
+ "index_sha256": "3430a1c79af11cd526d10dcdfbee8ef60d896c414177d41e40facd9248a01901",
+ "index_status": 200,
+ "printings": [
+  200,
+  3401361
  ],
  "errors_en": [],
  "errors_ja": []
