@@ -1,0 +1,586 @@
+{
+ "cards": [
+  {
+   "url": "?card=83f510b7-4cbd-4883-9c26-c8824bc668ac",
+   "name": "Gloomlake Verge",
+   "art": [
+    "https://cards.scryfall.io/large/front/8/3/83f510b7-4cbd-4883-9c26-c8824bc668ac.jpg?1783909428"
+   ],
+   "flavor": "Here, the Floodpits languish like a corpse, the clear waters choked by the filthy hands of the bog.",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "64eb7bb6-c7a1-46fa-99ba-98602900d38c",
+   "card": "Gloomlake Verge"
+  },
+  {
+   "url": "?card=bc95af55-d1dd-4fe6-adb0-3ad6db20d986",
+   "name": "Consign to Memory",
+   "art": [
+    "https://cards.scryfall.io/normal/front/b/c/bc95af55-d1dd-4fe6-adb0-3ad6db20d986.jpg?1783911293"
+   ],
+   "flavor": "He wept not for what was, but what could never be.",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "ab5c85bb-51ed-4cb2-9948-7f1bf5afb509",
+   "card": "Consign to Memory"
+  },
+  {
+   "url": "?card=a2c1765c-0054-4c9f-a6b3-5e54189b44c3",
+   "name": "Indulging Patrician",
+   "art": [
+    "https://cards.scryfall.io/normal/front/a/2/a2c1765c-0054-4c9f-a6b3-5e54189b44c3.jpg?1783907027"
+   ],
+   "flavor": "\"Just a nibble for now. I wouldn't want to ruin my appetite.\"",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "38889e09-f88b-4caf-93f3-9f472515b154",
+   "card": "Indulging Patrician"
+  },
+  {
+   "url": "?card=2082e04f-f972-424e-a724-7a5975215538",
+   "name": "Ring of Kalonia",
+   "art": [
+    "https://cards.scryfall.io/normal/front/2/0/2082e04f-f972-424e-a724-7a5975215538.jpg?1783940458"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "e8040165-59de-4179-b88e-9ea8d7ea1a7d",
+   "card": "Ring of Kalonia"
+  },
+  {
+   "url": "?card=7002a87b-a55f-42ec-b247-119a3229129f",
+   "name": "Autochthon Wurm",
+   "art": [
+    "https://cards.scryfall.io/normal/front/7/0/7002a87b-a55f-42ec-b247-119a3229129f.jpg?1783943628"
+   ],
+   "flavor": "The trainer awoke to begin the journey from the wurm's tail to its head. The sun was setting when she arrived.",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "e1d078c6-c616-445f-bbde-03e3219d17e0",
+   "card": "Autochthon Wurm"
+  },
+  {
+   "url": "?card=8bbf476f-ccc8-42ac-8d01-64bb85552acd",
+   "name": "Biowaste Blob",
+   "art": [
+    "https://cards.scryfall.io/normal/front/8/b/8bbf476f-ccc8-42ac-8d01-64bb85552acd.jpg?1783928799"
+   ],
+   "flavor": "\"The Simic will be fined for contaminating the waterways. In the meantime, seize that blob!\"\n—Arrester Polgar",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "866343c2-03a4-4c90-97a6-e1b71c3b4e56",
+   "card": "Biowaste Blob"
+  },
+  {
+   "url": "?card=48ce03b3-ec7c-46df-b89a-55405f3b5245",
+   "name": "The Three Seasons",
+   "art": [
+    "https://cards.scryfall.io/normal/front/4/8/48ce03b3-ec7c-46df-b89a-55405f3b5245.jpg?1783928189"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "dfdaae8f-bc8b-4057-88d6-0e26d398fc1b",
+   "card": "The Three Seasons"
+  },
+  {
+   "url": "?card=d90f5a4e-8c3a-4803-bb59-d3d7c23761db",
+   "name": "Nefarious Lich",
+   "art": [
+    "https://cards.scryfall.io/normal/front/d/9/d90f5a4e-8c3a-4803-bb59-d3d7c23761db.jpg?1783945242"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "5df4ea1d-419a-4cba-a5e9-c330836ef1d6",
+   "card": "Nefarious Lich"
+  },
+  {
+   "url": "?card=25d309d6-9e56-441e-bd29-5c903d5221bf",
+   "name": "Brazen Borrower // Petty Theft",
+   "art": [
+    "https://cards.scryfall.io/normal/front/2/5/25d309d6-9e56-441e-bd29-5c903d5221bf.jpg?1783903792"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "01ed960a-491b-48cb-a73d-d7ac83c593f0",
+   "card": "Brazen Borrower // Petty Theft"
+  },
+  {
+   "url": "?card=abff6c81-65a4-48fa-ba8f-580f87b0344a",
+   "name": "Delver of Secrets // Insectile Aberration",
+   "art": [
+    "https://cards.scryfall.io/normal/front/a/b/abff6c81-65a4-48fa-ba8f-580f87b0344a.jpg?1783925652",
+    "https://cards.scryfall.io/normal/back/a/b/abff6c81-65a4-48fa-ba8f-580f87b0344a.jpg?1783925652"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "762a4b35-0a1a-419c-9f62-fb2e6f24891e",
+   "card": "Delver of Secrets // Insectile Aberration"
+  },
+  {
+   "url": "?card=24c0d87b-0049-4beb-b9cb-6f813b7aa7dc",
+   "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+   "art": [
+    "https://cards.scryfall.io/normal/front/2/4/24c0d87b-0049-4beb-b9cb-6f813b7aa7dc.jpg?1783923875",
+    "https://cards.scryfall.io/normal/back/2/4/24c0d87b-0049-4beb-b9cb-6f813b7aa7dc.jpg?1783923875"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "9dc5d989-dba5-45a8-8537-c291bf49e545",
+   "card": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+  },
+  {
+   "url": "?card=7673784e-db4b-43a1-8d55-1bb9fc1e284f",
+   "name": "Lightning Bolt",
+   "art": [
+    "https://cards.scryfall.io/normal/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008"
+   ],
+   "flavor": "\"I am the god of thunder, the lord of the savage lightning, and the very skies must tremble when speaks The Mighty Thor!\"",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3",
+   "card": "Lightning Bolt"
+  },
+  {
+   "url": "?card=a9738cda-adb1-47fb-9f4c-ecd930228c4d",
+   "name": "Ragavan, Nimble Pilferer",
+   "art": [
+    "https://cards.scryfall.io/normal/front/a/9/a9738cda-adb1-47fb-9f4c-ecd930228c4d.jpg?1791803835"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "08840968-fc72-4f03-9036-73ae3d03fe0a",
+   "card": "Ragavan, Nimble Pilferer"
+  },
+  {
+   "url": "?card=427d7eab-24e3-41de-8444-d9a2c96f526f",
+   "name": "Wear // Tear",
+   "art": [
+    "https://cards.scryfall.io/normal/front/4/2/427d7eab-24e3-41de-8444-d9a2c96f526f.jpg?1783912349"
+   ],
+   "flavor": "",
+   "pressed": [
+    "en"
+   ],
+   "lang": "en",
+   "asked": "f86ada82-e454-46f1-89a3-39058dd25339",
+   "card": "Wear // Tear"
+  },
+  {
+   "url": "?card=64eb7bb6-c7a1-46fa-99ba-98602900d38c",
+   "name": "グルームレイクの境界",
+   "art": [
+    "https://cards.scryfall.io/normal/front/6/4/64eb7bb6-c7a1-46fa-99ba-98602900d38c.jpg?1782784429"
+   ],
+   "flavor": "此の地フラッドピットは死体のように停滞しており、かつて透き通っていた水は沼地の汚れた手に締め上げられている。",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "64eb7bb6-c7a1-46fa-99ba-98602900d38c",
+   "card": "Gloomlake Verge"
+  },
+  {
+   "url": "?card=ab5c85bb-51ed-4cb2-9948-7f1bf5afb509",
+   "name": "記憶への放逐",
+   "art": [
+    "https://cards.scryfall.io/normal/front/a/b/ab5c85bb-51ed-4cb2-9948-7f1bf5afb509.jpg?1782793980"
+   ],
+   "flavor": "彼はかつての姿にではなく、なりえなかった姿に涙したのだ。",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "ab5c85bb-51ed-4cb2-9948-7f1bf5afb509",
+   "card": "Consign to Memory"
+  },
+  {
+   "url": "?card=38889e09-f88b-4caf-93f3-9f472515b154",
+   "name": "耽溺する貴族階級",
+   "art": [
+    "https://cards.scryfall.io/normal/front/3/8/38889e09-f88b-4caf-93f3-9f472515b154.jpg?1782773199"
+   ],
+   "flavor": "「今は一口にしておきましょう。食欲が無くなるといけないから。」",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "38889e09-f88b-4caf-93f3-9f472515b154",
+   "card": "Indulging Patrician"
+  },
+  {
+   "url": "?card=e8040165-59de-4179-b88e-9ea8d7ea1a7d",
+   "name": "カロニアの指輪",
+   "art": [
+    "https://cards.scryfall.io/normal/front/e/8/e8040165-59de-4179-b88e-9ea8d7ea1a7d.jpg?1782981817"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "e8040165-59de-4179-b88e-9ea8d7ea1a7d",
+   "card": "Ring of Kalonia"
+  },
+  {
+   "url": "?card=e1d078c6-c616-445f-bbde-03e3219d17e0",
+   "name": "土着のワーム",
+   "art": [
+    "https://cards.scryfall.io/normal/front/e/1/e1d078c6-c616-445f-bbde-03e3219d17e0.jpg?1783018829"
+   ],
+   "flavor": "訓練官は目覚めると、ワームの尾から頭までの旅を始めた。 着く頃には日が暮れていた。",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "e1d078c6-c616-445f-bbde-03e3219d17e0",
+   "card": "Autochthon Wurm"
+  },
+  {
+   "url": "?card=866343c2-03a4-4c90-97a6-e1b71c3b4e56",
+   "name": "生廃棄物の泥塊",
+   "art": [
+    "https://cards.scryfall.io/normal/front/8/6/866343c2-03a4-4c90-97a6-e1b71c3b4e56.jpg?1782897506"
+   ],
+   "flavor": "「シミック連合には下水汚染で罰金を課す。それはともかく、泥塊を何とかしろ！」\n――拘引者ポルガー",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "866343c2-03a4-4c90-97a6-e1b71c3b4e56",
+   "card": "Biowaste Blob"
+  },
+  {
+   "url": "?card=dfdaae8f-bc8b-4057-88d6-0e26d398fc1b",
+   "name": "三つの季節",
+   "art": [
+    "https://cards.scryfall.io/normal/front/d/f/dfdaae8f-bc8b-4057-88d6-0e26d398fc1b.jpg?1782892265"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "dfdaae8f-bc8b-4057-88d6-0e26d398fc1b",
+   "card": "The Three Seasons"
+  },
+  {
+   "url": "?card=5df4ea1d-419a-4cba-a5e9-c330836ef1d6",
+   "name": "極悪な死",
+   "art": [
+    "https://cards.scryfall.io/normal/front/d/9/d90f5a4e-8c3a-4803-bb59-d3d7c23761db.jpg?1783945242"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "5df4ea1d-419a-4cba-a5e9-c330836ef1d6",
+   "card": "Nefarious Lich"
+  },
+  {
+   "url": "?card=01ed960a-491b-48cb-a73d-d7ac83c593f0",
+   "name": "厚かましい借り手 // 些細な盗み",
+   "art": [
+    "https://cards.scryfall.io/normal/front/0/1/01ed960a-491b-48cb-a73d-d7ac83c593f0.jpg?1782759341"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "01ed960a-491b-48cb-a73d-d7ac83c593f0",
+   "card": "Brazen Borrower // Petty Theft"
+  },
+  {
+   "url": "?card=762a4b35-0a1a-419c-9f62-fb2e6f24891e",
+   "name": "秘密を掘り下げる者 // 昆虫の逸脱者",
+   "art": [
+    "https://cards.scryfall.io/normal/front/7/6/762a4b35-0a1a-419c-9f62-fb2e6f24891e.jpg?1782872683",
+    "https://cards.scryfall.io/normal/back/7/6/762a4b35-0a1a-419c-9f62-fb2e6f24891e.jpg?1782872683"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "762a4b35-0a1a-419c-9f62-fb2e6f24891e",
+   "card": "Delver of Secrets // Insectile Aberration"
+  },
+  {
+   "url": "?card=9dc5d989-dba5-45a8-8537-c291bf49e545",
+   "name": "鏡割りの寓話 // キキジキの鏡像",
+   "art": [
+    "https://cards.scryfall.io/normal/front/9/d/9dc5d989-dba5-45a8-8537-c291bf49e545.jpg?1782862134",
+    "https://cards.scryfall.io/normal/back/9/d/9dc5d989-dba5-45a8-8537-c291bf49e545.jpg?1782862134"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "9dc5d989-dba5-45a8-8537-c291bf49e545",
+   "card": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+  },
+  {
+   "url": "?card=89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3",
+   "name": "稲妻",
+   "art": [
+    "https://cards.scryfall.io/normal/front/8/9/89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3.jpg?1785282945"
+   ],
+   "flavor": "「我は雷神、激しき電光の王、猛きソーの言葉が天空をも揺るがす！」",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "89ea9a01-a4e9-43c5-bdd7-3a0e4dcec0f3",
+   "card": "Lightning Bolt"
+  },
+  {
+   "url": "?card=08840968-fc72-4f03-9036-73ae3d03fe0a",
+   "name": "敏捷なこそ泥、ラガバン",
+   "art": [
+    "https://cards.scryfall.io/normal/front/0/8/08840968-fc72-4f03-9036-73ae3d03fe0a.jpg?1782881343"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "08840968-fc72-4f03-9036-73ae3d03fe0a",
+   "card": "Ragavan, Nimble Pilferer"
+  },
+  {
+   "url": "?card=f86ada82-e454-46f1-89a3-39058dd25339",
+   "name": "摩耗 // 損耗",
+   "art": [
+    "https://cards.scryfall.io/normal/front/f/8/f86ada82-e454-46f1-89a3-39058dd25339.jpg?1782799923"
+   ],
+   "flavor": "",
+   "pressed": [
+    "ja"
+   ],
+   "lang": "ja",
+   "asked": "f86ada82-e454-46f1-89a3-39058dd25339",
+   "card": "Wear // Tear"
+  }
+ ],
+ "search": {
+  "到達": {
+   "n": 653,
+   "top": [
+    "菌類の到達地",
+    "地平線への到達",
+    "霧中の到達",
+    "アーボーグの掃除屋",
+    "アイノクの弩弓手",
+    "青ざめた出家蜘蛛",
+    "悪鬼の鞭",
+    "アストニッシング・スパイダーマン"
+   ],
+   "last": [
+    "隆盛なるエヴィンカー",
+    "黎明をもたらす者ライラ",
+    "ワスプ、ジャネット・ヴァン・ダイン",
+    "A.I.M.ボット"
+   ],
+   "note": []
+  },
+  "ボーダーレス版": {
+   "n": 3736,
+   "top": [
+    "アークリアクター",
+    "アーケン石 // 精髄探し",
+    "アーチリッチ、アサーラック",
+    "アーデンベイル城",
+    "アーボーグの暴食、ヤーグル",
+    "アーマー・ウォーズ",
+    "アールンドの天啓",
+    "哀歌コウモリ"
+   ],
+   "last": [
+    "Warrior's Resolve",
+    "Widget Contraption",
+    "Witch-king, Sky Scourge",
+    "Wolverine, Best There Is"
+   ],
+   "note": [
+    "ボーダーレス版>ボーダーレス版のあるカード"
+   ]
+  },
+  "ボーダーレスのドラゴン": {
+   "n": 103,
+   "top": [
+    "アダルト・ゴールド・ドラゴン",
+    "運命の大嵐、ドラゴンホーク",
+    "エインシャント・カッパー・ドラゴン",
+    "エインシャント・ゴールド・ドラゴン",
+    "エインシャント・シルヴァー・ドラゴン",
+    "エインシャント・ブラス・ドラゴン",
+    "エインシャント・ブロンズ・ドラゴン",
+    "黄金架のドラゴン"
+   ],
+   "last": [
+    "龍王ドロモカ",
+    "龍魂、サルカン",
+    "竜航技師",
+    "ロクの伝説 // アバター・ロク"
+   ],
+   "note": [
+    "ボーダーレス>ボーダーレス版のあるカード"
+   ]
+  },
+  "日本語版のカード": {
+   "n": 30840,
+   "top": [
+    "アーイシャ・タナカ",
+    "アーカム・ダグソン",
+    "アーカムの風見",
+    "アーカムの天測儀",
+    "アーギヴィーアの修復術",
+    "アーギヴィーアの発見",
+    "アーグの盗賊団",
+    "アーク弓のビビアン"
+   ],
+   "last": [
+    "７代目ドクター",
+    "８代目ドクター",
+    "９代目ドクター",
+    "Ｊ・ジョナ・ジェイムソン"
+   ],
+   "note": [
+    "日本語版のカード>日本語版のあるカード"
+   ]
+  },
+  "シリアル番号": {
+   "n": 292,
+   "top": [
+    "アーデンベイル城",
+    "アーボーグの暴食、ヤーグル",
+    "灯の分身",
+    "悪辣な略奪",
+    "アシュノッドの供犠台",
+    "アジリティのボブルヘッド",
+    "アゾリウスの造反者、ラヴィニア",
+    "集めるもの、ウモーリ"
+   ],
+   "last": [
+    "６代目ドクター",
+    "７代目ドクター",
+    "８代目ドクター",
+    "９代目ドクター"
+   ],
+   "note": [
+    "シリアル番号>シリアルナンバー版のあるカード"
+   ]
+  },
+  "セット:マーベル": {
+   "n": 468,
+   "top": [
+    "アークリアクター",
+    "アーマー・ウォーズ",
+    "アイアンマン・アーマー",
+    "アイアンマンの遺志、ウォーマシン",
+    "愛のヴィジョン",
+    "悪意ある科学者、ドク・オック",
+    "悪逆な怒り",
+    "悪行の見通し"
+   ],
+   "last": [
+    "S.H.I.E.L.D.の飛行車",
+    "S.H.I.E.L.D.のヘリキャリア",
+    "USエージェント、ジョン・ウォーカー",
+    "Ｊ・ジョナ・ジェイムソン"
+   ],
+   "note": []
+  },
+  "セット:タルキール": {
+   "n": 276,
+   "top": [
+    "アイノクの旅人",
+    "圧倒的電撃",
+    "孔蹄のビヒモス",
+    "アブザンの碑",
+    "アブザンの信奉者",
+    "アブザンの夜明け、フェロザー",
+    "雨とばりの再生者",
+    "嵐鱗の末裔"
+   ],
+   "last": [
+    "Bloomvine Regent // Claim Territory",
+    "Clarion Conqueror",
+    "Marang River Regent // Coil and Catch",
+    "Scavenger Regent // Exude Toxin"
+   ],
+   "note": []
+  },
+  "追放": {
+   "n": 3914,
+   "top": [
+    "異次元への追放",
+    "ヴェクからの追放魔道士",
+    "エドラスからの追放",
+    "ズーコの追放",
+    "追放されし王子、ズーコ",
+    "追放されしファラオ、クレオパトラ",
+    "追放するものドロマー",
+    "追放の裏切り"
+   ],
+   "last": [
+    "わめき騒ぐマンドリル",
+    "我々の刃",
+    "C.A.M.P.",
+    "Mr.ガッツィー"
+   ],
+   "note": []
+  }
+ },
+ "meta": [
+  "1st Place · Standard Challenge 32（2026-10-02） ↗",
+  "1st Place · Standard Championship Week Finals（2026-10-10） ↗",
+  "1st Place · Hex West Standard RCQ  - 9/20（2026-09-20） ↗",
+  "1st Place · Standard Challenge 32（2026-09-22） ↗",
+  "2nd Place · Standard Challenge 32（2026-09-22） ↗",
+  "1st Place · Standard Challenge 16 Special（2026-10-09） ↗",
+  "1st Place · Standard Challenge 32（2026-10-02） ↗",
+  "1st Place · ReCQ - Standard - SCG CON Los Angeles - Saturday - 3:00 pm（2026-10-10） ↗",
+  "1st Place · Standard Challenge 32 Special（2026-10-09） ↗",
+  "1st Place · Standard Challenge 32（2026-09-18） ↗",
+  "1st Place · Standard Challenge 16（2026-10-11） ↗",
+  "1st Place · ReCQ - Standard - SCG CON Los Angeles - Sunday - 12:30 pm（2026-10-11） ↗"
+ ],
+ "errors_en": [],
+ "errors_ja": []
+}

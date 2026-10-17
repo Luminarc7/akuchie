@@ -1,0 +1,5 @@
++ mkdir -p probe_out/verify
++ pip install -q playwright==1.56.0
++ python3 -m playwright install --with-deps chromium
++ python3 dbprobe/verify.py
+done 28
