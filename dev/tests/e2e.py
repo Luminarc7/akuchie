@@ -1183,9 +1183,9 @@ with sync_playwright() as p:
     page.keyboard.press("ArrowLeft")
     check("price history: keyboard moves between dates", tip.is_visible() and "2026/10/9" in last and "2026/10/8" in tip.inner_text(), [last, tip.inner_text()])
     if SHOTS: page.locator("#priceHistory").screenshot(path="hist_card.png")
-    page.click('#priceHistory .seg-btn[data-foil="1"]')
+    page.click('#histFoil')
     check("price history: foil prices", page.locator("#priceHistory .hist-end").text_content() == "¥9,150")
-    page.click('#priceHistory .seg-btn[data-foil="0"]')
+    page.click('#histFoil')
     page.click('#priceHistory .seg-btn[data-range="30"]')
     chg30 = page.locator("#priceHistory .hist-change").inner_text()
     check("price history: 1-month range", chg30.startswith("1か月で +") and chg30 != chg, chg30)
@@ -1269,9 +1269,9 @@ with sync_playwright() as p:
     page.mouse.move(box["x"] + box["width"] * 0.6, box["y"] + box["height"] / 2)
     check("card prices: chart tooltip in euros", "€" in page.locator("#priceHistory .hist-tip").inner_text() and "$" not in page.locator("#priceHistory .hist-tip").inner_text(), page.locator("#priceHistory .hist-tip").inner_text())
     page.mouse.move(5, 5)
-    page.click('#priceHistory .seg-btn[data-foil="1"]')
+    page.click('#histFoil')
     check("card prices: euro foil history", page.locator("#priceHistory .hist-end").text_content() == "¥8,608", page.locator("#priceHistory .hist-end").text_content())
-    page.click('#priceHistory .seg-btn[data-foil="0"]')
+    page.click('#histFoil')
     page.click("#priceHistory .hist-table summary")
     check("card prices: chart table in euros", "EUR" in page.locator("#priceHistory .hist-table thead").inner_text()
           and "€36.80" in page.locator("#priceHistory .hist-table tbody tr").first.inner_text(), page.locator("#priceHistory .hist-table tbody tr").first.inner_text())
@@ -1416,7 +1416,7 @@ with sync_playwright() as p:
     check("home: logo text, centred WARUJIE under 悪知恵, new subtitle and title",
           page.locator(".brand-mark").inner_text() == "悪知恵" and page.locator(".brand-roman").inner_text() == "WARUJIE"
           and abs(page.evaluate("(() => { const a = document.querySelector('.brand-mark').getBoundingClientRect(), b = document.querySelector('.brand-roman').getBoundingClientRect(); return (a.left + a.width / 2) - (b.left + b.width / 2); })()")) < 1.5
-          and page.locator("#brandSub").count() == 0 and page.title().startswith("悪知恵（warujie）"), page.title())   # the tagline left the top bar (the home page says it)
+          and "効果テキスト" in page.locator("#brandSub").inner_text() and page.title().startswith("悪知恵（warujie）"), page.title())
     check("home: top-bar search hidden (the big box is the search box)", not page.locator("#searchInput").is_visible() and page.locator("#heroInput").is_visible())
     # name suggestions
     page.locator("#heroInput").press_sequentially("ラガ")
@@ -2924,9 +2924,9 @@ with sync_playwright() as p:
     page.click("[data-dview=image]")
     wc = page.evaluate("""(() => { const keep = cheapStore.data; cheapStore.data = { cards: { 'Lightning Bolt': [100, 100, 'c'], 'Shivan Dragon': [200, null, 'r'], 'Llanowar Elves': [50, 50, 'u'], 'Ragavan, Nimble Pilferer': [5000, 4000, 'm'] } };
         const c = deckCost([[4, 'Lightning Bolt'], [3, 'Shivan Dragon'], [4, 'Llanowar Elves'], [1, 'Ragavan, Nimble Pilferer'], [20, 'Mountain']]);
-        const html = wildcardsHtml(c, 'standard'), modern = wildcardsHtml(c, 'modern'); cheapStore.data = keep; return [c.wc, c.yen, html.includes('wc-m'), modern]; })()""")
-    check("deck cost: Arena wildcards by rarity, basic lands left out; only for Standard",
-          wc[0] == {"m": 1, "r": 3, "u": 4, "c": 4} and wc[1] == round(4 * 150 + 3 * 300 + 4 * 75 + 1 * min(7500, 6400)) and wc[2] and wc[3] == "", wc)
+        const html = wildcardsHtml(c, 'standard'), modern = wildcardsHtml(c, 'modern'), pioneer = wildcardsHtml(c, 'pioneer'); cheapStore.data = keep; return [c.wc, c.yen, html.includes('wc-m'), modern, pioneer.includes('wc-m')]; })()""")
+    check("deck cost: Arena wildcards by rarity, basic lands left out; for Standard and Pioneer, not Modern",
+          wc[0] == {"m": 1, "r": 3, "u": 4, "c": 4} and wc[1] == round(4 * 150 + 3 * 300 + 4 * 75 + 1 * min(7500, 6400)) and wc[2] and wc[3] == "" and wc[4], wc)
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
     page.wait_for_function("document.querySelector('#metaBody .meta-cost')")
     gr = page.locator("#metaBody .meta-row").first
@@ -3007,8 +3007,8 @@ with sync_playwright() as p:
           and "価格" in page.locator(".meta-cols").inner_text() and page.locator("#metaHelpBtn").inner_text() == "ⓘ 見方")
     page.wait_for_function("document.querySelector('#metaBody .meta-price .meta-cost')")
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
-    check("phone, metagame: formats as ST Pi Mo LC VT Pa, periods as 30日 90日",
-          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["ST", "Pi", "Mo", "LC", "VT", "Pa"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
+    check("phone, metagame: formats as St Pi Mo Lg Vt Pa, periods as 30日 90日",
+          page.locator("#metaFormats .seg-btn").all_inner_texts() == ["St", "Pi", "Mo", "Lg", "Vt", "Pa"] and page.locator("#metaWindows .seg-btn").all_inner_texts() == ["30日", "90日"],
           (page.locator("#metaFormats .seg-btn").all_inner_texts(), page.locator("#metaWindows .seg-btn").all_inner_texts()))
     fr = page.evaluate("[...document.querySelectorAll('#metaFormats .seg-btn')].map(b => Math.round(b.getBoundingClientRect().right))")
     check("phone, metagame: all six formats fit on screen", max(fr) <= 390 - 16, fr)
@@ -4152,7 +4152,7 @@ with sync_playwright() as p:
     check("top bar: JP | EN and ¥ | $ switches, JP and ¥ chosen at first", pressed("#langBtn") == "JP" and pressed("#curBtn") == "¥"
           and page.locator("#langBtn button").all_inner_texts() == ["JP", "EN"] and page.locator("#curBtn button").all_inner_texts() == ["¥", "$"]
           and page.get_attribute("html", "data-cur") == "jpy", (pressed("#langBtn"), pressed("#curBtn")))
-    check("top bar: no tagline, no 'English' button", page.locator("#brandSub").count() == 0 and page.locator(".lang-btn").count() == 0)
+    check("top bar: the tagline stays (owner's choice), no 'English' button", page.locator("#brandSub").count() == 1 and page.locator(".lang-btn").count() == 0)
     psec = page.locator("#cardViewCard .price-section")
     check("¥: the card page's prices in yen, the dollar price on hover, the rates under them", "¥5,625" in psec.inner_text() and "$37.50" not in psec.inner_text()
           and page.locator("#cardViewCard .sp-val .cur").first.get_attribute("title") == "$37.50" and "1ドル＝150.00円" in psec.inner_text(), psec.inner_text())
@@ -4201,6 +4201,64 @@ with sync_playwright() as p:
           and page.locator(".lead-extra, .hero-hint").count() == 0)
     page.set_viewport_size({"width": 1280, "height": 900})
     page.evaluate("localStorage.removeItem('warujie-currency')")
+
+    # ---- 52. page cleanup round 2 (2026-10-17): tagline back, square JP | EN and ¥ | $ switches, St Pi Mo Lg Vt Pa Cm, Pioneer wildcards ----
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_selector(".cp-name")
+    page.evaluate("['warujie-currency', 'akuchie-lang'].forEach(k => localStorage.removeItem(k))")
+    page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_selector("#priceHistory svg .hist-line")
+    bar = page.evaluate("""(() => { const r = s => document.querySelector(s).getBoundingClientRect(), bar = document.querySelector('.topbar-inner');
+        return [bar.scrollWidth <= bar.clientWidth + 1, Math.round(r('#brandSub').width), Math.round(r('#langBtn').right), Math.round(r('#themeSwitch').right), Math.round(r('#brandSub').right) <= Math.round(r('#searchForm').left), Math.round(r('#searchInput').width), Math.round(r('#brandSub').height)]; })()""")
+    check("top bar (1280px): the tagline is back beside the logo and everything fits", page.locator("#brandSub").is_visible() and "効果テキスト" in page.locator("#brandSub").inner_text()
+          and bar[0] and bar[1] > 0 and bar[3] <= 1280 - 12 and bar[4] and bar[5] >= 200 and bar[6] <= 32, bar)   # the search box keeps a usable width; the tagline in two lines
+    look = page.evaluate("""(() => { const t = document.querySelector('#langBtn .sq-track'), d = document.querySelector('#darkSwitch .sq-track'), c = getComputedStyle(t), e = getComputedStyle(d);
+        return [!!document.querySelector('#curBtn .sq-track'), c.borderRadius, e.borderRadius, c.width, e.width, c.height, e.height]; })()""")
+    check("top bar: JP | EN and ¥ | $ are the same square switch as ダーク / 軽量", look[0] and look[1] == look[2] and look[3] == look[4] and look[5] == look[6], look)
+    knob = lambda sel: page.evaluate(f"Math.round(document.querySelector('{sel} .sq-knob').getBoundingClientRect().left - document.querySelector('{sel} .sq-track').getBoundingClientRect().left)")
+    k0 = knob("#langBtn")
+    page.click("#langBtn .sq-track"); page.wait_for_function("document.documentElement.lang === 'en'"); page.wait_for_timeout(250)
+    check("JP | EN: a click on the switch itself turns to English and moves the knob right", page.locator("#langBtn [aria-pressed=true]").inner_text() == "EN"
+          and page.get_attribute("#langBtn", "data-on") == "1" and knob("#langBtn") > k0 + 10 and page.locator("#brandSub").inner_text() == "MTG card search by rules text", [k0, knob("#langBtn")])
+    page.click("#langBtn .sq-track"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    check("JP | EN: and back to Japanese", page.locator("#langBtn [aria-pressed=true]").inner_text() == "JP" and page.get_attribute("#langBtn", "data-on") == "")
+    page.click("#curBtn .sq-track"); page.wait_for_function("document.documentElement.dataset.cur === 'usd'")
+    check("¥ | $: a click on the switch itself turns to dollars", page.locator("#curBtn [aria-pressed=true]").inner_text() == "$" and page.get_attribute("#curBtn", "data-on") == "1"
+          and page.locator("#priceHistory .hist-end").text_content() == "$41.00", page.locator("#priceHistory .hist-end").text_content())
+    page.click("#curBtn [data-v=jpy]"); page.wait_for_function("document.documentElement.dataset.cur === 'jpy'")
+    check("¥ | $: the ¥ label picks yen again", page.get_attribute("#curBtn", "data-on") == "" and page.locator("#priceHistory .hist-end").text_content() == "¥6,150")
+    page.click("#langBtn [aria-pressed=true]"); page.wait_for_timeout(150)
+    check("JP | EN: clicking the chosen side changes nothing", page.evaluate("document.documentElement.lang") == "ja")
+    fsw = page.locator("#histFoil")
+    check("price chart: foil is a square switch labelled フォイル like the listings' (no 通常 / Foil buttons)", fsw.count() == 1 and fsw.get_attribute("role") == "switch"
+          and fsw.inner_text() == "フォイル" and fsw.get_attribute("aria-checked") == "false" and page.locator("#priceHistory .seg-btn[data-foil]").count() == 0)
+    fsw.click(); page.wait_for_function("document.getElementById('histFoil') && document.getElementById('histFoil').getAttribute('aria-checked') === 'true'")
+    check("price chart: the switch shows foil prices", page.locator("#priceHistory .hist-end").text_content() == "¥9,150", page.locator("#priceHistory .hist-end").text_content())
+    page.click("#histFoil"); page.wait_for_function("document.getElementById('histFoil').getAttribute('aria-checked') === 'false'")
+    if SHOTS: page.locator(".topbar").screenshot(path="r53_topbar.png")
+    codes = page.evaluate("(() => { const d = document.createElement('div'); d.innerHTML = legalityCirclesHtml({ standard: 'legal', commander: 'legal' }); return [...d.querySelectorAll('.legal-circle')].map(c => c.textContent); })()")
+    check("search tiles: format circles as St Pi Mo Lg Vt Pa Cm (the owner's list)", codes == ["St", "Pi", "Mo", "Lg", "Vt", "Pa", "Cm"], codes)
+    check("Arena wildcards: Standard and Pioneer only", page.evaluate("[wildcardsHtml({ wc: { m: 1, r: 0, u: 0, c: 0 } }, 'pioneer') !== '', wildcardsHtml({ wc: { m: 1, r: 0, u: 0, c: 0 } }, 'legacy') === '']") == [True, True])
+    # the set page's 日本語版 / 英語版 is the same square switch
+    page.goto(SITE + "?set=m10&lang=en"); page.wait_for_selector("#setHeader .set-lang-toggle .sq-track")
+    check("set page: 日本語版 / 英語版 as the square switch, 英語版 chosen", page.get_attribute("#setHeader .set-lang-toggle", "data-on") == "1"
+          and page.get_attribute("#setHeader .set-lang-btn[data-lang=en]", "aria-pressed") == "true")
+    page.click("#setHeader .set-lang-toggle .sq-track"); page.wait_for_function("document.querySelector('#setHeader .set-lang-btn[data-lang=ja]') && document.querySelector('#setHeader .set-lang-btn[data-lang=ja]').getAttribute('aria-pressed') === 'true'")
+    check("set page: a click on the switch turns to the Japanese printings", "lang=ja" in page.url and page.get_attribute("#setHeader .set-lang-toggle", "data-on") == "", page.url)
+    if SHOTS: page.locator("#setHeader").screenshot(path="r53_set.png")
+    # phone: the metagame's two-letter codes share the row, each centred
+    page.set_viewport_size({"width": 390, "height": 844})
+    META_MODE["mode"] = "real"
+    page.goto(SITE + "?view=meta&format=pioneer"); page.wait_for_selector("#metaBody .meta-row")
+    fb = page.evaluate("""[...document.querySelectorAll('#metaFormats .seg-btn')].map(b => { const r = b.getBoundingClientRect(), s = b.querySelector('.sh-short').getBoundingClientRect();
+        return [Math.round(r.width), Math.round((s.left + s.width / 2) - (r.left + r.width / 2)), b.innerText]; })""")
+    row = page.evaluate("(() => { const s = document.getElementById('metaFormats').getBoundingClientRect(), b = [...document.querySelectorAll('#metaFormats .seg-btn')]; return [Math.round(b[0].getBoundingClientRect().left - s.left), Math.round(s.right - b[b.length - 1].getBoundingClientRect().right)]; })()")
+    check("phone, metagame: St Pi Mo Lg Vt Pa fill the row in equal buttons, each code centred", [x[2] for x in fb] == ["St", "Pi", "Mo", "Lg", "Vt", "Pa"]
+          and max(x[0] for x in fb) - min(x[0] for x in fb) <= 1 and all(abs(x[1]) <= 1 for x in fb) and abs(row[0]) <= 2 and abs(row[1]) <= 2 and no_hscroll(), (fb, row))
+    check("phone: the top bar's switches fit, the tagline stays hidden there as before", page.locator("#curBtn").is_visible() and not page.locator("#brandSub").is_visible() and no_hscroll())
+    if SHOTS: page.screenshot(path="r53_meta_phone.png")
+    META_MODE["mode"] = "fixture"
+    page.set_viewport_size({"width": 1280, "height": 900})
+
     str_src = INDEX[INDEX.index("const STR = {"):INDEX.index("\n};", INDEX.index("const STR = {"))]
     str_keys = re.findall(r"^\s+'([^']+)':\s*\[", str_src, re.M)
     check("interface strings: no key in STR twice (a later one would win silently)", len(str_keys) > 500 and len(set(str_keys)) == len(str_keys),

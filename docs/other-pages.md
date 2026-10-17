@@ -38,7 +38,8 @@ in `dev/tests/e2e.py`.
 The set list comes from Scryfall's `/sets` (paper sets with cards, newest first), grouped by
 type (`SET_GROUPS`) and filterable. Japanese set names are in `SET_NAME_JA`, a hand-made list:
 add new sets there when they come out. One set's cards come from a Scryfall search
-(`setSearchUrl()`), Japanese printings when `lang=ja`.
+(`setSearchUrl()`), Japanese printings when `lang=ja`; the 日本語版 / 英語版 choice in the set's header is
+the same square switch as the top bar's JP | EN (`.tog`).
 
 ## Metagame tab
 
@@ -66,7 +67,7 @@ wrong ordinal right (the sources write 2st, 3st, 22th), here and on deck pages.
   name (down to `META_NAME_MIN` px) after each render, resize and toggle, and the mana symbols are
   small (11px) so the name and its colours sit as one centred block. The name, price, share and
   win rate share the row's first line (see "Sizes that should match" in [interface.md](interface.md)). The format buttons show
-  two-letter codes (`FORMAT_SHORT`: ST, Pi, Mo, LC, VT, Pa, the owner's choice), the
+  two-letter codes (`FORMAT_SHORT`: St, Pi, Mo, Lg, Vt, Pa, the owner's choice of 2026-10-17; Cm for Commander on the search tiles' circles, `FORMAT_BADGES`), the
   periods 30日/30d, the ⓘ button no words, and the win-rate column says 勝率/Win%; each button
   keeps its full name as a tooltip (`.sh-full` / `.sh-short` spans).
 - **Rank arrows.** In the default share order, each rank has ▲ or ▼ beside it when the deck's
@@ -76,8 +77,8 @@ wrong ordinal right (the sources write 2st, 3st, 22th), here and on deck pages.
   did; the tooltip also says how the rank moved. A deck absent from the earlier 4 weeks gets ▲.
 - **Deck price.** A 価格 column left of the share shows about how much the sample list costs in
   yen (`metaCostsFor()`, cached in `metaCosts`; a + when some cards have no price), and the sort menu has 安い順 (cheapest first;
-  decks without a price go last). In Standard, the Arena wildcards the list needs appear too
-  (`wildcardsHtml()`).
+  decks without a price go last). In Standard and Pioneer (`WC_FORMATS`), the Arena wildcards the
+  list needs appear too (`wildcardsHtml()`), unless a card in it isn't on Arena.
 
 ### How a deck's price is worked out
 
@@ -97,7 +98,7 @@ with how often each card is played across all lists) and `meta_lists/<days>-<for
 image or list view is saved in `akuchie-deck-view`. The trend chart is `deckTrendHtml()`.
 Under the title, `deckCostHtml()` draws two one-line boxes of the same height, side by side
 (on phones the wildcard box is labelled just "Arena"): 価格 and the deck's price in yen
-(how it is worked out is a tooltip and the note at the foot of the page) and the Arena wildcards (Standard only; the rarity names are tooltips). The sample-list picker sits in a
+(how it is worked out is a tooltip and the note at the foot of the page) and the Arena wildcards (Standard and Pioneer only; the rarity names are tooltips). The sample-list picker sits in a
 bar that stays under the top bar while the page scrolls (`.deck-pick-bar`). After the main deck
 and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-land cards (0 to
 6+). Each card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list
@@ -167,8 +168,8 @@ follows.
 
 ### The tray
 
-The top bar's ☆ button (`#wantBtn`, count of copies `#wantN`; the word ウォント only on screens
-1400px and wider) opens `#wantTray` from the right over a dimmed page (`#wantTrayBg`; phones: the
+The top bar's ☆ button (`#wantBtn`, count of copies `#wantN`; the ☆ alone, its name in the tooltip,
+so the search box keeps its width beside the JP | EN and ¥ | $ switches) opens `#wantTray` from the right over a dimmed page (`#wantTrayBg`; phones: the
 whole width), `openTray()` / `closeTray()`; the ☆ again, ×, Esc or a click beside it closes it.
 `drawTray()`: the title (the want list's name when it has one, `wantData().title`) and how many cards; a リスト / 画像 switch (remembered as
 `WANT_VIEW_KEY`, `warujie-want-view`; no pictures in lightweight mode); each card with − n ＋ and

@@ -3,9 +3,13 @@
 ## Text in two languages
 
 Every visible string exists in Japanese and English. Japanese is the default; the top bar's
-JP | EN switch (`#langBtn`, two buttons with `aria-pressed`) switches, and the choice is saved.
+JP | EN switch (`#langBtn`) switches, and the choice is saved.
 Beside it, the ¥ | $ switch (`#curBtn`) picks the currency of every price (see
-[Currency](#currency-the--switch) below). `syncTopToggles()` marks the chosen half of both.
+[Currency](#currency-the--switch) below). Both look like the square ダーク / 軽量 switches: the two
+choices are buttons with `aria-pressed`, and the square switch (`.sq-track`) between them flips to the
+other one (`topTogglePick()`). `syncTopToggles()` marks the chosen one and moves the knob (`data-on`).
+The tagline (`#brandSub`) shows only on screens wider than 1240px; from 1201px up the bar's gaps
+and tab padding are a little tighter so the search box keeps its width.
 
 - **`STR`** holds every string: `'key': ['日本語', 'English']`. Placeholders look like `{n}`.
 - **`t(key, vars)`** returns the string in the current language (`LANG`), filling in `vars`.

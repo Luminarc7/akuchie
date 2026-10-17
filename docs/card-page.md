@@ -87,7 +87,7 @@ saved in `akuchie-offer-foil`; foil-only printings switch to foil automatically 
 visitor changed it by hand (`offerFoilTouched`).
 
 **Price history** keeps US dollars and euros, non-foil and foil, daily for 120 days and weekly
-after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`histState`).
+after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`#histFoil`, the same square switch as the listings' フォイル; `histState`).
 
 ## Shop links
 
