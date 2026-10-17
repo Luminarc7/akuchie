@@ -24,7 +24,7 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Roles row | `showCardRoles()` | Tag file |
 | Set, number, Scryfall link | inline in `renderCardViewContent()` | |
 | Prices (JP / US / EU tabs) | `priceHtml()`, `marketRows()`, `rerenderPriceSection()` | Scryfall prices, warujie-prices `q/` shards |
-| Shop links | `shopGroups` in `renderCardViewContent()`; `…Url()` helpers; `jpShopDirHtml()` | Links only |
+| Shop links (each shop once) | `shopLinksHtml()` (US/EU tabs, `MARKET_SHOPS`), `jpShopDirHtml()` (JP tab); `…Url()` helpers | Links only |
 | Listings and stock | `offersHtml()`, `offerRows()` | warujie-prices `q/` shards (`l`, `lk`) |
 | Legality | `legalityHtml()` | Scryfall `legalities` |
 | Deck sites | `mtgDecksUrl()`, `goldfishUrl()` | Links only |
@@ -73,8 +73,9 @@ The three tabs (`PRICE_MARKETS`, choice saved in `akuchie-market`):
 | US | TCGplayer lowest listing, Mana Pool, Card Kingdom (sell), Cardsphere, other USD shops from MTGJSON; TCGplayer market price only when nothing else is known; Card Kingdom's buy price last |
 | EU | Cardmarket lowest offer, other EUR shops; Cardmarket trend only when nothing else is known |
 
-The cheapest selling price in each column (non-foil, foil) is marked "best". Every amount shows
-yen too (`yenFor()`, `yenForEur()`), using Frankfurter's rate.
+The cheapest selling price in each column (non-foil, foil) is marked "best". Every amount is
+shown in the currency chosen in the top bar (¥ by default, `curHtml()`), the shop's own price on
+hover; see [interface.md](interface.md#currency-the--switch).
 
 `loadCardQuotes()` reads `q/<first two characters of the id>.json.gz` and fills `card._quotes`
 (today's shop prices), `card._offers` (listings), `card._links` (shop product links). The file
@@ -86,12 +87,15 @@ saved in `akuchie-offer-foil`; foil-only printings switch to foil automatically 
 visitor changed it by hand (`offerFoilTouched`).
 
 **Price history** keeps US dollars and euros, non-foil and foil, daily for 120 days and weekly
-after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`histState`).
+after that. The chart offers 1 month, 3 months (default), 1 year and all, plus a foil switch (`#histFoil`, the same square switch as the listings' フォイル; `histState`).
 
 ## Shop links
 
 Links are search URLs built from the card's English or Japanese name; nothing is read from the
-shops. Japanese shops: `hareruyaUrl()`, `bigMagicUrl()`, `cardRushUrl()`, `tokyoMtgUrl()` and the
+shops. Each shop is linked once: the Japanese shops only in the JP tab's list
+(`jpShopDirHtml()`), and the 「ショップで探す」 row under the US and EU prices (`shopLinksHtml()`,
+`MARKET_SHOPS`) only lists that market's shops the prices and listings above don't link to
+already (usually Star City Games, plus Card Kingdom when it has no price). Japanese shops: `hareruyaUrl()`, `bigMagicUrl()`, `cardRushUrl()`, `tokyoMtgUrl()` and the
 `JP_SHOP_SEARCH` list (each entry: Japanese label, English label, URL with `{q}`, optionally
 `"name": "en"` to search by English name). On phones only `JP_DIR_PHONE` shops show before
 "load more". Star City Games is a link only (no price feed exists).

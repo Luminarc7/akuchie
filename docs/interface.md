@@ -2,8 +2,14 @@
 
 ## Text in two languages
 
-Every visible string exists in Japanese and English. Japanese is the default; the 「EN」 button
-(`#langBtn`) switches, and the choice is saved.
+Every visible string exists in Japanese and English. Japanese is the default; the top bar's
+JP | EN switch (`#langBtn`) switches, and the choice is saved.
+Beside it, the ¥ | $ switch (`#curBtn`) picks the currency of every price (see
+[Currency](#currency-the--switch) below). Both look like the square ダーク / 軽量 switches: the two
+choices are buttons with `aria-pressed`, and the square switch (`.sq-track`) between them flips to the
+other one (`topTogglePick()`). `syncTopToggles()` marks the chosen one and moves the knob (`data-on`).
+The tagline (`#brandSub`) shows only on screens wider than 1240px; from 1201px up the bar's gaps
+and tab padding are a little tighter so the search box keeps its width.
 
 - **`STR`** holds every string: `'key': ['日本語', 'English']`. Placeholders look like `{n}`.
 - **`t(key, vars)`** returns the string in the current language (`LANG`), filling in `vars`.
@@ -22,6 +28,23 @@ Adding a string: add a `STR` entry with both languages, use `t('your.key')` (or 
 Game words have their own tables: `FORMAT_JA`/`FORMAT_EN`, `CREATURE_TYPE_JA`, `JA_KEYWORDS`,
 `SUPERTYPE_JA`, `CARDTYPE_WORD_JA`, `SUBTYPE_JA`, `SET_NAME_JA`, rarity labels (`rarity.*` in
 `STR`). Use the official Japanese card wording.
+
+## Currency: the ¥ | $ switch
+
+Every price on the site is shown in one currency, yen by default or US dollars (`CUR`, saved as
+`warujie-currency`, also on `<html data-cur>`). Prices arrive in dollars (US shops), euros
+(European shops) or yen (Japanese shops); each is converted at today's rate (Frankfurter, the
+`exchange rate` section) and the shop's own price shows on hover (the `title`). Until the rate is
+in, the shop's own price is shown.
+
+- **`curHtml(amount, from)`** writes a price (`from`: `usd`, `eur`, `jpy`) as
+  `<span class="cur" data-amt data-from>`; **`updateYenLabels()`** redraws all of them, so
+  anything drawn with it follows the switch by itself. `curText()` is the same as plain text.
+- Prices drawn as text (the price history chart, deck totals `yenRound()`/`yenSmall()`, which
+  use `fromYen()`) are drawn again by **`redrawPrices()`**, which `setCurrency()` calls. A new
+  view with prices drawn as text needs a line there.
+- The fx note under the card page's prices shows only when something on that tab is converted.
+- The Rakuten Books boxes on the home page keep the shop's yen prices.
 
 ## Themes
 
@@ -115,6 +138,7 @@ All in `localStorage`, all optional (private browsing just forgets them). **Keep
 |---|---|
 | `akuchie-theme` | `light` / `dark` |
 | `akuchie-lang` | `en` when English was chosen |
+| `warujie-currency` | `usd` when prices are shown in dollars (`CUR_KEY`) |
 | `akuchie-lite` | `1` in lightweight mode |
 | `akuchie-view` | `text` for the text view of results |
 | `akuchie-market` | price tab: `jp`, `us`, `eu` |
