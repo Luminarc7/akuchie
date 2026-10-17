@@ -40,6 +40,15 @@ ETBでカードを引く, エルフ ロード…); add a search there when one s
 `harness.py` opens the site with the real database and stubs Scryfall; use it for
 screenshots or to reproduce a bug with real data.
 
+## `dev/tests/worker_icons.mjs` — the test sites' pink icon
+
+    node dev/tests/worker_icons.mjs
+
+Checks `testIcons()` in `worker.js`: the branch previews (staging…) get the pink icon and
+`manifest-test.webmanifest`, warujie.jp and the live Worker's address keep the green one, and
+every icon file the page, both manifests and `sw.js` name exists. Run it whenever `worker.js`,
+the icons or the manifests change.
+
 ## `check_docs.py` — the docs still match the code
 
     python3 dev/check_docs.py

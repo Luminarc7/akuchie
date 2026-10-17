@@ -42,6 +42,7 @@ Both must pass before every push. Details in [`../dev/README.md`](../dev/README.
 |---|---|---|
 | `python3 dev/tests/e2e.py` | About 600 checks of the whole site in headless Chromium; every network request answered from fixtures, so it runs offline and repeatably. Last line: `N/N checks passed` | a few minutes |
 | `cd dev/searchbench && python3 search_checks.py ../../index.html` | About 90 real searches against the real database and role tags | a minute or two |
+| `node dev/tests/worker_icons.mjs` | `worker.js` gives the test sites the pink app icon and warujie.jp the green one; every icon file exists | seconds |
 | `python3 dev/check_docs.py` | Every function, constant, file and section the docs name still exists | seconds |
 
 Add checks for every new feature or fix: in `e2e.py` as a new numbered section near the end
