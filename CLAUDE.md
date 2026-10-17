@@ -11,8 +11,9 @@ details: those live in the owner's private notes.
 - browse sets;
 - see a metagame tab (deck shares, win rates, trends) and deck pages with sample lists and
   MTG Arena/MTGO export;
-- keep a want list (☆ on results and card pages, saved in the browser) and take it to MTG Arena,
-  MTGO, Moxfield, Archidekt, Hareruya or the deck price page;
+- keep a want list (☆ on results and card pages, saved in the browser; the top bar's ☆ opens it as a
+  tray), which is also the deck price page's list, and take it to MTG Arena, MTGO, Moxfield,
+  Archidekt or Hareruya;
 - see price movers and Commander combos (on the preview page);
 - install it as an app.
 
