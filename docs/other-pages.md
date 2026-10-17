@@ -13,8 +13,8 @@ button works.
 | `?view=meta[&format=modern][&days=30]` | Metagame tab | `renderMeta()` |
 | `?view=deck&format=…&days=…&deck=<name>[&u=1][&list=N]` | One deck | `renderDeck()`, `drawDeck()` |
 | `?view=prices[&market=us\|eu][&win=1\|7\|30][&dir=up\|down]` | Price movers | `renderMovers()` |
-| `?view=import[&list=<a deck list>]` | Want list and deck price page (one list) | `renderImport()`, `priceImport()`, `drawImport()` |
-| `?view=want` | The old want list address: opens `?view=import` | `routeFromUrl()` |
+| `?view=import[&list=<a deck list>]` | Deck price page: the pasted deck | `renderImport()`, `priceImport()`, `drawImport()` |
+| `?view=want` | The same page showing the want list (the ☆ cards) | `renderImport()`, `drawImportHead()` |
 
 Adding a view: a branch in `routeFromUrl()` and `applyRoute()`, a `<div id="…View">` in the
 HTML, a line in `showView()`, a tab or link, share tags in `worker.js` `shareTags()`, and checks
@@ -102,31 +102,38 @@ and sideboard, `deckCurveHtml()` draws the mana curve of the main deck's non-lan
 6+). Each card also shows its own cheapest price (`.dc-yen` in image view, `.dl-yen` in list
 view).
 
-## Want list and deck price page (one list)
+## Want list and deck price page (two lists, one page)
 
-`?view=import` (`#importView`, titled ウォントリスト・デッキの価格): one list, which the ☆
-buttons fill and where a deck list can be pasted, priced in yen and taken elsewhere. The owner
-asked for the want list's own page and the deck price page to become one, in the deck price
-page's style, and for the top bar's ☆ to open a tray of the list (MTGGoldfish's card tray was the
-example), 2026-10-17. `?view=want`, the want list's old address (never live), opens this page.
-It belongs to the price tab (the tab bar marks 価格 while it is open). Ways in: the tray's
-価格を見る・書き出す, the デッキの価格を調べる button in the price tab's bar (`.imp-open`,
-`a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the shown list there
-(with the deck's name) so cards can be swapped and the price follows.
+`#importView` shows one of two lists, priced in yen and taken elsewhere the same way: the want
+list that the ☆ buttons fill (`?view=want`, titled ウォントリスト) and a pasted deck list
+(`?view=import`, titled デッキの価格を調べる, as it was before the want list). A switch at the top
+(`#impWhich`, ☆ ウォントリスト / デッキの価格, drawn by `drawImportHead()` with the title, lead and
+label for the list shown) goes between them. The owner asked for the want list's page and the
+deck price page to become one, in the deck price page's style, with the top bar's ☆ opening a
+tray of the list (MTGGoldfish's card tray was the example), and then chose to keep the two lists
+apart (2026-10-17): a ☆ never touches a pasted deck, and a deck page's list never replaces the
+want list. The page belongs to the price tab (the tab bar marks 価格 while it is open). Ways in:
+the tray's 価格を見る・書き出す (`?view=want`), the デッキの価格を調べる button in the price tab's bar
+(`.imp-open`, `a[data-import]`), and 編集して計算 on a deck page (`.deck-edit`), which opens the
+shown list as the pasted deck (with the deck's name) so cards can be swapped and the price
+follows.
 
-### The list
+### The lists
 
-- **It is text**: the box's text, `listText`, kept in the browser only (`IMPORT_SAVE_KEY`,
-  `warujie-deck-import`; no accounts). Every change goes through `setListText()`, which saves it,
-  updates the box, every ☆ and the tray (`refreshWant()`), and prices it again on this page.
-  Another tab's change arrives by the `storage` event. `wantData()` reads the text as cards (the
-  same card's lines added up, by oracle id or English name; memoized per text) for the ☆
-  buttons, the top bar's count and the tray.
+- **They are text**, kept in the browser only (no accounts): `lists.want` (`WANT_SAVE_KEY`,
+  `warujie-want-list`) and `lists.deck` (`IMPORT_SAVE_KEY`, `warujie-deck-import`, the deck price
+  page's key since before the want list, so a deck pasted on the live site stays where it was).
+  `importState.which` says which one the page shows, and the box holds that one (`pageList()`).
+  Every change goes through `setList(which, text)`, which saves it, updates the box when it shows
+  that list, every ☆ and the tray for the want list (`refreshWant()`), and prices it again when it
+  is on screen. Another tab's change arrives by the `storage` event. `wantData()` reads the want
+  list as cards (the same card's lines added up, by oracle id or English name; memoized per text)
+  for the ☆ buttons, the top bar's count and the tray.
 - **☆ buttons.** Every search result has one over its picture (`wantTogHtml()`, called from
   `cardTileHtml()`; at the end of the row in the text view, `textRowHtml()`), and the card page
-  has the same ☆ in a row of its own under the picture and language buttons (`#cpWant` inside
-  `.cp-art`, `wantCardHtml()`; as wide as the picture and as tall as the language buttons, 28px
-  or 26px on phones, `--want-h`; the owner's choices, 2026-10-16/17). A tap adds the line
+  has the same ☆ in a row of its own between the picture and the language buttons (`#cpWant`
+  inside `.cp-art`, before `#printSlot`, `wantCardHtml()`; as wide as the picture and as tall as
+  a language button, 28px or 26px on phones, `--want-h`; the owner's choices, 2026-10-16/17). A tap adds the line
   `1 Card Name (SET) 123` (English name, and the printing when the card knows its number,
   `wantLineFor()`) after the last main-deck line (`withLineAdded()`, so it never lands in a
   sideboard); pressed again it takes all the card's lines out, with undo. Each button carries the
@@ -134,14 +141,15 @@ It belongs to the price tab (the tab bar marks 価格 while it is open). Ways in
   `document` in the capture phase handles every want button first (`.want-tog`,
   `[data-want-act]`), so a ☆ inside a result's link doesn't open the card. Another printing's
   page shows the ☆ pressed too (the list is per card).
-- **Counts.** ＋ adds to the card's first line, − takes from its last (`wantSetCount()`,
+- **Counts.** ＋ adds to the card's first line, − takes from its last (`listSetCount()`,
   rewriting the count the way the line wrote it, `lineWithCount()`: `4 稲妻`, `4x`, `x4`,
-  `SB: 2 …`). Undo (`wantUndoToast()`) puts the text back unless the list changed again since.
+  `SB: 2 …`). Undo (`wantUndoToast()`) puts the list's text back unless it changed again since.
 - **The note** at the bottom of the screen (`wantToast()`, `#wantToast`) confirms, with
   リストを見る (opens the tray) after adding and 元に戻す after taking a card out, clearing the
-  list, or when a deck page or a shared link replaced the list (`imp.replaced`).
-- A list kept the old way (`warujie-want`, staging only, 2026-10-16) moves into the text once
-  (`WANT_OLD_KEY`).
+  list, or when a deck page or a shared link replaced the pasted deck (`imp.replaced`).
+- A list kept the old way (`warujie-want`, staging only, 2026-10-16) moves into the want list
+  once (`WANT_OLD_KEY`). The ☆ cards saved on the test site between 2026-10-17's merge of the
+  two pages and their separation went into the deck's key, so they show under デッキの価格 there.
 
 ### The tray
 
@@ -156,7 +164,7 @@ row with the buttons under each (`trayTileHtml()`). Pictures come straight from 
 server by the database's printing (`trayPic()`), or show the printing the line names (an art
 picked on the price page, below) once that card is known (`trayCard()`; the tray asks for the
 ones not known yet with `loadPrintCards()` when it opens). Lines not found link to the price page. At the
-bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る・書き出す (this page), and
+bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る・書き出す (`?view=want`), and
 晴れる屋で買う as below. A card's name opens its page (on phones the tray closes first).
 
 ### Reading and pricing
@@ -183,8 +191,9 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
 - **The price** is the deck pages' (`deckCost()`, `deckCostHtml()`, see "How a deck's price is
   worked out" above), with lines not found counted as missing (so the total reads 「〜」).
   Arena wildcards show when every card is on Arena. Each card shows the price of one copy, as
-  on the deck pages; then the mana curve (`deckCurveHtml()`). The untitled list is called
-  ウォントリスト (`imp.untitled`).
+  on the deck pages; then the mana curve (`deckCurveHtml()`). An untitled list is called
+  ウォントリスト or 貼り付けたデッキ (`want.title`, `imp.untitled`). An empty want list says how to
+  fill it with ☆ (`tray.empty`); an empty deck shows the formats it reads and an example.
 - **The bar** (`.want-bar`, owner's request 2026-10-16): the price and リスト / 画像 on the left,
   晴れる屋で買う and 書き出す on the right, staying under the top bar while the list scrolls
   (`position: sticky` at `--stick-top`). On phones the price box's note goes under the price.
@@ -196,14 +205,14 @@ bottom: 全部消す (a second tap within 4 seconds, then undo), 価格を見る
 - **Export** (`importListText()`): Arena or MTGO text, text with printings (`print`:
   `4 Card Name (MH3) 123` where the line has them, which Moxfield and Archidekt read as that
   printing), the .txt file, and a link that carries the list (`importShareUrl()`,
-  `?view=import&list=`; opening such a link puts its list in place of the list, with undo, and
-  makes the address plain again). Links to Moxfield and Archidekt (`WANT_SITES`: neither can be
+  `?view=import&list=`, from either list; opening such a link puts its list in place of the
+  pasted deck, with undo, and makes the address plain again). Links to Moxfield and Archidekt (`WANT_SITES`: neither can be
   filled in from a link, so the tap copies the list with printings and opens their page, and a
   line says to paste it into Import).
 - The list is priced as people type (`priceImport()`, 350 ms after the last key), first from the
   database, then with prices, then with pictures (`importState`, cached per language and name),
   then with the pictures of the printings the lines name (below). There is no "price it" button
-  (the owner found it pointless, 2026-10-16). 消す clears the list, with undo.
+  (the owner found it pointless, 2026-10-16). 消す clears the list shown, with undo.
 
 ### Counts and art under each card
 
@@ -211,7 +220,7 @@ In the picture view (画像) each card has − n ＋ and an art button under it 
 passed to `deckGroupsHtml()`; owner's request 2026-10-17). The list view stays as it was.
 
 - **− n ＋** change that card's lines in that part only (main, sideboard or commander), the way
-  they were written (`impEntry()` reads the box again, then `wantSetCount()`); − on the last copy
+  they were written (`impEntry()` reads the list again, then `listSetCount()`); − on the last copy
   takes the card out, with undo. The page is drawn again and the button keeps the focus
   (`impActSel()`).
 - **The art button** opens `#artPicker` over a dimmed page (`#artPickerBg`; on phones a sheet from

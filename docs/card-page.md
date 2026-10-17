@@ -18,7 +18,8 @@ Everything that loads later (printings, prices, history, combos, similar cards) 
 | Part | Function(s) | Data from |
 |---|---|---|
 | Picture | `cardArtHtml()`, `pictureTag()` | Scryfall images. Placeholder Japanese scans are swapped for the same printing's English picture with a note |
-| Language buttons (JP EN CS…) under the picture | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()` | One Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
+| ☆ want list button under the picture, as wide as it (`#cpWant`) | `wantCardHtml()` | The want list in the browser ([other-pages.md](other-pages.md#the-lists)) |
+| Language buttons (JP EN CS…) under the ☆ | `fillPrintToggle()`, `printingLanguages()`, `printButtonsHtml()` | One Scryfall search: `e:<set> cn:"<number>" include_multilingual=true` (plus `SET_TWIN`) |
 | Name, cost, type line, text | `cardPageNames()`, `cardPageType()`, `cardPageText()` | Scryfall card, Japanese from the database where Scryfall lacks it |
 | Roles row | `showCardRoles()` | Tag file |
 | Set, number, Scryfall link | inline in `renderCardViewContent()` | |

@@ -359,7 +359,7 @@
   .cp-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .cp-name { font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 24px; line-height: 1.3; margin: 0; }
   .cp-name-sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
-  .print-slot { min-height: 34px; margin-top: 10px; }
+  .print-slot { min-height: 34px; margin-top: 6px; }
   .print-langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
   .print-lang { width: 38px; height: 28px; padding: 0; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface);
     color: var(--text); font: 700 11.5px/1 "Zen Kaku Gothic New", sans-serif; letter-spacing: .04em; cursor: pointer; }
@@ -1083,7 +1083,7 @@
     .cp-art { grid-row: 1 / span 3; }
     .cp-meta { margin-top: 0; }
     .cp-art { position: static; max-width: none; margin: 0; }
-    .print-slot { margin-top: 8px; }
+    .print-slot { margin-top: 4px; }
     .print-langs { gap: 4px; }
     .print-lang { flex: 0 0 calc((100% - 12px) / 4); width: auto; height: 26px; font-size: 11px; }
     .cp-info { display: contents; }
@@ -1257,6 +1257,15 @@
   .deck-export-menu { max-width: calc(100vw - 16px); }
   .imp-layout { display: grid; gap: 18px; }
   .imp-form { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  /* the switch between the want list (?view=want) and the pasted deck (?view=import) */
+  .imp-which { display: flex; border: 1px solid var(--line-strong); border-radius: 9px; overflow: hidden; margin-bottom: 4px; }
+  .imp-which:empty { display: none; }
+  .imp-which a { flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; padding: 0 10px;
+    background: var(--field); color: var(--text-2); font-size: 13.5px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .imp-which a + a { border-left: 1px solid var(--line-strong); }
+  .imp-which a:hover { color: var(--accent); }
+  .imp-which a[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+  .imp-which svg { width: 15px; height: 15px; flex: none; }
   .imp-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 27px; font-weight: 800; line-height: 1.3; }
   .imp-lead { margin: 0 0 4px; font-size: 13px; line-height: 1.75; color: var(--text-2); }
   .imp-label { font-size: 12px; font-weight: 700; color: var(--muted); }
@@ -1308,9 +1317,10 @@
   .want-btn .want-n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800;
     display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
   .want-btn .want-n[hidden] { display: none; }
-  /* the card page's want list row, under the picture: as wide as the picture, as tall as the language buttons */
-  .cp-want { --want-h: 28px; margin-top: 6px; display: flex; height: var(--want-h); }
+  /* the card page's ☆, between the picture and the language buttons: as wide as the picture, as tall as a language button */
+  .cp-want { --want-h: 28px; margin-top: 10px; display: flex; height: var(--want-h); }
   .cp-want:empty { display: none; }
+  .cp-want:empty + .print-slot { margin-top: 10px; }
   .cp-want .want-tog { position: static; width: 100%; height: 100%; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface);
     color: var(--text-2); box-shadow: none; }
   .cp-want .want-tog svg { width: 17px; height: 17px; }
@@ -1440,7 +1450,7 @@
     .ap-body { padding: 10px 12px calc(14px + env(safe-area-inset-bottom, 0px)); }
     .ap-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     /* the card page's narrow picture column: the language buttons are 26px tall there */
-    .cp-want { --want-h: 26px; }
+    .cp-want { --want-h: 26px; margin-top: 8px; }
     .cp-want .want-tog svg { width: 15px; height: 15px; }
   }
   #deckPeek { position: fixed; z-index: 70; width: 230px; aspect-ratio: 488 / 680; border-radius: 11px; pointer-events: none; box-shadow: var(--shadow); display: none; }
@@ -2035,9 +2045,10 @@
 <div id="importView" class="wrap" style="display:none;">
   <div class="imp-layout">
     <form class="imp-form" id="importForm">
-      <h1 class="imp-title" data-i18n="imp.title">ウォントリスト・デッキの価格</h1>
-      <p class="imp-lead" data-i18n="imp.lead">☆を押したカードはこのリストに入ります。デッキリストを貼り付けても読めます（MTGアリーナ・MTGOのリスト、「4 稲妻」のように打った行、日本語名・英語名どちらでも）。それぞれのカードのいちばん安い版でそろえた金額を円で出します。</p>
-      <label class="imp-label" for="importText" data-i18n="imp.label">リスト</label>
+      <nav class="imp-which" id="impWhich" aria-label="リスト" data-i18n-aria="imp.which.aria"></nav>
+      <h1 class="imp-title" id="impTitle">デッキの価格を調べる</h1>
+      <p class="imp-lead" id="impLead">デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。</p>
+      <label class="imp-label" for="importText" id="impLabel">デッキリスト</label>
       <textarea id="importText" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="4 稲妻&#10;4 Ragavan, Nimble Pilferer&#10;20 山&#10;&#10;サイドボード&#10;2 Pyroblast" data-i18n-ph="imp.ph"></textarea>
       <div class="imp-actions">
         <button type="button" class="adv-btn" id="importClear" data-i18n="imp.clear">消す</button>
@@ -2315,10 +2326,17 @@ const STR = {
   'deck.export.file': ['MTGO用ファイル（.txt）を保存', 'Save a Magic Online file (.txt)'],
   'deck.export.done': ['コピーしました', 'Copied'],
   'deck.export.note': ['カード名は英語です。両面カードや出来事のカードは表の面の名前、分割カードと部屋は「A // B」で書き出します。', 'Card names are in English: double-faced and adventure cards by their front face, split cards and Rooms as “A // B”.'],
-  'title.import': ['ウォントリスト・デッキの価格 — 悪知恵', 'Want list & deck prices — 悪知恵'],
-  'imp.title': ['ウォントリスト・デッキの価格', 'Want list & deck prices'],
-  'imp.lead': ['☆を押したカードはこのリストに入ります。デッキリストを貼り付けても読めます（MTGアリーナ・MTGOのリスト、「4 稲妻」のように打った行、日本語名・英語名どちらでも）。それぞれのカードのいちばん安い版でそろえた金額を円で出します。', 'Cards you ☆ go into this list, and you can paste a deck list too (MTG Arena or Magic Online lists, typed “4 Lightning Bolt” lines, Japanese or English names). It shows what the cards cost in yen in their cheapest printings.'],
-  'imp.label': ['リスト', 'List'],
+  'title.import': ['デッキの価格を調べる — 悪知恵', 'Price a deck list — 悪知恵'],
+  'title.want': ['ウォントリスト — 悪知恵', 'Want list — 悪知恵'],
+  'imp.title': ['デッキの価格を調べる', 'Price a deck list'],
+  'imp.lead': ['デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。',
+    'Paste a deck list to see what it costs in yen with each card’s cheapest printing. Lists from MTG Arena or Magic Online work, and so do typed lines like “4 Lightning Bolt”, with English or Japanese names.'],
+  'imp.label': ['デッキリスト', 'Deck list'],
+  'imp.which.aria': ['リスト', 'Lists'],
+  'imp.tab.deck': ['デッキの価格', 'Deck prices'],
+  'want.lead': ['☆を押したカードがここに入ります。枚数や絵柄を変えて、いちばん安い版でそろえた金額を円で見たり、晴れる屋・Moxfield・Archidektに持っていったりできます。貼り付けたデッキとは別のリストです。',
+    'Cards you ☆ land here. Change counts or art, see what they cost in yen in their cheapest printings, and take the list to Hareruya, Moxfield or Archidekt. It is kept apart from the deck you paste.'],
+  'imp.removed': ['デッキから外しました', 'Taken out of the deck'],
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
@@ -2334,7 +2352,7 @@ const STR = {
   'imp.empty.mtgo': ['MTGOや海外のデッキサイトのテキスト（空行のあとがサイドボード、SB: の行も）', 'Magic Online and deck-site text (after a blank line comes the sideboard; SB: lines too)'],
   'imp.empty.typed': ['手で打った「4 稲妻」「稲妻 x4」「4x Lightning Bolt」。セット記号や (M10) 146 は無視します', 'Typed lines: “4 Lightning Bolt”, “Lightning Bolt x4”, “4x 稲妻”. Set codes like (M10) 146 are ignored'],
   'imp.sample': ['例を入れてみる', 'Try an example'],
-  'imp.untitled': ['ウォントリスト', 'Want list'],
+  'imp.untitled': ['貼り付けたデッキ', 'Your deck'],
   'imp.replaced': ['リストを入れ替えました', 'The list was replaced'],
   'imp.n.aria': ['{name}の枚数', 'Copies of {name}'],
   'pick.btn': ['絵柄を変える', 'Change the art'],
@@ -6133,7 +6151,7 @@ function renderCardViewContent(card) {
 
   box.innerHTML = `
     <div class="card-page">
-      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="print-slot" id="printSlot"></div><div class="cp-want" id="cpWant">${wantCardHtml(card)}</div></div>
+      <div class="cp-art">${cardArtHtml(card, names.main)}<div class="cp-want" id="cpWant">${wantCardHtml(card)}</div><div class="print-slot" id="printSlot"></div></div>
       <div class="cp-info">
         <div class="cp-title-row">
           <div>
@@ -6209,8 +6227,8 @@ function renderCardViewContent(card) {
       if (art && pictureSource(card) !== card) {
         const slot = document.getElementById('printSlot'), want = document.getElementById('cpWant');
         art.innerHTML = cardArtHtml(card, cardPageNames(card, printChoice(card)).main);
-        if (slot) art.appendChild(slot);   // the language buttons stay
-        if (want) art.appendChild(want);   // and the want list box
+        if (want) art.appendChild(want);   // the ☆ stays between the picture
+        if (slot) art.appendChild(slot);   // and the language buttons
       }
     });
   }
@@ -6791,7 +6809,7 @@ document.getElementById('setTypeSelect').addEventListener('change', renderSetLis
 // ---- routing ----------------------------------------------------------------
 // ?card=<id> card page · ?set=<code>[&lang=ja|en] set page · ?view=sets set list
 // · ?view=meta[&format=modern][&days=30] metagame tab · ?view=import[&list=…] deck price page
-// · ?view=want want list
+// · ?view=want want list (the same page, showing the want list instead of the pasted deck)
 function routeFromUrl() {
   const p = new URLSearchParams(location.search);
   if (p.get('card')) return { view: 'card', id: p.get('card') };
@@ -6803,8 +6821,8 @@ function routeFromUrl() {
   if (p.get('view') === 'sets') return { view: 'sets' };
   if (p.get('view') === 'meta') return { view: 'meta', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '' };
   if (p.get('view') === 'prices') return { view: 'prices', win: p.get('win') || '', dir: p.get('dir') || '', market: p.get('market') || '' };
-  // ?view=want was the want list's own page (staging only): it is this page now
-  if (p.get('view') === 'import' || p.get('view') === 'want') return { view: 'import', list: p.get('list') || '' };
+  if (p.get('view') === 'want') return { view: 'import', which: 'want', list: '' };
+  if (p.get('view') === 'import') return { view: 'import', which: 'deck', list: p.get('list') || '' };
   if (p.get('view') === 'deck') return { view: 'deck', format: (p.get('format') || '').toLowerCase(), days: p.get('days') || '', deck: p.get('deck') || '', u: p.get('u') === '1', list: Math.max(0, parseInt(p.get('list') || '0', 10) || 0) };
   return { view: 'search' };
 }
@@ -8056,7 +8074,7 @@ function setLang(lang, save) {
   } else if (route.view === 'deck') {
     renderDeck(route);
   } else if (route.view === 'import') {
-    document.title = t('title.import');
+    drawImportHead();
     priceImport();   // names, pictures and set names in the other language
   } else if (route.view === 'prices') {
     renderMovers();
@@ -10444,7 +10462,11 @@ window.addEventListener('scroll', hideDeckPeek, { passive: true });
 // the way the deck pages are (deckCost(): each card's cheapest printing, basic lands free).
 // Which printing is the cheapest comes from cheap_prints.json.gz. The pasted text is kept only
 // in this browser (IMPORT_SAVE_KEY), so it is still there next time.
+// ?view=want is the same page showing the want list (the ☆ cards, WANT_SAVE_KEY) instead: two
+// lists, kept apart (owner's choice 2026-10-17), with a switch at the top of the page.
 const IMPORT_SAVE_KEY = 'warujie-deck-import';
+const WANT_SAVE_KEY = 'warujie-want-list';
+const LIST_KEYS = { want: WANT_SAVE_KEY, deck: IMPORT_SAVE_KEY };
 const IMPORT_MAX_LINES = 400;
 // section headings, as MTG Arena (English and Japanese), Magic Online and deck sites write them
 const IMPORT_PARTS = [
@@ -10650,32 +10672,62 @@ function lineWithPrint(raw, s, cn) {
 }
 
 const importState = {
+  which: 'deck',       // the list shown: 'deck' (?view=import) or 'want' (?view=want)
   token: 0, result: null, tried: false, copied: null, note: null,
   pics: new Map(),     // LANG|name -> { row, card } with pictures
   view: (() => { try { return localStorage.getItem('akuchie-deck-view') === 'image' && !LITE ? 'image' : 'list'; } catch (e) { return 'list'; } })(),
 };
-function loadImportText() { try { return localStorage.getItem(IMPORT_SAVE_KEY) || ''; } catch (e) { return ''; } }
-function saveImportText(text) {
-  try { if (text.trim()) localStorage.setItem(IMPORT_SAVE_KEY, text.slice(0, 20000)); else localStorage.removeItem(IMPORT_SAVE_KEY); } catch (e) { /* private mode */ }
+function loadListText(which) { try { return localStorage.getItem(LIST_KEYS[which]) || ''; } catch (e) { return ''; } }
+function saveListText(which, text) {
+  const key = LIST_KEYS[which];
+  try { if (text.trim()) localStorage.setItem(key, text.slice(0, 20000)); else localStorage.removeItem(key); } catch (e) { /* private mode */ }
 }
-// the list itself: the box's text, which the ☆ buttons and the tray change too (setListText())
-let listText = loadImportText();
+// the two lists as text: the box shows the one on screen; the ☆ buttons and the tray change the want list
+const lists = { want: loadListText('want'), deck: loadListText('deck') };
+function pageList() { return lists[importState.which]; }
+// every change to a list: kept, the box when it shows that list, every ☆ and the tray for the
+// want list, and priced again when it is on screen (unless the change came from the box itself)
+function setList(which, text, from) {
+  text = String(text || '');
+  if (text === lists[which]) return;
+  lists[which] = text;
+  saveListText(which, text);
+  const shown = importState.which === which;
+  const ta = document.getElementById('importText');
+  if (shown && ta && from !== 'box' && ta.value !== text) ta.value = text;
+  if (which === 'want') refreshWant();
+  if (!from && shown && routeFromUrl().view === 'import') priceImport();
+}
+// the switch, title and words above the box, for the list on screen
+function drawImportHead() {
+  const want = importState.which === 'want';
+  document.title = t(want ? 'title.want' : 'title.import');
+  document.getElementById('impWhich').innerHTML = [['want', '?view=want', STAR_SVG + esc(t('want.title'))], ['deck', '?view=import', esc(t('imp.tab.deck'))]]
+    .map(([w, href, label]) => `<a href="${href}" data-which="${w}"${w === importState.which ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  document.getElementById('impTitle').textContent = t(want ? 'want.title' : 'imp.title');
+  document.getElementById('impLead').textContent = t(want ? 'want.lead' : 'imp.lead');
+  document.getElementById('impLabel').textContent = t(want ? 'want.title' : 'imp.label');
+}
 function renderImport(route) {
-  document.title = t('title.import');
+  const which = route.which === 'want' ? 'want' : 'deck';
+  if (which !== importState.which) importState.note = null;   // "copied, paste it there" was about the other list
+  importState.which = which;
+  drawImportHead();
   const ta = document.getElementById('importText');
   if (route.list) {
-    // a deck page's list or a shared link takes the place of the list, with undo
-    const before = listText;
-    setListText(route.list, 'route');
-    if (before.trim() && before !== listText) wantUndoToast(t('imp.replaced'), { before, after: listText });
+    // a deck page's list or a shared link takes the place of the pasted deck, with undo
+    const before = lists.deck;
+    setList('deck', route.list, 'route');
+    if (before.trim() && before !== lists.deck) wantUndoToast(t('imp.replaced'), { which: 'deck', before, after: lists.deck });
     // the list is in the box (and kept) now: a reload shows what was edited, not the link's list again
     history.replaceState(history.state, '', '?view=import');
-  } else if (ta.value !== listText) ta.value = listText;
+  }
+  if (ta.value !== pageList()) ta.value = pageList();
   priceImport();
 }
 async function priceImport() {
   const token = ++importState.token;
-  const text = listText;
+  const text = pageList();
   const body = document.getElementById('importBody');
   if (!text.trim()) { importState.result = null; body.innerHTML = importEmptyHtml(); return; }
   if (!LOCAL_DB) {
@@ -10707,6 +10759,7 @@ async function priceImport() {
   if (await loadPrintCards(res.commander.concat(res.main, res.side)) && token === importState.token) drawImport();
 }
 function importEmptyHtml() {
+  if (importState.which === 'want') return `<div class="imp-empty"><p class="imp-empty-h">${esc(t('tray.empty'))}</p><p>${esc(t('tray.empty.body'))}</p></div>`;
   return `<div class="imp-empty"><p class="imp-empty-h">${t('imp.empty.h')}</p>
     <ul class="imp-empty-list"><li>${t('imp.empty.arena')}</li><li>${t('imp.empty.mtgo')}</li><li>${t('imp.empty.typed')}</li></ul>
     <button type="button" class="adv-btn" id="importSample">${t('imp.sample')}</button></div>`;
@@ -10782,7 +10835,7 @@ function impActSel(act, part, name) {
 }
 // the card as the list has it now (the box may have changed since the last pricing)
 function impEntry(part, name) {
-  return (readImport(listText)[part] || []).find(x => x.name === name) || null;
+  return (readImport(pageList())[part] || []).find(x => x.name === name) || null;
 }
 function drawImport() {
   const res = importState.result;
@@ -10837,7 +10890,7 @@ function drawImport() {
   const note = importState.note && Date.now() < importState.note.until ? `<p class="imp-buy-note" role="status">${esc(importState.note.text)}</p>` : '';
   let html = `<div class="deck-head">
       <div class="deck-title-row">
-        <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t('imp.untitled'))}</span></h2>
+        <h2 class="deck-title imp-deck-title">${pips ? `<span class="pips">${pips}</span>` : ''}<span>${esc(res.title || t(importState.which === 'want' ? 'want.title' : 'imp.untitled'))}</span></h2>
       </div>
       <p class="deck-meta">${facts.map(f => `<span class="fact">${esc(f)}</span>`).join(' <span class="sep">·</span>')}</p>
       ${note}
@@ -10879,22 +10932,22 @@ const IMPORT_SAMPLE = ['デッキ', '4 稲妻', '4 Monastery Swiftspear', '4 ゴ
   'サイドボード', '3 Smash to Smithereens', '2 Path to Exile'].join('\n');
 let importTimer = null;
 document.getElementById('importText').addEventListener('input', (e) => {
-  setListText(e.target.value, 'box');
+  setList(importState.which, e.target.value, 'box');
   clearTimeout(importTimer);
   importTimer = setTimeout(priceImport, 350);
 });
 document.getElementById('importForm').addEventListener('submit', (e) => e.preventDefault());
 document.getElementById('importClear').addEventListener('click', () => {
-  const before = listText;
-  setListText('', 'box');
+  const which = importState.which, before = lists[which];
+  setList(which, '', 'box');
   document.getElementById('importText').value = '';
   priceImport();
   document.getElementById('importText').focus();
-  if (before.trim()) wantUndoToast(t('want.cleared'), { before, after: listText });
+  if (before.trim()) wantUndoToast(t('want.cleared'), { which, before, after: lists[which] });
 });
 document.getElementById('importBody').addEventListener('click', async (e) => {
   if (e.target.closest('#importSample')) {
-    setListText(IMPORT_SAMPLE);
+    setList(importState.which, IMPORT_SAMPLE);
     return;
   }
   const ia = e.target.closest('[data-imp-act]');
@@ -10903,21 +10956,22 @@ document.getElementById('importBody').addEventListener('click', async (e) => {
     if (act === 'art') { openArtPicker(part, name); return; }
     const x = impEntry(part, name);
     if (!x) return;
-    // the card's own lines change, the way they were written (wantSetCount())
-    if (act === 'more') wantSetCount(x, Math.min(WANT_MAX_COPIES, x.count + 1));
-    else if (x.count > 1) wantSetCount(x, x.count - 1);
-    else wantUndoToast(t('want.removed'), wantSetCount(x, 0));
+    // the card's own lines change, the way they were written (listSetCount())
+    const which = importState.which;
+    if (act === 'more') listSetCount(which, x, Math.min(WANT_MAX_COPIES, x.count + 1));
+    else if (x.count > 1) listSetCount(which, x, x.count - 1);
+    else wantUndoToast(t(which === 'want' ? 'want.removed' : 'imp.removed'), listSetCount(which, x, 0));
     return;
   }
   const fix = e.target.closest('.imp-fix');
   if (fix) {
     // the line keeps its count; the name becomes the one picked
-    const lines = listText.split(/\r?\n/);
+    const lines = pageList().split(/\r?\n/);
     const i = Number(fix.dataset.line);
     if (lines[i] !== undefined) {
       const m = /^(\s*(?:SB:\s*)?\d{1,3}\s*(?:[xX×*](?=\s)|枚)?\s*)/i.exec(lines[i].normalize('NFKC'));
       lines[i] = (m ? m[1] : '1 ') + fix.dataset.name;
-      setListText(lines.join('\n'));
+      setList(importState.which, lines.join('\n'));
     }
     return;
   }
@@ -10925,14 +10979,14 @@ document.getElementById('importBody').addEventListener('click', async (e) => {
   if (buy && importState.result) {
     // the link opens Hareruya's page as usual; the list is on the clipboard to paste there
     // read the box again: the tap may come before the last change was priced
-    copyTextNow(hareruyaText(readImport(listText)));
+    copyTextNow(hareruyaText(readImport(pageList())));
     importNote(t('imp.hareruya.done'));
     return;
   }
   const site = e.target.closest('[data-isite]');
   if (site && importState.result) {
     // Moxfield and Archidekt: the list with printings on the clipboard, their page opens as usual
-    copyTextNow(importListText(readImport(listText), 'print'));
+    copyTextNow(importListText(readImport(pageList()), 'print'));
     importNote(t('want.site.done', { site: site.dataset.isite }));
     return;
   }
@@ -10997,6 +11051,13 @@ document.addEventListener('click', (e) => {
     const text = `About\nName ${deckLabel(deckState.current.a).name}\n\n` + deckExportText(deckState.current.chosen, 'arena');
     goTo('?view=import&list=' + encodeURIComponent(text.trim()));
   } else goTo('?view=import');
+});
+// the switch at the top of the page: the want list or the pasted deck
+document.getElementById('impWhich').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-which]');
+  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+  e.preventDefault();
+  if (a.dataset.which !== importState.which) goTo(a.getAttribute('href'));
 });
 
 // ---- art picker: every printing of a card on the deck price page --------------------------------
@@ -11091,11 +11152,11 @@ function pickArt(card) {
   const x = impEntry(artState.part, artState.name);
   if (!x) { closeArtPicker(); return; }
   PRINT_CARDS.set(printKey(card.set, card.collector_number), card);
-  const before = listText, lines = listText.split(/\r?\n/);
+  const which = importState.which, before = lists[which], lines = before.split(/\r?\n/);
   x.lines.forEach(l => { lines[l.i] = lineWithPrint(lines[l.i], card.set, card.collector_number); });
-  setListText(lines.join('\n'));
+  setList(which, lines.join('\n'));
   closeArtPicker(true);
-  if (listText !== before) wantUndoToast(t('pick.done'), { before, after: listText });
+  if (lists[which] !== before) wantUndoToast(t('pick.done'), { which, before, after: lists[which] });
 }
 document.getElementById('artPicker').addEventListener('click', (e) => {
   if (e.target.closest('.wt-close')) { closeArtPicker(true); return; }
@@ -11108,14 +11169,15 @@ document.getElementById('artPickerBg').addEventListener('click', () => closeArtP
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && artState.open) closeArtPicker(true); });
 window.addEventListener('popstate', () => closeArtPicker());
 
-// ---- want list: the list on the deck price page, filled with ☆ from anywhere --------------------
-// One list (owner's request 2026-10-17): the text in the deck price page's box, listText, saved as
-// IMPORT_SAVE_KEY. A ☆ on a search result (wantTogHtml() in cardTileHtml() and textRowHtml()) or on
-// a card page (wantCardHtml()) adds a "1 Card Name (SET) 123" line to it, and pressed again takes
-// the card's lines out. The top bar's ☆ (#wantBtn) opens the tray (#wantTray, drawTray()): the
-// cards in the list with − n ＋ and a trash can, as rows or pictures, and the way to the deck
-// price page, which prices the same list and takes it elsewhere.
-const WANT_OLD_KEY = 'warujie-want';   // the separate list this replaced (staging only, 2026-10-16): moved into the text once
+// ---- want list: filled with ☆ from anywhere, shown on the deck price page --------------------
+// The want list is a text like a pasted deck, lists.want, saved as WANT_SAVE_KEY and kept apart
+// from the pasted deck (owner's choice 2026-10-17). A ☆ on a search result (wantTogHtml() in
+// cardTileHtml() and textRowHtml()) or on a card page (wantCardHtml()) adds a "1 Card Name (SET)
+// 123" line to it, and pressed again takes the card's lines out. The top bar's ☆ (#wantBtn) opens
+// the tray (#wantTray, drawTray()): the cards in the list with − n ＋ and a trash can, as rows or
+// pictures, and the way to ?view=want, the deck price page showing the want list, which prices it
+// and takes it elsewhere.
+const WANT_OLD_KEY = 'warujie-want';   // the JSON list it replaced (staging only, 2026-10-16): moved into the text once
 const WANT_MAX_COPIES = 99;
 const STAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.03.98 5.69L12 16.67l-5.1 2.68.98-5.69L3.75 9.63l5.7-.83z"/></svg>';
 const TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12.2A2 2 0 0 0 8.5 21h7a2 2 0 0 0 2-1.8l1-12.2M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></svg>';
@@ -11152,9 +11214,9 @@ function lineWithCount(raw, n) {
 // the list as cards: the same card's lines added up, by oracle id (or English name)
 let wantMemo = null;
 function wantData() {
-  const key = `${LOCAL_DB ? 1 : 0}${cheapStore.data ? 1 : 0}|${listText}`;
+  const key = `${LOCAL_DB ? 1 : 0}${cheapStore.data ? 1 : 0}|${lists.want}`;
   if (wantMemo && wantMemo.key === key) return wantMemo;
-  const parsed = parseDeckText(listText);
+  const parsed = parseDeckText(lists.want);
   const list = [], byKey = new Map(), byName = new Map();
   let total = 0, missing = 0;
   parsed.lines.forEach(l => {
@@ -11187,26 +11249,16 @@ function wantFindFor(e) {
   const d = wantData();
   return (e && (d.byKey.get(e.k) || d.byName.get(nameKey(e.n)))) || null;
 }
-// every change to the list: kept, the box on the deck price page, every ☆, the tray
-function setListText(text, from) {
-  text = String(text || '');
-  if (text === listText) return;
-  listText = text;
-  saveImportText(text);
-  const ta = document.getElementById('importText');
-  if (ta && from !== 'box' && ta.value !== text) ta.value = text;
-  refreshWant();
-  if (!from && routeFromUrl().view === 'import') priceImport();
-}
 function wantAdd(e) {
-  if (parseDeckText(listText).lines.length >= IMPORT_MAX_LINES - 1) return null;
-  const before = listText;
-  setListText(withLineAdded(listText, wantLineFor(e)));
-  return { before, after: listText };
+  if (parseDeckText(lists.want).lines.length >= IMPORT_MAX_LINES - 1) return null;
+  const before = lists.want;
+  setList('want', withLineAdded(lists.want, wantLineFor(e)));
+  return { which: 'want', before, after: lists.want };
 }
-// a new count for a card (0 takes all its lines out): ＋ goes on its first line, − comes off its last
-function wantSetCount(x, c) {
-  const before = listText, lines = listText.split(/\r?\n/);
+// a new count for a card in either list (0 takes all its lines out): ＋ goes on its first line,
+// − comes off its last
+function listSetCount(which, x, c) {
+  const before = lists[which], lines = before.split(/\r?\n/);
   let diff = c - x.count;
   if (c <= 0) x.lines.slice().sort((a, b) => b.i - a.i).forEach(l => lines.splice(l.i, 1));
   else if (diff > 0) {
@@ -11220,13 +11272,14 @@ function wantSetCount(x, c) {
       if (l.count - take <= 0) lines.splice(l.i, 1); else lines[l.i] = lineWithCount(lines[l.i], l.count - take);
     }
   }
-  setListText(lines.join('\n'));
-  return { before, after: listText };
+  setList(which, lines.join('\n'));
+  return { which, before, after: lists[which] };
 }
-// undo puts the text back, unless the list changed again since
+// undo puts the text back (snap: { which, before, after }), unless the list changed again since
 function wantUndoToast(msg, snap) {
   if (!snap) return;
-  wantToast(msg, { label: t('want.undo'), run: () => { if (listText === snap.after) setListText(snap.before); } });
+  const which = snap.which || 'want';
+  wantToast(msg, { label: t('want.undo'), run: () => { if (lists[which] === snap.after) setList(which, snap.before); } });
 }
 
 // the ☆ on a search result and on the card page
@@ -11296,21 +11349,21 @@ document.addEventListener('click', (e) => {
     try { entry = JSON.parse(b.dataset.wc || 'null'); } catch (err) { entry = null; }
     if (!entry) return;
     const x = wantFindFor(entry);
-    if (x) wantUndoToast(t('want.removed'), wantSetCount(x, 0));
+    if (x) wantUndoToast(t('want.removed'), listSetCount('want', x, 0));
     else if (wantAdd(entry)) wantToast(t('want.added'), trayState.open ? null : { label: t('want.see'), run: () => openTray() });
     return;
   }
   const x = wantData().byKey.get(b.dataset.want);
   if (!x) return;
   const act = b.dataset.wantAct;
-  if (act === 'more') wantSetCount(x, x.count + 1);
-  else if (act === 'less' && x.count > 1) wantSetCount(x, x.count - 1);
-  else wantUndoToast(t('want.removed'), wantSetCount(x, 0));
+  if (act === 'more') listSetCount('want', x, x.count + 1);
+  else if (act === 'less' && x.count > 1) listSetCount('want', x, x.count - 1);
+  else wantUndoToast(t('want.removed'), listSetCount('want', x, 0));
 }, true);
 // the list changed in another tab
 window.addEventListener('storage', (e) => {
-  if (e.key !== IMPORT_SAVE_KEY && e.key !== null) return;
-  setListText(loadImportText());
+  if (e.key === null || e.key === WANT_SAVE_KEY) setList('want', loadListText('want'));
+  if (e.key === null || e.key === IMPORT_SAVE_KEY) setList('deck', loadListText('deck'));
 });
 
 // the tray: the top bar's ☆ opens it from the right, over the page
@@ -11405,7 +11458,7 @@ function drawTray() {
   if (!d.total) body = `<div class="wt-empty"><p class="wt-empty-h">${esc(t('tray.empty'))}</p><p>${esc(t('tray.empty.body'))}</p></div>`;
   else {
     body = view === 'image' && !LITE ? `<div class="wt-grid">${items.map(trayTileHtml).join('')}</div>` : `<ul class="wt-list">${items.map(trayRowHtml).join('')}</ul>`;
-    if (d.missing) body += `<p class="wt-miss"><a href="?view=import" data-tray-go="1">${esc(tn('tray.missing', d.missing))}</a></p>`;
+    if (d.missing) body += `<p class="wt-miss"><a href="?view=want" data-tray-go="1">${esc(tn('tray.missing', d.missing))}</a></p>`;
   }
   const armed = Date.now() < trayState.armed;
   tray.innerHTML = `<div class="wt-head">
@@ -11416,7 +11469,7 @@ function drawTray() {
     <div class="wt-body">${body}</div>
     <div class="wt-foot">
       <div class="wt-foot-row"><span class="imp-saved">${esc(t('imp.saved'))}</span>${d.total ? `<button type="button" class="wt-clear" data-armed="${armed ? 1 : 0}">${esc(t(armed ? 'want.clear.sure' : 'want.clear'))}</button>` : ''}</div>
-      <a class="wt-go" href="?view=import" data-tray-go="1">${esc(t('tray.go'))}</a>
+      <a class="wt-go" href="?view=want" data-tray-go="1">${esc(t('tray.go'))}</a>
       ${d.list.length ? `<a class="adv-btn wt-buy" href="${HARERUYA_BULK}" target="_blank" rel="noopener" data-thareruya="1" title="${esc(t('imp.hareruya.title'))}">${t('imp.hareruya')} ↗</a>` : ''}
     </div>`;
   const b = tray.querySelector('.wt-body');
@@ -11439,7 +11492,7 @@ document.getElementById('wantTray').addEventListener('click', (e) => {
   }
   if (e.target.closest('[data-thareruya]')) {
     // Hareruya reads "4 Card Name" lines (CLAUDE.md rule 3: a link only, the list goes on the clipboard)
-    copyTextNow(hareruyaText(readImport(listText)));
+    copyTextNow(hareruyaText(readImport(lists.want)));
     wantToast(t('imp.hareruya.done'));
     return;
   }
@@ -11452,16 +11505,16 @@ document.getElementById('wantTray').addEventListener('click', (e) => {
       return;
     }
     trayState.armed = 0;
-    const before = listText;
-    setListText('');
-    wantUndoToast(t('want.cleared'), { before, after: listText });
+    const before = lists.want;
+    setList('want', '');
+    wantUndoToast(t('want.cleared'), { which: 'want', before, after: lists.want });
     return;
   }
   if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
   if (e.target.closest('[data-tray-go]')) {
     e.preventDefault();
     closeTray();
-    goTo('?view=import');
+    goTo('?view=want');
     return;
   }
   const link = e.target.closest('a[data-card]');
@@ -11475,14 +11528,14 @@ document.getElementById('wantTray').addEventListener('click', (e) => {
   let old = null;
   try { old = JSON.parse(localStorage.getItem(WANT_OLD_KEY) || 'null'); } catch (e) { old = null; }
   if (!Array.isArray(old)) return;
-  let text = listText;
+  let text = lists.want;
   old.forEach(x => {
     if (!x || typeof x.n !== 'string' || !x.n.trim()) return;
     const c = Math.min(WANT_MAX_COPIES, Math.max(1, Math.floor(Number(x.c)) || 1));
     text = withLineAdded(text, wantLineFor({ n: x.n, s: x.s, cn: x.cn }).replace(/^1 /, `${c} `));
   });
   try { localStorage.removeItem(WANT_OLD_KEY); } catch (e) { /* fine */ }
-  setListText(text, 'start');
+  setList('want', text, 'start');
 })();
 refreshWant();
 dbLoaded.then(refreshWant);
