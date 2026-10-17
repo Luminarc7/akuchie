@@ -48,7 +48,8 @@ weekly trend (sparklines from `trends`) and key cards. A win rate from fewer tha
 `META_MIN_MATCHES` matches is hidden as noise; when most decks are below it, a note offers the
 period with more matches. The ⓘ button (`#metaHelpBtn`, text in `STR` `meta.help`) explains how to
 read the numbers. The deck icon is a card's art crop (`deckArtHtml()`, credited with
-`creditDeckArt()`).
+`creditDeckArt()`). A sample list's finish comes from the source as written; `placeText()` puts a
+wrong ordinal right (the sources write 2st, 3st, 22th), here and on deck pages.
 
 - **Deck names in Japanese.** Archetype names arrive in English from MTGOFormatData.
   `deckNameJa()` translates them: whole names first (`DECK_NAME_WHOLE`), then guild and mono-colour

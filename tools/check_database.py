@@ -13,6 +13,7 @@ import argparse
 import collections
 import gzip
 import json
+import re
 import sys
 
 # How much may go missing before a rebuild is refused. Scryfall merges or drops a few
@@ -29,6 +30,7 @@ SPOT_CHECKS = ["Lightning Bolt", "Counterspell", "Llanowar Elves", "Sol Ring", "
                "Ragavan, Nimble Pilferer", "Sheoldred, the Apocalypse", "The One Ring", "Orcish Bowmasters",
                "Brainstorm", "Dark Ritual", "Thoughtseize", "Solitude", "Shivan Dragon", "Serra Angel"]
 RARITY_LETTERS = "curmsb"
+JA_CHARS = re.compile("[\u3040-\u30ff\u3400-\u9fff]")
 SHOW = 60                     # names listed per section of the note
 
 
@@ -78,7 +80,8 @@ def check(old_path, new_path, old_printings=None, new_printings=None):
         problems.append(f"{len(lost)} cards would disappear (at most {MAX_LOST_CARDS} allowed)")
 
     def count(rows, key):
-        return sum(1 for r in rows if r.get(key))
+        # a Japanese text counts only with Japanese in it (older builds kept some English ones)
+        return sum(1 for r in rows if r.get(key) and (key != "oracle_ja" or JA_CHARS.search(r[key])))
     for key, most, what in (("name_ja", MAX_LOST_JA_NAMES, "Japanese names"), ("oracle_ja", MAX_LOST_JA_TEXT, "Japanese rules texts")):
         before, after = count(old_rows, key), count(new_rows, key)
         if after < before - most:
@@ -113,7 +116,8 @@ def check(old_path, new_path, old_printings=None, new_printings=None):
     if both and len(renamed) > MAX_NAME_CHANGES * len(both):
         problems.append(f"{len(renamed):,} Japanese names changed (at most {MAX_NAME_CHANGES:.0%} allowed)")
     got_name = [new_by[o] for o in both if not old_by[o].get("name_ja") and new_by[o].get("name_ja")]
-    got_text = [new_by[o] for o in both if not old_by[o].get("oracle_ja") and new_by[o].get("oracle_ja")]
+    has_text = lambda r: bool(r.get("oracle_ja") and JA_CHARS.search(r["oracle_ja"]))
+    got_text = [new_by[o] for o in both if not has_text(old_by[o]) and has_text(new_by[o])]
 
     old_p, new_p = printing_count(old_printings), printing_count(new_printings)
     if new_printings and old_p and new_p < old_p * (1 - MAX_LOST_PRINTINGS):
