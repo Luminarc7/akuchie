@@ -3263,34 +3263,39 @@ with sync_playwright() as p:
           page.locator("#cardGrid .text-row .want-tog").first.get_attribute("aria-pressed") == "true")
     page.click("#viewToggle [data-view=image]"); page.wait_for_selector("#cardGrid .card-tile")
 
-    page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_selector("#cpWant .want-add")
-    check("want list: the card page has an add button", page.locator("#cpWant .want-add").inner_text().strip() == "ウォントリストに追加")
-    page.click("#cpWant .want-add"); page.wait_for_selector("#cpWant .want-step")
-    page.click("#cpWant [data-want-act=more]"); page.click("#cpWant [data-want-act=more]")
-    check("want list: on the card page, + and − change how many copies", page.locator("#cpWant .want-c").inner_text() == "3枚" and page.locator("#wantN").inner_text() == "4")
+    page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_selector("#cpWant .want-tog")
+    star = page.locator("#cpWant .want-tog")
+    check("want list: the card page has the same ☆ as search results, not pressed yet",
+          star.get_attribute("aria-pressed") == "false" and star.get_attribute("aria-label") == "ウォントリストに追加" and star.inner_text().strip() == ""
+          and page.locator("#cpWant .want-step, #cpWant .want-add, #cpWant .want-trash").count() == 0)
+    star.click(); page.wait_for_timeout(200)
+    check("want list: the card page's ☆ adds the card", star.get_attribute("aria-pressed") == "true" and page.locator("#wantN").inner_text() == "2"
+          and star.get_attribute("aria-label") == "ウォントリストから外す")
     art, box = page.locator("#cardViewCard .cp-art img").first.bounding_box(), page.locator("#cpWant").bounding_box()
-    check("want list: on the card page it is a box of its own under the picture",
+    check("want list: on the card page it is a row of its own under the picture",
           page.evaluate("document.querySelector('.cp-art').contains(document.getElementById('cpWant'))") and box["y"] > art["y"] + art["height"], (art, box))
-    page.click("#cpWant .want-trash"); page.wait_for_selector("#cpWant .want-add")
-    check("want list: the trash can takes the card out (all copies), with undo", page.locator("#wantN").inner_text() == "1"
-          and page.locator("#wantToast button").inner_text() == "元に戻す" and page.locator("#cpWant .want-trash").count() == 0)
-    page.click("#wantToast button"); page.wait_for_selector("#cpWant .want-trash")
-    check("want list: undo brings back all 3 copies", page.locator("#cpWant .want-c").inner_text() == "3枚")
+    page.evaluate("wantSetCount(RAG_KEY, 3)".replace("RAG_KEY", repr(RAG)))
+    page.wait_for_timeout(100)
+    star.click(); page.wait_for_timeout(200)
+    check("want list: pressing the card page's ☆ again takes the card out (all copies), with undo", page.locator("#wantN").inner_text() == "1"
+          and page.locator("#wantToast button").inner_text() == "元に戻す" and star.get_attribute("aria-pressed") == "false")
+    page.click("#wantToast button"); page.wait_for_timeout(200)
+    check("want list: undo brings back all 3 copies", page.locator("#cpWant .want-tog").get_attribute("aria-pressed") == "true" and page.locator("#wantN").inner_text() == "4")
     sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
         l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 28]; })()""")
-    check("want list: on the card page it is one row, as wide as the picture and as tall as the language buttons",
-          abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5 and page.locator("#cpWant .want-box-head, #cpWant .want-other").count() == 0, sz)
+    check("want list: on the card page the ☆ row is as wide as the picture and as tall as the language buttons",
+          abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(250)
     sz = page.evaluate("""(() => { const w = document.getElementById('cpWant').getBoundingClientRect(), a = document.querySelector('#cardViewCard .cp-art img').getBoundingClientRect(),
         l = document.querySelector('.print-lang'); return [w.width, a.width, w.height, l ? l.getBoundingClientRect().height : 26]; })()""")
-    check("phone, card page: the want row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
+    check("phone, card page: the ☆ row is as wide as the picture and as tall as the language buttons", abs(sz[0] - sz[1]) < 1.5 and abs(sz[2] - sz[3]) < 1.5, sz)
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
-    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-step")
-    check("want list: another printing's page shows the same count, with no note", page.locator("#cpWant .want-c").inner_text() == "3枚" and "リスト" not in page.locator("#cpWant").inner_text(), page.locator("#cpWant").inner_text())
+    page.goto(SITE + "?card=rag-en-mh2-bl"); page.wait_for_selector("#cpWant .want-tog")
+    check("want list: another printing's page shows the ☆ pressed (the list is per card)", page.locator("#cpWant .want-tog").get_attribute("aria-pressed") == "true")
     # put this printing (#345) in the list: take the card out and add it again from here
-    page.click("#cpWant .want-trash"); page.wait_for_selector("#cpWant .want-add")
-    page.click("#cpWant .want-add"); page.wait_for_selector("#cpWant .want-step")
-    page.click("#cpWant [data-want-act=more]"); page.click("#cpWant [data-want-act=more]"); page.wait_for_timeout(150)
+    page.click("#cpWant .want-tog"); page.wait_for_timeout(150)
+    page.click("#cpWant .want-tog"); page.wait_for_timeout(150)
+    page.evaluate("wantSetCount(RAG_KEY, 3)".replace("RAG_KEY", repr(RAG))); page.wait_for_timeout(100)
     rag = [x for x in page.evaluate("JSON.parse(localStorage.getItem('warujie-want'))") if x["o"] == RAG][0]
     check("want list: adding from another printing's page keeps that printing", rag["id"] == "rag-en-mh2-bl" and rag["cn"] == "345" and rag["c"] == 3, rag)
 
@@ -3378,7 +3383,7 @@ with sync_playwright() as p:
     page.click("#wantBody [data-wview=list]"); page.wait_for_selector("#wantBody .want-list .wl-row")
     page.reload(); page.wait_for_selector("#wantBody .wl-row")
     check("want list: still there after a reload (kept in this browser)", page.locator("#wantBody .wl-row").count() == 2 and page.locator("#wantN").inner_text() == "3")
-    page.locator("#wantBody .wl-title").first.click(); page.wait_for_selector("#cpWant .want-step")
+    page.locator("#wantBody .wl-title").first.click(); page.wait_for_selector("#cpWant .want-tog")
     check("want list page: a card's name opens its page", "card=bolt-" in page.url, page.url)
     page.go_back(); page.wait_for_selector("#wantBody .wl-row")
     page.click("#wantBody [data-want-import]"); page.wait_for_selector("#importBody .deck-cost .dcst-v")

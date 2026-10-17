@@ -153,13 +153,12 @@ card, that they can export or save to other deckbuilding sites").
 
 - **Adding.** Every search result has a ☆ over its picture (`wantTogHtml()`, called from
   `cardTileHtml()`; at the end of the row in the text view, `textRowHtml()`): one tap adds the
-  card, another takes it out. The card page has one row of its own under the picture and language
-  buttons (`#cpWant` inside `.cp-art`, `wantCardHtml()`; the owner chose that place and asked for
-  it compact, 2026-10-16): as wide as the picture and as tall as the language buttons (28px, 26px
-  on phones, `--want-h`). It holds ☆ ウォントリストに追加 (ウォントに追加 on phones), or once the
-  card is in the list a − n枚 ＋ stepper and a trash can (`TRASH_SVG`) that takes it out. There is
-  no "already in the list" text. When the picture is swapped for the English one,
-  the box is put back with the language buttons. A note at the bottom of the screen
+  card, another takes it out. The card page has the same ☆ (`wantCardHtml()` returns
+  `wantTogHtml()`) in a row of its own under the picture and language buttons (`#cpWant` inside
+  `.cp-art`; the owner chose that place, asked for it compact and then for the star, 2026-10-16/17):
+  as wide as the picture and as tall as the language buttons (28px, 26px on phones, `--want-h`),
+  filled while the card is in the list. How many copies is set on the list page. When the picture
+  is swapped for the English one, the row is put back with the language buttons. A note at the bottom of the screen
   (`wantToast()`, `#wantToast`) confirms, with リストを見る after adding and 元に戻す after taking
   a card out. The ☆ sits inside the result's link, so one click listener on `document` in the
   capture phase handles every want button first (`.want-tog`, `[data-want-act]`) and stops the
@@ -168,7 +167,7 @@ card, that they can export or save to other deckbuilding sites").
 - **What is kept** (`wantEntryOf()`): one entry per card (oracle id, `wantKeyOf()`) with its
   English name, the number of copies (1–`WANT_MAX_COPIES`) and the printing it was added from
   (id, set, collector number, language), at most `WANT_MAX` cards. Another printing's page shows
-  the same count; to switch printings, take the card out there and add it again.
+  the ☆ pressed too; to switch printings, take the card out there and add it again.
 - **The top bar** has a ☆ button (`#wantBtn`) with the number of copies (`#wantN`); the word
   ウォント shows only on screens 1400px and wider. `refreshWant()` updates it, every ☆ on the
   page, the card page and the list page after each change, and when another tab changes the list
