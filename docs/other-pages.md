@@ -351,8 +351,13 @@ least $0.50) is decided in warujie-prices `build_prices.py` (`MIN_PRICE_CENTS`,
 
 ## The installable app
 
-- `manifest.webmanifest`: name, colours, icons (`icons/*-v2.png`). When icons change, give
-  them a new file name (`-v3`) so phones pick them up, and update the manifest and `<head>`.
+- `manifest.webmanifest`: name, colours, icons (`icons/*-v3.png`). The icon is the owner's
+  favicon (`favicon.ico`, 2026-10-17: 悪 in a glowing ring), drawn again at full size by
+  `tools/make_icons.py` because the favicon only holds 16–48 px. The script makes a green set
+  for warujie.jp and a pink set (`icons/*-v3-test.png`, named by `manifest-test.webmanifest`)
+  that `worker.js` shows on the test sites (see [hosting.md](hosting.md#workerjs), job 5).
+  When icons change, raise `VERSION` in the script so phones pick up the new files, and update
+  both manifests, the `<head>`, `sw.js` and the checks in `dev/tests/worker_icons.mjs`.
 - `sw.js`: the offline copy; see [hosting.md](hosting.md#swjs-the-offline-copy).
 - The install button in the footer (`#appInstall`) shows when the browser offers installing,
   and on iPhone/iPad with instructions for "Add to Home Screen".

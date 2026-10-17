@@ -32,7 +32,7 @@ there.** (The repository itself is public on GitHub, so never put secrets in any
 
 ## `worker.js`
 
-Four jobs:
+Five jobs:
 
 1. **HTML without Cloudflare's injected scripts.** Cloudflare would add its Web Analytics beacon
    and bot-detection script to HTML. The Worker fetches the page from the assets, sets
@@ -68,6 +68,13 @@ When you add a page type, add its share tags in `shareTags()` and a check in
    **Setting it up (owner):** make a Rakuten Web Service app of type "Webアプリケーション" with
    `https://warujie.jp` as its allowed site, then add the two secrets above.
 
+5. **The pink icon on the test sites** (`isTestSite()`, `testIcons()`). On a branch preview
+   (`<branch>-warujie.warujie-mtg.workers.dev`, staging included) the page's icon,
+   apple-touch-icon and manifest links are pointed at the pink files (`TEST_ICONS`:
+   `icons/*-v3-test.png`, `manifest-test.webmanifest`), so a test site saved to a phone's home
+   screen is easy to tell from warujie.jp. warujie.jp and `warujie.warujie-mtg.workers.dev` keep
+   the green icon. Tests: `dev/tests/worker_icons.mjs`.
+
 ## `sw.js`: the offline copy
 
 A service worker so the installed app opens without a connection, with search working on the
@@ -76,7 +83,7 @@ stored database.
 - **Network first, always.** It only answers from its cache when the network fails, so nobody
   is kept on an old version, and a rollback reaches visitors on their next visit.
 - **Stored:** the page (any URL of it, stored under its path), `/ja_cards.json`, `/printings.json.gz`, `/meta.json`,
-  `/meta_decks.json`, `/combo_ja.js`, `/manifest.webmanifest`, `/meta_lists/*`, `/icons/*`
+  `/meta_decks.json`, `/combo_ja.js`, `/manifest.webmanifest`, `/manifest-test.webmanifest`, `/meta_lists/*`, `/icons/*`
   (`KEEP`). Other origins (Scryfall, fonts, price data) are left to the browser.
 - The database (about 22 MB unpacked) is stored again only when its ETag changed.
 - The cache is named `warujie-v2` (`CACHE`). Changing the name makes every visitor drop the old

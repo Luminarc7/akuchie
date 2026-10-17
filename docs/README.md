@@ -60,7 +60,7 @@ is given. Search for them; line numbers move too often to be worth writing down.
 | Change what link previews (LINE, X…) show | `worker.js`, `shareTags()` |
 | Change the footer | `<footer class="attribution">` in the HTML (keep the no-tracking promise true) |
 | Add the Rakuten / Amazon affiliate IDs, or change the shop box | `AFFILIATE`; `renderHomeShop()`, `renderSetShop()`; the Worker's `rakutenItems()`. See [other-pages.md](other-pages.md#shops-rakuten-books-and-amazon) |
-| Change the app icon or name | `icons/`, `manifest.webmanifest`, `tools/make_icons.py` |
+| Change the app icon or name | `icons/`, `manifest.webmanifest`, `manifest-test.webmanifest`, `tools/make_icons.py` (pink test-site icon: `worker.js`, `TEST_ICONS`) |
 | Change price-mover thresholds | warujie-prices `build_prices.py`: `MIN_PRICE_CENTS`, `MIN_CHANGE_CENTS`, `WINDOWS` |
 | Change the metagame numbers | `build_meta.py` (this repo); the tab itself is "metagame tab" in `index.html` |
 | Change how a pasted deck list is read | `parseDeckText()`, `IMPORT_PARTS`, `cleanImportName()`, `importRow()`. See [other-pages.md](other-pages.md#reading-and-pricing) |
@@ -83,7 +83,7 @@ When you change code, update the doc that covers it in the same commit (see
 | `index.html` home, sets, metagame, price movers, deck pages, deck price page, want list, export, install | other-pages.md |
 | `STR`, themes, language switch, lightweight mode, phone menu, `localStorage` keys | interface.md |
 | any new or renamed `// ---- section ----` or top-level function that others call | index-html.md |
-| `worker.js`, `sw.js`, `wrangler.jsonc`, `.assetsignore`, `manifest.webmanifest` | hosting.md |
+| `worker.js`, `sw.js`, `wrangler.jsonc`, `.assetsignore`, `manifest.webmanifest`, `manifest-test.webmanifest` | hosting.md |
 | `ja_cards.json.gz` fields, `printings.json.gz`, `tools/*.py`, `build_meta.py`, workflows, the warujie-prices file formats | data.md |
 | `dev/` tests, branches, publishing steps | workflow.md |
 | a bug you fixed that could come back | troubleshooting.md |

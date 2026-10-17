@@ -96,6 +96,7 @@ A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is
   - it serves the card database brotli-compressed (`ja_cards.json.br`, made at deploy by
     `tools/brotli_db.mjs`);
   - for link-preview bots it rewrites the og/title tags of card, deck, set, meta and price pages.
+  - on the test sites (`<branch>-warujie…workers.dev`) it points the icon links at the pink icon;
   - `/shop/rakuten` asks Rakuten Books' API (keys: Cloudflare secrets `RAKUTEN_APP_ID`,
     `RAKUTEN_ACCESS_KEY`) for Secret Lairs and booster boxes, kept an hour.
 - **`ja_cards.json.gz`** is the card database and **`printings.json.gz`** its printings (below).
@@ -104,7 +105,9 @@ A legacy GitHub Pages build still runs on `main` (from before Cloudflare). It is
 - **`combo_ja.js`** has the Japanese wording for combo results.
 - **`manifest.webmanifest`, `sw.js`, `icons/`, `og.png`** make it installable, give it a
   network-first offline copy (cache `warujie-v2`) and provide the share picture.
-  `tools/make_icons.py` centres the icons by ink.
+  The app icon is the owner's favicon (`favicon.ico`), redrawn at full size by
+  `tools/make_icons.py`: green for warujie.jp, pink for the test sites (`worker.js` swaps the
+  icon and manifest links there, `manifest-test.webmanifest`).
 - **`.assetsignore`** lists what is *not* served: `tools/`, `dev/`, `docs/`, `CLAUDE.md`,
   workflows, scripts. Anything new that shouldn't be public goes there.
 - **`dev/`** holds the test suites (see `dev/README.md`). **`tools/`** holds the scripts below.
