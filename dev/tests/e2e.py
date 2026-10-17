@@ -4331,6 +4331,22 @@ with sync_playwright() as p:
     page.evaluate("localStorage.removeItem('akuchie-lite')")
     page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
 
+    # the order stays put when a count changes (the owner's report, 2026-10-17: Flare of Malice passed Baleful Mastery at 5)
+    page.evaluate("localStorage.setItem('warujie-want-list', '4 Llanowar Elves\\n4 Ragavan, Nimble Pilferer\\n')")
+    page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .imp-row")
+    order = lambda: page.evaluate("[...document.querySelectorAll('#importBody .imp-row [data-imp-act=more]')].map(b => b.dataset.in)")
+    before = order()
+    page.click("#importBody .imp-row [data-in='Ragavan, Nimble Pilferer'][data-imp-act='more']"); page.wait_for_timeout(300)
+    after_list = order()
+    page.click("#importBody [data-iview=image]"); page.wait_for_selector("#importBody .imp-card")
+    page.click("#importBody .imp-card [data-in='Ragavan, Nimble Pilferer'][data-imp-act='more']"); page.wait_for_timeout(300)
+    after_pics = page.evaluate("[...document.querySelectorAll('#importBody .imp-card [data-imp-act=more]')].map(b => b.dataset.in)")
+    check("order: one more copy never moves a card past another of the same mana value, in either view",
+          before == after_list == after_pics == ["Llanowar Elves", "Ragavan, Nimble Pilferer"] and "6 Ragavan" in listtext(), (before, after_list, after_pics))
+    check("order: deck pages still put most copies first", page.evaluate("deckSort([{ cmc: 1, count: 1, label: 'a' }, { cmc: 1, count: 4, label: 'b' }], false).map(x => x.label).join()") == "b,a")
+    page.click("#importBody [data-iview=list]"); page.wait_for_selector("#importBody .imp-row")
+    page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+
     # ---- 52. a green ＋ beside each card name in the suggestions: one copy into the want list, or into the list on the price page ----
     page.goto(SITE + "?card=drag-ja"); page.wait_for_selector(".cp-name")
     page.wait_for_function("typeof LOCAL_DB !== 'undefined' && LOCAL_DB")
