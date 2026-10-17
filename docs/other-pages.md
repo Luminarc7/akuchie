@@ -117,7 +117,7 @@ wrong ordinal right (the sources write 2st, 3st, 22th), here and on deck pages.
 printing's price (`cheap.json.gz` from warujie-prices, `loadCheapest()`, matched by
 `cheapRow()`): the lower of USD × the dollar rate and EUR × the euro rate (`cardYen()`).
 Basic lands count as free (`isBasicLand()`). Totals are rounded (`yenRound()`) and shown as
-「約¥…」; when some cards have no price, `costText()` says 「〜」 and the deck page says how many
+「約¥…」 (or 「約$…」 with $ chosen in the top bar); when some cards have no price, `costText()` says 「〜」 and the deck page says how many
 are missing. Wildcards count each card at its lowest Arena rarity (`RARITY_LETTER`, falling back
 to the database's rarity when the price file has none).
 

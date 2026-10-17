@@ -161,7 +161,6 @@
     background: linear-gradient(120deg, var(--accent) 0%, var(--brand-hi) 48%, var(--accent) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
   }
-  .brand-sub { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
   .search-form { grid-area: search; display: flex; gap: 8px; min-width: 0; }
   .search-form input { flex: 1; min-width: 0; padding: 10px 14px; font-size: 15px; }
   .search-form > button, .btn-primary {
@@ -177,11 +176,12 @@
   .top-tab:hover { color: var(--text); }
   .top-tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
   .top-controls { grid-area: controls; display: flex; align-items: center; gap: 8px; }
-  .lang-btn {
-    border: 1px solid var(--line); background: var(--field); border-radius: 999px;
-    padding: 5px 12px; font-size: 12px; color: var(--text); white-space: nowrap;
-  }
-  .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+  /* the JP | EN and ¥ | $ switches: two halves, the chosen one filled */
+  .tog { display: inline-flex; flex: none; border: 1px solid var(--line); background: var(--field); border-radius: 999px; padding: 2px; }
+  .tog button { border: 0; background: none; border-radius: 999px; min-width: 30px; padding: 3px 8px; font-size: 12px; font-weight: 700; line-height: 1.5; color: var(--muted); white-space: nowrap; cursor: pointer; }
+  .tog button:hover { color: var(--text); }
+  .tog button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); cursor: default; }
+  .tog button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .theme-switch { display: flex; align-items: center; gap: 14px; }
   .sq-switch { display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; padding: 4px 0; color: var(--text-2); font-size: 12px; white-space: nowrap; cursor: pointer; }
   .sq-switch:hover { color: var(--text); }
@@ -324,7 +324,6 @@
   .shift-icon.common { background: var(--rar-common); } .shift-icon.uncommon { background: var(--rar-uncommon); }
   .shift-icon.rare { background: var(--rar-rare); }     .shift-icon.mythic { background: var(--rar-mythic); }
   .tile-price { color: var(--accent); font-weight: 700; white-space: nowrap; }
-  .tile-price .yen { color: var(--text); font-weight: 500; margin-left: 4px; }
 
   .legal-circles { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
   .legal-circle {
@@ -397,7 +396,6 @@
   .price-table { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 16px; align-items: baseline; font-size: 13px; }
   .price-table .lbl { color: var(--muted); }
   .price-table .usd { color: var(--accent); font-weight: 700; font-size: 17px; }
-  .price-table .jpy { font-size: 15px; font-weight: 500; }
   .price-avg { font-size: 12.5px; margin-top: 8px; }
   .price-avg strong { color: var(--accent); }
   .price-sub { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.7; }
@@ -463,7 +461,6 @@
   .print-tag { font-size: 10px; padding: 0 5px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); }
   .print-tag.ja { color: var(--accent); border-color: var(--warn-line); }
   .print-price { font-size: 11.5px; color: var(--accent); font-weight: 700; }
-  .print-price .yen-short { color: var(--text); font-weight: 500; }
 
   /* ========================= combo suggestions ========================= */
   .combos { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px 18px; }
@@ -706,7 +703,6 @@
   .hb-illus { font-size: 11px; color: var(--muted); margin: 10px 0 0; line-height: 1.6; }
 
   /* ============================== responsive ============================== */
-  @media (max-width: 1240px) { .brand-sub { display: none; } }
   /* medium widths: search box drops to its own row so nothing is squeezed */
   @media (max-width: 1200px) and (min-width: 821px) {
     :root { --bar-h: 112px; }
@@ -781,7 +777,7 @@
     .meta-share, .meta-wr { text-align: right; }
     .meta-num { font-size: 14px; }
     .meta-trend { justify-content: flex-end; margin-top: 0; min-height: 0; }
-    .meta-row:not(.open) :is(.meta-cards, .meta-sample, .meta-decklink, .bar-track, .wr-track, .meta-sub, .meta-lbl, .spark) { display: none; }
+    .meta-row:not(.open) :is(.meta-cards, .meta-sample, .bar-track, .wr-track, .meta-sub, .meta-lbl, .spark) { display: none; }
     .meta-toggle {
       display: block; grid-area: tog; width: 14px; height: 22px; padding: 0; border: 0; background: none; color: var(--muted);
       font-size: 12px; line-height: 22px; text-align: center;
@@ -808,7 +804,6 @@
     .meta-bar .meta-head > .seg .seg-btn { flex: none; }
     .meta-controls { margin-left: 0; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
     .meta-controls .seg-btn { white-space: nowrap; padding: 3px 9px; font-size: 12px; }
-    .meta-decklink { order: 4; }
     .meta-price .meta-cost { font-size: 11px; }
     #metaView .meta-bar .meta-title { display: none; }
     .meta-row:not(.open) .meta-name-en { display: none; }
@@ -838,7 +833,7 @@
     .zh-kind { min-width: 0; width: 100%; }
     .brand-mark { font-size: 26px; }
     .sq-switch { font-size: 11.5px; }
-    .lang-btn { padding: 5px 9px; font-size: 11.5px; }
+    .tog button { min-width: 26px; padding: 3px 6px; font-size: 11.5px; }
     .top-controls { gap: 6px; }
     .set-row { grid-template-columns: 24px minmax(0, 1fr) auto; gap: 9px; }
     .print-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
@@ -851,7 +846,6 @@
   .brand-logo { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
   .brand-mark { font-size: 30px; line-height: 1.12; letter-spacing: 0; }
   .brand-roman { font-size: 9.5px; letter-spacing: 0.24em; padding-left: 0.24em; color: var(--muted); }
-  .brand-sub { border-left: 1px solid var(--line); padding-left: 14px; font-size: 12px; line-height: 1.4; color: var(--text-2); white-space: normal; max-width: 10.5em; }
   html[data-view="search"][data-home="true"]:not([data-hero-out="true"]) .topbar .search-form { display: none; }
   html[data-home="true"][data-hero-out="true"] .topbar .search-form { animation: bar-search-in 0.18s ease; }
   @keyframes bar-search-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
@@ -865,7 +859,7 @@
   .hero-title { margin: 0; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-weight: 800; font-size: 30px; line-height: 1.3; text-wrap: balance; }
   .hero-lead { margin: 0; max-width: 40em; color: var(--text-2); font-size: 15px; line-height: 1.75; }
   .hero-form { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-  .hero-label { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .hero-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* for screen readers: the box's placeholder says it */
   .hero-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .hero-row .suggest-wrap { position: relative; flex: 1 1 320px; min-width: 0; }
   .hero-row input { width: 100%; height: 58px; padding: 0 18px; font-size: 17px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--field); }
@@ -882,7 +876,6 @@
   .adv-btn svg { width: 14px; height: 14px; flex: none; }
   .adv-btn .arrow { font-size: 10px; color: var(--muted); }
   .adv-btn[aria-expanded="true"] { border-color: var(--accent); }
-  .hero-hint { font-size: 12.5px; color: var(--muted); }
   .hero-try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
   .try-pill { border: 1px solid var(--line); background: var(--surface); color: var(--text); border-radius: 999px; padding: 5px 13px; font-size: 13px; white-space: nowrap; }
   .try-pill:hover { border-color: var(--accent); }
@@ -1049,7 +1042,6 @@
   @media (max-width: 820px) {
     .brand-mark { font-size: 25px; }
     .brand-roman { font-size: 8.5px; }
-    .brand-sub { font-size: 11px; padding-left: 8px; max-width: 9.5em; }
     .brand { gap: 8px; }
     .menu-btn { display: inline-flex; }
     .top-controls { position: relative; gap: 4px; }
@@ -1057,20 +1049,16 @@
     .top-controls .theme-switch.open { display: flex; }
     .top-controls .theme-switch { gap: 2px; padding: 6px 12px; }
     .top-controls .sq-switch { padding: 9px 2px; font-size: 13px; justify-content: space-between; flex-direction: row-reverse; gap: 18px; }
-    .lang-btn { padding: 5px 10px; font-size: 11.5px; }
     .hero { padding: 14px 0 18px; gap: 16px; }
     .hero-main { gap: 10px; }
     .hero-title { font-size: 21px; }
     .hero-lead { font-size: 13px; }
-    .hero-lead .lead-extra { display: none; }
-    .hero-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
     .hero-row { flex-wrap: nowrap; gap: 8px; }
     .hero-row .suggest-wrap { flex: 1 1 auto; }
     .hero-row input { height: 50px; font-size: 16px; padding: 0 12px; }
     .hero-row > button { height: 50px; padding: 0 16px; font-size: 16px; }
     .hero-tools, .hero-try { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; }
     .hero-tools::-webkit-scrollbar, .hero-try::-webkit-scrollbar { display: none; }
-    .hero-hint { display: none; }
     .adv-btn, .try-pill { flex: none; min-height: 36px; }
     .hero-example { padding: 14px; gap: 10px; }
     .hx-thumb, .hx-thumb img, .hx-noimg { width: 36px; }
@@ -1140,7 +1128,6 @@
   /* metagame: decks open their own page */
   a.meta-name-text { color: inherit; text-decoration: none; }
   a.meta-name-text:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-  .meta-decklink { margin-left: 2px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 500; font-size: 12px; color: var(--accent); white-space: nowrap; }
 
   /* deck pages */
   .deck-head { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 8px; }
@@ -1190,7 +1177,8 @@
   .app-install { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
   .app-install[hidden], .app-ios[hidden] { display: none; }
   .app-ios { font-size: 12px; color: var(--muted); }
-  .deck-src a { color: var(--accent); }
+  .deck-src a, .deck-src-link { color: var(--accent); }
+  .deck-src-link { font-size: 12.5px; white-space: nowrap; flex: none; }
   .deck-note { margin: 12px 0 0; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .deck-section { margin-top: 22px; }
   .deck-section > h2 { margin: 0 0 12px; font-family: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 20px; display: flex; align-items: baseline; gap: 10px; }
@@ -1586,7 +1574,6 @@
   .set-shop .hs-list { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   @media (max-width: 820px) { .set-shop-part.amazon { flex: 1 1 100%; } }
   #homeMoversMore[hidden] { display: none; }
-  .mover-yen { display: block; margin-top: 1px; font-size: 11px; color: var(--muted); }
 
   /* ========================== round 4: prices by market ========================== */
   .price-section { display: block; }
@@ -1603,7 +1590,6 @@
   .sp-shop a:hover { color: var(--accent); }
   .sp-shop small { margin-left: 6px; font-size: 11px; font-weight: 500; color: var(--muted); }
   .sp-val strong { font-size: 15px; color: var(--accent); }
-  .sp-val .jpy { display: block; font-size: 11.5px; color: var(--text-2); }
   .sp-val.none { color: var(--muted); }
   .price-wip { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; background: var(--field); border: 1px dashed var(--line-strong); border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.7; color: var(--text-2); }
   .wip-badge { display: inline-block; flex: none; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
@@ -1614,10 +1600,7 @@
   .cp-row.shop-links { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: 5px; align-items: center; }
   .cp-row.shop-links > .cp-row-label { grid-row: 1 / span 3; align-self: start; line-height: 22px; margin-right: 0; }
   .shop-group { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; min-width: 0; }
-  .shop-group .sg-label { width: 2.6em; flex: none; font-size: 10.5px; font-weight: 700; color: var(--muted); }
   .cp-row.shop-links .external-link-btn { padding: 1px 9px; font-size: 11.5px; line-height: 1.7; }
-  .shop-links[data-market="jp"] .shop-group:not([data-region="jp"]) { display: none; }
-  .shop-links:not([data-market="jp"]) .jp-more { display: none; }
   /* home price box: winners and losers */
   .hb-part + .hb-part { margin-top: 8px; }
   .hb-part-head { margin: 4px 0 0; font-size: 12px; font-weight: 700; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
@@ -1703,7 +1686,6 @@
   .of-country { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .02em; cursor: help; }
   .of-price strong { display: block; font-size: 14.5px; color: var(--text); }
   .of-row.best .of-price strong { color: var(--accent); }
-  .of-price .jpy { display: block; font-size: 11px; color: var(--text-2); }
   .of-stock { font-size: 12.5px; color: var(--text-2); }
   .of-stock.any { font-size: 11.5px; color: var(--muted); cursor: help; }
   .offers-empty { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
@@ -1721,9 +1703,7 @@
   .cp-market[data-market="jp"] .cp-market-grid { grid-template-columns: minmax(0, 1fr); }
   .jp-offers { max-width: 640px; }
   .jp-offers .of-scroll { max-height: 360px; }
-  .jp-offers-note { margin: 10px 0 0; font-size: 11.5px; color: var(--muted); }
   .cp-market[data-market="jp"] .cp-offers, .cp-offers[hidden] { display: none; }
-  .cp-market[data-market="jp"] .shop-links { display: none; }
   .cp-market:not([data-market="jp"]) .jp-dir { display: none; }
   .jp-dir { margin-top: 18px; }
   .jp-dir-head { margin: 0 0 6px; font-size: 12px; font-weight: 700; color: var(--muted); }
@@ -1737,7 +1717,6 @@
   .jp-go { flex: none; margin-left: auto; color: var(--muted); }
   .jp-shop:hover .jp-go, .jp-shop:hover .jp-name { color: var(--accent); }
   .jp-dir-more { display: none; width: 100%; margin-top: 12px; }
-  .jp-dir-note { margin: 10px 0 0; font-size: 11.5px; color: var(--muted); }
   @container (min-width: 480px) { .jp-dir-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @container (min-width: 760px) { .jp-dir-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @container (max-width: 479px) {
@@ -1750,8 +1729,6 @@
   .cp-market .cp-row.shop-links { grid-template-columns: minmax(0, 1fr); row-gap: 5px; margin-top: 14px; }
   .cp-market .cp-row.shop-links > .cp-row-label { grid-row: auto; line-height: 1.4; }
   .cp-market .shop-group { grid-column: 1; }
-  .cp-market .shop-group .sg-label { width: 2.3em; }
-  html[lang="en"] .cp-market .shop-group .sg-label { width: 3.5em; }
   .cp-market .cp-row.shop-links .external-link-btn { padding: 1px 8px; }
   /* the notes at the bottom of the card page */
   .price-notes { margin-top: 18px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
@@ -1877,7 +1854,6 @@
   <div class="topbar-inner">
     <a class="brand" href="./" id="brandLink">
       <span class="brand-logo"><span class="brand-mark">悪知恵</span><span class="brand-roman">WARUJIE</span></span>
-      <span class="brand-sub" id="brandSub">効果テキストで探せるMTGカード検索</span>
     </a>
     <form class="search-form" id="searchForm" role="search" action="./">
       <div class="suggest-wrap">
@@ -1894,7 +1870,8 @@
     </div>
     <div class="top-controls">
       <button type="button" class="want-btn" id="wantBtn" aria-expanded="false" aria-controls="wantTray" title="ウォントリスト" data-i18n-title="want.title" aria-label="ウォントリスト" data-i18n-aria="want.title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.7.83-4.13 4.03.98 5.69L12 16.67l-5.1 2.68.98-5.69L3.75 9.63l5.7-.83z"/></svg><span class="want-l" data-i18n="want.short">ウォント</span><span class="want-n" id="wantN" hidden></span></button>
-      <button type="button" class="lang-btn" id="langBtn" lang="en" aria-label="Switch to English">English</button>
+      <div class="tog" id="langBtn" role="group" aria-label="表示言語" data-i18n-aria="lang.aria"><button type="button" data-v="ja" lang="ja" aria-pressed="true" title="日本語">JP</button><button type="button" data-v="en" lang="en" aria-pressed="false" title="English">EN</button></div>
+      <div class="tog" id="curBtn" role="group" aria-label="通貨" data-i18n-aria="cur.aria"><button type="button" data-v="jpy" aria-pressed="true" title="円" data-i18n-title="cur.jpy">¥</button><button type="button" data-v="usd" aria-pressed="false" title="米ドル" data-i18n-title="cur.usd">$</button></div>
       <button type="button" class="menu-btn" id="menuBtn" aria-label="メニュー" data-i18n-aria="menu.aria" aria-expanded="false" aria-controls="themeSwitch">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -1911,7 +1888,7 @@
   <section class="hero" id="homeHero">
     <div class="hero-main">
       <h1 class="hero-title" data-i18n="hero.title">書いてあることで、カードを探す。</h1>
-      <p class="hero-lead"><span data-i18n="hero.lead">カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索です。</span><span class="lead-extra" data-i18n="hero.lead2">たとえば「1枚捨てる」や「飛行 絆魂」と入れると、その効果を持つカードが見つかります。</span></p>
+      <p class="hero-lead"><span data-i18n="hero.lead">カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索です。</span></p>
       <form class="hero-form" id="heroForm" role="search">
         <label class="hero-label" for="heroInput" data-i18n="hero.label">カード名・効果テキスト</label>
         <div class="hero-row">
@@ -1925,7 +1902,6 @@
       <p class="lite-note" id="liteNote"><span data-i18n="lite.note">軽量モードで表示中です。画像やフォント、価格・デッキの欄を省いて、すばやく読み込みます。</span> <button type="button" class="link-btn" id="liteOff" data-i18n="lite.off">通常の表示に戻す</button></p>
       <div class="hero-tools">
         <button type="button" class="adv-btn" id="advToggle" aria-expanded="false" aria-controls="filterPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span data-i18n="adv.open">詳しい条件で検索</span> <span class="arrow" aria-hidden="true">▼</span></button>
-        <span class="hero-hint" data-i18n="hero.hint">日本語でも英語でも。語順や「を」「の」の違いは気にしなくて大丈夫です。</span>
       </div>
       <div id="heroAdvSlot"></div>
       <div class="hero-try" id="heroTry"></div>
@@ -2239,7 +2215,6 @@ const MAIN_URL = /(?:\/|\/index\.html?)$/i.test(location.pathname) ? '../' : './
 const DATA_DIRS = SITE === 'main' ? [''] : ['', '../'];
 
 const STR = {
-  'brand.sub': ['効果テキストで探せるMTGカード検索', 'MTG card search by rules text'],
   'deck.back': ['← 戻る', '← Back'],
   'deck.title': ['{name}（{fmt}）のデッキリスト — 悪知恵', '{name} ({fmt}) deck list — 悪知恵'],
   'deck.loading': ['デッキリストを読み込み中…', 'Loading the deck list…'],
@@ -2247,6 +2222,7 @@ const STR = {
   'deck.notfound.body': ['集計期間が進んで、デッキが一覧から外れた可能性があります。<a href="{url}">メタゲームを見る</a>', 'It may have dropped out of the list as the period moved on. <a href="{url}">Open the metagame</a>'],
   'deck.share': ['使用率 {v}%（{n}）', '{v}% of decks ({n})'],
   'deck.wr': ['勝率 {v}%（{n}）', '{v}% match wins ({n})'],
+  'deck.src.link': ['出典 ↗', 'Source ↗'],
   'deck.src': ['このリスト：', 'This list: '],
   'deck.main': ['メインデッキ', 'Main deck'],
   'deck.side': ['サイドボード', 'Sideboard'],
@@ -2255,7 +2231,6 @@ const STR = {
   'deck.keycards': ['主要カード', 'Key cards'],
   'deck.keyonly': ['デッキリストのデータ（meta_decks.json）がまだないため、このデッキの主要カードだけを表示しています。最新の build_meta.py を実行して meta_decks.json をアップロードすると、デッキ全体が表示されます。', 'The deck list file (meta_decks.json) is not there yet, so only this deck’s key cards are shown. Run the latest build_meta.py and upload meta_decks.json to show whole lists.'],
   'deck.more': ['ほかによく使われるカード', 'Other popular cards'],
-  'deck.more.sub': ['このリストには入っていないものの、このデッキの多くのリストが使っているカードです。', 'Played by many lists of this deck, but not by this one.'],
   'deck.rate': ['採用率 {v}%', 'in {v}% of lists'],
   'deck.rate.short': ['{v}%', '{v}%'],
   'deck.more.rate': ['採用率 {v}%・平均{a}枚', '{v}% · avg. {a}'],
@@ -2276,13 +2251,10 @@ const STR = {
   'deck.g.enchantment': ['エンチャント', 'Enchantments'],
   'deck.g.land': ['土地', 'Lands'],
   'deck.g.other': ['その他', 'Other'],
-  'meta.decklist': ['デッキリストを見る →', 'Deck list →'],
   'hero.title': ['書いてあることで、カードを探す。', 'Find cards by what they say.'],
   'hero.lead': ['カード名はもちろん、カードに書いてある効果からも探せる日本語のMTGカード検索です。', 'Search Magic cards by name, or by what is written on them, in Japanese or English. '],
-  'hero.lead2': ['たとえば「1枚捨てる」や「飛行 絆魂」と入れると、その効果を持つカードが見つかります。', 'Try “discard a card” or “flying lifelink” to find every card with that effect.'],
   'hero.label': ['カード名・効果テキスト', 'Card name or rules text'],
   'hero.ph': ['例：稲妻、パーマネント2つを生け贄に捧げる', 'e.g. Lightning Bolt, sacrifice two permanents'],
-  'hero.hint': ['日本語でも英語でも。語順や「を」「の」の違いは気にしなくて大丈夫です。', 'Japanese or English. Word order and small words don’t matter.'],
   'hero.try': ['試してみる', 'Try'],
   'adv.open': ['詳しい条件で検索', 'Advanced search'],
   'hx.label': ['効果の例', 'Effects to try'],
@@ -2318,18 +2290,17 @@ const STR = {
   'links.decks.short': ['使用デッキ', 'Decks'],
   'legal.more': ['ほかのフォーマット', 'Other formats'],
   'legal.short': ['フォーマット', 'Formats'],
-  'shop.cardrush': ['カードラッシュ', 'Card Rush'],
   'loadmore.auto': ['下までスクロールすると続きを自動で読み込みます', 'More results load as you scroll down'],
   'res.for': ['「{q}」：', '“{q}”: '],
-  'brand.sub.selesnya': ['セレズニア版・緑と白のカード', 'Selesnya edition · green & white cards'],
-  'brand.sub.golgari': ['ゴルガリ版・緑と黒のカード', 'Golgari edition · green & black cards'],
   'title.home': ['悪知恵（warujie）— 効果テキストで探せるMTGカード検索', '悪知恵 (warujie) — MTG card search by rules text'],
   'title.home.selesnya': ['悪知恵 セレズニア版 — 緑と白のカード', '悪知恵 (Warujie) Selesnya — green & white cards'],
   'title.home.golgari': ['悪知恵 ゴルガリ版 — 緑と黒のカード', '悪知恵 (Warujie) Golgari — green & black cards'],
   'title.sets': ['セット一覧 — 悪知恵', 'Sets — 悪知恵'],
   'title.meta': ['メタゲーム — 悪知恵', 'Metagame — 悪知恵'],
-  'lang.switch': ['English', '日本語'],
-  'lang.switch.aria': ['Switch to English', '日本語に切り替える'],
+  'lang.aria': ['表示言語', 'Language'],
+  'cur.aria': ['通貨', 'Currency'],
+  'cur.jpy': ['円で表示', 'Show prices in yen'],
+  'cur.usd': ['米ドルで表示', 'Show prices in US dollars'],
   'search.aria': ['カードを検索', 'Search cards'],
   'search.ph': ['カード名・効果テキストで検索', 'Card name or rules text'],
   'search.btn': ['検索', 'Search'],
@@ -2409,8 +2380,8 @@ const STR = {
   'deck.curve': ['マナカーブ', 'Mana curve'],
   'deck.curve.sub': ['土地以外 {n}枚', '{n} nonland cards'],
   'deck.curve.title': ['マナ総量{v}：{n}枚', 'Mana value {v}: {n} cards'],
-  'deck.cost.note': ['金額は目安です：それぞれのカードのいちばん安い版の価格（米国の TCGplayer と欧州の Cardmarket の安いほう）を今日の為替レートで円にして、枚数分を足しました。基本土地は含みません。日本のショップの価格とは異なります。',
-    "An estimate: for each card, the price of its cheapest printing (the lower of TCGplayer in the US and Cardmarket in Europe), converted to yen at today's rate and multiplied by the number of copies. Basic lands are left out. Prices in Japanese shops differ."],
+  'deck.cost.note': ['金額は目安です：それぞれのカードのいちばん安い版の価格（米国の TCGplayer と欧州の Cardmarket の安いほう）を今日の為替レートで換算して、枚数分を足しました。基本土地は含みません。日本のショップの価格とは異なります。',
+    "An estimate: for each card, the price of its cheapest printing (the lower of TCGplayer in the US and Cardmarket in Europe), converted at today's rate and multiplied by the number of copies. Basic lands are left out. Prices in Japanese shops differ."],
   'deck.yen.title': ['1枚あたり・いちばん安い版の価格', 'Per copy, cheapest printing'],
   'meta.more.aria': ['{name}：カードと数字を表示', '{name}: show cards and numbers'],
   'meta.hint.few': ['勝率は{min}試合以上のデッキだけ表示しています（{total}デッキ中{n}）。', 'Win rates are shown only for decks with {min}+ matches ({n} of {total}). '],
@@ -2438,7 +2409,7 @@ const STR = {
   'meta.trend.title': ['{name}：直近{n}週の使用率（週ごと）{from}% → {to}%', '{name}: share of the field over the last {n} weeks, {from}% → {to}%'],
   'meta.trend.delta': ['4週で{d}', '{d} over 4 weeks'],
   'deck.trend': ['使用率の推移', 'Share over time'],
-  'deck.trend.sub': ['週ごとの使用率（直近{n}週）。その週の大会のデッキのうち、このデッキの割合です。', 'Share of the field week by week (last {n} weeks): this deck’s part of the decks in that week’s events.'],
+  'deck.trend.sub': ['週ごと・直近{n}週', 'Week by week, last {n} weeks'],
   'deck.trend.week': ['{d}の週：{v}%（{n}デッキ中）', 'Week of {d}: {v}% (of {n} decks)'],
   'deck.lists': ['サンプルリスト', 'Sample list'],
   'deck.lists.n': ['{n}件', '{n} lists'],
@@ -2451,19 +2422,19 @@ const STR = {
   'title.import': ['デッキの価格を調べる — 悪知恵', 'Price a deck list — 悪知恵'],
   'title.want': ['ウォントリスト — 悪知恵', 'Want list — 悪知恵'],
   'imp.title': ['デッキの価格を調べる', 'Price a deck list'],
-  'imp.lead': ['デッキリストを貼り付けると、それぞれのカードのいちばん安い版でそろえた金額を円で出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも、日本語名・英語名どちらでも読めます。',
-    'Paste a deck list to see what it costs in yen with each card’s cheapest printing. Lists from MTG Arena or Magic Online work, and so do typed lines like “4 Lightning Bolt”, with English or Japanese names.'],
+  'imp.lead': ['デッキリストを貼り付けると、いちばん安い版でそろえた金額を出します。MTGアリーナ・MTGOのリストでも、「4 稲妻」のように打った行でも読めます。',
+    'Paste a deck list to see what it costs in each card’s cheapest printing. MTG Arena or Magic Online lists work, and so do typed lines like “4 Lightning Bolt”.'],
   'imp.label': ['デッキリスト', 'Deck list'],
   'imp.which.aria': ['リスト', 'Lists'],
   'imp.tab.deck': ['デッキの価格', 'Deck prices'],
-  'want.lead': ['☆を押したカードがここに入ります。枚数や絵柄を変えて、いちばん安い版でそろえた金額を円で見たり、晴れる屋・Moxfield・Archidektに持っていったりできます。貼り付けたデッキとは別のリストです。',
-    'Cards you ☆ land here. Change counts or art, see what they cost in yen in their cheapest printings, and take the list to Hareruya, Moxfield or Archidekt. It is kept apart from the deck you paste.'],
+  'want.lead': ['☆を押したカードがここに入ります。枚数や絵柄を変えて、いちばん安い版でそろえた金額を見たり、晴れる屋・Moxfield・Archidektに持っていったりできます。貼り付けたデッキとは別のリストです。',
+    'Cards you ☆ land here. Change counts or art, see what they cost in their cheapest printings, and take the list to Hareruya, Moxfield or Archidekt. It is kept apart from the deck you paste.'],
   'imp.removed': ['デッキから外しました', 'Taken out of the deck'],
   'imp.ph': ['4 稲妻\n4 Ragavan, Nimble Pilferer\n20 山\n\nサイドボード\n2 Pyroblast', '4 Lightning Bolt\n4 Ragavan, Nimble Pilferer\n20 Mountain\n\nSideboard\n2 Pyroblast'],
   'imp.clear': ['消す', 'Clear'],
   'imp.saved': ['このブラウザにだけ保存されます', 'Kept only in this browser'],
   'imp.open': ['デッキの価格を調べる', 'Price a deck list'],
-  'imp.open.sub': ['リストを貼り付けて合計を円で', 'Paste a list, see the total in yen'],
+  'imp.open.sub': ['リストを貼り付けて合計を計算', 'Paste a list, see the total'],
   'deck.edit': ['編集して計算', 'Edit & price'],
   'deck.edit.title': ['このリストを貼り付けページで開きます。カードを入れ替えると価格が計算し直されます', 'Opens this list on the deck price page, where you can swap cards and see the price change'],
   'imp.loading': ['カードのデータを読み込み中…', 'Loading the card data…'],
@@ -2649,13 +2620,10 @@ const STR = {
   'price.jp.wip': ['日本のショップ価格は準備中です。掲載の許可をいただいたショップから順に追加します。それまでは下の「ショップで探す」から各ショップでご確認ください。', 'Japanese shop prices are a work in progress: shops will be added as they give permission. Until then, check the shops linked below.'],
   'price.col.shop': ['ショップ', 'Shop'],
   'offers.heading': ['出品と在庫', 'Listings and stock'],
-  'offers.sub.us': ['米国・安い順', 'US · cheapest first'],
-  'offers.sub.eu': ['欧州・安い順', 'Europe · cheapest first'],
-  'offers.sub.jp': ['日本・安い順', 'Japan · cheapest first'],
-  'offers.jp.heading': ['日本のショップの在庫と価格', 'Stock and prices at Japanese shops'],
-  'offers.jp.more': ['ほかの日本のショップは、掲載の許可をいただいたショップから順に追加します。', 'More Japanese shops will be added as they give permission.'],
+  'offers.sub': ['安い順', 'cheapest first'],
+  'offers.jp.heading': ['在庫と価格', 'Stock and prices'],
   'offers.lang.en': ['英語', 'English'],
-  'price.jp.none': ['ENNDAL GAMES にこの版の在庫はありませんでした（毎晩確認）。ほかの日本のショップは、掲載の許可をいただいたショップから順に追加します。下のショップでも探せます。', 'ENNDAL GAMES has no copies of this printing in stock (checked every night). More Japanese shops will be added as they give permission; you can also search the shops below.'],
+  'price.jp.none': ['ENNDAL GAMES にこの版の在庫はありません（毎晩確認）。', 'ENNDAL GAMES has no copies of this printing (checked every night).'],
   'notes.offers.jp': ['日本の在庫と価格：ENNDAL GAMES の在庫（{date}）より。毎晩確認しているため、売り切れていることがあります。価格はショップの表示どおりの円です。', 'Japanese stock and prices: ENNDAL GAMES’ stock{date}. It is checked every night, so a copy may have sold since. Prices are in yen, as the shop shows them.'],
   'notes.cond.jp': ['状態の目安：NM＝ほぼ新品、EX＝軽い傷。', 'Condition: NM = near mint; EX = light wear.'],
   'offers.col.cond': ['状態', 'Condition'],
@@ -2669,10 +2637,9 @@ const STR = {
   'offers.none.foil': ['この版のフォイルの出品は見つかりませんでした', 'No foil listings found for this printing'],
   'offers.more': ['すべて表示（{n}件）', 'Show all ({n})'],
   'market.soon': ['準備中', 'Coming soon'],
-  'price.jp.notice': ['日本のショップの価格と在庫は、掲載の許可をいただいたショップから順にここに表示します。それまでは下のショップでこのカードを直接お探しください。', 'Japanese shop prices and stock will appear here as shops give permission. Until then, search this card at any shop below.'],
+  'price.jp.notice': ['日本のショップの価格は、掲載の許可をいただいたショップから順に表示します。', 'Japanese shop prices appear here as shops give permission.'],
   'jpdir.count': ['{n}店', '{n}'],
   'jpdir.more': ['さらに表示（残り{n}店）', 'Load more ({n} more)'],
-  'jpdir.note': ['各リンクは、そのショップでこのカードを検索します。', "Each link opens that shop's own search for this card."],
   'offers.count': ['{n}件', '{n} listings'],
   'offers.jp.wip': ['日本のショップの出品と在庫は、掲載の許可をいただいたショップから順に表示します。それまでは左の「ショップで探す」から各ショップでご確認ください。', 'Listings from Japanese shops will appear as the shops give permission. Until then, check the shops linked on the left.'],
   'offers.foil.aria': ['フォイルの出品を表示', 'Show foil listings'],
@@ -2706,10 +2673,8 @@ const STR = {
   'price.src.us.nodate': ['TCGplayer は Scryfall 経由の相場（直近の取引の平均）です。', 'TCGplayer: market price via Scryfall (average of recent sales).'],
   'price.src.eu': ['Cardmarket は Scryfall 経由のトレンド価格です。', 'Cardmarket: trend price via Scryfall.'],
   'price.src.eu.more': ['Cardmarket のトレンド価格（Scryfall 経由）と MTGJSON の価格（{date}）です。', 'Cardmarket trend price via Scryfall, and prices from MTGJSON ({date}).'],
-  'shops.jp': ['日本', 'Japan'],
-  'shops.us': ['米国', 'US'],
-  'shops.eu': ['欧州', 'Europe'],
   'hist.note.eu': ['Cardmarket のトレンド価格（ユーロ）を今日のレートで円換算。英語版の同じ版の価格です。', 'Cardmarket trend price (EUR), converted to yen at today’s rate. Prices of the English copy of this printing.'],
+  'hist.note.eu.usd': ['Cardmarket のトレンド価格（ユーロ）を今日のレートでドル換算。英語版の同じ版の価格です。', 'Cardmarket trend price (EUR), converted to US dollars at today’s rate. Prices of the English copy of this printing.'],
   'hist.note.eu.raw': ['Cardmarket のトレンド価格（ユーロ）。英語版の同じ版の価格です。', 'Cardmarket trend price (EUR), for the English copy of this printing.'],
   'hist.jp': ['日本の価格の推移は準備中です。「米国」「欧州」で海外の価格の推移を見られます。', 'Japanese price history is a work in progress. Pick “US” or “Europe” to see those markets.'],
   'prices.markets.aria': ['市場', 'Market'],
@@ -2719,8 +2684,7 @@ const STR = {
   'prices.col.up': ['値上がり', 'Winners'],
   'prices.col.down': ['値下がり', 'Losers'],
   'prices.none.col': ['大きく動いたカードはありません。', 'No card moved much.'],
-  'prices.note.eu': ['価格は欧州市場の Cardmarket トレンド価格（ユーロ。Scryfall 経由、さかのぼった分は MTGJSON より）で、円は今日のレートでの換算です。€2以上で€0.50以上動いたカードを、1枚につき最も動いた版で表示しています。データ更新：{date}', 'Prices are European Cardmarket trend prices in euros (via Scryfall; earlier days via MTGJSON), with yen at today’s rate. Cards worth €2 or more that moved by at least €0.50, shown once each with the printing that moved most. Updated: {date}'],
-  'yen.approx': ['約{y}', '≈ {y}'],
+  'prices.note.eu': ['価格は欧州市場の Cardmarket トレンド価格（ユーロ。Scryfall 経由、さかのぼった分は MTGJSON より）を今日のレートで換算しています。€2以上で€0.50以上動いたカードを、1枚につき最も動いた版で表示しています。データ更新：{date}', 'Prices are European Cardmarket trend prices in euros (via Scryfall; earlier days via MTGJSON), converted at today’s rate. Cards worth €2 or more that moved by at least €0.50, shown once each with the printing that moved most. Updated: {date}'],
   'img.fail': ['画像を読み込めませんでした', 'Image failed to load'],
   'img.none': ['画像なし', 'No image'],
   'img.english.none': ['{lang}版の画像がScryfallにないため、同じ版の英語版の画像を表示しています。', 'Scryfall has no picture of the {lang} printing, so the English printing’s picture is shown.'],
@@ -2753,7 +2717,6 @@ const STR = {
   'price.min': ['最安：', 'Lowest: '],
   'loyalty': ['忠誠度 {n}', 'Loyalty {n}'],
   'notext': ['（効果テキストなし）', '(No rules text)'],
-  'shop.hareruya': ['晴れる屋', 'Hareruya'],
   'links.shops': ['ショップで探す', 'Find it in shops'],
   'links.decks': ['大会デッキでの使用状況', 'Tournament deck usage'],
   'versions.loading': ['すべての版・仕様を確認中…', 'Checking all printings…'],
@@ -5842,33 +5805,63 @@ const fxReady = (async () => {
   if (eur) { EUR_JPY = eur.rate; if (!FX_DATE) FX_DATE = eur.date || ''; }
   updateYenLabels();
 })();
-function yenForEur(eur) {
-  const n = parseFloat(eur);
-  if (!EUR_JPY || !(n > 0)) return '';
-  return '¥' + Math.round(n * EUR_JPY).toLocaleString('ja-JP');
-}
-
-function yenFor(usd) {
-  const n = parseFloat(usd);
-  if (!USD_JPY || !(n > 0)) return '';
-  return '¥' + Math.round(n * USD_JPY).toLocaleString('ja-JP');
-}
 function fxNoteText() {
   if (USD_JPY && EUR_JPY) return t('fx.note2', { rate: USD_JPY.toFixed(2), eur: EUR_JPY.toFixed(2), date: FX_DATE });
   return USD_JPY ? t('fx.note', { rate: USD_JPY.toFixed(2), date: FX_DATE }) : '';
 }
-// Fills every element carrying data-usd with its yen amount. Called when the
-// rate arrives and after anything with prices is rendered.
+// Redraws every price (curHtml()) in the chosen currency. Called when the rate
+// arrives, when the currency is switched and after anything with prices is rendered.
 function updateYenLabels(root = document) {
-  root.querySelectorAll('[data-usd]').forEach(el => {
-    const y = yenFor(el.dataset.usd);
-    el.textContent = !y ? '' : el.classList.contains('yen-short') ? y : t('yen.approx', { y });
-  });
-  root.querySelectorAll('[data-eur]').forEach(el => {
-    const y = yenForEur(el.dataset.eur);
-    el.textContent = !y ? '' : el.classList.contains('yen-short') ? y : t('yen.approx', { y });
+  root.querySelectorAll('.cur[data-amt]').forEach(el => {
+    const n = el.dataset.amt, from = el.dataset.from;
+    el.textContent = curText(n, from);
+    const native = nativeFmt(n, from);
+    if (el.textContent !== native) el.title = native; else el.removeAttribute('title');
   });
   root.querySelectorAll('.fx-note').forEach(el => { el.textContent = fxNoteText(); });
+}
+
+// ---- currency: every price in ¥ or $ (the top bar's ¥ | $ switch, remembered) --------
+// Prices come in dollars (US shops), euros (European shops) or yen (Japanese shops); each is
+// shown in the chosen currency at today's rate, with the shop's own price on hover. Until the
+// rate is in, the shop's own price is shown.
+const CUR_KEY = 'warujie-currency';
+let CUR = (() => { try { return localStorage.getItem(CUR_KEY) === 'usd' ? 'usd' : 'jpy'; } catch (e) { return 'jpy'; } })();
+document.documentElement.dataset.cur = CUR;
+// an amount in its own currency ('usd' | 'eur' | 'jpy') -> the chosen currency, or null without a rate
+function curValue(n, from) {
+  n = Number(n);
+  if (!(n > 0)) return null;
+  if (from === (CUR === 'usd' ? 'usd' : 'jpy')) return n;
+  const jpy = from === 'jpy' ? n : from === 'usd' ? (USD_JPY ? n * USD_JPY : null) : (EUR_JPY ? n * EUR_JPY : null);
+  if (jpy === null) return null;
+  return CUR === 'jpy' ? jpy : (USD_JPY ? jpy / USD_JPY : null);
+}
+const usdFmt = v => '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const jpyFmt = v => '¥' + Math.round(v).toLocaleString('ja-JP');
+function curFmt(v) { return CUR === 'usd' ? usdFmt(v) : jpyFmt(v); }
+function nativeFmt(n, from) {
+  n = Number(n);
+  return from === 'jpy' ? jpyFmt(n) : from === 'eur' ? '€' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : usdFmt(n);
+}
+function curText(n, from) { const v = curValue(n, from); return v === null ? nativeFmt(n, from) : curFmt(v); }
+// a price that follows the switch (updateYenLabels() redraws it)
+function curHtml(n, from, cls = '') {
+  const text = curText(n, from), native = nativeFmt(n, from);
+  return `<span class="cur${cls ? ' ' + cls : ''}" data-amt="${esc(String(n))}" data-from="${from}"${text !== native ? ` title="${esc(native)}"` : ''}>${esc(text)}</span>`;
+}
+// a yen amount worked out from several shops (deck totals): in the chosen currency
+function fromYen(y, digits = 0) {
+  if (CUR === 'usd' && USD_JPY) return '$' + (y / USD_JPY).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return jpyFmt(y);
+}
+function setCurrency(cur, save) {
+  CUR = cur === 'usd' ? 'usd' : 'jpy';
+  document.documentElement.dataset.cur = CUR;
+  if (save) { try { localStorage.setItem(CUR_KEY, CUR); } catch (e) { /* private mode */ } }
+  syncTopToggles();
+  updateYenLabels();
+  redrawPrices();
 }
 
 // ---- prices -----------------------------------------------------------------
@@ -5923,7 +5916,7 @@ function tilePriceHtml(card) {
   const p = effectivePrices(card);
   const usd = p.usd || p.usd_foil || p.usd_etched;
   if (!usd) return `<span>${card.set ? card.set.toUpperCase() : ''}</span>`;
-  return `<span class="tile-price">$${usd}<span class="yen yen-short" data-usd="${usd}">${yenFor(usd)}</span></span>`;
+  return `<span class="tile-price">${curHtml(usd, 'usd')}</span>`;
 }
 
 // ---- Japanese names/text for any printing -----------------------------------
@@ -6190,11 +6183,7 @@ function marketRows(card, market) {
 }
 function moneyCell(v, market, best = false) {
   if (!(v > 0)) return '<span class="sp-val none">—</span>';
-  const amount = v.toFixed(2);
-  const sym = market === 'eu' ? '€' : '$';
-  const yen = market === 'eu' ? yenForEur(amount) : yenFor(amount);
-  const attr = market === 'eu' ? `data-eur="${amount}"` : `data-usd="${amount}"`;
-  return `<span class="sp-val${best ? ' best' : ''}"><strong>${sym}${amount}</strong>${best === 'tag' ? `<span class="best-tag">${t('price.best')}</span>` : ''}<span class="jpy" ${attr}>${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`;
+  return `<span class="sp-val${best ? ' best' : ''}"><strong>${curHtml(v.toFixed(2), market === 'eu' ? 'eur' : 'usd')}</strong>${best === 'tag' ? `<span class="best-tag">${t('price.best')}</span>` : ''}</span>`;
 }
 function priceHtml(card) {
   const market = priceMarket;
@@ -6215,14 +6204,14 @@ function priceHtml(card) {
       : `<div class="price-empty">${t('price.none.market')}</div>`;
   }
   const avg = (market === 'us' && card._avg)
-    ? `${t('price.avg', { n: card._avg.n })}<strong>$${card._avg.avg}</strong> <span data-usd="${card._avg.avg}"></span>`
-      + `　${t('price.min')}<strong>$${card._avg.min}</strong> <span data-usd="${card._avg.min}"></span>`
+    ? `${t('price.avg', { n: card._avg.n })}<strong>${curHtml(card._avg.avg, 'usd')}</strong>`
+      + `　${t('price.min')}<strong>${curHtml(card._avg.min, 'usd')}</strong>`
     : '';
   return `<div class="price-section cp-section" data-market="${market}">
     <div class="price-head"><div class="price-heading">${t('price.heading')}</div>${tabs}</div>
     ${body}
     <div class="price-avg" id="priceAvg">${avg}</div>
-    ${market === 'jp' ? '' : `<div class="price-sub"><span class="fx-note">${fxNoteText()}</span></div>`}
+    ${market === (CUR === 'usd' ? 'us' : 'jp') ? '' : `<div class="price-sub"><span class="fx-note">${fxNoteText()}</span></div>`}
   </div>`;
 }
 function rerenderPriceSection(card) {
@@ -6231,8 +6220,8 @@ function rerenderPriceSection(card) {
   sec.outerHTML = priceHtml(card);
   const offers = document.getElementById('offersBox');
   if (offers) offers.outerHTML = offersHtml(card);
-  const shops = document.querySelector('#cardViewCard .shop-links');
-  if (shops) shops.dataset.market = priceMarket;
+  const shops = document.getElementById('shopLinks');
+  if (shops) shops.innerHTML = shopLinksHtml(card);
   const mk = document.querySelector('#cardViewCard .cp-market');
   if (mk) mk.dataset.market = priceMarket;   // the JP tab: one column, the Japanese shop list in place of the link buttons
   const notes = document.getElementById('priceNotes');
@@ -6302,15 +6291,12 @@ function offerRowHtml(card, r, market, foil, first) {
   const cond = r.cond
     ? `<span class="of-cond" title="${esc(pick2(OFFER_CONDS[r.cond]) || r.cond)}">${esc(r.cond)}</span>`
     : `<span class="of-cond any" title="${esc(t('offers.cond.any'))}">—</span>`;
-  const amount = (r.cents / 100).toFixed(2);
-  const eu = market === 'eu';
-  const yen = jp ? '' : eu ? yenForEur(amount) : yenFor(amount);
+  const amount = jp ? Math.round(r.cents) : (r.cents / 100).toFixed(2);
   const stock = r.qty === null
     ? `<span class="of-stock any" title="${esc(t('offers.stock.any'))}">${t('offers.listed')}</span>`
     : `<span class="of-stock">${t('offers.qty', { n: fmtNum(r.qty) })}</span>`;
   return `<div class="of-row${first ? ' best' : ''}" role="row"><span class="of-shop" role="cell">${shop}${lang}</span><span role="cell">${cond}</span>`
-    + (jp ? `<span class="of-price" role="cell"><strong>¥${Math.round(r.cents).toLocaleString('ja-JP')}</strong></span>`
-          : `<span class="of-price" role="cell"><strong>${eu ? '€' : '$'}${amount}</strong><span class="jpy" ${eu ? 'data-eur' : 'data-usd'}="${amount}">${yen ? t('yen.approx', { y: yen }) : ''}</span></span>`)
+    + `<span class="of-price" role="cell"><strong>${curHtml(amount, jp ? 'jpy' : market === 'eu' ? 'eur' : 'usd')}</strong></span>`
     + `<span role="cell">${stock}</span></div>`;
 }
 // the cheapest-first table with its foil switch: { foil, sw, table }
@@ -6333,7 +6319,7 @@ function offerTableParts(card, market) {
 }
 function offersHtml(card) {
   const market = priceMarket;
-  const head = sw => `<div class="offers-head"><div class="offers-title">${t('offers.heading')}<small>${t('offers.sub.' + market)}</small></div>${sw || ''}</div>`;
+  const head = sw => `<div class="offers-head"><div class="offers-title">${t('offers.heading')}<small>${t('offers.sub')}</small></div>${sw || ''}</div>`;
   if (market === 'jp') {   // the Japan tab shows its shops' stock in the price column (jpOffersHtml)
     return `<aside class="cp-offers" id="offersBox" data-market="jp" hidden></aside>`;
   }
@@ -6349,9 +6335,8 @@ function jpOffersHtml(card) {
   if (!offerRows(card, 'jp', 0).length && !offerRows(card, 'jp', 1).length) return '';
   const { foil, sw, table } = offerTableParts(card, 'jp');
   return `<div class="jp-offers" id="jpOffers" data-foil="${foil}">
-    <div class="offers-head"><div class="offers-title">${t('offers.jp.heading')}<small>${t('offers.sub.jp')}</small></div>${sw}</div>
+    <div class="offers-head"><div class="offers-title">${t('offers.jp.heading')}<small>${t('offers.sub')}</small></div>${sw}</div>
     ${table}
-    <p class="jp-offers-note">${t('offers.jp.more')}</p>
   </div>`;
 }
 
@@ -6452,6 +6437,22 @@ document.getElementById('cardViewCard').addEventListener('click', (e) => {
   if (box && box._hist && !box.hidden) drawPriceHistory(box);
 });
 
+// 「ショップで探す」 under the US and EU prices: that market's shops (search links) that the
+// prices and listings above don't link to already. The Japanese shops are in the 日本 tab.
+const MARKET_SHOPS = {
+  us: [['TCGplayer', tcgplayerUrl], ['Card Kingdom', cardKingdomUrl], ['Star City Games', starCityUrl]],
+  eu: [['Cardmarket', cardmarketUrl]],
+};
+function shopLinksHtml(card) {
+  const market = priceMarket;
+  if (!MARKET_SHOPS[market]) return '';
+  const linked = new Set(marketRows(card, market).filter(r => r.url).map(r => r.label));
+  [0, 1].forEach(f => offerRows(card, market, f).forEach(r => { if (offerLink(card, r.shop, f)) linked.add(OFFER_SHOPS[r.shop]); }));
+  const links = MARKET_SHOPS[market].map(([label, url]) => [label, url(card)]).filter(([label, url]) => url && !linked.has(label));
+  if (!links.length) return '';
+  return `<div class="cp-row external-links shop-links"><span class="cp-row-label">${t('links.shops')}</span><span class="shop-group">${links.map(([label, url]) =>
+    `<a class="external-link-btn" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join('')}</span></div>`;
+}
 // shops by country (search links; nothing is copied from them)
 function tcgplayerUrl(card) {
   const en = englishName(card);
@@ -6512,12 +6513,6 @@ function renderCardViewContent(card) {
   const names = cardPageNames(card, pl);
   const pt = (card.power !== undefined && card.power !== null) ? `<span class="cp-pt">${esc(card.power)}/${esc(card.toughness)}</span>`
     : (card.loyalty !== undefined ? `<span class="cp-pt">${t('loyalty', { n: esc(card.loyalty) })}</span>` : '');
-  const shopGroups = [
-    ['jp', [[t('shop.hareruya'), hareruyaUrl(card)], ['BIG MAGIC', bigMagicUrl(card)], [t('shop.cardrush'), cardRushUrl(card)], ['Tokyo MTG', tokyoMtgUrl(card)]]
-      .concat(JP_SHOP_SEARCH.map(s => [LANG === 'en' ? s.en : s.ja, jpShopUrl(s, card), 'jp-more']))],
-    ['us', [['TCGplayer', tcgplayerUrl(card)], ['Card Kingdom', cardKingdomUrl(card)], ['Star City Games', starCityUrl(card)]]],
-    ['eu', [['Cardmarket', cardmarketUrl(card)]]],
-  ].map(([k, links]) => [k, links.filter(([, url]) => url)]).filter(([, links]) => links.length);
   const deckLinks = [['MTGDecks', mtgDecksUrl(card)], ['MTGGoldfish', goldfishUrl(card)]].filter(([, url]) => url);
   const linkRow = links => links.map(([label, url, cls]) =>
     `<a class="external-link-btn${cls ? ' ' + cls : ''}" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('');
@@ -6548,10 +6543,7 @@ function renderCardViewContent(card) {
         <div class="cp-market" data-market="${priceMarket}"><div class="cp-market-grid">
           <div class="cp-market-main">
             ${priceHtml(card)}
-            ${shopGroups.length ? `<div class="cp-row external-links shop-links" data-market="${priceMarket}">
-              <span class="cp-row-label">${t('links.shops')}</span>${shopGroups.map(([k, links]) =>
-                `<span class="shop-group" data-region="${k}"><span class="sg-label">${t('shops.' + k)}</span>${linkRow(links)}</span>`).join('')}
-            </div>` : ''}
+            <div id="shopLinks">${shopLinksHtml(card)}</div>
             ${jpShopDirHtml(card)}
           </div>
           ${offersHtml(card)}
@@ -6675,7 +6667,6 @@ function jpShopDirHtml(card) {
     <h3 class="jp-dir-head" id="jpDirHead">${t('links.shops')}<span>${t('jpdir.count', { n: shops.length })}</span></h3>
     <div class="jp-dir-list">${rows}</div>
     ${rest > 0 ? `<button type="button" class="load-more-btn jp-dir-more">${t('jpdir.more', { n: rest })}</button>` : ''}
-    <p class="jp-dir-note">${t('jpdir.note')}</p>
   </section>`;
 }
 function jpShopUrl(shop, card) {
@@ -6806,7 +6797,7 @@ async function loadPrintings(card) {
         <span class="print-set">${esc(display.set_name || display.set.toUpperCase())}</span>
         <span class="print-meta">#${esc(display.collector_number)}${LANG === 'en' ? ' · ' : '・'}${rarityLabel(display.rarity)}</span>
         <span class="print-tags">${tags}</span>
-        ${usd ? `<span class="print-price">$${usd} <span class="yen-short" data-usd="${usd}"></span></span>` : ''}
+        ${usd ? `<span class="print-price">${curHtml(usd, 'usd')}</span>` : ''}
       </button>`;
     }).join('')}</div>`;
     updateYenLabels(document.getElementById('cardViewCard'));
@@ -8443,11 +8434,7 @@ function applyStaticText() {
   });
   renderFormatSelect();
   renderHeroTry();
-  document.getElementById('brandSub').textContent = t(SITE === 'main' ? 'brand.sub' : 'brand.sub.' + SITE);
-  const langBtn = document.getElementById('langBtn');
-  langBtn.textContent = t('lang.switch');
-  langBtn.setAttribute('aria-label', t('lang.switch.aria'));
-  langBtn.lang = LANG === 'en' ? 'ja' : 'en';
+  syncTopToggles();
   renderGuide();
   updateDbCount();
   renderSiteSwitch();
@@ -8530,7 +8517,35 @@ function setLang(lang, save) {
   }
   relocalizeSearchResults();   // the search results stay underneath the other pages
 }
-document.getElementById('langBtn').addEventListener('click', () => { setLang(LANG === 'en' ? 'ja' : 'en', true); relocalizeHome(); });
+// the top bar's JP | EN and ¥ | $ switches: the chosen half is marked
+function syncTopToggles() {
+  document.querySelectorAll('#langBtn [data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === LANG)));
+  document.querySelectorAll('#curBtn [data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === CUR)));
+}
+document.getElementById('langBtn').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-v]');
+  if (!b || b.dataset.v === LANG) return;
+  setLang(b.dataset.v, true);
+  relocalizeHome();
+});
+document.getElementById('curBtn').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-v]');
+  if (b && b.dataset.v !== CUR) setCurrency(b.dataset.v, true);
+});
+// After the ¥ | $ switch: the prices drawn as text (charts, movers, deck totals) are drawn again.
+function redrawPrices() {
+  const route = routeFromUrl();
+  if (route.view === 'card' && shownCard) {
+    rerenderPriceSection(shownCard);
+    const box = document.getElementById('priceHistory');
+    if (box && box._hist && !box.hidden) drawPriceHistory(box);
+  } else if (route.view === 'meta') renderMeta();
+  else if (route.view === 'deck') renderDeck(route);
+  else if (route.view === 'import') priceImport();
+  else if (route.view === 'prices') renderMovers();
+  if (homeStarted) { renderHomeMovers(); renderHomeMeta(); }
+  if (trayState.open) drawTray();
+}
 
 // ---- metagame tab -------------------------------------------------------------
 // Reads meta.json (built by build_meta.py): for each format, the share of the
@@ -8872,7 +8887,7 @@ function metaRowHtml(a, index, maxShare, costs) {
       <div class="meta-rank">${rankMoveHtml(a)}<span class="rank-n">${index + 1}</span></div>
       ${art}
       <div class="meta-deck">
-        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${label.short ? `<span class="nm-full">${esc(name)}</span><span class="nm-short" title="${esc(name)}">${esc(label.short)}</span>` : esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}<a class="meta-decklink" href="${esc(deckHref)}" data-deck="1">${t('meta.decklist')}</a></div>
+        <div class="meta-name">${pips ? `<span class="pips">${pips}</span>` : ''}<a class="meta-name-text" href="${esc(deckHref)}" data-deck="1">${label.short ? `<span class="nm-full">${esc(name)}</span><span class="nm-short" title="${esc(name)}">${esc(label.short)}</span>` : esc(name)}</a>${label.sub ? `<span class="meta-name-en">${esc(label.sub)}</span>` : ''}</div>
         ${cards ? `<div class="meta-cards">${cards}</div>` : ''}
         ${sample}
         ${wcs ? `<div class="meta-wc"><span class="meta-wc-l">${esc(t('deck.wc'))}</span>${wcs}</div>` : ''}
@@ -9119,11 +9134,6 @@ async function showPriceHistory(card) {
   drawPriceHistory(box);
 }
 
-function moneyText(cents) {
-  if (cents === null || cents === undefined) return '';
-  return USD_JPY ? '¥' + Math.round(cents / 100 * USD_JPY).toLocaleString('ja-JP') : '$' + (cents / 100).toFixed(2);
-}
-function usdText(cents) { return '$' + (cents / 100).toFixed(2); }
 function pctText(p) { return (p > 0 ? '+' : p < 0 ? '−' : '±') + Math.abs(p).toFixed(1) + '%'; }
 function dateLabel(iso, withYear) {
   const [y, m, d] = iso.split('-').map(Number);
@@ -9146,7 +9156,8 @@ function niceTicks(lo, hi, count) {
   for (let v = start; v <= end + step / 2; v += step) ticks.push(Math.round(v * 1e6) / 1e6);
   return ticks;
 }
-function axisMoney(v, rate = USD_JPY, sym = '$') {
+function axisMoney(v, rate = USD_JPY, sym = '$', cur = 'jpy') {
+  if (rate && cur === 'usd') return '$' + (v >= 100 ? Math.round(v) : v.toFixed(v < 10 ? 2 : 1));
   if (rate) {
     if (v >= 10000) return LANG === 'en' ? '¥' + (v / 1000).toLocaleString('en-US', { maximumFractionDigits: 1 }) + 'K'
                                          : '¥' + (v / 10000).toLocaleString('ja-JP', { maximumFractionDigits: 2 }) + '万';
@@ -9164,10 +9175,11 @@ function drawPriceHistory(box) {
   }
   const off = market === 'eu' ? 2 : 0;
   const S = [series[off] || [], series[off + 1] || []];
-  const rate = market === 'eu' ? EUR_JPY : USD_JPY;
+  // rate: the shop's currency -> the chosen one (¥, or $ for euros); none when it is already that
+  const rate = CUR === 'jpy' ? (market === 'eu' ? EUR_JPY : USD_JPY) : (market === 'eu' && EUR_JPY && USD_JPY ? EUR_JPY / USD_JPY : null);
   const sym = market === 'eu' ? '€' : '$';
   const hraw = c => sym + (c / 100).toFixed(2);
-  const hm = c => rate ? '¥' + Math.round(c / 100 * rate).toLocaleString('ja-JP') : hraw(c);
+  const hm = c => rate ? (CUR === 'usd' ? usdFmt(c / 100 * rate) : jpyFmt(c / 100 * rate)) : hraw(c);
   const has = [0, 1].filter(k => (S[k] || []).some(v => v !== null && v !== undefined));
   const head = (extra = '', controls = '') => `<div class="hist-head"><span class="hist-title">${t('hist.heading')}<small class="hist-market">${t('market.' + market + '.long')}</small></span>${extra}${controls}</div>`;
   if (!has.length) { box.innerHTML = head() + `<p class="hist-note">${t('hist.none')}</p>`; return; }
@@ -9191,7 +9203,7 @@ function drawPriceHistory(box) {
   }
   const n = dates.length;
   const collecting = n < 30 ? `<p class="hist-note">${n === 1 ? t('hist.collecting.one') : t('hist.collecting', { n })}</p>` : '';
-  const note = `<p class="hist-note">${t(market === 'eu' ? (rate ? 'hist.note.eu' : 'hist.note.eu.raw') : (rate ? 'hist.note' : 'hist.note.usd'))}</p>`;
+  const note = `<p class="hist-note">${t(market === 'eu' ? (rate ? (CUR === 'usd' ? 'hist.note.eu.usd' : 'hist.note.eu') : 'hist.note.eu.raw') : (rate ? 'hist.note' : 'hist.note.usd'))}</p>`;
   if (known.length < 2) {
     box.innerHTML = head('', controls) + (known.length ? `<p class="hist-note"><strong>${esc(hm(known[0].c))}</strong>（${esc(dateLabel(known[0].d, true))}）</p>` : '') + (collecting || `<p class="hist-note">${t('hist.none')}</p>`);
     wireHistControls(box);
@@ -9217,7 +9229,7 @@ function drawPriceHistory(box) {
     ? `<circle class="hist-dot" cx="${X(s[0].d).toFixed(1)}" cy="${Y(s[0].c * perYen).toFixed(1)}" r="3"></circle>`
     : `<path class="hist-area" d="M${X(s[0].d).toFixed(1)},${H - m.b} L${s.map(xy).join(' L')} L${X(s[s.length - 1].d).toFixed(1)},${H - m.b} Z"></path><path class="hist-line" d="M${s.map(xy).join(' L')}"></path>`).join('');
   const grid = ticks.map(v => `<line class="hist-grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"></line>
-      <text class="hist-axis" x="${m.l - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${esc(axisMoney(v, rate, sym))}</text>`).join('');
+      <text class="hist-axis" x="${m.l - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${esc(axisMoney(v, rate, sym, CUR))}</text>`).join('');
   const spanDays = (t1 - t0) / 864e5;
   const xIdx = [...new Set([0, Math.round((pts.length - 1) / 2), pts.length - 1])];
   const xLabels = xIdx.map((i, j) => `<text class="hist-axis" x="${X(pts[i].d).toFixed(1)}" y="${H - 6}" text-anchor="${j === 0 ? 'start' : j === xIdx.length - 1 ? 'end' : 'middle'}">${esc(dateLabel(pts[i].d, spanDays > 300 && j !== 1))}</text>`).join('');
@@ -9311,12 +9323,9 @@ function loadMovers() {
   }
   return moverState.promise;
 }
+// a mover's price in the chosen currency (the shop's own on hover)
 function moverMoney(cents, market) {
-  return market === 'eu' ? '€' + (cents / 100).toFixed(2) : usdText(cents);
-}
-function moverYen(cents, market) {
-  const rate = market === 'eu' ? EUR_JPY : USD_JPY;
-  return rate ? '¥' + Math.round(cents / 100 * rate).toLocaleString('ja-JP') : '';
+  return curHtml((cents / 100).toFixed(2), market === 'eu' ? 'eur' : 'usd');
 }
 function renderMovers() {
   document.title = t('title.prices');
@@ -9372,14 +9381,13 @@ function moverRowHtml(e, i, market = 'us') {
   const main = LANG === 'ja' && ja ? ja : e.n;
   const sub = [LANG === 'ja' && ja ? e.n : (LANG === 'en' && ja ? ja : ''), `${String(e.s || '').toUpperCase()} #${e.c || ''}`].filter(Boolean).join(' · ');
   const img = e.img ? `<img src="${esc(e.img)}" alt="" loading="lazy">` : '<span class="mover-noimg"></span>';
-  const yen = moverYen(e.then, market) ? `<small class="mover-yen">${esc(moverYen(e.then, market))} → ${esc(moverYen(e.now, market))}</small>` : '';
   return `<li class="mover-row">
       <span class="meta-rank">${i + 1}</span>
       <a class="mover-card" href="?card=${encodeURIComponent(e.id)}" data-card="${esc(e.id)}">${img}
         <span class="mover-name">${esc(main)}${e.f ? `<span class="mover-foil">${t('prices.foil')}</span>` : ''}<small>${esc(sub)}</small></span></a>
       <span class="mover-nums">
         <span class="mover-chg ${e.pct > 0 ? 'up' : 'down'}"><span class="arrow" aria-hidden="true">${e.pct > 0 ? '▲' : '▼'}</span>${pctText(e.pct)}</span><br>
-        <span class="mover-from">${esc(moverMoney(e.then, market))} → ${esc(moverMoney(e.now, market))}${yen}</span>
+        <span class="mover-from">${moverMoney(e.then, market)} → ${moverMoney(e.now, market)}</span>
       </span>
     </li>`;
 }
@@ -10289,7 +10297,7 @@ async function renderHomeMovers() {
       const name = (LANG !== 'en' && row && row.name_ja) ? row.name_ja : e.n;
       return `<li class="hb-row"><span class="hb-rank">${i + 1}</span>
         <a class="hb-name" href="?card=${encodeURIComponent(e.id)}" data-card="${esc(e.id)}">${esc(name)}</a>
-        <span class="hb-sub">${esc(moverMoney(e.then, market))} → ${esc(moverMoney(e.now, market))}</span>
+        <span class="hb-sub">${moverMoney(e.then, market)} → ${moverMoney(e.now, market)}</span>
         <span class="hb-num ${dir}"><span class="arrow" aria-hidden="true">${dir === 'up' ? '▲' : '▼'}</span>${pctText(e.pct)}</span></li>`;
     }).join('')}</ol>` : `<p class="hb-empty">${esc(t('prices.none.col'))}</p>`}</div>`;
   body.innerHTML = `${part('up', up)}${part('down', down)}<p class="hb-src">${esc(t(market === 'eu' ? 'home.market.eu.src' : 'home.market.us.src'))}</p>`;
@@ -10628,9 +10636,10 @@ function deckCost(cards) {
   });
   return { yen: Math.round(yen), missing, priced: priced && yen > 0, wc: arena ? wc : null };
 }
-function yenRound(y) { return '¥' + (Math.round(y / 100) * 100).toLocaleString('ja-JP'); }
-// one card: to the yen under ¥1,000, to ¥10 above
-function yenSmall(y) { return '¥' + (y < 1000 ? Math.max(1, Math.round(y)) : Math.round(y / 10) * 10).toLocaleString('ja-JP'); }
+// a deck's total: to ¥100 (or the dollar, with $ chosen)
+function yenRound(y) { return CUR === 'usd' && USD_JPY ? fromYen(y) : '¥' + (Math.round(y / 100) * 100).toLocaleString('ja-JP'); }
+// one card: to the yen under ¥1,000, to ¥10 above (or the cent)
+function yenSmall(y) { return CUR === 'usd' && USD_JPY ? fromYen(y, 2) : '¥' + (y < 1000 ? Math.max(1, Math.round(y)) : Math.round(y / 10) * 10).toLocaleString('ja-JP'); }
 function costText(cost) {
   return cost && cost.priced ? t(cost.missing ? 'meta.cost.more' : 'meta.cost', { y: yenRound(cost.yen) }) : '';
 }
@@ -10962,11 +10971,13 @@ function drawDeck() {
         <button type="button" role="menuitem" data-export="file">${t('deck.export.file')}</button>
         <p class="deck-export-note">${t('deck.export.note')}</p>
       </div></details>` : '';
+  // the chosen list's own page: a link beside the picker (without a picker, a line names the list)
+  const srcLink = src && /^https:\/\//.test(src.url || '') ? `<a class="deck-src-link" href="${esc(src.url)}" target="_blank" rel="noopener">${t('deck.src.link')}</a>` : '';
   const listPicker = choices && choices.length > 1 ? `<label class="deck-pick"><span>${t('deck.lists')}</span><select id="deckListSel">${choices.map((c, i) => {
       const l = c.list || {};
       const label = `${i + 1}. ` + [placeText(l.result), l.event].filter(Boolean).join(LANG === 'en' ? ' · ' : '・') + (l.date ? `（${l.date}）` : '');
       return `<option value="${i}"${i === pick ? ' selected' : ''}>${esc(label)}</option>`;
-    }).join('')}</select><span class="deck-pick-n">${t('deck.lists.n', { n: choices.length })}</span></label>` : '';
+    }).join('')}</select><span class="deck-pick-n">${t('deck.lists.n', { n: choices.length })}</span>${srcLink}</label>` : '';
   const main = lists.main.map(x => deckItem(x[1], x[0], x[2], infos));
   const side = lists.side.map(x => deckItem(x[1], x[0], x[2], infos));
   const more = lists.more.map(x => Object.assign(deckItem(x[0], null, x[1], infos), { avg: x[2] }));
@@ -10981,12 +10992,12 @@ function drawDeck() {
     </div>`;
   // the sample-list picker stays under the top bar while the lists scroll by
   if (listPicker) html += `<div class="deck-pick-bar">${listPicker}</div>`;
-  html += srcHtml;
+  else html += srcHtml;
   if (!entry) html += `<p class="deck-note">${t('deck.keyonly')}</p>`;
   html += `<section class="deck-section"><h2>${entry ? t('deck.main') : t('deck.keycards')}${entry ? `<span class="dg-n">${tn('deck.cards', total(main))}</span>` : ''}</h2>${deckGroupsHtml(main, view, true)}</section>`;
   if (side.length) html += `<section class="deck-section"><h2>${t('deck.side')}<span class="dg-n">${tn('deck.cards', total(side))}</span></h2>${deckGroupsHtml(side, view, false)}</section>`;
   if (entry) html += deckCurveHtml(main);
-  if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><p class="deck-sub">${t('deck.more.sub')}</p><ul class="dl">${deckSort(more, true).map(it => deckRowHtml(it)).join('')}</ul></section>`;
+  if (more.length) html += `<section class="deck-section deck-more"><h2>${t('deck.more')}</h2><ul class="dl">${deckSort(more, true).map(it => deckRowHtml(it)).join('')}</ul></section>`;
   html += deckTrendHtml(format, a);
   if (entry) html += `<p class="deck-foot">${t('deck.note', { n: tn('meta.decks', a.decks), win: t('meta.window', { n: days }) })}</p>`;
   if (entry) html += `<p class="deck-cost-note">${esc(t('deck.cost.note'))}</p>`;
@@ -11821,7 +11832,7 @@ function drawArtPicker() {
       <span class="print-set">${esc(display.set_name || display.set.toUpperCase())}</span>
       <span class="print-meta">${esc(display.set.toUpperCase())} #${esc(display.collector_number)}${LANG === 'en' ? ' · ' : '・'}${rarityLabel(display.rarity)}</span>
       <span class="print-tags">${tags}</span>
-      ${usd ? `<span class="print-price">$${esc(usd)} <span class="yen-short" data-usd="${esc(usd)}"></span></span>` : ''}
+      ${usd ? `<span class="print-price">${curHtml(usd, 'usd')}</span>` : ''}
     </button>`;
   }).join('')}</div>`;
   const scroll = (box.querySelector('.ap-body') || {}).scrollTop || 0;
