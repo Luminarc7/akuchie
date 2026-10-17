@@ -729,11 +729,12 @@ with sync_playwright() as p:
     art, info = page.locator(".cp-art").bounding_box(), page.locator(".cp-info").bounding_box()
     check("card page is two columns on desktop (image left, details right)", art["x"] + art["width"] <= info["x"] + 1 and abs(art["y"] - info["y"]) < 4, (art, info))
     price = page.locator("#cardViewCard .price-section").inner_text()
-    check("USD price with yen", "$40.00" in price and "約¥6,000" in price and "約¥9,000" in price, price)
+    check("prices in yen by default, the shop's dollar price on hover", "¥6,000" in price and "¥9,000" in price and "$40.00" not in price
+          and page.locator("#cardViewCard .sp-val .cur").first.get_attribute("title") == "$40.00", price)
     page.wait_for_function("document.querySelector('#priceAvg').textContent.includes('平均')")
-    check("average across printings", "$45.33" in page.locator("#priceAvg").inner_text(), page.locator("#priceAvg").inner_text())
+    check("average across printings", "¥6,800" in page.locator("#priceAvg").inner_text(), page.locator("#priceAvg").inner_text())
     check("all 3 printings in gallery", page.locator("#versionMenuPanel .print-item").count() == 3)
-    href = lambda label: page.locator("#cardViewCard a.external-link-btn", has_text=label).get_attribute("href")
+    href = lambda label: page.locator("#cardViewCard a.external-link-btn, #cardViewCard a.jp-shop", has_text=label).first.get_attribute("href")   # the Japanese shops are in the 日本 tab's list
     check("Hareruya: Japanese name on the Japanese site", href("晴れる屋") == "https://www.hareruyamtg.com/ja/products/search?product=" + Q("敏捷なこそ泥、ラガバン"), href("晴れる屋"))
     check("BIG MAGIC: own search, English name (no Google)", href("BIG MAGIC") == "https://www.bigweb.co.jp/ja/products/mtg/list?name=" + Q("Ragavan, Nimble Pilferer"), href("BIG MAGIC"))
     check("Tokyo MTG: own search, English name (no Google)", href("Tokyo MTG") == "https://tokyomtg.com/cardpage.html?p=q&query=" + Q("Ragavan, Nimble Pilferer"), href("Tokyo MTG"))
@@ -862,11 +863,11 @@ with sync_playwright() as p:
     # ---- 8. English mode ----
     JP = re.compile(r"[ぁ-んァ-ヶ一-龥]")
     lang = lambda: page.evaluate("document.documentElement.lang")
-    check("site starts in Japanese; the button offers English", lang() == "ja" and page.locator("#langBtn").inner_text() == "English")
+    check("site starts in Japanese; the JP | EN switch shows JP chosen", lang() == "ja" and page.locator("#langBtn [aria-pressed=true]").inner_text() == "JP")
     n_before = len(calls)
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     page.wait_for_function("document.documentElement.lang === 'en' && document.querySelector('#hxList .hx-effect') && !/[ぁ-んァ-ヶ一-龥]/.test([...document.querySelectorAll('#hxList .hx-effect')].map(b => b.textContent).join(''))")
-    check("English mode: html lang, button now offers 日本語", lang() == "en" and page.locator("#langBtn").inner_text() == "日本語")
+    check("English mode: html lang, the switch shows EN chosen", lang() == "en" and page.locator("#langBtn [aria-pressed=true]").inner_text() == "EN")
     check("English mode: the effect examples switch to English", page.locator("#hxList .hx-entry").count() >= 1 and page.locator("#hxLabel").inner_text() == "Effects to try",
           page.locator("#hxList .hx-effect").all_inner_texts())
     top_search("Shivan Dragon")
@@ -875,7 +876,7 @@ with sync_playwright() as p:
     tile = page.locator("#cardGrid .card-tile").first.inner_text()
     check("English mode: English name first with the Japanese beside it, English printing, type line, rarity and price",
           page.locator("#cardGrid .card-name-main").first.inner_text() == "Shivan Dragon" and page.locator("#cardGrid .card-name-sub").first.inner_text() == "シヴ山のドラゴン"
-          and "Creature — Dragon" in tile and "Rare" in tile and "$0.50" in tile and "¥75" in tile, tile)
+          and "Creature — Dragon" in tile and "Rare" in tile and "¥75" in tile and page.locator("#cardGrid .card-tile .cur").first.get_attribute("title") == "$0.50", tile)
     ui = {sel: page.locator(sel).inner_text() for sel in [".top-tabs", ".theme-switch", "#filterPanel .filter-head", ".toolbar", "#guidePanel", "#dbCount", "#searchBtn"]}
     titles = page.locator("#filterPanel .filter-title").all_inner_texts()
     chips = page.locator("#filterPanel .opt-chip").all_inner_texts() + page.locator("#filterPanel .chip").all_inner_texts()
@@ -909,7 +910,7 @@ with sync_playwright() as p:
     check("English card page: English name, type and rules text", page.locator(".cp-name").inner_text() == "Ragavan, Nimble Pilferer"
           and page.locator(".cp-name-sub").inner_text() == "敏捷なこそ泥、ラガバン" and "Legendary Creature — Monkey Pirate" in info
           and "create a Treasure token" in info, info[:300])
-    check("English card page: section labels and legality", all(x in info for x in ["Price", "Non-foil", "≈ ¥6,000", "Find it in shops", "Decks", "Formats", "Banned", "Restricted", "Mythic"])
+    check("English card page: section labels and legality", all(x in info for x in ["Price", "Non-foil", "¥6,000", "Find it in shops", "Decks", "Formats", "Banned", "Restricted", "Mythic"])
           and not JP.search(info.replace("敏捷なこそ泥、ラガバン", "")), info)
     check("English card page: Hareruya link goes to the English site", href("Hareruya") == "https://www.hareruyamtg.com/en/products/search?product=" + Q("Ragavan, Nimble Pilferer"), href("Hareruya"))
     page.wait_for_function("document.querySelector('#priceAvg').textContent.includes('Average')")
@@ -920,11 +921,11 @@ with sync_playwright() as p:
     check("English mode: page title", page.title() == "Ragavan, Nimble Pilferer — 悪知恵", page.title())
     if SHOTS: page.screenshot(path="card_en.png", full_page=False)
     # switching language while on the card page re-draws it in place
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     page.wait_for_function("document.querySelector('.cp-name').textContent === '敏捷なこそ泥、ラガバン'")
     check("switching back on the card page shows Japanese again (no refetch of printings needed)",
           "フォーマット" in page.locator("#cardViewCard .cp-info").inner_text() and "使用デッキ" in page.locator("#cardViewCard .cp-info").inner_text() and page.locator("#versionMenuHeading").inner_text() == "すべての版・仕様（3）")
-    page.click("#langBtn"); page.wait_for_function("document.querySelector('.cp-name').textContent === 'Ragavan, Nimble Pilferer'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.querySelector('.cp-name').textContent === 'Ragavan, Nimble Pilferer'")
     page.reload(); page.wait_for_selector("#cardView .print-item")
     check("language choice remembered after reload", lang() == "en" and page.locator(".cp-name").inner_text() == "Ragavan, Nimble Pilferer" and page.locator("#tabSets").inner_text() == "Sets")
     page.click("#tabSets"); page.wait_for_selector("#setList .set-row")
@@ -1024,7 +1025,7 @@ with sync_playwright() as p:
     page.click("#backToSearchBtn"); page.wait_for_selector("#metaBody .meta-row")
     check("metagame: back from the card returns to the metagame tab", "view=meta" in page.url and page.locator("#metaView").is_visible(), page.url)
     # Japanese
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     page.wait_for_function("document.querySelector('#metaFormats .seg-btn .sh-full').textContent === 'スタンダード'")
     r0 = page.locator("#metaBody .meta-row").nth(0).inner_text()
     check("metagame in Japanese: labels and Japanese card names", all(x in r0 for x in ["Gruul Dragons", "100デッキ", "400試合", "シヴ山のドラゴン", "稲妻", "ラノワールのエルフ", "サンプルリスト"])
@@ -1048,9 +1049,9 @@ with sync_playwright() as p:
     home()
     check("phone: top bar with the language button fits", no_hscroll() and page.locator("#langBtn").is_visible() and page.locator("#tabMeta").is_visible())
     if SHOTS: page.screenshot(path="home_phone.png", full_page=False)
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     check("phone: English top bar fits too", no_hscroll())
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     for wdt in (821, 900, 1000, 1200, 1201, 1280):
         page.set_viewport_size({"width": wdt, "height": 800})
         box = page.locator("#searchInput" if page.locator("#searchInput").is_visible() else "#heroInput").bounding_box()
@@ -1065,10 +1066,10 @@ with sync_playwright() as p:
     # ---- 11. the metagame tab with real data, in English ----
     META_MODE["mode"] = "real"
     page.goto(SITE + "?view=meta&format=legacy"); page.wait_for_selector("#metaBody .meta-row")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     check("metagame tab readable with real data", page.locator("#metaBody .meta-row").count() >= 10 and no_hscroll())
     if SHOTS: page.wait_for_timeout(300); page.screenshot(path="meta_real_en.png", full_page=False)
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     META_MODE["mode"] = "fixture"
 
     # ---- 12. without the card database (live Scryfall search as the fallback) ----
@@ -1078,11 +1079,11 @@ with sync_playwright() as p:
     top_search("e:mh2")
     page.wait_for_function("document.querySelectorAll('#cardGrid .card-tile').length === 2")
     check("no database: live search still works in Japanese", "2 件見つかりました" in count_text().replace(" ", " ") or "2" in count_text(), count_text())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     check("no database: language switch keeps the results", page.locator("#cardGrid .card-tile").count() == 2 and "cards found" in count_text(), count_text())
     page.click("#tabMeta"); page.wait_for_selector("#metaBody .meta-row")
     check("no database: metagame tab still lists decks (English card names)", "Shivan Dragon" in page.locator("#metaBody").inner_text() and page.locator("#metaBody a.meta-card").count() == 0)
-    page.click("#langBtn")
+    page.click("#langBtn [aria-pressed=false]")
     DB_MODE["present"] = True
 
     # =====================================================================
@@ -1120,10 +1121,10 @@ with sync_playwright() as p:
     check("card page: a good Japanese scan stays, no note", "/large/rag-ja-mh2" in page.locator(".cp-art img").first.get_attribute("src") and page.locator(".cp-img-note").count() == 0)
     page.goto(SITE + "?set=m10&lang=ja"); page.wait_for_selector("#setGrid .card-tile img")
     check("set page: Japanese placeholder shows the English scan", "bolt-en-m10" in page.locator("#setGrid .card-tile[data-id='bolt-ja-m10'] img").get_attribute("src"))
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.goto(SITE + "?card=bolt-ja-m10"); page.wait_for_function("document.querySelector('.cp-art img') && document.querySelector('.cp-art img').src.includes('bolt-en')")
     check("card page note in English", "no picture of the Japanese printing" in page.locator(".cp-img-note").inner_text(), page.locator(".cp-img-note").inner_text())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     if SHOTS: page.goto(SITE + "?card=bolt-ja-m10"); page.wait_for_selector(".cp-img-note"); page.screenshot(path="card_placeholder.png", full_page=False)
 
     # ---- 15. search: words that belong together ----
@@ -1177,14 +1178,14 @@ with sync_playwright() as p:
         const second = resultTilesHtml(cards.slice(3), rows.slice(3), rows[2]); const again = resultTilesHtml(cards.slice(3), rows.slice(3), rows[3]);
         state.showLoose = false; return [first.split('tier-divider').length - 1, second.split('tier-divider').length - 1, again.split('tier-divider').length - 1]; }""")
     check("search: 'load more' adds a heading only where a new group starts", split == [1, 1, 0], split)
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     names = search("sacrifice 2 permanants")
     note = page.locator("#matchNote").inner_text()
     check("search in English: note and toggle", names == ["Annihilator Beast", "Costly Altar", "Paired Offering"] and 'Searched for “permanents” instead of “permanants”.' in note
           and page.locator("#looseToggle").inner_text() == "Also show cards that only contain the words separately (+1)", note)
     search("elf mana")
     check("search in English: group headings", page.locator("#cardGrid .tier-divider").all_inner_texts() == ["Words together", "Matching together with the card’s type or name"])
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     check("search: switching language keeps the headings", page.locator("#cardGrid .tier-divider").all_inner_texts() == ["語句がまとまって一致", "カードのタイプ・名前と組み合わせて一致"])
     page.set_viewport_size({"width": 390, "height": 800})
     search("sacrifice 2 permanants")
@@ -1233,10 +1234,10 @@ with sync_playwright() as p:
     page.goto(SITE + "?card=eo-1"); page.wait_for_selector(".cp-name"); page.wait_for_timeout(600)
     check("price history: nothing shown when its data file is missing", page.locator("#priceHistory").is_hidden())
     page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_selector("#priceHistory svg .hist-line")
-    page.click("#langBtn"); page.wait_for_selector("#priceHistory svg .hist-line")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_selector("#priceHistory svg .hist-line")
     check("price history in English", page.locator("#priceHistory .hist-title").inner_text().replace("\n", " ").startswith("Price history") and "US market" in page.locator("#priceHistory .hist-title").inner_text()
           and page.locator("#priceHistory .hist-change").inner_text() == "+36.7% over 3M", page.locator("#priceHistory .hist-title").inner_text())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(400)
     sw = page.evaluate("document.querySelector('#priceHistory svg').getBoundingClientRect().width")
     check("phone: chart fits the screen", no_hscroll() and sw <= 360, sw)
@@ -1249,7 +1250,7 @@ with sync_playwright() as p:
         return page.evaluate("""[...document.querySelectorAll('#cardViewCard .shop-prices .sp-shop')].map(s => {
             const a = s.nextElementSibling, b = a.nextElementSibling;
             const label = [...s.childNodes].map(n => n.textContent.replace('↗', '').trim()).filter(Boolean).join(' ');
-            const v = x => x.querySelector('strong') ? x.querySelector('strong').textContent : '—';
+            const v = x => x.querySelector('strong') ? (x.querySelector('.cur[title]') || x.querySelector('strong')).title || x.querySelector('strong').textContent : '—';   // the shop's own price
             return [label, v(a), v(b)];
         })""")
     def wait_market(m):
@@ -1263,12 +1264,12 @@ with sync_playwright() as p:
     rows = shop_rows()
     check("card prices: US - selling prices (TCGplayer's lowest listing instead of its market price), then Card Kingdom's buying price",
           rows == [["TCGplayer 最安出品", "$37.50", "$55.00"], ["Card Kingdom 販売", "$44.99", "$69.99"], ["Cardsphere", "$39.50", "—"], ["Card Kingdom 買取", "$30.00", "$45.00"]], rows)
-    best = page.evaluate("[...document.querySelectorAll('#cardViewCard .sp-val.best strong')].map(s => s.textContent)")
+    best = page.evaluate("[...document.querySelectorAll('#cardViewCard .sp-val.best strong .cur')].map(s => s.title)")
     check("card prices: the cheapest selling price in each column is marked (not the buying price)", best == ["$37.50", "$55.00"]
           and psec.locator(".best-tag").all_inner_texts() == ["最安", "最安"], best)
-    check("card prices: no market price shown when selling prices are known", "相場" not in psec.locator(".shop-prices").inner_text() and "$40.00" not in psec.locator(".shop-prices").inner_text())
+    check("card prices: no market price shown when selling prices are known", "相場" not in psec.locator(".shop-prices").inner_text() and "¥6,000" not in psec.locator(".shop-prices").inner_text())
     ptxt = psec.inner_text()
-    check("card prices: yen beside each dollar price", "約¥5,625" in ptxt and "約¥8,250" in ptxt and "約¥4,500" in ptxt and "約¥5,925" in ptxt, ptxt)
+    check("card prices: each dollar price shown in yen", "¥5,625" in ptxt and "¥8,250" in ptxt and "¥4,500" in ptxt and "¥5,925" in ptxt and "$37.50" not in ptxt, ptxt)
     check("card prices: column headings", psec.locator(".sp-h").all_inner_texts() == ["ショップ", "通常", "フォイル"], psec.locator(".sp-h").all_inner_texts())
     plink = lambda label: psec.locator(".sp-shop a", has_text=label).get_attribute("href")
     check("card prices: shop names link to the shop's search",
@@ -1281,14 +1282,14 @@ with sync_playwright() as p:
           "1ドル＝150.00円" in sub and "1ユーロ＝160.00円" in sub and "TCGCSV" not in sub and "MTGJSON" not in sub
           and "TCGCSV" in notes and "MTGJSON" in notes and "2026/10/9" in notes and "状態を問わない" in notes, (sub, notes))
     page.wait_for_function("document.querySelector('#priceAvg').textContent.includes('平均')")
-    check("card prices: US tab keeps the average across printings", "$45.33" in page.locator("#priceAvg").inner_text())
+    check("card prices: US tab keeps the average across printings", "¥6,800" in page.locator("#priceAvg").inner_text())
     check("card prices: no Japanese shop prices copied", not any(x in ptxt for x in ["晴れる屋", "BIG MAGIC", "カードラッシュ"]))
     # Europe
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="eu"]'); wait_market("eu")
     rows = shop_rows()
     ptxt = psec.inner_text()
     check("card prices: Europe - Cardmarket's lowest offer in euros, with yen at the euro rate",
-          rows == [["Cardmarket 最安出品", "€31.90", "€48.00"]] and "約¥5,104" in ptxt and "約¥7,680" in ptxt and "€35.00" not in ptxt, (rows, ptxt))
+          rows == [["Cardmarket 最安出品", "€31.90", "€48.00"]] and "¥5,104" in ptxt and "¥7,680" in ptxt and "€35.00" not in ptxt, (rows, ptxt))
     check("card prices: Europe - Cardmarket link, average left out",
           plink("Cardmarket") == "https://www.cardmarket.com/en/Magic/Products/Search?searchString=" + Q("Ragavan, Nimble Pilferer", safe="")
           and page.locator("#priceAvg").inner_text().strip() == "", page.locator("#priceAvg").inner_text())
@@ -1312,13 +1313,13 @@ with sync_playwright() as p:
     if SHOTS: page.locator("#cardViewCard .price-section").screenshot(path="price_eu.png")
     page.reload(); wait_market("eu")
     page.wait_for_selector("#priceHistory svg .hist-line")
-    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('€31.90')")
+    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('¥5,104')")
     check("card prices: still Europe after reloading", shop_rows()[0][1] == "€31.90" and page.locator("#priceHistory .hist-end").text_content() == "¥5,888")
     page.goto(SITE + "?card=rag-ja-mh2"); wait_market("eu")
-    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('€31.90')")
+    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('¥5,104')")
     check("card prices: Japanese printing shows its English twin's lowest offer", shop_rows() == [["Cardmarket 最安出品", "€31.90", "€48.00"]], shop_rows())
     page.goto(SITE + "?card=rag-en-mul"); wait_market("eu")
-    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('€38.00')")
+    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('¥6,080')")
     check("card prices: no lowest offer known -> the trend price (here MTGJSON's), dated", shop_rows() == [["Cardmarket トレンド", "€38.00", "—"]]
           and "MTGJSON" in page.locator("#priceNotes").inner_text() and "2026/10/9" in page.locator("#priceNotes").inner_text(), (shop_rows(), page.locator("#priceNotes").inner_text()))
     page.goto(SITE + "?card=bolt-en-m10"); wait_market("eu"); page.wait_for_timeout(500)
@@ -1326,7 +1327,7 @@ with sync_playwright() as p:
     # Japan: ENNDAL GAMES has no copies of this printing -> one notice, nothing else
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
     check("card prices: Japan tab - one notice for prices and listings, nothing else", psec.locator(".jp-notice .wip-badge").inner_text() == "準備中"
-          and "ENNDAL GAMES にこの版の在庫はありませんでした" in psec.inner_text() and page.locator("#offersBox").is_hidden() and psec.locator(".shop-prices").count() == 0
+          and "ENNDAL GAMES にこの版の在庫はありません（毎晩確認）。" in psec.inner_text() and page.locator("#offersBox").is_hidden() and psec.locator(".shop-prices").count() == 0
           and psec.locator(".price-sub").count() == 0 and psec.locator("#jpOffers").count() == 0, psec.inner_text())
     page.goto(SITE + "?card=rag-en-mh2"); wait_market("jp")
     page.wait_for_function("document.getElementById('priceHistory') && !document.getElementById('priceHistory').hidden && document.querySelector('#priceHistory .hist-note')")
@@ -1345,17 +1346,17 @@ with sync_playwright() as p:
     check("card prices: no selling price known -> TCGplayer's market price instead, no MTGJSON note", shop_rows() == [["TCGplayer 相場", "$0.50", "—"]]
           and "MTGJSON" not in page.locator("#priceNotes").inner_text(), (shop_rows(), page.locator("#priceNotes").inner_text()))
     page.goto(SITE + "?card=rag-en-mh2"); page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
     check("card prices in English", psec.locator(".price-tabs .seg-btn").all_inner_texts() == ["Japan", "US", "Europe"]
           and shop_rows() == [["TCGplayer lowest listing", "$37.50", "$55.00"], ["Card Kingdom selling", "$44.99", "$69.99"], ["Cardsphere", "$39.50", "—"], ["Card Kingdom buying", "$30.00", "$45.00"]]
           and psec.locator(".sp-h").all_inner_texts() == ["Shop", "Non-foil", "Foil"] and "€1 = ¥160.00" in psec.inner_text(), (shop_rows(), psec.inner_text()))
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
     page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
-    check("card prices in English: Japan - ENNDAL GAMES' stock, more shops as they give permission", "Stock and prices at Japanese shops" in psec.inner_text()
-          and "permission" in psec.inner_text() and psec.locator("#jpOffers .of-lang").all_inner_texts() == ["Japanese", "Japanese", "English"], psec.inner_text())
+    check("card prices in English: Japan - ENNDAL GAMES' stock, without the 'more shops later' line", "Stock and prices" in psec.inner_text()
+          and "permission" not in psec.inner_text() and psec.locator("#jpOffers .of-lang").all_inner_texts() == ["Japanese", "Japanese", "English"], psec.inner_text())
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
     sp = page.locator("#cardViewCard .shop-prices").bounding_box()
@@ -1375,9 +1376,9 @@ with sync_playwright() as p:
     up_box = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box(); down_box = page.locator('#moverBody .mover-col[data-dir="down"]').bounding_box()
     check("price movers: two columns on a wide screen", abs(up_box["y"] - down_box["y"]) < 2 and down_box["x"] > up_box["x"] + up_box["width"] - 1, (up_box, down_box))
     first = page.locator('#moverBody .mover-col[data-dir="up"] .mover-row').first.inner_text()
-    check("price movers: change, dollars first and yen beside", "+13.0%" in first and "$6.44 → $7.28" in first and "¥966 → ¥1,092" in first, first)
+    check("price movers: change, dollars first and yen beside", "+13.0%" in first and "¥966 → ¥1,092" in first and "$6.44" not in first, first)
     lose = page.locator('#moverBody .mover-col[data-dir="down"] .mover-row').first.inner_text()
-    check("price movers: losers show the fall", "−5.7%" in lose and "$30.75 → $29.00" in lose, lose)
+    check("price movers: losers show the fall", "−5.7%" in lose and "¥4,613 → ¥4,350" in lose, lose)
     check("price movers: all three periods offered", page.locator("#moverWindows .seg-btn").all_inner_texts() == ["前日比", "1週間", "1か月"])
     check("price movers: summary counts both lists", "（4枚）" in page.locator("#moverSummary").inner_text(), page.locator("#moverSummary").inner_text())
     page.click('#moverWindows .seg-btn[data-win="1"]')
@@ -1388,14 +1389,14 @@ with sync_playwright() as p:
     if SHOTS: page.screenshot(path="prices_tab.png")
     # Europe
     page.click('#moverMarkets .seg-btn[data-market="eu"]')
-    page.wait_for_function("document.querySelector('#moverBody .mover-row') && document.querySelector('#moverBody').textContent.includes('€')")
+    page.wait_for_function("document.querySelector('#moverBody .mover-row') && location.search.includes('market=eu') && document.querySelector('#moverBody .cur[data-from=eur]')")
     check("price movers: European market - its own winners and losers", "market=eu" in page.url and "win=30" in page.url
           and col_names("up") == ["ウルザの物語", "敏捷なこそ泥、ラガバン"] and col_names("down") == ["Deathrite Shaman"], [page.url, col_names("up"), col_names("down")])
     page.click('#moverWindows .seg-btn[data-win="7"]')
     first = page.locator('#moverBody .mover-col[data-dir="up"] .mover-row').first.inner_text()
-    check("price movers: euros first, yen at the euro rate", "+5.1%" in first and "€41.10 → €43.20" in first and "¥6,576 → ¥6,912" in first and "$" not in first, first)
+    check("price movers: euros first, yen at the euro rate", "+5.1%" in first and "¥6,576 → ¥6,912" in first and "€41.10" not in first and "$" not in first, first)
     lose = page.locator('#moverBody .mover-col[data-dir="down"] .mover-row').first.inner_text()
-    check("price movers: European losers", "−16.3%" in lose and "€6.45 → €5.40" in lose, lose)
+    check("price movers: European losers", "−16.3%" in lose and "¥1,032 → ¥864" in lose, lose)
     check("price movers: note names Cardmarket for Europe", "Cardmarket" in page.locator("#moverNote").inner_text() and "€2" in page.locator("#moverNote").inner_text())
     if SHOTS: page.screenshot(path="prices_eu.png")
     # Japan
@@ -1413,11 +1414,11 @@ with sync_playwright() as p:
     check("price movers: a row opens the card page", "card=qp-en" in page.url)
     page.go_back(); page.wait_for_selector("#moverBody .mover-row")
     check("price movers: back returns to the list", "view=prices" in page.url and page.locator("#tabPrices").get_attribute("aria-selected") == "true")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     check("price movers in English", page.locator("#moverMarkets .seg-btn").all_inner_texts() == ["US", "Europe", "Japan"] and page.title() == "Price movers — 悪知恵"
           and [re.sub(r"\s", "", x) for x in page.locator("#moverBody .mover-col-head").all_inner_texts()] == ["▲Winners", "▼Losers"]
           and "Qasali Pridemage" in page.locator("#moverBody").inner_text() and "TCGplayer" in page.locator("#moverNote").inner_text(), page.locator("#moverBody .mover-col-head").all_inner_texts())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.wait_for_timeout(300)
     up_box = page.locator('#moverBody .mover-col[data-dir="up"]').bounding_box(); down_box = page.locator('#moverBody .mover-col[data-dir="down"]').bounding_box()
     check("phone: price movers fit, losers below winners", no_hscroll() and page.locator("#tabPrices").is_visible() and down_box["y"] > up_box["y"] + up_box["height"] - 1, (up_box, down_box))
@@ -1452,7 +1453,7 @@ with sync_playwright() as p:
     check("home: logo text, centred WARUJIE under 悪知恵, new subtitle and title",
           page.locator(".brand-mark").inner_text() == "悪知恵" and page.locator(".brand-roman").inner_text() == "WARUJIE"
           and abs(page.evaluate("(() => { const a = document.querySelector('.brand-mark').getBoundingClientRect(), b = document.querySelector('.brand-roman').getBoundingClientRect(); return (a.left + a.width / 2) - (b.left + b.width / 2); })()")) < 1.5
-          and "効果テキスト" in page.locator("#brandSub").inner_text() and page.title().startswith("悪知恵（warujie）"), page.title())
+          and page.locator("#brandSub").count() == 0 and page.title().startswith("悪知恵（warujie）"), page.title())   # the tagline left the top bar (the home page says it)
     check("home: top-bar search hidden (the big box is the search box)", not page.locator("#searchInput").is_visible() and page.locator("#heroInput").is_visible())
     # name suggestions
     page.locator("#heroInput").press_sequentially("ラガ")
@@ -1501,15 +1502,17 @@ with sync_playwright() as p:
     check("card page: rules text shows mana symbols", [i.get_attribute("alt") for i in page.locator(".cp-text img.sym").all()] == ["{T}", "{G}"]
           and [i.get_attribute("alt") for i in page.locator(".cp-cost img.pip").all()] == ["{G}"], page.locator(".cp-text").inner_html())
     sl = page.locator("#cardViewCard .shop-links")
-    groups = page.evaluate("[...document.querySelectorAll('#cardViewCard .shop-links .shop-group')].map(g => [g.dataset.region, g.querySelector('.sg-label').textContent, [...g.querySelectorAll('a.external-link-btn')].filter(a => a.offsetParent).map(a => a.textContent.replace('↗', '').trim())])")
-    check("card page: shop links grouped by country, US and European shops added",
-          groups == [["jp", "日本", ["晴れる屋", "BIG MAGIC", "カードラッシュ", "Tokyo MTG"]], ["us", "米国", ["TCGplayer", "Card Kingdom", "Star City Games"]], ["eu", "欧州", ["Cardmarket"]]], groups)
-    check("card page: shop link addresses (Japanese name for Card Rush, English for the US and Europe)",
+    row = page.evaluate("[...document.querySelectorAll('#cardViewCard .shop-links a.external-link-btn')].map(a => a.textContent.replace('↗', '').trim())")
+    above = page.evaluate("[...document.querySelectorAll('#cardViewCard .sp-shop a, #offersBox .of-shop a')].map(a => a.textContent.replace('↗', '').trim())")
+    check("card page: 「ショップで探す」 lists only this market's shops that the prices above don't link to (no Japanese shops: they are in the 日本 tab)",
+          "Star City Games" in row and set(row) <= {"TCGplayer", "Card Kingdom", "Star City Games"} and not set(row) & set(above)
+          and page.locator("#cardViewCard .shop-links .sg-label").count() == 0, (row, above))
+    clink = lambda label: page.locator("#cardViewCard a", has_text=label).first.get_attribute("href")
+    check("card page: shop link addresses (Japanese name for Card Rush, English for the US)",
           href("カードラッシュ") == "https://www.cardrush-mtg.jp/product-list?keyword=" + Q("ラノワールのエルフ")
-          and sl.locator("a", has_text="Card Kingdom").get_attribute("href") == "https://www.cardkingdom.com/catalog/search?search=header&filter%5Bname%5D=Llanowar%20Elves"
-          and sl.locator("a", has_text="Star City Games").get_attribute("href") == "https://starcitygames.com/search/?search_query=Llanowar%20Elves"
-          and sl.locator("a", has_text="TCGplayer").get_attribute("href") == "https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=Llanowar%20Elves"
-          and sl.locator("a", has_text="Cardmarket").get_attribute("href") == "https://www.cardmarket.com/en/Magic/Products/Search?searchString=Llanowar%20Elves",
+          and clink("Card Kingdom") == "https://www.cardkingdom.com/catalog/search?search=header&filter%5Bname%5D=Llanowar%20Elves"
+          and clink("Star City Games") == "https://starcitygames.com/search/?search_query=Llanowar%20Elves"
+          and clink("TCGplayer") == "https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=Llanowar%20Elves",
           [a.get_attribute("href") for a in sl.locator("a").all()])
     check("card page: no magi link", "magi" not in sl.inner_text().lower().replace("magic", "") and page.locator("#cardViewCard a[href*='magi.camp'], #cardViewCard a[href*='magi.']").count() == 0)
     fs = page.evaluate("[parseFloat(getComputedStyle(document.querySelector('#cardViewCard .shop-links a.external-link-btn')).fontSize), document.querySelector('#cardViewCard .shop-links a.external-link-btn').getBoundingClientRect().height, parseFloat(getComputedStyle(document.querySelector('#cardViewCard .cp-row:not(.shop-links) a.external-link-btn')).fontSize)]")
@@ -1573,14 +1576,14 @@ with sync_playwright() as p:
     check("home: US - 7-day winners and losers in dollars, Japanese names",
           hb_names("up") == ["クァーサルの群れ魔道士", "Deathrite Shaman", "敏捷なこそ泥、ラガバン"] and hb_names("down") == ["ウルザの物語"]
           and [re.sub(r"\s", "", x) for x in page.locator("#homeMoversBody .hb-part-head").all_inner_texts()] == ["▲値上がり", "▼値下がり"]
-          and "+13.0%" in first_row and "$6.44 → $7.28" in first_row and "TCGplayer" in page.locator("#homeMoversBody .hb-src").inner_text(), (hb_names("up"), hb_names("down"), first_row))
+          and "+13.0%" in first_row and "¥966 → ¥1,092" in first_row and "TCGplayer" in page.locator("#homeMoversBody .hb-src").inner_text(), (hb_names("up"), hb_names("down"), first_row))
     check("home: losers show the fall", "−5.7%" in page.locator('#homeMoversBody .hb-part[data-dir="down"] .hb-row').first.inner_text())
     check("home: 'see all' goes to the US market", page.get_attribute("#homeMoversMore", "href") == "?view=prices&market=us&win=7")
     page.click("#homeMoversTabs .seg-btn[data-market=eu]")
     page.wait_for_function("document.querySelector('#homeMoversBody .hb-src') && document.querySelector('#homeMoversBody .hb-src').textContent.includes('Cardmarket')")
     eu_row = page.locator('#homeMoversBody .hb-part[data-dir="up"] .hb-row').first.inner_text()
     check("home: Europe tab - winners and losers in euros", hb_names("up") == ["ウルザの物語", "敏捷なこそ泥、ラガバン"] and hb_names("down") == ["Deathrite Shaman"]
-          and "€41.10 → €43.20" in eu_row and "+5.1%" in eu_row and page.get_attribute("#homeMoversMore", "href") == "?view=prices&market=eu&win=7", (hb_names("up"), eu_row))
+          and "¥6,576 → ¥6,912" in eu_row and "+5.1%" in eu_row and page.get_attribute("#homeMoversMore", "href") == "?view=prices&market=eu&win=7", (hb_names("up"), eu_row))
     if SHOTS: page.locator("#homeMovers").screenshot(path="home_box_eu.png")
     page.click("#homeMoversMore"); page.wait_for_selector("#moverBody .mover-row")
     check("home: 'see all' from Europe opens the European list", "market=eu" in page.url and page.get_attribute('#moverMarkets .seg-btn[data-market="eu"]', "aria-selected") == "true")
@@ -1731,13 +1734,13 @@ with sync_playwright() as p:
     page.click("#brandLink"); page.wait_for_selector("#homeHero", state="visible")
     check("preview.html: the logo returns to the preview home page", page.url.endswith("/Warujie/preview.html"), page.url)
     # English home
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_function("document.querySelector('#homeMetaTabs .seg-btn').textContent === 'Standard'")
     page.wait_for_function("document.querySelector('#hxList .hx-effect') && !/[ぁ-んァ-ヶ一-龥]/.test([...document.querySelectorAll('#hxList .hx-effect')].map(b => b.textContent).join(''))")
     check("English home: hero, example and boxes in English", page.locator(".hero-title").inner_text() == "Find cards by what they say." and page.locator("#advToggle").inner_text().startswith("Advanced search")
           and page.locator("#homeMoversTitle").inner_text().startswith("Price movers") and not JP.search(" ".join(page.locator("#hxList .hx-effect").all_inner_texts())), page.locator("#hxList .hx-effect").all_inner_texts())
     if SHOTS: page.wait_for_timeout(300); page.screenshot(path="v7_home_en.png", full_page=False)
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     # phones
     page.set_viewport_size({"width": 390, "height": 800})
     page.goto(SITE); page.wait_for_selector("#homeMoversBody .hb-row")
@@ -1799,14 +1802,15 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=meta&format=standard"); page.wait_for_selector("#metaBody .meta-row")
     first = page.locator("#metaBody .meta-row").first
     check("metagame: each deck name links to the deck's own page", first.locator("a.meta-name-text").get_attribute("href") == "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"
-          and first.locator("a.meta-decklink").inner_text() == "デッキリストを見る →", first.locator("a.meta-name-text").get_attribute("href"))
+          and first.locator("a.meta-decklink").count() == 0, first.locator("a.meta-name-text").get_attribute("href"))   # no second "deck list" link beside it
     first.locator("a.meta-name-text").click()
     page.wait_for_selector("#deckBody .deck-group")
     check("deck page: own address, title, metagame tab selected", "view=deck" in page.url and "deck=Gruul%20Dragons" in page.url
           and page.title() == "グルール・ドラゴン（スタンダード）のデッキリスト — 悪知恵" and page.get_attribute("#tabMeta", "aria-selected") == "true", (page.url, page.title()))
-    head = page.locator(".deck-head").inner_text() + page.locator(".deck-src").inner_text()
+    chosen = lambda: page.evaluate("document.querySelector('#deckListSel').selectedOptions[0].textContent")
+    head = page.locator(".deck-head").inner_text() + chosen()
     check("deck page: format, period, share, win rate and where the list comes from", all(x in head for x in ["スタンダード・直近30日", "使用率 25.0%（100デッキ）", "勝率 55.0%（400試合）", "1st Place・Big Open（2026-10-03）"])
-          and page.locator(".deck-src a").get_attribute("href") == "https://melee.gg/Decklist/View/abc", head)
+          and page.locator(".deck-pick-bar a.deck-src-link").get_attribute("href") == "https://melee.gg/Decklist/View/abc" and page.locator(".deck-src").count() == 0, head)   # the picker names the list; its page is the 出典 link beside it
     page.wait_for_function("document.querySelectorAll('#deckBody .deck-section')[0].querySelectorAll('.deck-card img').length >= 6")
     groups = page.evaluate("[...document.querySelectorAll('#deckBody .deck-section')[0].querySelectorAll('.dg-head')].map(h => [h.firstChild.textContent, h.querySelector('.dg-n') ? h.querySelector('.dg-n').textContent : ''])")
     check("deck page: main deck grouped by card type, with card counts", groups == [["クリーチャー", "12"], ["インスタント", "4"], ["土地", "42"], ["その他", "2"]], groups)
@@ -1863,11 +1867,11 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=deck&format=standard&deck=Nope"); page.wait_for_selector("#deckBody .status-line .serif")
     check("deck page: an unknown deck says so", "このデッキは見つかりませんでした" in page.locator("#deckBody").inner_text() and page.locator("#deckBody .status-line a").get_attribute("href").startswith("?view=meta&format=standard"))
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_function("document.querySelector('#deckBody .dg-head') && document.querySelector('#deckBody .dg-head').firstChild.textContent === 'Creatures'")
     check("deck page in English", page.title() == "Gruul Dragons (Standard) deck list — 悪知恵" and "Llanowar Elves" in page.locator("#deckBody .deck-section").first.inner_text()
           and "Main deck" in page.locator("#deckBody").inner_text() and "in 95% of lists" in page.locator("#deckBody").inner_text(), page.title())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     DECKS_MODE["mode"] = "absent"
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .deck-group")
     gk = page.evaluate("[...document.querySelectorAll('#deckBody .dg-head')].map(h => h.firstChild.textContent)")
@@ -2012,13 +2016,13 @@ with sync_playwright() as p:
     page.goto(SITE + "preview.html?card=rag-en-mh2"); page.wait_for_selector("#combosBox .combo-row")
     check("preview: a combo with a card missing from the database still lists it (no link)", page.locator("#combosBox .combo-chip", has_text="Unknown Combo Piece").count() == 1
           and page.locator("#combosBox a.combo-chip", has_text="Unknown Combo Piece").count() == 0)
-    page.click("#langBtn"); page.wait_for_selector("#combosBox .combo-row")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_selector("#combosBox .combo-row")
     check("preview in English: heading", page.locator("#combosBox .combos-heading").inner_text().startswith("Commander combos (1)"), page.locator("#combosBox .combos-heading").inner_text())
     page.locator("#combosBox .combo-steps summary").first.click()
     check("preview in English: results and steps stay in English", page.locator("#combosBox .combo-results").first.inner_text().replace("→", "").strip() == "Infinite colorless mana"
           and page.locator("#combosBox .combo-steps summary").first.inner_text() == "Prerequisites and steps"
           and page.locator("#combosBox .combo-steps li").all_inner_texts() == ["Sacrifice a Rat to Ashnod's Altar.", "Repeat."], page.locator("#combosBox .combo-steps").first.inner_text())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'"); page.wait_for_selector("#combosBox .combo-row")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'"); page.wait_for_selector("#combosBox .combo-row")
     page.wait_for_function("document.querySelector('#combosBox .combos-heading').textContent.startsWith('統率者戦のコンボ')")
     page.locator("#combosBox .combo-steps summary").first.click()
     check("…and back in Japanese: a line it can't fully translate (a card not in the combo) stays English", "Sacrifice a Rat to Ashnod's Altar." in page.locator("#combosBox .combo-steps").first.inner_text()
@@ -2080,7 +2084,7 @@ with sync_playwright() as p:
     pics = [c for c in calls[n1:] if "cards.scryfall.io" in c]
     check("lite card page: only the card's own picture, not the large size", page.locator(".cp-art img").count() >= 1 and len(pics) == 1 and "/normal/rag-ja-mh2" in pics[0]
           and page.locator("#versionMenuPanel .print-item img[src*='cards.scryfall.io']").count() == 0, pics)
-    check("lite card page: prices shown, price history behind a button", "$40.00" in page.locator("#cardViewCard .price-section").inner_text()
+    check("lite card page: prices shown, price history behind a button", "¥6,000" in page.locator("#cardViewCard .price-section").inner_text()
           and page.locator("#priceHistory .lite-load").inner_text() == "価格の推移を表示" and not any("/h/" in c for c in calls[n1:]), [c for c in calls[n1:] if "prices" in c])
     if SHOTS: page.screenshot(path="lite_card.png", full_page=True)
     page.click("#priceHistory .lite-load"); page.wait_for_selector("#priceHistory svg .hist-line")
@@ -2100,11 +2104,11 @@ with sync_playwright() as p:
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons"); page.wait_for_selector("#deckBody .dl-row"); page.wait_for_timeout(300)
     check("lite deck page: the text list, without the picture view", page.locator("#deckBody .dl-row").count() >= 8 and not page.locator("#deckBody .view-toggle").is_visible()
           and page.locator("#deckBody img[src*='cards.scryfall.io']").count() == 0)
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
     check("lite in English: note and switch label", "Lite mode is on" in page.locator("#liteNote").inner_text() and page.locator("#liteSwitch .sq-label").inner_text() == "Lite"
           and page.locator("#liteOff").inner_text() == "Switch back to the full site")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
     check("lite phone: fits, and the menu has the lite switch on", no_hscroll() and (page.click("#menuBtn") or True) and page.locator("#liteSwitch").is_visible()
           and page.get_attribute("#liteSwitch", "aria-checked") == "true")
@@ -2154,13 +2158,13 @@ with sync_playwright() as p:
     check("preview footer: Commander Spellbook credited", page.locator("footer .combos-only").is_visible()
           and page.locator("footer .combos-only a").get_attribute("href") == "https://commanderspellbook.com")
     page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     ft = foot.inner_text()
     check("English footer: no Japanese translation of the notice, everything else in English",
           "非公式" not in ft and "Prices are for reference only" in ft and "no accounts, cookies, analytics or ads" in ft and "Contact" in ft
           and "European Central Bank" in ft and page.locator("#contactLink").inner_text() == CONTACT, ft)
     if SHOTS: foot.screenshot(path="footer_en.png")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.set_viewport_size({"width": 390, "height": 800}); page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
     check("phone: footer fits", no_hscroll())
     if SHOTS: page.locator("footer.attribution").screenshot(path="footer_phone.png")
@@ -2174,20 +2178,20 @@ with sync_playwright() as p:
     OFFER_JS = """[...document.querySelectorAll('#offersBox .of-row:not(.of-h)')].map(r => [
         (r.querySelector('.of-shop a') || r.querySelector('.of-shop')).textContent.replace(' ↗', '').trim(),
         r.querySelector('.of-lang:not(.of-country)') ? r.querySelector('.of-lang:not(.of-country)').textContent : '',
-        r.querySelector('.of-cond').textContent, r.querySelector('.of-price strong').textContent,
-        r.querySelector('.of-price .jpy').textContent, r.querySelector('.of-stock').textContent])"""
+        r.querySelector('.of-cond').textContent, r.querySelector('.of-price .cur').title || r.querySelector('.of-price strong').textContent,
+        r.querySelector('.of-price strong').textContent, r.querySelector('.of-stock').textContent])"""   # the shop's own price, then the shown one
     offer_rows = lambda: page.evaluate(OFFER_JS)
     ob = page.locator("#offersBox")
     page.goto(SITE + "?card=rag-ja-mh2")
     page.wait_for_selector("#offersBox .of-row:not(.of-h)")
     page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
-    us_rows = [["Mana Pool", "", "LP", "$35.50", "約¥5,325", "2点"], ["TCGplayer", "", "—", "$37.50", "約¥5,625", "出品あり"],
-               ["Card Kingdom", "", "EX", "$38.24", "約¥5,736", "1点"], ["Mana Pool", "", "NM", "$39.00", "約¥5,850", "4点"],
-               ["Mana Pool", "日本語", "NM", "$42.00", "約¥6,300", "1点"], ["Card Kingdom", "", "NM", "$44.99", "約¥6,749", "3点"]]
+    us_rows = [["Mana Pool", "", "LP", "$35.50", "¥5,325", "2点"], ["TCGplayer", "", "—", "$37.50", "¥5,625", "出品あり"],
+               ["Card Kingdom", "", "EX", "$38.24", "¥5,736", "1点"], ["Mana Pool", "", "NM", "$39.00", "¥5,850", "4点"],
+               ["Mana Pool", "日本語", "NM", "$42.00", "¥6,300", "1点"], ["Card Kingdom", "", "NM", "$44.99", "¥6,749", "3点"]]
     check("listings: every shop's copies by condition, cheapest first, with yen and stock (sold-out ones left out)", offer_rows() == us_rows, offer_rows())
-    check("listings: heading, market and columns", ob.locator(".offers-title").inner_text().replace("\n", "") == "出品と在庫米国・安い順"
+    check("listings: heading, market and columns", ob.locator(".offers-title").inner_text().replace("\n", "") == "出品と在庫安い順"
           and ob.locator(".of-h > span").all_inner_texts() == ["ショップ", "状態", "価格", "在庫"], (ob.locator(".offers-title").inner_text(), ob.locator(".of-h > span").all_inner_texts()))
-    check("listings: the cheapest is marked", ob.locator(".of-row.best").count() == 1 and ob.locator(".of-row.best .of-price strong").inner_text() == "$35.50")
+    check("listings: the cheapest is marked", ob.locator(".of-row.best").count() == 1 and ob.locator(".of-row.best .of-price strong").inner_text() == "¥5,325")
     pb, sb, cb = psec.bounding_box(), page.locator("#cardViewCard .shop-prices").bounding_box(), page.locator("#cardViewCard .cp-info").bounding_box()
     obb = ob.bounding_box()
     check("listings: in the space right of the prices, from the top of the price area, inside the card box",
@@ -2203,7 +2207,7 @@ with sync_playwright() as p:
     sw = page.locator("#offerFoil")
     check("listings: a foil switch, off at first", sw.get_attribute("role") == "switch" and sw.get_attribute("aria-checked") == "false" and sw.inner_text().strip() == "フォイル")
     sw.click(); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'true'")
-    foil_rows = [["TCGplayer", "", "—", "$55.00", "約¥8,250", "出品あり"], ["Mana Pool", "", "NM", "$58.00", "約¥8,700", "2点"], ["Card Kingdom", "", "NM", "$69.99", "約¥10,499", "1点"]]
+    foil_rows = [["TCGplayer", "", "—", "$55.00", "¥8,250", "出品あり"], ["Mana Pool", "", "NM", "$58.00", "¥8,700", "2点"], ["Card Kingdom", "", "NM", "$69.99", "¥10,499", "1点"]]
     check("listings: the foil switch shows the foil copies", offer_rows() == foil_rows and ob.locator(".of-shop a", has_text="Card Kingdom").get_attribute("href").endswith("-foil"), offer_rows())
     page.reload(); page.wait_for_selector("#offersBox .of-row:not(.of-h)")
     check("listings: the foil choice is remembered", page.get_attribute("#offerFoil", "aria-checked") == "true" and offer_rows() == foil_rows)
@@ -2215,14 +2219,14 @@ with sync_playwright() as p:
     eu_rows = offer_rows()
     countries = page.evaluate("[...document.querySelectorAll('#offersBox .of-row:not(.of-h)')].map(r => r.querySelector('.of-country') ? r.querySelector('.of-country').textContent : '')")
     check("listings: Europe tab - CardTrader's sellers in Europe (condition, language, stock, country) and Cardmarket's cheapest offer, in euros",
-          eu_rows == [["CardTrader", "", "SP", "€29.00", "約¥4,640", "2点"], ["Cardmarket", "", "—", "€31.90", "約¥5,104", "出品あり"], ["CardTrader", "日本語", "NM", "€33.00", "約¥5,280", "1点"]]
-          and countries == ["IT", "", "DE"] and "欧州・安い順" in ob.locator(".offers-title").inner_text()
+          eu_rows == [["CardTrader", "", "SP", "€29.00", "¥4,640", "2点"], ["Cardmarket", "", "—", "€31.90", "¥5,104", "出品あり"], ["CardTrader", "日本語", "NM", "€33.00", "¥5,280", "1点"]]
+          and countries == ["IT", "", "DE"] and "安い順" in ob.locator(".offers-title").inner_text()
           and olink("Cardmarket") == "https://www.cardmarket.com/en/Magic/Products?idProduct=2001" and olink("CardTrader") == "https://www.cardtrader.com/cards/701"
           and ob.locator(".of-country").first.get_attribute("title") == "出品者の国：IT", (eu_rows, countries, olink("CardTrader")))
     eu_notes = page.locator("#priceNotes").inner_text()
     check("notes: Europe names CardTrader with its date and the European condition grades", "CardTrader の欧州の出品者（" in eu_notes and "SP＝軽い傷" in eu_notes, eu_notes)
     page.click("#offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'true'")
-    check("listings: Europe foil - CardTrader's Mint copy and Cardmarket's foil low", offer_rows() == [["Cardmarket", "", "—", "€48.00", "約¥7,680", "出品あり"], ["CardTrader", "", "M", "€50.00", "約¥8,000", "1点"]], offer_rows())
+    check("listings: Europe foil - CardTrader's Mint copy and Cardmarket's foil low", offer_rows() == [["Cardmarket", "", "—", "€48.00", "¥7,680", "出品あり"], ["CardTrader", "", "M", "€50.00", "¥8,000", "1点"]], offer_rows())
     page.click("#offerFoil"); page.wait_for_function("document.getElementById('offerFoil').getAttribute('aria-checked') === 'false'")
     if SHOTS: page.locator("#cardViewCard .cp-info").screenshot(path="offers_eu_box.png")
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); wait_market("jp")
@@ -2269,13 +2273,13 @@ with sync_playwright() as p:
     check("listings: a printing nobody sells says so", "この版の出品は見つかりませんでした" in ob.inner_text() and ob.locator(".of-row").count() == 0, ob.inner_text())
     # English
     page.goto(SITE + "?card=rag-ja-mh2"); page.wait_for_selector("#offersBox .of-row:not(.of-h)")
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_selector("#offersBox .of-row:not(.of-h)")
     er = offer_rows()
-    check("listings in English", ob.locator(".offers-title").inner_text().replace("\n", "") == "Listings and stockUS · cheapest first"
+    check("listings in English", ob.locator(".offers-title").inner_text().replace("\n", "") == "Listings and stockcheapest first"
           and ob.locator(".of-h > span").all_inner_texts() == ["Shop", "Condition", "Price", "Stock"] and er[0][5] == "2" and er[1][5] == "listed"
           and er[4][1] == "Japanese" and page.locator("#priceNotes .price-notes-heading").inner_text() == "About the prices", er)
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     # narrower screens: the listings go under the prices
     for w in (1100, 900):
         page.set_viewport_size({"width": w, "height": 900}); page.wait_for_timeout(250)
@@ -2481,7 +2485,7 @@ with sync_playwright() as p:
 
     # English
     home()
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     run("card draw")
     check("English: card draw (two words) is the role, A→Z", names() == ["Dispute Test", "Mulldrifter Test", "Study Test"] and "Showing cards with the role “Card draw”." in note(), (names(), note()))
     run("red removal")
@@ -2499,7 +2503,7 @@ with sync_playwright() as p:
     check("English: a chip searches the English slang", names()[:2] == ["Big Bolt Test", "Blue Bolt Test"], names())
     run("big blt test")
     check("English: no results - did you mean", "Did you mean" in page.locator("#zeroHelp").inner_text() and page.locator("#zeroHelp a.zh-card", has_text="Big Bolt Test").count() == 1, page.locator("#zeroHelp").inner_text())
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
 
     # the lightweight mode: no similar cards; the role data isn't downloaded for the card page
     page.evaluate("localStorage.setItem('akuchie-lite', '1')")
@@ -2544,14 +2548,14 @@ with sync_playwright() as p:
           and page.locator("#cardViewCard .jp-shop").first.get_attribute("target") == "_blank" and page.locator("#cardViewCard .jp-shop").first.get_attribute("rel") == "noopener", (href("シングルスター"), href("晴れる屋")))
     check("JP tab: a shop that only takes English names gets the English name", href("MTG Guild") == "https://mtg-guild.com/?mode=srh&keyword=Lightning%20Bolt", href("MTG Guild"))
     if SHOTS: page.locator("#cardViewCard .cp-market").screenshot(path="jp_dir.png")
-    groups = lambda: page.evaluate("[...document.querySelectorAll('#cardViewCard .shop-group')].filter(g => g.offsetParent).map(g => [g.dataset.region, [...g.querySelectorAll('a')].filter(a => a.offsetParent).map(a => a.textContent.replace(' ↗', ''))])")
-    for m in ("us", "eu"):
+    shown = lambda sel: page.evaluate(f"[...document.querySelectorAll('{sel}')].filter(a => a.offsetParent).map(a => a.textContent.replace('↗', '').trim())")
+    for m, allowed in (("us", {"TCGplayer", "Card Kingdom", "Star City Games"}), ("eu", {"Cardmarket"})):
         page.click(f'#cardViewCard .price-tabs .seg-btn[data-pmarket="{m}"]')
         page.wait_for_function(f"document.querySelector('#cardViewCard .cp-market').dataset.market === '{m}'")
-        g = groups()
-        check(f"{m.upper()} tab: the shop links as before (4 Japanese, US, Europe), no Japanese list, listings back", [x[0] for x in g] == ["jp", "us", "eu"] and g[0][1] == ["晴れる屋", "BIG MAGIC", "カードラッシュ", "Tokyo MTG"]
-              and g[1][1] == ["TCGplayer", "Card Kingdom", "Star City Games"] and g[2][1] == ["Cardmarket"] and page.locator("#cardViewCard .jp-dir").is_hidden()
-              and page.locator("#offersBox").is_visible() and page.locator("#cardViewCard .jp-notice").count() == 0, g)
+        row, above = shown("#cardViewCard .shop-links a"), shown("#cardViewCard .sp-shop a, #offersBox .of-shop a")
+        check(f"{m.upper()} tab: 「ショップで探す」 only this market's shops not linked above (no Japanese ones), no Japanese list, listings back",
+              set(row) <= allowed and not set(row) & set(above) and (m == "eu" or "Star City Games" in row) and page.locator("#cardViewCard .jp-dir").is_hidden()
+              and page.locator("#offersBox").is_visible() and page.locator("#cardViewCard .jp-notice").count() == 0, (row, above))
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]')
     page.wait_for_function("document.querySelector('#cardViewCard .cp-market').dataset.market === 'jp'")
     page.goto(SITE + "?card=bolt-ja-m10"); page.wait_for_selector("#cardViewCard .jp-shop")
@@ -2571,7 +2575,7 @@ with sync_playwright() as p:
     if SHOTS: page.locator("#cardViewCard .cp-market").screenshot(path="jp_dir_phone.png")
     page.set_viewport_size({"width": 1280, "height": 900})
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]')
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.goto(SITE + "?card=bolt-ja-m10"); page.wait_for_selector("#cardViewCard .shop-links")
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="jp"]'); page.wait_for_function("document.querySelector('#cardViewCard .cp-market').dataset.market === 'jp'")
     g = jp()
@@ -2581,7 +2585,7 @@ with sync_playwright() as p:
     check("English phone: 'Load more (11 more)'", page.locator("#cardViewCard .jp-dir-more").inner_text() == "Load more (11 more)")
     page.set_viewport_size({"width": 1280, "height": 900})
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]')
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
 
     # the metagame and price tabs: one box that stays at the top
     for url, label in ((SITE + "?view=meta", "metagame"), (SITE + "?view=prices", "prices")):
@@ -2690,10 +2694,10 @@ with sync_playwright() as p:
     check("deck page: several sample lists to choose from", sel.locator("option").count() == 2 and "1. 1st Place・Big Open" in sel.locator("option").first.inner_text()
           and "2件" in page.locator(".deck-pick").inner_text(), page.locator(".deck-pick").inner_text())
     page.select_option("#deckListSel", "1")
-    page.wait_for_function("document.querySelector('#deckBody .deck-src') && document.querySelector('#deckBody .deck-src').textContent.includes('Second Open')")
+    page.wait_for_function("document.querySelector('#deckBody .deck-src-link') && document.querySelector('#deckBody .deck-src-link').href.endsWith('/def')")
     main = page.locator("#deckBody .deck-section").first
     check("deck page: choosing another list shows its cards and its source, and the address remembers it",
-          "2nd Place" in page.locator(".deck-src").inner_text() and "list=1" in page.url and "メインデッキ60枚" in main.locator("h2").inner_text().replace("\n", ""),
+          "2nd Place" in chosen() and "list=1" in page.url and "メインデッキ60枚" in main.locator("h2").inner_text().replace("\n", ""),
           (page.url, main.locator("h2").inner_text()))
     check("deck page: 'other popular cards' leaves out what this list already plays", "English Only Thing" not in page.locator("#deckBody").inner_text().split("ほかによく使われるカード")[-1] if "ほかによく使われるカード" in page.locator("#deckBody").inner_text() else True)
     page.click("#deckExport summary"); page.click("#deckExport [data-export=arena]")
@@ -2708,8 +2712,8 @@ with sync_playwright() as p:
     body = open(f.path(), "rb").read().decode("utf-8")
     check("deck page: the MTGO file (.txt, Windows line ends, sideboard after a blank line)", f.suggested_filename == "Gruul Dragons.txt"
           and body == "4 Shivan Dragon\r\n4 Lightning Bolt\r\n4 English Only Thing\r\n24 Mountain\r\n24 Forest\r\n\r\n4 Qasali Pridemage\r\n", (f.suggested_filename, body))
-    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons&list=1"); page.wait_for_selector("#deckBody .deck-src")
-    check("deck page: a link with list=1 opens that list", "Second Open" in page.locator(".deck-src").inner_text() and page.locator("#deckListSel").input_value() == "1")
+    page.goto(SITE + "?view=deck&format=standard&days=30&deck=Gruul%20Dragons&list=1"); page.wait_for_selector("#deckBody .deck-src-link")
+    check("deck page: a link with list=1 opens that list", page.locator(".deck-src-link").get_attribute("href").endswith("/def") and page.locator("#deckListSel").input_value() == "1")
     if SHOTS: page.screenshot(path="deck_lists.png", full_page=True)
     page.goto(SITE + "?view=deck&format=standard&days=30&deck=Orzhov&u=1"); page.wait_for_selector("#deckBody .deck-group")
     check("deck page: a deck with one list has no list picker", page.locator("#deckListSel").count() == 0 and page.locator("#deckExport").count() == 1)
@@ -3424,11 +3428,11 @@ with sync_playwright() as p:
     check("desktop, deck page: the export menu still opens right-aligned under its button", abs(r[0] - r[1]) < 1, r)
     page.click("#deckExport summary")
     page.goto(SITE + "?view=import"); page.wait_for_selector("#importBody .deck-cost")
-    page.click("#langBtn"); page.wait_for_timeout(400)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(400)
     check("deck price page in English", page.locator(".imp-title").inner_text() == "Price a deck list" and "Main deck" in page.locator("#importBody").inner_text()
           and "Buy at Hareruya" in page.locator("#importBody").inner_text() and page.title().startswith("Price a deck list")
           and page.locator("#impWhich a").all_inner_texts() == ["Want list", "Deck prices"], page.locator("#importBody").inner_text()[:200])
-    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     check("footer: the privacy note says pasted deck lists stay in the browser", "貼り付けたデッキリスト" in page.locator(".attribution").inner_text())
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300)
     fs = page.evaluate("parseFloat(getComputedStyle(document.getElementById('importText')).fontSize)")
@@ -3507,10 +3511,10 @@ with sync_playwright() as p:
         if SHOTS:
             page.locator("#homeBoxes").screenshot(path=f"/tmp/shop-home-desktop-{theme_name}.png")
     page.reload(); page.wait_for_selector("#homeShop .hs-card")
-    page.click("#langBtn"); page.wait_for_timeout(400); page.wait_for_selector("#homeShop .hs-card")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(400); page.wait_for_selector("#homeShop .hs-card")
     check("home in English: the boxes' titles", "Secret Lair on sale" in page.locator("#homeShop").inner_text() and "Booster boxes on sale" in page.locator("#homeBoxShop").inner_text()
           and "¥17,867" in page.locator("#homeBoxShop").inner_text(), page.locator("#homeShop").inner_text()[:200])
-    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     page.set_viewport_size({"width": 390, "height": 844}); page.goto(SITE); page.wait_for_selector("#homeShop .hs-card")
     check("phone: the boxes fit, only the product row scrolls sideways", no_hscroll() and box("#homeShop")[0] <= 390)
     if SHOTS:
@@ -3746,13 +3750,13 @@ with sync_playwright() as p:
     check("deck price page: 消す clears the deck only", decktext() is None and listtext() == want_now and page.locator("#wantN").inner_text() == "6")
     page.goto(SITE + "?view=want"); page.wait_for_selector("#importBody .want-bar")
     check("want list: ?view=want opens it directly", page.input_value("#importText") == want_now and page.locator("#impWhich a[aria-current=page]").inner_text() == "ウォントリスト")
-    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     page.click("#wantBtn"); page.wait_for_selector("#wantTray .wt-row")
     check("tray in English", "Want list" in tray.locator(".wt-h").inner_text() and tray.locator(".wt-go").inner_text() == "See prices and export"
           and page.locator(".imp-title").inner_text() == "Want list" and page.title().startswith("Want list — ")
           and page.locator("#impWhich a").all_inner_texts() == ["Want list", "Deck prices"], tray.inner_text()[:200])
     page.keyboard.press("Escape")
-    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     check("footer: the privacy note says the want list stays in the browser", "ウォントリスト" in page.locator(".attribution").inner_text())
     # the separate list from before (staging only) moves into the text once
     page.evaluate("""localStorage.setItem('warujie-want', JSON.stringify([{o: 'x', n: 'Counterspell', c: 2, id: '', s: '', cn: '', l: ''}]))""")
@@ -3875,9 +3879,9 @@ with sync_playwright() as p:
     page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
     check("JP stock: a Japanese printing shows its card's ENNDAL GAMES copies, cheapest first, in yen with language and stock",
           jp_rows() == [["ENNDAL GAMES", "日本語", "EX", "¥5,980", "1点"], ["ENNDAL GAMES", "日本語", "NM", "¥6,980", "2点"], ["ENNDAL GAMES", "英語", "NM", "¥7,480", "3点"]], jp_rows())
-    check("JP stock: heading, columns, the cheapest marked, no 'coming soon' notice", jpo.locator(".offers-title").inner_text().replace("\n", "") == "日本のショップの在庫と価格日本・安い順"
+    check("JP stock: heading, columns, the cheapest marked, no 'coming soon' notice", jpo.locator(".offers-title").inner_text().replace("\n", "") == "在庫と価格安い順"
           and jpo.locator(".of-h > span").all_inner_texts() == ["ショップ", "状態", "価格", "在庫"] and jpo.locator(".of-row.best .of-price").inner_text() == "¥5,980"
-          and psec.locator(".jp-notice").count() == 0 and "許可をいただいたショップから順に追加" in jpo.inner_text(), jpo.inner_text())
+          and psec.locator(".jp-notice").count() == 0 and "許可をいただいたショップから順に追加" not in jpo.inner_text(), jpo.inner_text())
     check("JP stock: the shop name opens the product at ENNDAL GAMES, in a new tab",
           jpo.locator(".of-shop a").first.get_attribute("href") == "https://www.enndalgames.com/%28MH2-MR%29Ragavan%2C+Nimble+Pilferer%2F%E6%95%8F%E6%8D%B7%E3%81%AA%E3%81%8B%E3%81%99%E3%82%81%E5%8F%96%E3%82%8A%E3%80%81%E3%83%A9%E3%82%AC%E3%83%B4%E3%82%A1%E3%83%B3/product/MH2-MR-0138-JP-NM-normal/"
           and jpo.locator(".of-shop a").first.get_attribute("target") == "_blank", jpo.locator(".of-shop a").first.get_attribute("href"))
@@ -3907,11 +3911,11 @@ with sync_playwright() as p:
     check("JP stock on a phone: every row fits, no sideways scrolling", no_hscroll() and all(b["x"] >= 0 and b["x"] + b["width"] <= 390 for b in rb) and len(rb) == 3, rb)
     if SHOTS: page.locator("#cardViewCard .cp-market").screenshot(path="jp_stock_phone.png")
     page.set_viewport_size({"width": 1280, "height": 900})
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'en'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
     page.wait_for_selector("#jpOffers .of-row:not(.of-h)")
     check("JP stock in English: labels, and the night in Japan time", jp_rows()[0] == ["ENNDAL GAMES", "Japanese", "EX", "¥5,980", "1"]
           and "ENNDAL GAMES’ stock (as of 2:00 on 2026-10-09, Japan time)" in page.locator("#priceNotes").inner_text(), (jp_rows(), page.locator("#priceNotes").inner_text()))
-    page.click("#langBtn"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
     page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]'); wait_market("us")
     page.evaluate("localStorage.clear()")
 
@@ -4014,7 +4018,7 @@ with sync_playwright() as p:
     check("art picker: one Scryfall search for the printings and one for the Japanese ones",
           sum("/cards/search" in c and "oracleid" in urllib.parse.unquote_plus(c) for c in calls[n_calls:]) == 2, calls[n_calls:])
     check("art picker: Japanese printings say so, prices show, the picture shown now is marked",
-          pick.locator(".ap-item .print-tag.ja").count() == 2 and "$55.00" in pick.inner_text()
+          pick.locator(".ap-item .print-tag.ja").count() == 2 and "¥8,250" in pick.inner_text()
           and pick.locator(".ap-item.current").count() == 1 and "#138" in pick.locator(".ap-item.current").inner_text()
           and "選択中" in pick.locator(".ap-item.current").inner_text())
     pick.locator(".ap-item", has_text="#345").click(); page.wait_for_timeout(300)
@@ -4088,13 +4092,73 @@ with sync_playwright() as p:
     check("phone: the picker is a sheet from the bottom, three printings across", abs(box[0]) < 1 and abs(box[1] - box[3]) < 1 and abs(box[2] - box[4]) < 1 and cols == 3 and no_hscroll(), [box, cols])
     page.keyboard.press("Escape")
     page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(200)
-    page.click("#langBtn"); page.wait_for_selector("#importBody .imp-card")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_selector("#importBody .imp-card")
     page.click(rag + "[data-imp-act='art']"); page.wait_for_selector("#artPicker .ap-item")
     check("English: the picker and the buttons in English", "Choose the art" in pick.inner_text() and pick.locator(".ap-item .print-tag.ja").count() == 0
           and page.locator(rag + "[data-imp-act='art']").get_attribute("aria-label") == "Change the art of Ragavan, Nimble Pilferer", pick.inner_text()[:200])
     page.keyboard.press("Escape")
-    page.click("#langBtn"); page.wait_for_timeout(300)
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_timeout(300)
     page.evaluate("['warujie-deck-import', 'warujie-want-list', 'akuchie-deck-view'].forEach(k => localStorage.removeItem(k))")
+    # ---- 49. page cleanup (2026-10-17): JP | EN and ¥ | $ in the top bar, every price in the chosen currency ----
+    PRICE_SITE["dir"] = PRICES_FULL
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
+    page.evaluate("['warujie-currency', 'akuchie-market', 'akuchie-lang'].forEach(k => localStorage.removeItem(k))")
+    page.goto(SITE + "?card=rag-en-mh2")
+    page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
+    pressed = lambda sel: page.locator(sel + " [aria-pressed=true]").inner_text()
+    check("top bar: JP | EN and ¥ | $ switches, JP and ¥ chosen at first", pressed("#langBtn") == "JP" and pressed("#curBtn") == "¥"
+          and page.locator("#langBtn button").all_inner_texts() == ["JP", "EN"] and page.locator("#curBtn button").all_inner_texts() == ["¥", "$"]
+          and page.get_attribute("html", "data-cur") == "jpy", (pressed("#langBtn"), pressed("#curBtn")))
+    check("top bar: no tagline, no 'English' button", page.locator("#brandSub").count() == 0 and page.locator(".lang-btn").count() == 0)
+    psec = page.locator("#cardViewCard .price-section")
+    check("¥: the card page's prices in yen, the dollar price on hover, the rates under them", "¥5,625" in psec.inner_text() and "$37.50" not in psec.inner_text()
+          and page.locator("#cardViewCard .sp-val .cur").first.get_attribute("title") == "$37.50" and "1ドル＝150.00円" in psec.inner_text(), psec.inner_text())
+    page.click("#curBtn [data-v=usd]")
+    page.wait_for_function("document.documentElement.dataset.cur === 'usd'")
+    ptxt = psec.inner_text()
+    check("$: prices in dollars at once, no yen, no rate note on the US tab", "$37.50" in ptxt and "$44.99" in ptxt and "¥" not in ptxt and "1ドル" not in ptxt
+          and page.locator("#cardViewCard .sp-val .cur[title]").count() == 0 and pressed("#curBtn") == "$", ptxt)
+    page.wait_for_selector("#priceHistory svg .hist-line")
+    check("$: the price chart in dollars", page.locator("#priceHistory .hist-end").text_content() == "$41.00", page.locator("#priceHistory .hist-end").text_content())
+    check("$: the printings' prices in dollars", "$55.00" in page.locator("#versionMenuPanel").inner_text() and "¥" not in page.locator("#versionMenuPanel").inner_text())
+    check("$: the listings in dollars", "$35.50" in page.locator("#offersBox").inner_text() and "¥" not in page.locator("#offersBox").inner_text())
+    if SHOTS:
+        page.wait_for_timeout(300); page.screenshot(path="usd_card.png", full_page=True)
+        page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(300); page.screenshot(path="usd_card_phone.png", full_page=True)
+        page.set_viewport_size({"width": 1280, "height": 900}); page.wait_for_timeout(300)
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="eu"]')
+    page.wait_for_function("document.querySelector('#cardViewCard .price-section').dataset.market === 'eu'")
+    eu = page.locator("#cardViewCard .shop-prices .cur").first
+    check("$: European prices converted to dollars, the euro price on hover, with the rates", eu.inner_text() == "$34.03" and eu.get_attribute("title") == "€31.90"
+          and "1ユーロ＝160.00円" in psec.inner_text(), (eu.inner_text(), eu.get_attribute("title")))
+    page.click('#cardViewCard .price-tabs .seg-btn[data-pmarket="us"]')
+    page.reload(); page.wait_for_function("document.querySelector('#cardViewCard .shop-prices') && document.querySelector('#cardViewCard .shop-prices').textContent.includes('Cardsphere')")
+    check("$: remembered after reloading", page.evaluate("localStorage.getItem('warujie-currency')") == "usd" and "$37.50" in psec.inner_text() and pressed("#curBtn") == "$")
+    top_search("ラガバン"); page.wait_for_selector("#cardGrid .tile-price")
+    check("$: search results in dollars", page.locator("#cardGrid .tile-price").first.inner_text() == "$40.00", page.locator("#cardGrid .tile-price").first.inner_text())
+    page.goto(SITE + "?view=prices&market=us&win=7"); page.wait_for_selector("#moverBody .mover-row")
+    mv = page.locator("#moverBody").inner_text()
+    check("$: price movers in dollars", "$6.44 → $7.28" in mv and "¥" not in mv, mv[:200])
+    if SHOTS: page.screenshot(path="usd_movers.png")
+    page.click("#curBtn [data-v=jpy]"); page.wait_for_function("document.documentElement.dataset.cur === 'jpy'")
+    mv = page.locator("#moverBody").inner_text()
+    check("¥ again: the movers follow without reloading", "¥966 → ¥1,092" in mv and "$" not in mv, mv[:200])
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'en'")
+    check("English: the switches keep their labels, EN chosen, labels for screen readers", pressed("#langBtn") == "EN" and page.get_attribute("#curBtn", "aria-label") == "Currency"
+          and page.get_attribute("#langBtn", "aria-label") == "Language" and page.get_attribute("#curBtn [data-v=usd]", "title") == "Show prices in US dollars")
+    page.click("#langBtn [aria-pressed=true]"); page.wait_for_timeout(200)
+    check("pressing the chosen half changes nothing", page.evaluate("document.documentElement.lang") == "en")
+    page.click("#langBtn [aria-pressed=false]"); page.wait_for_function("document.documentElement.lang === 'ja'")
+    page.set_viewport_size({"width": 390, "height": 800}); page.goto(SITE); page.wait_for_selector("#homeHero", state="visible")
+    lb, cb, mb = page.locator("#langBtn").bounding_box(), page.locator("#curBtn").bounding_box(), page.locator("#menuBtn").bounding_box()
+    check("phone: both switches in the top bar beside the menu, on one line, no sideways scroll", no_hscroll() and abs(lb["y"] - cb["y"]) < 4
+          and lb["x"] + lb["width"] <= cb["x"] and cb["x"] + cb["width"] <= mb["x"] + 1 and mb["x"] + mb["width"] <= 390, (lb, cb, mb))
+    if SHOTS: page.screenshot(path="topbar_phone.png")
+    check("home: no input label, second lead line or hint (the placeholder and the examples say it)", page.locator(".hero-label").bounding_box()["width"] <= 1
+          and page.locator(".lead-extra, .hero-hint").count() == 0)
+    page.set_viewport_size({"width": 1280, "height": 900})
+    page.evaluate("localStorage.removeItem('warujie-currency')")
     str_src = INDEX[INDEX.index("const STR = {"):INDEX.index("\n};", INDEX.index("const STR = {"))]
     str_keys = re.findall(r"^\s+'([^']+)':\s*\[", str_src, re.M)
     check("interface strings: no key in STR twice (a later one would win silently)", len(str_keys) > 500 and len(set(str_keys)) == len(str_keys),
